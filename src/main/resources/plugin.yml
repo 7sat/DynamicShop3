@@ -1,0 +1,13 @@
+name: DynamicShop
+version: ${project.version}
+main: me.sat7.dynamicshop.DynamicShop
+depend: [Vault]
+softdepend: [PlaceholderAPI, Jobs]
+api-version: 1.14
+authors: [sat7]
+description: Full GUI shop with dynamic prices
+commands:
+  DynamicShop:
+    description: "단축 명령어: ds"
+    aliases: [ds]
+  shop:

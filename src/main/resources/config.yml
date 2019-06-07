@@ -1,0 +1,8 @@
+Language: en-US
+Prefix: §3§l[dShop] §f
+SalesTax: 25
+UseShopCommand: true
+DefaultShopName: Main
+DisplayStockAsStack: false
+DeliveryChargeScale: 1
+NumberOfPlayer: 10
