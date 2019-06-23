@@ -6,3 +6,4 @@ DefaultShopName: Main
 DisplayStockAsStack: false
 DeliveryChargeScale: 1
 NumberOfPlayer: 10
+OnClickCloseButton_OpenStartPage: true

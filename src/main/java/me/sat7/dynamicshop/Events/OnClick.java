@@ -140,7 +140,7 @@ public class OnClick implements Listener {
                         }
                         else
                         {
-                            if(e.getCurrentItem().getType() != Material.AIR) return;
+                            if(e.getCurrentItem() != null && e.getCurrentItem().getType() != Material.AIR) return;
 
                             DynamicShop.ccStartpage.get().set("Buttons." + e.getSlot() + ".displayName", DynamicShop.ccStartpage.get().get("Buttons." +itemtoMove+".displayName"));
                             DynamicShop.ccStartpage.get().set("Buttons." + e.getSlot() + ".lore", DynamicShop.ccStartpage.get().get("Buttons." +itemtoMove+".lore"));
@@ -264,7 +264,15 @@ public class OnClick implements Listener {
                     if(e.getSlot() == 45)
                     {
                         DynaShopAPI.PlayerSoundEffect(player,"click");
-                        DynaShopAPI.OpenStartPage(player);
+
+                        if(DynamicShop.plugin.getConfig().getBoolean("OnClickCloseButton_OpenStartPage"))
+                        {
+                            DynaShopAPI.OpenStartPage(player);
+                        }
+                        else
+                        {
+                            DynaShopAPI.CloseInventoryWithDelay(player);
+                        }
                     }
                     // 페이지 이동 버튼
                     else if(e.getSlot() == 49)

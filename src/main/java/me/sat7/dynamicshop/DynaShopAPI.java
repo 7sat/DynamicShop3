@@ -1401,7 +1401,7 @@ public class DynaShopAPI {
         // 실제 판매 가능량 확인
         int actualAmount = myItem.getAmount();
         //actualAmount = 9999;
-        player.sendMessage("aa:"+actualAmount);
+        //player.sendMessage("aa:"+actualAmount);
         HashMap<Integer,ItemStack> hashMap = player.getInventory().removeItem(myItem);
         player.updateInventory();
         if(!hashMap.isEmpty())

@@ -342,6 +342,8 @@ public final class DynamicShop extends JavaPlugin implements Listener {
         if(numPlayer > 100) numPlayer = 100;
         getConfig().set("NumberOfPlayer",numPlayer);
 
+        getConfig().set("OnClickCloseButton_OpenStartPage",getConfig().getBoolean("OnClickCloseButton_OpenStartPage"));
+
         saveConfig();
 
         StartTaskTimer();
@@ -1635,6 +1637,7 @@ public final class DynamicShop extends JavaPlugin implements Listener {
                             temp.add("stockStabilizing");
                             temp.add("account");
                             temp.add("hideStock");
+                            temp.add("sellbuy");
                         }
 
                         for (String s:temp)
@@ -2000,6 +2003,26 @@ public final class DynamicShop extends JavaPlugin implements Listener {
                                 }
                             }
                         }
+                        if(args[2].equalsIgnoreCase("sellbuy") && sender.hasPermission("dshop.admin.shopedit"))
+                        {
+                            if(args.length == 4)
+                            {
+                                temp.add("SellOnly");
+                                temp.add("BuyOnly");
+                                temp.add("Clear");
+
+                                for (String s:temp)
+                                {
+                                    if(s.startsWith(args[3])) alist.add(s);
+                                }
+
+                                if(!ccUser.get().getString(senderUuid + ".tmpString").equals("sellbuy"))
+                                {
+                                    ccUser.get().set(senderUuid + ".tmpString","sellbuy");
+                                    ShowHelp("sellbuy",(Player)sender,args);
+                                }
+                            }
+                        }
                     }
                 }
                 else if(args[0].equalsIgnoreCase("createshop") && sender.hasPermission("dshop.admin.createshop"))
@@ -2177,7 +2200,7 @@ public final class DynamicShop extends JavaPlugin implements Listener {
             if(player.hasPermission("dshop.admin.shopedit")||player.hasPermission("dshop.admin.shopedit")||player.hasPermission("dshop.admin.editall"))
             {
                 player.sendMessage(" - " + ccLang.get().getString("HELP.USAGE")
-                        + ": /ds shop <shopname> <addhand | add | edit | editall | permission | maxpage | flag | position | shophours | fluctuation | stockStabilizing | hideStock | account>");
+                        + ": /ds shop <shopname> <addhand | add | edit | editall | sellbuy | permission | maxpage | flag | position | shophours | fluctuation | stockStabilizing | hideStock | account>");
             }
 
             if(player.hasPermission("dshop.admin.shopedit")) player.sendMessage("§e - addhand: " + ccLang.get().getString("HELP.SHOPADDHAND"));
@@ -2435,6 +2458,13 @@ public final class DynamicShop extends JavaPlugin implements Listener {
             player.sendMessage(" - " + "This is beta feature. Currently only support 'Shop'");
             player.sendMessage(" - " + "You need to Copy pages yml file to DynamicShop/Convert/Shop");
             player.sendMessage(" - " + "Item meta will be lost");
+
+            player.sendMessage("");
+        }
+        else if(helpcode.equals("sellbuy") && player.hasPermission("dshop.admin.shopedit"))
+        {
+            player.sendMessage(dsPrefix + ccLang.get().getString("HELP.TITLE").replace("{command}","sellbuy"));
+            player.sendMessage(" - " + ccLang.get().getString("HELP.USAGE") + ": /ds shop <shop name> sellbuy < sellonly | buyonly | clear >");
 
             player.sendMessage("");
         }

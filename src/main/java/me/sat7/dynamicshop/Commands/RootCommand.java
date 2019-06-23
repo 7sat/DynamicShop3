@@ -1199,6 +1199,63 @@ public class RootCommand implements CommandExecutor {
                         }
                         DynamicShop.ccShop.save();
                     }
+
+                    // ds shop shopname sellbuy <SellOnly | BuyOnly | Clear>
+                    else if(args[2].equalsIgnoreCase("sellbuy"))
+                    {
+                        // 권한 확인
+                        if(!player.hasPermission("dshop.admin.shopedit"))
+                        {
+                            player.sendMessage(DynamicShop.dsPrefix + DynamicShop.ccLang.get().getString("ERR.NO_PERMISSION"));
+                            return true;
+                        }
+
+                        if(args.length != 4)
+                        {
+                            player.sendMessage(DynamicShop.dsPrefix + DynamicShop.ccLang.get().getString("ERR.WRONG_USAGE"));
+                            return true;
+                        }
+
+                        // 수정
+                        String temp = "";
+                        if(args[3].equalsIgnoreCase("SellOnly"))
+                        {
+                            temp = "SellOnly";
+                        }
+                        else if(args[3].equalsIgnoreCase("BuyOnly"))
+                        {
+                            temp = "BuyOnly";
+                        }
+                        else
+                        {
+                            temp = "SellBuy";
+                        }
+
+                        for (String s:DynamicShop.ccShop.get().getConfigurationSection(shopName).getKeys(false))
+                        {
+                            try
+                            {
+                                int i = Integer.parseInt(s);
+                                if(!DynamicShop.ccShop.get().contains(shopName+"."+s+".value")) continue; //장식용임
+                            }
+                            catch (Exception e)
+                            {
+                                continue;
+                            }
+
+                            if(temp.equalsIgnoreCase("SellBuy"))
+                            {
+                                DynamicShop.ccShop.get().set(shopName+"."+s+".tradeType", null);
+                            }
+                            else
+                            {
+                                DynamicShop.ccShop.get().set(shopName+"."+s+".tradeType", temp);
+                            }
+                        }
+
+                        DynamicShop.ccShop.save();
+                        player.sendMessage(DynamicShop.dsPrefix + DynamicShop.ccLang.get().getString("CHANGES_APPLIED") + temp);
+                    }
                 }
             }
 
