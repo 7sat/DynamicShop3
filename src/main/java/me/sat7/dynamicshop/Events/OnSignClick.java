@@ -7,6 +7,8 @@ import org.bukkit.Material;
 import org.bukkit.block.Block;
 import org.bukkit.block.BlockFace;
 import org.bukkit.block.Sign;
+import org.bukkit.block.data.BlockData;
+import org.bukkit.block.data.Directional;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
@@ -17,6 +19,7 @@ import org.bukkit.event.block.SignChangeEvent;
 import org.bukkit.event.entity.EntityExplodeEvent;
 import org.bukkit.event.player.PlayerInteractEvent;
 import org.bukkit.inventory.ItemStack;
+import org.omg.DynamicAny.DynValueCommon;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -54,6 +57,19 @@ public class OnSignClick  implements Listener
 
             DynamicShop.ccSign.get().set(signId+".shop" , ChatColor.stripColor(e.getLine(1)));
 
+            Block tempBlock = e.getBlock();
+            Block blockBehind = null;
+            if (tempBlock != null && tempBlock.getState() instanceof Sign)
+            {
+                BlockData data = tempBlock.getBlockData();
+                if (data instanceof Directional)
+                {
+                    Directional directional = (Directional)data;
+                    blockBehind = tempBlock.getRelative(directional.getFacing().getOppositeFace());
+                }
+            }
+            DynamicShop.ccSign.get().set(signId+".attached" , blockBehind.getX()+"_"+blockBehind.getY()+"_"+blockBehind.getZ());
+
             try
             {
                 String shop = ChatColor.stripColor(e.getLine(1));
@@ -87,58 +103,94 @@ public class OnSignClick  implements Listener
                 int z = e.getClickedBlock().getZ();
                 String signId = x + "_" + y + "_" + z;
 
-                if(DynamicShop.ccSign.get().contains(signId))
+                // 정보가 없음
+                if(!DynamicShop.ccSign.get().contains(signId))
                 {
-                    String shopName = ChatColor.stripColor(DynamicShop.ccSign.get().getString(signId+".shop"));
-                    // 상점 존재 확인
-                    if(DynamicShop.ccShop.get().contains(shopName))
+                    // 재생성 시도
+                    if(e.getPlayer().hasPermission("dshop.admin.createsign"))
                     {
-                        //권한 확인
-                        String permission = DynamicShop.ccShop.get().getString(shopName+".Options.permission");
-                        if(permission != null && permission.length()>0 )
-                        {
-                            if(!p.hasPermission(permission) && !p.hasPermission(permission+".buy") && !p.hasPermission(permission+".sell"))
-                            {
-                                p.sendMessage(DynamicShop.dsPrefix + DynamicShop.ccLang.get().getString("ERR.NO_PERMISSION"));
-                                return;
-                            }
-                        }
+                        DynamicShop.ccSign.get().set(signId+".shop" , ChatColor.stripColor(s.getLine(1)));
 
                         try
                         {
-                            int idx = DynaShopAPI.FindItemFromShop(shopName,new ItemStack(Material.getMaterial(DynamicShop.ccSign.get().getString(signId+".mat"))));
+                            String shop = ChatColor.stripColor(s.getLine(1));
+                            String mat = ChatColor.stripColor(s.getLine(2)).toUpperCase();
+                            int i = DynaShopAPI.FindItemFromShop(shop,new ItemStack(Material.getMaterial(mat)));
 
-                            if(idx != -1)
-                            {
-                                DynamicShop.ccUser.get().set(p.getUniqueId().toString()+".interactItem",shopName+"/"+idx);
-                                DynamicShop.ccUser.get().set(p.getUniqueId().toString()+".tmpString","sign");
-                                DynamicShop.ccUser.save();
+                            s.setLine(2, DynamicShop.ccShop.get().getConfigurationSection(shop).getString(i+".mat"));
 
-                                DynaShopAPI.OpenItemTradeInven(p,shopName,String.valueOf(idx));
-                            }
-                            else
-                            {
-                                DynaShopAPI.OpenShopGUI(p, shopName, 1);
-                            }
+                            DynamicShop.ccSign.get().set(signId+".mat" , mat);
+                        }catch (Exception exception)
+                        {
+                            s.setLine(2,"");
                         }
-                        catch (Exception exception)
+
+                        DynamicShop.ccSign.save();
+                    }
+                    else
+                    {
+                        // 아무런 일도 일어나지 않음.
+                        return;
+                    }
+                }
+
+                if(!DynamicShop.ccSign.get().contains(signId+".attached"))
+                {
+                    Block tempBlock = e.getClickedBlock();
+                    Block blockBehind = null;
+                    if (tempBlock != null && tempBlock.getState() instanceof Sign)
+                    {
+                        BlockData data = tempBlock.getBlockData();
+                        if (data instanceof Directional)
+                        {
+                            Directional directional = (Directional)data;
+                            blockBehind = tempBlock.getRelative(directional.getFacing().getOppositeFace());
+                        }
+                    }
+                    DynamicShop.ccSign.get().set(signId+".attached" , blockBehind.getX()+"_"+blockBehind.getY()+"_"+blockBehind.getZ());
+                    DynamicShop.ccSign.save();
+                }
+
+                String shopName = ChatColor.stripColor(DynamicShop.ccSign.get().getString(signId+".shop"));
+                // 상점 존재 확인
+                if(DynamicShop.ccShop.get().contains(shopName))
+                {
+                    //권한 확인
+                    String permission = DynamicShop.ccShop.get().getString(shopName+".Options.permission");
+                    if(permission != null && permission.length()>0 )
+                    {
+                        if(!p.hasPermission(permission) && !p.hasPermission(permission+".buy") && !p.hasPermission(permission+".sell"))
+                        {
+                            p.sendMessage(DynamicShop.dsPrefix + DynamicShop.ccLang.get().getString("ERR.NO_PERMISSION"));
+                            return;
+                        }
+                    }
+
+                    try
+                    {
+                        int idx = DynaShopAPI.FindItemFromShop(shopName,new ItemStack(Material.getMaterial(DynamicShop.ccSign.get().getString(signId+".mat"))));
+
+                        if(idx != -1)
+                        {
+                            DynamicShop.ccUser.get().set(p.getUniqueId().toString()+".interactItem",shopName+"/"+idx);
+                            DynamicShop.ccUser.get().set(p.getUniqueId().toString()+".tmpString","sign");
+                            DynamicShop.ccUser.save();
+
+                            DynaShopAPI.OpenItemTradeInven(p,shopName,String.valueOf(idx));
+                        }
+                        else
                         {
                             DynaShopAPI.OpenShopGUI(p, shopName, 1);
                         }
                     }
-                    else
+                    catch (Exception exception)
                     {
-                        p.sendMessage(DynamicShop.dsPrefix+DynamicShop.ccLang.get().getString("ERR.SHOP_NOT_FOUND"));
+                        DynaShopAPI.OpenShopGUI(p, shopName, 1);
                     }
                 }
                 else
                 {
-//                    if(s.getLine(0).equals("§3[DynamicShop]") && e.getPlayer().hasPermission("dshop.admin.createsign"))
-//                    {
-//                        s.setLine(1,"Error");
-//                        s.setLine(2,"YML data Missing");
-//                        s.update();
-//                    }
+                    p.sendMessage(DynamicShop.dsPrefix+DynamicShop.ccLang.get().getString("ERR.SHOP_NOT_FOUND"));
                 }
             }
         }
@@ -148,34 +200,40 @@ public class OnSignClick  implements Listener
     @EventHandler
     public void onBlockBreak(BlockBreakEvent e)
     {
-        ArrayList<Block> signList = new ArrayList<>();
-        signList.add(e.getBlock());
-        signList.add(e.getBlock().getRelative(BlockFace.EAST));
-        signList.add(e.getBlock().getRelative(BlockFace.WEST));
-        signList.add(e.getBlock().getRelative(BlockFace.NORTH));
-        signList.add(e.getBlock().getRelative(BlockFace.SOUTH));
+        Block b = e.getBlock();
+        int x = b.getX();
+        int y = b.getY();
+        int z = b.getZ();
+        String eventID = x + "_" + y + "_" + z;
 
-        for (Block b : signList)
+        for (String s:DynamicShop.ccSign.get().getKeys(false))
         {
-            if(b.getType().toString().contains("WALL_SIGN"))
+            if(s.equals(eventID))
             {
-                int x = b.getX();
-                int y = b.getY();
-                int z = b.getZ();
-                String signId = x + "_" + y + "_" + z;
-
-                if(DynamicShop.ccSign.get().contains(signId))
+                if(!e.getPlayer().hasPermission("dshop.admin.destroysign"))
                 {
-                    if(!e.getPlayer().hasPermission("dshop.admin.destroysign"))
-                    {
-                        e.setCancelled(true);
-                    }
-                    else
-                    {
-                        DynamicShop.ccSign.get().set(signId,null);
-                        DynamicShop.ccSign.save();
-                    }
+                    e.setCancelled(true);
                 }
+                else
+                {
+                    DynamicShop.ccSign.get().set(eventID,null);
+                    DynamicShop.ccSign.save();
+                }
+                break;
+            }
+
+            if(eventID.equals(DynamicShop.ccSign.get().getString(s+".attached")))
+            {
+                if(!e.getPlayer().hasPermission("dshop.admin.destroysign"))
+                {
+                    e.setCancelled(true);
+                }
+                else
+                {
+                    DynamicShop.ccSign.get().set(s,null);
+                    DynamicShop.ccSign.save();
+                }
+                break;
             }
         }
     }
