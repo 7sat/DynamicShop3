@@ -343,6 +343,7 @@ public final class DynamicShop extends JavaPlugin implements Listener {
         getConfig().set("NumberOfPlayer",numPlayer);
 
         getConfig().set("OnClickCloseButton_OpenStartPage",getConfig().getBoolean("OnClickCloseButton_OpenStartPage"));
+        getConfig().set("OpenStartPageInsteadOfDefaultShop",getConfig().getBoolean("OpenStartPageInsteadOfDefaultShop"));
 
         saveConfig();
 

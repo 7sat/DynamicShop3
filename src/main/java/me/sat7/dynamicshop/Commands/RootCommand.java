@@ -60,6 +60,13 @@ public class RootCommand implements CommandExecutor {
                 // ds shop (defaultShop)
                 if(args.length == 1)
                 {
+                    if(DynamicShop.plugin.getConfig().getBoolean("OpenStartPageInsteadOfDefaultShop"))
+                    {
+                        DynamicShop.ccUser.get().set(player.getUniqueId()+".interactItem","");
+                        DynaShopAPI.OpenStartPage(player);
+                        return true;
+                    }
+
                     shopName = DynamicShop.plugin.getConfig().getString("DefaultShopName");
                 }
                 // ds shop shopName
