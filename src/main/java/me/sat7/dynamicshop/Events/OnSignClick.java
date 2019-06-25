@@ -190,7 +190,7 @@ public class OnSignClick  implements Listener
                 }
                 else
                 {
-                    p.sendMessage(DynamicShop.dsPrefix+DynamicShop.ccLang.get().getString("ERR.SHOP_NOT_FOUND"));
+                    //p.sendMessage(DynamicShop.dsPrefix+DynamicShop.ccLang.get().getString("ERR.SHOP_NOT_FOUND"));
                 }
             }
         }
