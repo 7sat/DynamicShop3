@@ -816,8 +816,8 @@ public class DynaShopAPI {
                 buyStr,buyLore,1);
         inven.setItem(1,sellBtn);
         inven.setItem(10,buyBtn);
-        inven.setItem(8,sellBtn);
-        inven.setItem(17,buyBtn);
+        //inven.setItem(8,sellBtn);
+        //inven.setItem(17,buyBtn);
 
         String mat = DynamicShop.ccShop.get().getString(shopName+"."+tradeIdx+".mat");
         // 판매
@@ -825,7 +825,7 @@ public class DynaShopAPI {
         {
             int amount = 1;
             int idx = 2;
-            for (int i = 1; i < 7; i++)
+            for (int i = 1; i < 8; i++)
             {
                 ItemStack sell = new ItemStack(Material.getMaterial(mat),amount);
                 sell.setItemMeta((ItemMeta) DynamicShop.ccShop.get().get(shopName + "." + tradeIdx + ".itemStack"));
@@ -869,7 +869,7 @@ public class DynaShopAPI {
         {
             int amount = 1;
             int idx = 11;
-            for (int i = 1; i < 7; i++)
+            for (int i = 1; i < 8; i++)
             {
                 ItemStack buy = new ItemStack(Material.getMaterial(mat),amount);
                 buy.setItemMeta((ItemMeta) DynamicShop.ccShop.get().get(shopName + "." + tradeIdx + ".itemStack"));

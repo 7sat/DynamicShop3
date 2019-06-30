@@ -11,6 +11,7 @@ import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
 import org.bukkit.event.inventory.InventoryClickEvent;
 import org.bukkit.event.inventory.InventoryDragEvent;
+import org.bukkit.inventory.Inventory;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.ItemMeta;
 
@@ -24,7 +25,7 @@ public class OnClick implements Listener {
     // UI 인벤토리에 드래그로 아이탬 올리는것을 막음
     @EventHandler
     public void onDragInGUI(InventoryDragEvent event) {
-        if(event.getInventory().getSize() == 54 && DynamicShop.ccShop.get().contains(ChatColor.stripColor(event.getInventory().getItem(53).getItemMeta().getDisplayName())))
+        if(CheckInvenIsShopUI(event.getInventory()))
         {
             event.setCancelled(true);
         }
@@ -232,7 +233,7 @@ public class OnClick implements Listener {
                 }
             }
             // 상점
-            else if(e.getInventory().getSize() == 54 && DynamicShop.ccShop.get().contains(ChatColor.stripColor(e.getInventory().getItem(53).getItemMeta().getDisplayName())))
+            else if(CheckInvenIsShopUI(e.getInventory()))
             {
                 e.setCancelled(true);
 
@@ -768,7 +769,7 @@ public class OnClick implements Listener {
                 String shopName = temp[0];
                 String tradeIdx = temp[1];
 
-                if(e.getCurrentItem().getItemMeta() != null)
+                if(e.getCurrentItem() != null && e.getCurrentItem().getItemMeta() != null)
                 {
                     // 닫기
                     if(e.getSlot() == 9)
@@ -805,7 +806,7 @@ public class OnClick implements Listener {
                         }
 
                         // 판매 토글
-                        if(e.getSlot() == 1 || e.getSlot() == 8)
+                        if(e.getSlot() == 1)
                         {
                             if(player.hasPermission("dshop.admin.shopedit"))
                             {
@@ -827,7 +828,7 @@ public class OnClick implements Listener {
                             return;
                         }
                         // 구매 토글
-                        if(e.getSlot() == 10 || e.getSlot() == 17)
+                        if(e.getSlot() == 10)
                         {
                             if(player.hasPermission("dshop.admin.shopedit"))
                             {
@@ -897,7 +898,7 @@ public class OnClick implements Listener {
 
                         String permission = optionS.getString("permission");
                         // 판매
-                        if(e.getSlot() <=9)
+                        if(e.getSlot() <=10)
                         {
                             // 판매권한 확인
                             if(permission != null && permission.length()>0 && !player.hasPermission(permission) && !player.hasPermission(permission+".sell"))
@@ -1439,13 +1440,9 @@ public class OnClick implements Listener {
         // Shift클릭으로 UI인벤에 아이탬 올리는것 막기
         else if(e.isShiftClick())
         {
-            if(DynamicShop.ccShop.get().contains(ChatColor.stripColor(e.getView().getTitle())))
+            if(CheckInvenIsShopUI(e.getView().getInventory(0)))
             {
-                if(e.getInventory().getSize() == 54 && e.getInventory().getItem(53).getItemMeta().getDisplayName().
-                        equals(DynamicShop.ccLang.get().getString("SHOP_INFO")))
-                {
-                    e.setCancelled(true);
-                }
+                e.setCancelled(true);
             }
             else if(e.getView().getTitle().equalsIgnoreCase(DynamicShop.ccLang.get().getString("TRADE_TITLE"))) e.setCancelled(true);
             else if (e.getView().getTitle().equalsIgnoreCase(DynamicShop.ccLang.get().getString("PALETTE_TITLE"))) { e.setCancelled(true); }
@@ -1832,6 +1829,21 @@ public class OnClick implements Listener {
                 DynaShopAPI.OpenItemTradeInven(player,shopName, tradeIdx);
                 DynamicShop.ccShop.save();
             }
+        }
+    }
+
+    private Boolean CheckInvenIsShopUI(Inventory i)
+    {
+
+        if(i.getSize() == 54 && i.getItem(53) != null &&
+            DynamicShop.ccShop.get().contains(ChatColor.stripColor(i.getItem(53).getItemMeta().getDisplayName())) &&
+            i.getItem(53).getType().name().contains("SIGN"))
+        {
+            return true;
+        }
+        else
+        {
+            return false;
         }
     }
 }
