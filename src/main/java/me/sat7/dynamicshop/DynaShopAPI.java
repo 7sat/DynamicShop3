@@ -40,7 +40,17 @@ public class DynaShopAPI {
             return;
         }
 
-        Inventory vault = Bukkit.createInventory(player,54,"§3"+shopName);
+        String uiName = "";
+        if(DynamicShop.ccShop.get().contains(shopName+".Options.title"))
+        {
+            uiName = DynamicShop.ccShop.get().getString(shopName+".Options.title");
+        }
+        else
+        {
+            uiName = shopName;
+        }
+
+        Inventory vault = Bukkit.createInventory(player,54,"§3"+uiName);
 
         // 닫기 버튼
         ItemStack closeBtn =  CreateItemStack(Material.BARRIER,null,
@@ -131,7 +141,7 @@ public class DynaShopAPI {
         if(player.hasPermission("dshop.admin.shopedit")) infoLore.add(DynamicShop.ccLang.get().getString("RMB_EDIT"));
 
         ItemStack infoBtn =  CreateItemStack(Material.LEGACY_SIGN,null,
-                DynamicShop.ccLang.get().getString("SHOP_INFO"), infoLore,1);
+                "§3"+shopName, infoLore,1);
 
         vault.setItem(53,infoBtn);
 
@@ -1922,5 +1932,21 @@ public class DynaShopAPI {
     public static double GetCurJobPoints(Player p)
     {
         return Jobs.getPlayerManager().getPointsData().getPlayerPointsInfo(p.getUniqueId()).getCurrentPoints();
+    }
+
+    public static String GetBeautifiedName(Material mat)
+    {
+        String temp = mat.toString().replace("_"," ").toLowerCase();
+        String[] temparr = temp.split(" ");
+
+        String finalStr = "";
+        for (String s:temparr)
+        {
+            s = (""+s.charAt(0)).toUpperCase() + s.substring(1);
+            finalStr += s + " ";
+        }
+        finalStr = finalStr.substring(0,finalStr.length()-1);
+
+        return finalStr;
     }
 }

@@ -24,12 +24,9 @@ public class OnClick implements Listener {
     // UI 인벤토리에 드래그로 아이탬 올리는것을 막음
     @EventHandler
     public void onDragInGUI(InventoryDragEvent event) {
-        if (event.getInventory() != null && DynamicShop.ccShop.get().contains(ChatColor.stripColor(event.getView().getTitle()))) {
-            if(event.getInventory().getSize() == 54 && event.getInventory().getItem(53).getItemMeta().getDisplayName().
-                    equals(DynamicShop.ccLang.get().getString("SHOP_INFO")))
-            {
-                event.setCancelled(true);
-            }
+        if(event.getInventory().getSize() == 54 && DynamicShop.ccShop.get().contains(ChatColor.stripColor(event.getInventory().getItem(53).getItemMeta().getDisplayName())))
+        {
+            event.setCancelled(true);
         }
         else if (event.getInventory() != null && event.getView().getTitle().equalsIgnoreCase(DynamicShop.ccLang.get().getString("TRADE_TITLE"))) { event.setCancelled(true); }
         else if (event.getInventory() != null && event.getView().getTitle().equalsIgnoreCase(DynamicShop.ccLang.get().getString("PALETTE_TITLE"))) { event.setCancelled(true); }
@@ -235,19 +232,12 @@ public class OnClick implements Listener {
                 }
             }
             // 상점
-            else if(DynamicShop.ccShop.get().contains(ChatColor.stripColor(e.getView().getTitle())))
+            else if(e.getInventory().getSize() == 54 && DynamicShop.ccShop.get().contains(ChatColor.stripColor(e.getInventory().getItem(53).getItemMeta().getDisplayName())))
             {
-                if(e.getInventory().getSize() == 54 && e.getInventory().getItem(53).getItemMeta().getDisplayName().
-                        equals(DynamicShop.ccLang.get().getString("SHOP_INFO")))
-                {
-                    e.setCancelled(true);
-                }
-                else
-                {
-                    return;
-                }
+                e.setCancelled(true);
 
-                String shopName = ChatColor.stripColor(e.getView().getTitle());
+                String shopName = ChatColor.stripColor(e.getInventory().getItem(53).getItemMeta().getDisplayName());
+
                 int curPage = e.getInventory().getItem(49).getAmount();
 
                 String itemtoMove = "";
@@ -1537,7 +1527,7 @@ public class OnClick implements Listener {
         if(r.transactionSuccess())
         {
             player.sendMessage(DynamicShop.dsPrefix + DynamicShop.ccLang.get().getString("SELL_SUCCESS")
-                    .replace("{item}",tempIS.getType().name())
+                    .replace("{item}",DynaShopAPI.GetBeautifiedName(tempIS.getType()))
                     .replace("{amount}", Integer.toString(actualAmount))
                     .replace("{price}",econ.format(r.amount))
                     .replace("{bal}",econ.format(econ.getBalance((player)))));
@@ -1645,7 +1635,7 @@ public class OnClick implements Listener {
                 }
 
                 player.sendMessage(DynamicShop.dsPrefix + DynamicShop.ccLang.get().getString("BUY_SUCCESS")
-                        .replace("{item}",tempIS.getType().name())
+                        .replace("{item}",DynaShopAPI.GetBeautifiedName(tempIS.getType()))
                         .replace("{amount}", Integer.toString(actualAmount))
                         .replace("{price}",econ.format(r.amount))
                         .replace("{bal}",econ.format(econ.getBalance((player)))));
@@ -1721,7 +1711,7 @@ public class OnClick implements Listener {
         if(DynaShopAPI.AddJobsPoint(player, priceSum))
         {
             player.sendMessage(DynamicShop.dsPrefix + DynamicShop.ccLang.get().getString("SELL_SUCCESS_JP")
-                    .replace("{item}",tempIS.getType().name())
+                    .replace("{item}",DynaShopAPI.GetBeautifiedName(tempIS.getType()))
                     .replace("{amount}", Integer.toString(actualAmount))
                     .replace("{price}",df.format(priceSum))
                     .replace("{bal}",df.format(DynaShopAPI.GetCurJobPoints(player))));
@@ -1823,7 +1813,7 @@ public class OnClick implements Listener {
                 }
 
                 player.sendMessage(DynamicShop.dsPrefix + DynamicShop.ccLang.get().getString("BUY_SUCCESS_JP")
-                        .replace("{item}",tempIS.getType().name())
+                        .replace("{item}",DynaShopAPI.GetBeautifiedName(tempIS.getType()))
                         .replace("{amount}", Integer.toString(actualAmount))
                         .replace("{price}",df.format(priceSum))
                         .replace("{bal}",df.format(DynaShopAPI.GetCurJobPoints((player)))));
