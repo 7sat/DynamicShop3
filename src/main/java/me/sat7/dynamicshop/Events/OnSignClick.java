@@ -104,37 +104,39 @@ public class OnSignClick  implements Listener
                 String signId = x + "_" + y + "_" + z;
 
                 // 정보가 없음
-                if(!DynamicShop.ccSign.get().contains(signId))
+                if(!DynamicShop.ccSign.get().contains(signId) &&
+                        s.getLine(1).length() > 0 &&
+                        DynamicShop.ccShop.get().contains(ChatColor.stripColor(s.getLine(1))))
                 {
                     // 재생성 시도
                     if(e.getPlayer().hasPermission("dshop.admin.createsign"))
                     {
-                        DynamicShop.ccSign.get().set(signId+".shop" , ChatColor.stripColor(s.getLine(1)));
+                        String shop = ChatColor.stripColor(s.getLine(1));
+                        DynamicShop.ccSign.get().set(signId+".shop" , shop);
+                        s.setLine(0,"");
+                        s.setLine(1,"§a"+s.getLine(1));
 
                         try
                         {
-                            String shop = ChatColor.stripColor(s.getLine(1));
                             String mat = ChatColor.stripColor(s.getLine(2)).toUpperCase();
                             int i = DynaShopAPI.FindItemFromShop(shop,new ItemStack(Material.getMaterial(mat)));
-
                             s.setLine(2, DynamicShop.ccShop.get().getConfigurationSection(shop).getString(i+".mat"));
-
                             DynamicShop.ccSign.get().set(signId+".mat" , mat);
                         }catch (Exception exception)
                         {
                             s.setLine(2,"");
                         }
 
+                        s.update();
                         DynamicShop.ccSign.save();
                     }
                     else
                     {
-                        // 아무런 일도 일어나지 않음.
                         return;
                     }
                 }
 
-                if(!DynamicShop.ccSign.get().contains(signId+".attached"))
+                if(DynamicShop.ccSign.get().contains(signId) && !DynamicShop.ccSign.get().contains(signId+".attached"))
                 {
                     Block tempBlock = e.getClickedBlock();
                     Block blockBehind = null;
@@ -151,7 +153,9 @@ public class OnSignClick  implements Listener
                     DynamicShop.ccSign.save();
                 }
 
-                String shopName = ChatColor.stripColor(DynamicShop.ccSign.get().getString(signId+".shop"));
+                String shopName = DynamicShop.ccSign.get().getString(signId+".shop");
+                if(shopName == null || shopName.length() == 0) return;
+
                 // 상점 존재 확인
                 if(DynamicShop.ccShop.get().contains(shopName))
                 {
@@ -187,10 +191,6 @@ public class OnSignClick  implements Listener
                     {
                         DynaShopAPI.OpenShopGUI(p, shopName, 1);
                     }
-                }
-                else
-                {
-                    //p.sendMessage(DynamicShop.dsPrefix+DynamicShop.ccLang.get().getString("ERR.SHOP_NOT_FOUND"));
                 }
             }
         }
