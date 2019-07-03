@@ -10,8 +10,6 @@ import net.milkbowl.vault.economy.Economy;
 import org.bstats.bukkit.Metrics;
 import org.bukkit.Bukkit;
 import org.bukkit.Material;
-import org.bukkit.OfflinePlayer;
-import org.bukkit.Sound;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandSender;
 import org.bukkit.command.ConsoleCommandSender;
@@ -50,7 +48,7 @@ public final class DynamicShop extends JavaPlugin implements Listener {
     public static CustomConfig ccSound;
     public static CustomConfig ccLog;
 
-    public Random generator = new Random();
+    private Random generator = new Random();
 
     public static boolean updateAvailable = false;
     public static boolean jobsRebornActive = false;
@@ -225,9 +223,7 @@ public final class DynamicShop extends JavaPlugin implements Listener {
                         ccShop.get().set(shop+"."+item+".stock", oldStock);
                         needToUpdateUI = true;
                     }
-                    catch (Exception e)
-                    {
-                    }
+                    catch (Exception ignored){}
                 }
             }
 
@@ -388,8 +384,8 @@ public final class DynamicShop extends JavaPlugin implements Listener {
             ccLang.get().addDefault("SELLONLY_LORE", "§f판매만 가능한 아이탬");
             ccLang.get().addDefault("VALUE_BUY", "§f구매가치: ");
             ccLang.get().addDefault("VALUE_SELL", "§f판매가치: ");
-            ccLang.get().addDefault("PRICE", "§f구매 가격: ");
-            ccLang.get().addDefault("SELLPRICE", "§f판매 가격: ");
+            ccLang.get().addDefault("PRICE", "§f구매: ");
+            ccLang.get().addDefault("SELLPRICE", "§f판매: ");
             ccLang.get().addDefault("PRICE_MIN", "§f최소 가격: ");
             ccLang.get().addDefault("PRICE_MAX", "§f최대 가격: ");
             ccLang.get().addDefault("MEDIAN", "§f중앙값: ");
@@ -559,7 +555,6 @@ public final class DynamicShop extends JavaPlugin implements Listener {
             ccLang.get().addDefault("ERR.PLAYER_NOT_EXIST", "해당 플레이어를 찾을 수 없습니다.");
             ccLang.get().addDefault("ERR.SHOP_LINK_FAIL", "상점 둘 중 하나는 실제 계좌이어야 합니다.");
             ccLang.get().addDefault("ERR.SHOP_LINK_TARGET_ERR", "목표 상점은 실제 계좌를 가지고 있어야 합니다.");
-            //ccLang.get().addDefault("ERR.RECURSIVE_STRUCTURE", "두 상점이 서로를 연동할 수 없습니다.");
             ccLang.get().addDefault("ERR.NESTED_STRUCTURE", "계층 구조를 이루는것은 금지되어 있습니다. (ex. aa-bb, bb-cc)");
 
             ccLang.get().options().copyDefaults(true);
@@ -594,8 +589,8 @@ public final class DynamicShop extends JavaPlugin implements Listener {
             ccLang.get().addDefault("BUYONLY_LORE", "§fThis item is Buy only");
             ccLang.get().addDefault("SELL", "§2Sell");
             ccLang.get().addDefault("SELLONLY_LORE", "§fThis item is Sell only");
-            ccLang.get().addDefault("PRICE", "§fBuy Price: ");
-            ccLang.get().addDefault("SELLPRICE", "§fSell Price: ");
+            ccLang.get().addDefault("PRICE", "§fBuy: ");
+            ccLang.get().addDefault("SELLPRICE", "§fSell: ");
             ccLang.get().addDefault("VALUE_BUY", "§fValue(Buy): ");
             ccLang.get().addDefault("VALUE_SELL", "§fValue(Sell): ");
             ccLang.get().addDefault("PRICE_MIN", "§fMin Price: ");
@@ -768,7 +763,6 @@ public final class DynamicShop extends JavaPlugin implements Listener {
             ccLang.get().addDefault("ERR.PLAYER_NOT_EXIST", "Player not exist.");
             ccLang.get().addDefault("ERR.SHOP_LINK_FAIL", "At least one of them must be an actual account.");
             ccLang.get().addDefault("ERR.SHOP_LINK_TARGET_ERR", "Target shop must have actual account.");
-            //ccLang.get().addDefault("ERR.RECURSIVE_STRUCTURE", "Recursive structure is forbidden.");
             ccLang.get().addDefault("ERR.NESTED_STRUCTURE", "Nested structure is forbidden. (ex. aa-bb, bb-cc)");
 
             ccLang.get().options().copyDefaults(true);
@@ -1673,6 +1667,7 @@ public final class DynamicShop extends JavaPlugin implements Listener {
                             temp.add("stockStabilizing");
                             temp.add("account");
                             temp.add("hideStock");
+                            temp.add("hidePricingType");
                             temp.add("sellbuy");
                             temp.add("log");
                         }
@@ -1692,7 +1687,7 @@ public final class DynamicShop extends JavaPlugin implements Listener {
                                 ShowHelp("addhand",(Player)sender,args);
                             }
                         }
-                        if(args[2].equalsIgnoreCase("add") && sender.hasPermission("dshop.admin.shopedit"))
+                        else if(args[2].equalsIgnoreCase("add") && sender.hasPermission("dshop.admin.shopedit"))
                         {
                             if(args.length == 4)
                             {
@@ -1726,7 +1721,7 @@ public final class DynamicShop extends JavaPlugin implements Listener {
                                 }
                             }
                         }
-                        if(args[2].equalsIgnoreCase("edit") && sender.hasPermission("dshop.admin.shopedit"))
+                        else if(args[2].equalsIgnoreCase("edit") && sender.hasPermission("dshop.admin.shopedit"))
                         {
                             if(args.length == 4)
                             {
@@ -1746,10 +1741,7 @@ public final class DynamicShop extends JavaPlugin implements Listener {
                                         if(!ccShop.get().contains(shopName+"."+s+".value")) continue; // 장식용임
                                         temp.add(ccShop.get().getConfigurationSection(shopName+"."+s).getName()+"/"+ccShop.get().getString(shopName+"." + s +".mat"));
                                     }
-                                    catch (Exception e)
-                                    {
-
-                                    }
+                                    catch (Exception ignored){}
                                 }
 
                                 for (String s:temp)
@@ -1775,7 +1767,7 @@ public final class DynamicShop extends JavaPlugin implements Listener {
                                 }
                             }
                         }
-                        if(args[2].equalsIgnoreCase("editall") && sender.hasPermission("dshop.admin.shopedit"))
+                        else if(args[2].equalsIgnoreCase("editall") && sender.hasPermission("dshop.admin.shopedit"))
                         {
                             if(!ccUser.get().getString(senderUuid + ".tmpString").equals("editall"))
                             {
@@ -1825,7 +1817,7 @@ public final class DynamicShop extends JavaPlugin implements Listener {
                                 }
                             }
                         }
-                        if(args[2].equalsIgnoreCase("permission") && sender.hasPermission("dshop.admin.shopedit"))
+                        else if(args[2].equalsIgnoreCase("permission") && sender.hasPermission("dshop.admin.shopedit"))
                         {
                             if(!ccUser.get().getString(senderUuid + ".tmpString").equals("permission"))
                             {
@@ -1843,7 +1835,7 @@ public final class DynamicShop extends JavaPlugin implements Listener {
                                 }
                             }
                         }
-                        if(args[2].equalsIgnoreCase("maxpage") && sender.hasPermission("dshop.admin.shopedit"))
+                        else if(args[2].equalsIgnoreCase("maxpage") && sender.hasPermission("dshop.admin.shopedit"))
                         {
                             if(!ccUser.get().getString(senderUuid + ".tmpString").equals("maxpage"))
                             {
@@ -1851,7 +1843,7 @@ public final class DynamicShop extends JavaPlugin implements Listener {
                                 ShowHelp("maxpage",(Player)sender,args);
                             }
                         }
-                        if(args[2].equalsIgnoreCase("flag") && sender.hasPermission("dshop.admin.shopedit"))
+                        else if(args[2].equalsIgnoreCase("flag") && sender.hasPermission("dshop.admin.shopedit"))
                         {
                             if(args.length == 4)
                             {
@@ -1882,7 +1874,7 @@ public final class DynamicShop extends JavaPlugin implements Listener {
                                 ShowHelp("flag",(Player)sender,args);
                             }
                         }
-                        if(args[2].equalsIgnoreCase("position") && sender.hasPermission("dshop.admin.shopedit"))
+                        else if(args[2].equalsIgnoreCase("position") && sender.hasPermission("dshop.admin.shopedit"))
                         {
                             if(args.length >= 4)
                             {
@@ -1902,7 +1894,7 @@ public final class DynamicShop extends JavaPlugin implements Listener {
                                 ShowHelp("position",(Player)sender,args);
                             }
                         }
-                        if(args[2].equalsIgnoreCase("shophours") && sender.hasPermission("dshop.admin.shopedit"))
+                        else if(args[2].equalsIgnoreCase("shophours") && sender.hasPermission("dshop.admin.shopedit"))
                         {
                             if(!ccUser.get().getString(senderUuid + ".tmpString").equals("shophours"))
                             {
@@ -1910,7 +1902,7 @@ public final class DynamicShop extends JavaPlugin implements Listener {
                                 ShowHelp("shophours",(Player)sender,args);
                             }
                         }
-                        if(args[2].equalsIgnoreCase("fluctuation") && sender.hasPermission("dshop.admin.shopedit"))
+                        else if(args[2].equalsIgnoreCase("fluctuation") && sender.hasPermission("dshop.admin.shopedit"))
                         {
                             if(args.length == 4)
                             {
@@ -1933,7 +1925,7 @@ public final class DynamicShop extends JavaPlugin implements Listener {
                                 ShowHelp("fluctuation",(Player)sender,args);
                             }
                         }
-                        if(args[2].equalsIgnoreCase("stockStabilizing") && sender.hasPermission("dshop.admin.shopedit"))
+                        else if(args[2].equalsIgnoreCase("stockStabilizing") && sender.hasPermission("dshop.admin.shopedit"))
                         {
                             if(args.length == 4)
                             {
@@ -1956,7 +1948,7 @@ public final class DynamicShop extends JavaPlugin implements Listener {
                                 ShowHelp("stockStabilizing",(Player)sender,args);
                             }
                         }
-                        if(args[2].equalsIgnoreCase("account") && sender.hasPermission("dshop.admin.shopedit"))
+                        else if(args[2].equalsIgnoreCase("account") && sender.hasPermission("dshop.admin.shopedit"))
                         {
                             if(args.length == 4)
                             {
@@ -1979,10 +1971,7 @@ public final class DynamicShop extends JavaPlugin implements Listener {
                             {
                                 if(args[3].equals("linkto") || args[3].equals("transfer"))
                                 {
-                                    for (String s:ccShop.get().getKeys(false))
-                                    {
-                                        temp.add(s);
-                                    }
+                                    temp.addAll(ccShop.get().getKeys(false));
                                 }
 
                                 if(args[3].equals("set"))
@@ -2021,7 +2010,7 @@ public final class DynamicShop extends JavaPlugin implements Listener {
                                 }
                             }
                         }
-                        if(args[2].equalsIgnoreCase("hideStock") && sender.hasPermission("dshop.admin.shopedit"))
+                        else if(args[2].equalsIgnoreCase("hideStock") && sender.hasPermission("dshop.admin.shopedit"))
                         {
                             if(args.length == 4)
                             {
@@ -2040,7 +2029,26 @@ public final class DynamicShop extends JavaPlugin implements Listener {
                                 }
                             }
                         }
-                        if(args[2].equalsIgnoreCase("sellbuy") && sender.hasPermission("dshop.admin.shopedit"))
+                        else if(args[2].equalsIgnoreCase("hidePricingType") && sender.hasPermission("dshop.admin.shopedit"))
+                        {
+                            if(args.length == 4)
+                            {
+                                temp.add("true");
+                                temp.add("false");
+
+                                for (String s:temp)
+                                {
+                                    if(s.startsWith(args[3])) alist.add(s);
+                                }
+
+                                if(!ccUser.get().getString(senderUuid + ".tmpString").equals("hidePricingType"))
+                                {
+                                    ccUser.get().set(senderUuid + ".tmpString","hidePricingType");
+                                    ShowHelp("hidePricingType",(Player)sender,args);
+                                }
+                            }
+                        }
+                        else if(args[2].equalsIgnoreCase("sellbuy") && sender.hasPermission("dshop.admin.shopedit"))
                         {
                             if(args.length == 4)
                             {
@@ -2060,7 +2068,7 @@ public final class DynamicShop extends JavaPlugin implements Listener {
                                 }
                             }
                         }
-                        if(args[2].equalsIgnoreCase("log") && sender.hasPermission("dshop.admin.shopedit"))
+                        else if(args[2].equalsIgnoreCase("log") && sender.hasPermission("dshop.admin.shopedit"))
                         {
                             if(args.length == 4)
                             {
@@ -2299,16 +2307,15 @@ public final class DynamicShop extends JavaPlugin implements Listener {
             {
                 try
                 {
-                    int idx = -1;
                     ItemStack tempItem = new ItemStack(Material.getMaterial(args[3]));
-                    idx = DynaShopAPI.FindItemFromShop(args[1], tempItem);
+                    int idx = DynaShopAPI.FindItemFromShop(args[1], tempItem);
 
                     if(idx != -1)
                     {
                         DynaShopAPI.SendItemInfo(player,args[1],idx,"HELP.ITEM_ALREADY_EXIST");
                         player.sendMessage("");
                     }
-                }catch (Exception e){}
+                }catch (Exception ignored){}
             }
             else
             {
@@ -2328,9 +2335,8 @@ public final class DynamicShop extends JavaPlugin implements Listener {
             {
                 try
                 {
-                    int idx = -1;
                     ItemStack tempItem = new ItemStack(Material.getMaterial(args[3].substring(args[3].indexOf("/")+1)));
-                    idx = DynaShopAPI.FindItemFromShop(args[1], tempItem);
+                    int idx = DynaShopAPI.FindItemFromShop(args[1], tempItem);
 
                     if(idx != -1)
                     {
@@ -2338,7 +2344,7 @@ public final class DynamicShop extends JavaPlugin implements Listener {
                         player.sendMessage(" - " + ccLang.get().getString("HELP.REMOVE_ITEM"));
                         player.sendMessage("");
                     }
-                }catch (Exception e){}
+                }catch (Exception ignored){}
             }
             else
             {
@@ -2451,6 +2457,13 @@ public final class DynamicShop extends JavaPlugin implements Listener {
         {
             player.sendMessage(dsPrefix + ccLang.get().getString("HELP.TITLE").replace("{command}","hideStock"));
             player.sendMessage(" - " + ccLang.get().getString("HELP.USAGE") + ": /ds shop <shopname> hideStock <true | false>");
+
+            player.sendMessage("");
+        }
+        else if(helpcode.equals("hidePricingType") && player.hasPermission("dshop.admin.shopedit"))
+        {
+            player.sendMessage(dsPrefix + ccLang.get().getString("HELP.TITLE").replace("{command}","hidePricingType"));
+            player.sendMessage(" - " + ccLang.get().getString("HELP.USAGE") + ": /ds shop <shopname> hidePricingType <true | false>");
 
             player.sendMessage("");
         }

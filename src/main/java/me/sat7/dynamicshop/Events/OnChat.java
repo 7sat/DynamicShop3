@@ -8,7 +8,6 @@ import org.bukkit.configuration.ConfigurationSection;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
-import org.bukkit.event.player.AsyncPlayerChatEvent;
 import org.bukkit.event.player.PlayerChatEvent;
 import org.bukkit.scheduler.BukkitTask;
 
@@ -18,7 +17,7 @@ import java.util.UUID;
 
 public class OnChat implements Listener {
 
-    public static Map<UUID, Integer> runnableMap = new HashMap<>();
+    private static Map<UUID, Integer> runnableMap = new HashMap<>();
 
     public static void WaitForInput(Player player)
     {
@@ -49,7 +48,7 @@ public class OnChat implements Listener {
         runnableMap.put(player.getUniqueId(), taskID.getTaskId());
     }
 
-    public static void cancelRunnable(Player player) {
+    private static void cancelRunnable(Player player) {
         if(runnableMap.containsKey(player.getUniqueId())) {
             Bukkit.getScheduler().cancelTask(runnableMap.get(player.getUniqueId()));
         }

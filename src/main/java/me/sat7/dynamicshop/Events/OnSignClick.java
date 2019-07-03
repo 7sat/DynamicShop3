@@ -19,7 +19,6 @@ import org.bukkit.event.block.SignChangeEvent;
 import org.bukkit.event.entity.EntityExplodeEvent;
 import org.bukkit.event.player.PlayerInteractEvent;
 import org.bukkit.inventory.ItemStack;
-import org.omg.DynamicAny.DynValueCommon;
 
 import java.util.ArrayList;
 import java.util.List;

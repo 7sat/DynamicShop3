@@ -4,10 +4,8 @@ import me.sat7.dynamicshop.DynaShopAPI;
 import me.sat7.dynamicshop.DynamicShop;
 import net.milkbowl.vault.economy.Economy;
 import net.milkbowl.vault.economy.EconomyResponse;
-import org.apache.commons.lang.StringUtils;
 import org.bukkit.Bukkit;
 import org.bukkit.Material;
-import org.bukkit.OfflinePlayer;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandExecutor;
 import org.bukkit.command.CommandSender;
@@ -1146,7 +1144,7 @@ public class RootCommand implements CommandExecutor {
 
                                     if(DynamicShop.ccShop.get().contains(args[1]+".Options.flag.jobpoint"))
                                     {
-                                        DynaShopAPI.AddJobsPoint((Player)target,amount);
+                                        DynaShopAPI.AddJobsPoint(target,amount);
                                         DynaShopAPI.AddShopBalance(args[1],amount * -1);
                                         DynamicShop.ccShop.save();
 
@@ -1203,6 +1201,35 @@ public class RootCommand implements CommandExecutor {
                         {
                             DynamicShop.ccShop.get().set(args[1]+".Options.hideStock",null);
                             player.sendMessage(DynamicShop.dsPrefix+DynamicShop.ccLang.get().get("CHANGES_APPLIED") + "hideStock false");
+                        }
+                        DynamicShop.ccShop.save();
+                    }
+
+                    // ds shop shopname hidePricingType <true | false>
+                    else if(args[2].equalsIgnoreCase("hidePricingType"))
+                    {
+                        // 권한 확인
+                        if(!player.hasPermission("dshop.admin.shopedit"))
+                        {
+                            player.sendMessage(DynamicShop.dsPrefix + DynamicShop.ccLang.get().getString("ERR.NO_PERMISSION"));
+                            return true;
+                        }
+
+                        if(args.length != 4)
+                        {
+                            player.sendMessage(DynamicShop.dsPrefix + DynamicShop.ccLang.get().getString("ERR.WRONG_USAGE"));
+                            return true;
+                        }
+
+                        if(args[3].equals("true"))
+                        {
+                            DynamicShop.ccShop.get().set(args[1]+".Options.hidePricingType",true);
+                            player.sendMessage(DynamicShop.dsPrefix+DynamicShop.ccLang.get().get("CHANGES_APPLIED") + "hidePricingType true");
+                        }
+                        else
+                        {
+                            DynamicShop.ccShop.get().set(args[1]+".Options.hidePricingType",null);
+                            player.sendMessage(DynamicShop.dsPrefix+DynamicShop.ccLang.get().get("CHANGES_APPLIED") + "hidePricingType false");
                         }
                         DynamicShop.ccShop.save();
                     }
