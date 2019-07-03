@@ -401,6 +401,7 @@ public class OnClick implements Listener {
                         DynamicShop.ccShop.get().set(shopName+"." + clickedIdx + ".valueMax",DynamicShop.ccShop.get().get(shopName+"."+itemtoMove+".valueMax"));
                         DynamicShop.ccShop.get().set(shopName+"." + clickedIdx + ".median",DynamicShop.ccShop.get().get(shopName+"."+itemtoMove+".median"));
                         DynamicShop.ccShop.get().set(shopName+"." + clickedIdx + ".stock",DynamicShop.ccShop.get().get(shopName+"."+itemtoMove+".stock"));
+                        DynamicShop.ccShop.get().set(shopName+"." + clickedIdx + ".tradeType",DynamicShop.ccShop.get().get(shopName+"."+itemtoMove+".tradeType"));
 
                         if(DynamicShop.ccShop.get().contains(shopName+"."+itemtoMove+".value"))
                         {

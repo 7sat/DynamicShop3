@@ -169,8 +169,10 @@ public class DynaShopAPI {
                     double sellPrice = GetCurrentPrice(shopName, s, false);
                     if(buyPrice == sellPrice) sellPrice = buyPrice - ((buyPrice / 100) * GetTaxRate(shopName));
 
-                    lore.add(DynamicShop.ccLang.get().getString("PRICE") + df.format(buyPrice));
-                    lore.add(DynamicShop.ccLang.get().getString("SELLPRICE") + df.format(sellPrice));
+                    String tradeType = "default";
+                    if(DynamicShop.ccShop.get().contains(shopName+"."+s+".tradeType")) tradeType = DynamicShop.ccShop.get().getString(shopName+"."+s+".tradeType");
+                    if(!tradeType.equalsIgnoreCase("SellOnly")) lore.add(DynamicShop.ccLang.get().getString("PRICE") + df.format(buyPrice));
+                    if(!tradeType.equalsIgnoreCase("BuyOnly")) lore.add(DynamicShop.ccLang.get().getString("SELLPRICE") + df.format(sellPrice));
 
                     if(DynamicShop.ccShop.get().getInt(shopName+"." + s + ".stock") <= 0 || DynamicShop.ccShop.get().getInt(shopName+"." + s + ".median") <= 0)
                     {
