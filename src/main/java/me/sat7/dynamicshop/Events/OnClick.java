@@ -1212,12 +1212,18 @@ public class OnClick implements Listener {
                         else if(tab == 5)
                         {
                             newMedian = medianI + (int)editNum;
-                            if(newMedian < -1) newMedian = -1;
+                            if(newMedian == 0 && medianI == -1) newMedian = 1;
+                            else if(newMedian <= 0) newMedian = -1;
                         }
                         else if(tab == 6)
                         {
                             newStock = stockI + (int)editNum;
-                            if(newStock < -1) newStock = -1;
+                            if(newStock == 0 && stockI == -1) newStock = 1;
+                            else if(newStock <= 0)
+                            {
+                                newStock = -1;
+                                newMedian = -1;
+                            }
                         }
 
                         DynaShopAPI.OpenItemSettingGUI(player,e.getInventory().getItem(0),tab,newBuyValue,newSellValue,newValueMin,newValueMax,newMedian,newStock);

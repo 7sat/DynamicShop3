@@ -1237,6 +1237,10 @@ public class DynaShopAPI {
         {
             stockStr = "§3>" + stockStr;
         }
+
+        if(median <= 0) medianStr = medianStr + "§7("+DynamicShop.ccLang.get().getString("STATICPRICE")+")";
+        if(stock <= 0) stockStr = stockStr + "§7("+DynamicShop.ccLang.get().getString("INFSTOCK")+")";
+
         editBtnLore.add(buyValueStr);
         editBtnLore.add(sellValueStr);
         editBtnLore.add(priceMinStr);
@@ -1245,29 +1249,58 @@ public class DynaShopAPI {
         editBtnLore.add(stockStr);
 
         editBtnLore.add("§3§m                       ");
-        double buyPrice = (buyValue*median)/stock;
+        double buyPrice = 0;
         double sellPrice = 0;
-        if(buyValue != sellValue)
+        if(median <= 0 || stock <= 0 )
         {
-            editBtnLore.add("§7"+ChatColor.stripColor(DynamicShop.ccLang.get().getString("TAXIGNORED")));
-            sellPrice = (sellValue*median)/stock;
-        }
-        else
-        {
-            String taxStr = "§7"+ChatColor.stripColor(DynamicShop.ccLang.get().getString("TAX.SALESTAX")) + ": ";
-            if(DynamicShop.ccShop.get().contains(shopName+".Options.SalesTax"))
+            buyPrice = buyValue;
+            if(buyValue != sellValue)
             {
-                taxStr += DynamicShop.ccShop.get().getInt(shopName+".Options.SalesTax") + "%";
-                sellPrice = buyPrice - ((buyPrice / 100) * DynamicShop.ccShop.get().getInt(shopName+".Options.SalesTax"));
+                editBtnLore.add("§7"+ChatColor.stripColor(DynamicShop.ccLang.get().getString("TAXIGNORED")));
+                sellPrice = sellValue;
             }
             else
             {
-                taxStr += DynamicShop.plugin.getConfig().getDouble("SalesTax") + "%";
-                sellPrice = buyPrice - ((buyPrice / 100) * DynamicShop.plugin.getConfig().getDouble("SalesTax"));
+                String taxStr = "§7"+ChatColor.stripColor(DynamicShop.ccLang.get().getString("TAX.SALESTAX")) + ": ";
+                if(DynamicShop.ccShop.get().contains(shopName+".Options.SalesTax"))
+                {
+                    taxStr += DynamicShop.ccShop.get().getInt(shopName+".Options.SalesTax") + "%";
+                    sellPrice = buyPrice - ((buyPrice / 100) * DynamicShop.ccShop.get().getInt(shopName+".Options.SalesTax"));
+                }
+                else
+                {
+                    taxStr += DynamicShop.plugin.getConfig().getDouble("SalesTax") + "%";
+                    sellPrice = buyPrice - ((buyPrice / 100) * DynamicShop.plugin.getConfig().getDouble("SalesTax"));
+                }
+                sellPrice = (Math.round(sellPrice*100)/100.0);
+                editBtnLore.add(taxStr);
             }
-            sellPrice = (Math.round(sellPrice*100)/100.0);
+        }
+        else
+        {
+            buyPrice = (buyValue*median)/stock;
+            if(buyValue != sellValue) // 판매가 별도설정
+            {
+                editBtnLore.add("§7"+ChatColor.stripColor(DynamicShop.ccLang.get().getString("TAXIGNORED")));
+                sellPrice = (sellValue*median)/stock;
+            }
+            else
+            {
+                String taxStr = "§7"+ChatColor.stripColor(DynamicShop.ccLang.get().getString("TAX.SALESTAX")) + ": ";
+                if(DynamicShop.ccShop.get().contains(shopName+".Options.SalesTax"))
+                {
+                    taxStr += DynamicShop.ccShop.get().getInt(shopName+".Options.SalesTax") + "%";
+                    sellPrice = buyPrice - ((buyPrice / 100) * DynamicShop.ccShop.get().getInt(shopName+".Options.SalesTax"));
+                }
+                else
+                {
+                    taxStr += DynamicShop.plugin.getConfig().getDouble("SalesTax") + "%";
+                    sellPrice = buyPrice - ((buyPrice / 100) * DynamicShop.plugin.getConfig().getDouble("SalesTax"));
+                }
+                sellPrice = (Math.round(sellPrice*100)/100.0);
 
-            editBtnLore.add(taxStr);
+                editBtnLore.add(taxStr);
+            }
         }
 
         buyPrice = Math.round(buyPrice*100)/100.0;
@@ -1749,7 +1782,7 @@ public class DynaShopAPI {
 
         if(median <= 0 || tempS <= 0)
         {
-            total = DynamicShop.ccShop.get().getDouble(shopName+"." + idx + ".value") * Math.abs(amount);
+            total = value * Math.abs(amount);
         }
         else
         {
