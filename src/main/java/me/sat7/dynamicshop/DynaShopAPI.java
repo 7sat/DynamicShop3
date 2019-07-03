@@ -1,13 +1,10 @@
 package me.sat7.dynamicshop;
 
 import com.gamingmesh.jobs.Jobs;
-import com.gamingmesh.jobs.api.JobsPaymentEvent;
 import com.gamingmesh.jobs.container.PlayerPoints;
-import com.gamingmesh.jobs.container.ShopItem;
 import me.sat7.dynamicshop.Files.CustomConfig;
 import net.milkbowl.vault.economy.Economy;
 import net.milkbowl.vault.economy.EconomyResponse;
-import org.apache.commons.lang.StringUtils;
 import org.bukkit.*;
 import org.bukkit.configuration.ConfigurationSection;
 import org.bukkit.entity.Player;
@@ -18,6 +15,7 @@ import org.bukkit.inventory.meta.ItemMeta;
 
 import java.io.File;
 import java.text.DecimalFormat;
+import java.text.SimpleDateFormat;
 import java.util.*;
 
 public class DynaShopAPI {
@@ -181,7 +179,7 @@ public class DynaShopAPI {
                         stockStr = String.valueOf(DynamicShop.ccShop.get().getInt(shopName+"." + s + ".stock"));
                     }
 
-                    double value = GetCurrentValue(shopName, s);
+                    double value = GetCurrentPrice(shopName, s, true);
                     value = (Math.round(value*100)/100.0);
 
 
@@ -249,8 +247,8 @@ public class DynaShopAPI {
                 new ArrayList<>(Arrays.asList(DynamicShop.ccLang.get().getString("CLOSE_LORE"))),1);
         vault.setItem(27,closeBtn);
 
-        ConfigurationSection confSec = DynamicShop.ccShop.get().getConfigurationSection(shopName).getConfigurationSection("Options");
-        String permStr = confSec.getString("permission");
+        ConfigurationSection confSec_Options = DynamicShop.ccShop.get().getConfigurationSection(shopName).getConfigurationSection("Options");
+        String permStr = confSec_Options.getString("permission");
         String permNew = "dshop.user.shop."+shopName;
         Material permIcon;
         if(permStr.isEmpty())
@@ -439,7 +437,7 @@ public class DynaShopAPI {
         String cur1;
         String set1;
         Material icon1;
-        if(confSec.contains("flag.signshop"))
+        if(confSec_Options.contains("flag.signshop"))
         {
             icon1 = Material.GREEN_STAINED_GLASS_PANE;
             cur1 = DynamicShop.ccLang.get().getString("SET");
@@ -464,7 +462,7 @@ public class DynaShopAPI {
         String cur2;
         String set2;
         Material icon2;
-        if(confSec.contains("flag.localshop"))
+        if(confSec_Options.contains("flag.localshop"))
         {
             icon2 = Material.GREEN_STAINED_GLASS_PANE;
             cur2 = DynamicShop.ccLang.get().getString("SET");
@@ -490,7 +488,7 @@ public class DynaShopAPI {
         String cur3;
         String set3;
         Material icon3;
-        if(confSec.contains("flag.deliverycharge"))
+        if(confSec_Options.contains("flag.deliverycharge"))
         {
             icon3 = Material.GREEN_STAINED_GLASS_PANE;
             cur3 = DynamicShop.ccLang.get().getString("SET");
@@ -515,7 +513,7 @@ public class DynaShopAPI {
         String cur4;
         String set4;
         Material icon4;
-        if(confSec.contains("flag.jobpoint"))
+        if(confSec_Options.contains("flag.jobpoint"))
         {
             icon4 = Material.GREEN_STAINED_GLASS_PANE;
             cur4 = DynamicShop.ccLang.get().getString("SET");
@@ -537,11 +535,37 @@ public class DynaShopAPI {
                 f4Lore,1);
         vault.setItem(12,flag4);
 
+        // 로그 버튼
+        String log_cur;
+        String log_set;
+        if(confSec_Options.contains("log"))
+        {
+            log_cur = DynamicShop.ccLang.get().getString("ON");
+            log_set = DynamicShop.ccLang.get().getString("OFF");
+        }
+        else
+        {
+            log_cur = DynamicShop.ccLang.get().getString("OFF");
+            log_set = DynamicShop.ccLang.get().getString("ON");
+        }
+        ArrayList<String> logLore = new ArrayList<>();
+        logLore.add("§9"+DynamicShop.ccLang.get().getString("CUR_STATE")+": " + log_cur);
+        logLore.add("§e"+DynamicShop.ccLang.get().getString("CLICK")+": " + log_set);
+        ItemStack logToggleBtn =  CreateItemStack(Material.BOOK,null,
+                DynamicShop.ccLang.get().getString("LOG.LOG"),
+                logLore,1);
+        vault.setItem(30,logToggleBtn);
+
+        ItemStack logClearBtn =  CreateItemStack(Material.RED_STAINED_GLASS_PANE,null,
+                DynamicShop.ccLang.get().getString("LOG.DELETE"),
+                null,1);
+        vault.setItem(31,logClearBtn);
+
         player.openInventory(vault);
     }
 
     // 상점에 아이탬 추가
-    public static boolean AddItemToShop(String shopName, int idx, ItemStack item, double value, double minValue, double maxValue, int median, int stock)
+    public static boolean AddItemToShop(String shopName, int idx, ItemStack item, double buyValue, double sellValue, double minValue, double maxValue, int median, int stock)
     {
         try
         {
@@ -556,9 +580,17 @@ public class DynaShopAPI {
                 DynamicShop.ccShop.get().set(shopName+"." + idx + ".itemStack",null);
             }
 
-            if(value > 0)
+            if(buyValue > 0)
             {
-                DynamicShop.ccShop.get().set(shopName+"." + idx + ".value",value);
+                DynamicShop.ccShop.get().set(shopName+"." + idx + ".value",buyValue);
+                if(buyValue == sellValue)
+                {
+                    DynamicShop.ccShop.get().set(shopName+"." + idx + ".value2",null);
+                }
+                else
+                {
+                    DynamicShop.ccShop.get().set(shopName+"." + idx + ".value2",sellValue);
+                }
 
                 if(minValue > 0.01)
                 {
@@ -583,7 +615,9 @@ public class DynaShopAPI {
             }
             else
             {
+                // idx,null하면 안됨. 존재는 하되 하위 데이터만 없어야함.
                 DynamicShop.ccShop.get().set(shopName+"." + idx + ".value",null);
+                DynamicShop.ccShop.get().set(shopName+"." + idx + ".value2",null);
                 DynamicShop.ccShop.get().set(shopName+"." + idx + ".valueMin",null);
                 DynamicShop.ccShop.get().set(shopName+"." + idx + ".valueMax",null);
                 DynamicShop.ccShop.get().set(shopName+"." + idx + ".median",null);
@@ -606,9 +640,17 @@ public class DynaShopAPI {
     }
 
     // 아이탬의 value, median, stock을 수정
-    public static void EditShopItem(String shopName, int idx,  double value, double minValue, double maxValue, int median, int stock)
+    public static void EditShopItem(String shopName, int idx,  double buyValue, double sellValue, double minValue, double maxValue, int median, int stock)
     {
-        DynamicShop.ccShop.get().set(shopName+"." + idx + ".value",value);
+        DynamicShop.ccShop.get().set(shopName+"." + idx + ".value",buyValue);
+        if(buyValue == sellValue)
+        {
+            DynamicShop.ccShop.get().set(shopName+"." + idx + ".value2",null);
+        }
+        else
+        {
+            DynamicShop.ccShop.get().set(shopName+"." + idx + ".value2",sellValue);
+        }
         if(minValue > 0.01)
         {
             DynamicShop.ccShop.get().set(shopName+"." + idx + ".valueMin",minValue);
@@ -1100,7 +1142,7 @@ public class DynaShopAPI {
     }
 
     // 아이탬 셋팅창
-    public static void OpenItemSettingGUI(Player player, ItemStack itemStack, int tab, double price, double minPrice, double maxPrice, int median, int stock)
+    public static void OpenItemSettingGUI(Player player, ItemStack itemStack, int tab, double buyValue, double sellValue, double minPrice, double maxPrice, int median, int stock)
     {
         String[] temp = DynamicShop.ccUser.get().getString(player.getUniqueId()+".interactItem").split("/");
         String shopName = temp[0];
@@ -1109,32 +1151,31 @@ public class DynaShopAPI {
         String title = DynamicShop.ccLang.get().getString("ITEM_SETTING_TITLE");
         Inventory inven = Bukkit.createInventory(player,36,title);
 
-        price = Math.round(price*100)/100.0;
+        buyValue = Math.round(buyValue*100)/100.0;
+        sellValue = Math.round(sellValue*100)/100.0;
         minPrice = Math.round(minPrice*100)/100.0;
         maxPrice = Math.round(maxPrice*100)/100.0;
-        String priceStr = "";
+        String buyValueStr = "";
+        String sellValueStr = "";
         String priceMinStr = "";
         String priceMaxStr = "";
-        if(DynamicShop.ccShop.get().contains(shopName+".Options.flag.jobpoint"))
-        {
-            priceStr = DynamicShop.ccLang.get().getString("PRICE")+price;
-            priceMinStr = DynamicShop.ccLang.get().getString("PRICE_MIN")+minPrice;
-            priceMaxStr = DynamicShop.ccLang.get().getString("PRICE_MAX")+maxPrice;
-        }
-        else
-        {
-            priceStr = DynamicShop.ccLang.get().getString("PRICE")+price;
-            priceMinStr = DynamicShop.ccLang.get().getString("PRICE_MIN")+minPrice;
-            priceMaxStr = DynamicShop.ccLang.get().getString("PRICE_MAX")+maxPrice;
-        }
+        buyValueStr = DynamicShop.ccLang.get().getString("VALUE_BUY")+buyValue;
+        sellValueStr = DynamicShop.ccLang.get().getString("VALUE_SELL")+sellValue;
+        priceMinStr = DynamicShop.ccLang.get().getString("PRICE_MIN")+minPrice;
+        priceMaxStr = DynamicShop.ccLang.get().getString("PRICE_MAX")+maxPrice;
         String medianStr = DynamicShop.ccLang.get().getString("MEDIAN")+median;
         String stockStr = DynamicShop.ccLang.get().getString("STOCK")+stock;
 
+        ArrayList<String> sellValueLore = new ArrayList<>();
         ArrayList<String> medianLore = new ArrayList();
         ArrayList<String> stockLore = new ArrayList();
         ArrayList<String> maxPriceLore = new ArrayList();
 
-        // 고정가, 무한재고 표시
+        // 고정가, 무한재고, 별도판매가 안내 표시
+        if(buyValue != sellValue)
+        {
+            sellValueLore.add("§7("+DynamicShop.ccLang.get().getString("TAXIGNORED")+")");
+        }
         if(median <= 0)
         {
             medianLore.add("§7("+DynamicShop.ccLang.get().getString("STATICPRICE")+")");
@@ -1149,50 +1190,90 @@ public class DynaShopAPI {
         }
 
         // 가격, 미디안, 스톡 버튼
-        ItemStack valueBtn = DynaShopAPI.CreateItemStack((tab==1) ? Material.RED_STAINED_GLASS_PANE : Material.BLACK_STAINED_GLASS_PANE,null, priceStr,null,1);
-        ItemStack minValueBtn = DynaShopAPI.CreateItemStack((tab==2) ? Material.RED_STAINED_GLASS_PANE : Material.GRAY_STAINED_GLASS_PANE,null, priceMinStr,null,1);
-        ItemStack maxValueBtn = DynaShopAPI.CreateItemStack((tab==3) ? Material.RED_STAINED_GLASS_PANE : Material.GRAY_STAINED_GLASS_PANE,null, priceMaxStr,maxPriceLore,1);
-        ItemStack medianBtn = DynaShopAPI.CreateItemStack((tab==4) ? Material.RED_STAINED_GLASS_PANE : Material.BLACK_STAINED_GLASS_PANE,null, medianStr,medianLore,1);
-        ItemStack stockBtn = DynaShopAPI.CreateItemStack((tab==5) ? Material.RED_STAINED_GLASS_PANE : Material.BLACK_STAINED_GLASS_PANE,null, stockStr,stockLore,1);
-        inven.setItem(2,valueBtn);
-        inven.setItem(3,minValueBtn);
-        inven.setItem(4,maxValueBtn);
-        inven.setItem(5,medianBtn);
-        inven.setItem(6,stockBtn);
+        ItemStack buyValueBtn = DynaShopAPI.CreateItemStack((tab==1) ? Material.RED_STAINED_GLASS_PANE : Material.BLACK_STAINED_GLASS_PANE,null, buyValueStr,null,1);
+        ItemStack sellValueBtn = DynaShopAPI.CreateItemStack((tab==2) ? Material.RED_STAINED_GLASS_PANE : Material.GRAY_STAINED_GLASS_PANE,null, sellValueStr,sellValueLore,1);
+        ItemStack minValueBtn = DynaShopAPI.CreateItemStack((tab==3) ? Material.RED_STAINED_GLASS_PANE : Material.GRAY_STAINED_GLASS_PANE,null, priceMinStr,null,1);
+        ItemStack maxValueBtn = DynaShopAPI.CreateItemStack((tab==4) ? Material.RED_STAINED_GLASS_PANE : Material.GRAY_STAINED_GLASS_PANE,null, priceMaxStr,maxPriceLore,1);
+        ItemStack medianBtn = DynaShopAPI.CreateItemStack((tab==5) ? Material.RED_STAINED_GLASS_PANE : Material.BLACK_STAINED_GLASS_PANE,null, medianStr,medianLore,1);
+        ItemStack stockBtn = DynaShopAPI.CreateItemStack((tab==6) ? Material.RED_STAINED_GLASS_PANE : Material.BLACK_STAINED_GLASS_PANE,null, stockStr,stockLore,1);
+        inven.setItem(2,buyValueBtn);
+        inven.setItem(3,sellValueBtn);
+        inven.setItem(4,minValueBtn);
+        inven.setItem(5,maxValueBtn);
+        inven.setItem(6,medianBtn);
+        inven.setItem(7,stockBtn);
 
         ItemStack infoBtn = DynaShopAPI.CreateItemStack(Material.BLACK_STAINED_GLASS_PANE,null, "Shift = x5",null,1);
         inven.setItem(22,infoBtn);
 
         // 조절버튼
+        if(buyValue == sellValue) sellValueStr = "§7"+ ChatColor.stripColor(sellValueStr);
         if(minPrice <= 0.01) priceMinStr = "§7"+ ChatColor.stripColor(priceMinStr);
         if(maxPrice <=0) priceMaxStr = "§7"+ChatColor.stripColor(DynamicShop.ccLang.get().getString("PRICE_MAX") + DynamicShop.ccLang.get().getString("UNLIMITED"));
 
         ArrayList<String> editBtnLore = new ArrayList<>();
+        editBtnLore.add("§3§m                       ");
         if(tab == 1)
         {
-            priceStr = "§3>" + priceStr;
+            buyValueStr = "§3>" + buyValueStr;
         }
         else if(tab == 2)
         {
-            priceMinStr = "§3>" + priceMinStr;
+            sellValueStr = "§3>" + sellValueStr;
         }
         else if(tab == 3)
         {
-            priceMaxStr = "§3>" + priceMaxStr;
+            priceMinStr = "§3>" + priceMinStr;
         }
         else if(tab == 4)
         {
-            medianStr = "§3>" + medianStr;
+            priceMaxStr = "§3>" + priceMaxStr;
         }
         else if(tab == 5)
         {
+            medianStr = "§3>" + medianStr;
+        }
+        else if(tab == 6)
+        {
             stockStr = "§3>" + stockStr;
         }
-        editBtnLore.add(priceStr);
+        editBtnLore.add(buyValueStr);
+        editBtnLore.add(sellValueStr);
         editBtnLore.add(priceMinStr);
         editBtnLore.add(priceMaxStr);
         editBtnLore.add(medianStr);
         editBtnLore.add(stockStr);
+
+        editBtnLore.add("§3§m                       ");
+        double buyPrice = (buyValue*median)/stock;
+        double sellPrice = 0;
+        if(buyValue != sellValue)
+        {
+            editBtnLore.add("§7"+ChatColor.stripColor(DynamicShop.ccLang.get().getString("TAXIGNORED")));
+            sellPrice = (sellValue*median)/stock;
+        }
+        else
+        {
+            String taxStr = "§7"+ChatColor.stripColor(DynamicShop.ccLang.get().getString("TAX.SALESTAX")) + ": ";
+            if(DynamicShop.ccShop.get().contains(shopName+".Options.SalesTax"))
+            {
+                taxStr += DynamicShop.ccShop.get().getInt(shopName+".Options.SalesTax") + "%";
+                sellPrice = buyPrice - ((buyPrice / 100) * DynamicShop.ccShop.get().getInt(shopName+".Options.SalesTax"));
+            }
+            else
+            {
+                taxStr += DynamicShop.plugin.getConfig().getDouble("SalesTax") + "%";
+                sellPrice = buyPrice - ((buyPrice / 100) * DynamicShop.plugin.getConfig().getDouble("SalesTax"));
+            }
+            sellPrice = (Math.round(sellPrice*100)/100.0);
+
+            editBtnLore.add(taxStr);
+        }
+
+        buyPrice = Math.round(buyPrice*100)/100.0;
+        sellPrice = Math.round(sellPrice*100)/100.0;
+        editBtnLore.add("§3§l"+ChatColor.stripColor(DynamicShop.ccLang.get().getString("BUY")) + ": " + buyPrice);
+        editBtnLore.add("§3§l"+ChatColor.stripColor(DynamicShop.ccLang.get().getString("SELL")) + ": " + sellPrice);
 
         ItemStack d2Btn = DynaShopAPI.CreateItemStack(Material.WHITE_STAINED_GLASS_PANE,null, "/2",editBtnLore,1);
         ItemStack m1000Btn = DynaShopAPI.CreateItemStack(Material.WHITE_STAINED_GLASS_PANE,null, "-1000",editBtnLore,1);
@@ -1223,7 +1304,7 @@ public class DynaShopAPI {
         inven.setItem(23,m2Btn);
 
         // +, -, ~에 맞추기
-        if(tab <= 3)
+        if(tab <= 4)
         {
             inven.setItem(9,m100Btn);
             inven.setItem(10,m10Btn);
@@ -1248,11 +1329,11 @@ public class DynaShopAPI {
             inven.setItem(15,p10Btn);
             inven.setItem(16,p100Btn);
             inven.setItem(17,p1000Btn);
-            if(tab == 4)
+            if(tab == 5)
             {
                 inven.setItem(24,setToStock);
             }
-            else if(tab == 5)
+            else if(tab == 6)
             {
                 inven.setItem(24,setToMedian);
             }
@@ -1443,6 +1524,9 @@ public class DynaShopAPI {
         {
             DynamicShop.ccShop.save();
 
+            //로그 기록
+            AddLog(shopName,myItem.getType().toString(),-actualAmount,priceSum,"jobpoint",player.getName());
+
             player.sendMessage(DynamicShop.dsPrefix + DynamicShop.ccLang.get().getString("SELL_SUCCESS")
                     .replace("{item}",myItem.getType().name())
                     .replace("{amount}", Integer.toString(actualAmount))
@@ -1607,31 +1691,43 @@ public class DynaShopAPI {
     //==============================================================================================================
 
     // 특정 아이탬의 현재 가치를 계산 (다이나믹 or 고정가)
-    public static double GetCurrentValue(String shopName, String idx)
+    public static double GetCurrentPrice(String shopName, String idx, boolean buy)
     {
-        double temp;
-        if(DynamicShop.ccShop.get().getInt(shopName +"." + idx + ".median") <= 0 || DynamicShop.ccShop.get().getInt(shopName+"." + idx + ".stock") <= 0)
+        double price;
+
+        double value;
+        if(!buy && DynamicShop.ccShop.get().contains(shopName+"."+idx+".value2"))
         {
-            temp = DynamicShop.ccShop.get().getDouble(shopName+"." + idx + ".value");
+            value = DynamicShop.ccShop.get().getDouble(shopName+"."+idx+".value2");
         }
         else
         {
-            temp = (DynamicShop.ccShop.get().getInt(shopName+"." + idx + ".median") * DynamicShop.ccShop.get().getDouble(shopName+"." + idx + ".value")) / DynamicShop.ccShop.get().getInt(shopName+"." + idx + ".stock");
+            value = DynamicShop.ccShop.get().getDouble(shopName+"." + idx + ".value");
         }
-
         double min = DynamicShop.ccShop.get().getDouble(shopName+"."+idx+".valueMin");
         double max = DynamicShop.ccShop.get().getDouble(shopName+"."+idx+".valueMax");
+        int median = DynamicShop.ccShop.get().getInt(shopName +"." + idx + ".median");
+        int stock = DynamicShop.ccShop.get().getInt(shopName+"." + idx + ".stock");
 
-        if(min != 0 && temp < min)
+        if(median <= 0 || stock <= 0)
         {
-            temp = min;
+            price = value;
         }
-        if(max != 0 && temp > max)
+        else
         {
-            temp = max;
+            price = (median * value) / stock;
         }
 
-        return temp;
+        if(min != 0 && price < min)
+        {
+            price = min;
+        }
+        if(max != 0 && price > max)
+        {
+            price = max;
+        }
+
+        return price;
     }
 
     // 특정 아이탬의 앞으로 n개의 가치합을 계산 (다이나믹 or 고정가) (세금 반영)
@@ -1640,7 +1736,16 @@ public class DynaShopAPI {
         double total = 0;
         int median = DynamicShop.ccShop.get().getInt(shopName+"." + idx + ".median");
         int tempS = DynamicShop.ccShop.get().getInt(shopName+"." + idx + ".stock");
-        double value = DynamicShop.ccShop.get().getDouble(shopName+"." + idx + ".value");
+
+        double value;
+        if(amount < 0 && DynamicShop.ccShop.get().contains(shopName+"."+idx+".value2"))
+        {
+            value = DynamicShop.ccShop.get().getDouble(shopName+"."+idx+".value2");
+        }
+        else
+        {
+            value = DynamicShop.ccShop.get().getDouble(shopName+"." + idx + ".value");
+        }
 
         if(median <= 0 || tempS <= 0)
         {
@@ -1677,8 +1782,8 @@ public class DynaShopAPI {
             }
         }
 
-        // 세금 적용
-        if(amount < 0)
+        // 세금 적용 (판매가 별도지정시 세금계산 안함)
+        if(amount < 0 && !DynamicShop.ccShop.get().contains(shopName+"."+idx+".value2"))
         {
             if(DynamicShop.ccShop.get().contains(shopName+".Options.SalesTax"))
             {
@@ -1948,5 +2053,26 @@ public class DynaShopAPI {
         finalStr = finalStr.substring(0,finalStr.length()-1);
 
         return finalStr;
+    }
+
+    // 거래 로그 기록
+    public static void AddLog(String shopName,String itemName,int amount,double value,String curr,String player)
+    {
+        if(DynamicShop.ccShop.get().contains(shopName+".Options.log") && DynamicShop.ccShop.get().getBoolean(shopName+".Options.log"))
+        {
+            SimpleDateFormat sdf = new SimpleDateFormat ( "yyMMdd,HHmmss");
+            String timeStr = sdf.format (System.currentTimeMillis());
+
+            int i = 0;
+            if(DynamicShop.ccLog.get().contains(shopName)) i = DynamicShop.ccLog.get().getConfigurationSection(shopName).getKeys(false).size();
+
+            DynamicShop.ccLog.get().set(shopName+"."+i,timeStr +","+itemName + "," + amount + "," + Math.round(value*100)/100.0 + "," + curr+","+player);
+            DynamicShop.ccLog.save();
+        }
+
+        if(DynamicShop.ccLog.get().getKeys(true).size() > 500)
+        {
+            DynamicShop.SetupLogFile();
+        }
     }
 }

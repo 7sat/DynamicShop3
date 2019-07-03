@@ -16,6 +16,7 @@ import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.ItemMeta;
 
 import java.text.DecimalFormat;
+import java.text.SimpleDateFormat;
 import java.util.*;
 
 public class OnClick implements Listener {
@@ -221,6 +222,15 @@ public class OnClick implements Listener {
                     player.sendMessage(DynamicShop.dsPrefix+DynamicShop.ccLang.get().getString("STARTPAGE.ENTER_SHOPNAME"));
                     DynaShopAPI.CloseInventoryWithDelay(player);
                     DynamicShop.ccUser.get().set(player.getUniqueId()+".tmpString","waitforInput"+"shopname");
+
+                    String shopList = DynamicShop.ccLang.get().getString("SHOP_LIST") + ": ";
+                    for (String s:DynamicShop.ccShop.get().getKeys(false))
+                    {
+                        shopList += s + ", ";
+                    }
+                    shopList = shopList.substring(0,shopList.length()-2);
+                    player.sendMessage(DynamicShop.dsPrefix + shopList);
+
                     OnChat.WaitForInput(player);
                 }
                 // 장식
@@ -349,7 +359,12 @@ public class OnClick implements Listener {
                             {
                                 if(DynamicShop.ccShop.get().contains(shopName+"."+idx+".value"))
                                 {
-                                    double value = DynamicShop.ccShop.get().getDouble(shopName+"."+idx+".value");
+                                    double buyValue = DynamicShop.ccShop.get().getDouble(shopName+"."+idx+".value");
+                                    double sellValue = buyValue;
+                                    if(DynamicShop.ccShop.get().contains(shopName+"."+idx+".value2"))
+                                    {
+                                        sellValue = DynamicShop.ccShop.get().getDouble(shopName+"."+idx+".value2");
+                                    }
                                     double valueMin = DynamicShop.ccShop.get().getDouble(shopName+"."+idx+".valueMin");
                                     if(valueMin <= 0.01) valueMin = 0.01;
                                     double valueMax = DynamicShop.ccShop.get().getDouble(shopName+"."+idx+".valueMax");
@@ -360,7 +375,7 @@ public class OnClick implements Listener {
                                     ItemStack iStack = new ItemStack(e.getCurrentItem().getType());
                                     iStack.setItemMeta((ItemMeta) DynamicShop.ccShop.get().get(shopName + "." + idx + ".itemStack"));
 
-                                    DynaShopAPI.OpenItemSettingGUI(player,iStack,1,value,valueMin,valueMax,median,stock);
+                                    DynaShopAPI.OpenItemSettingGUI(player,iStack,1,buyValue,sellValue,valueMin,valueMax,median,stock);
                                 }
                                 else
                                 {
@@ -391,6 +406,9 @@ public class OnClick implements Listener {
                         DynamicShop.ccShop.get().set(shopName+"." + clickedIdx + ".mat",DynamicShop.ccShop.get().get(shopName+"."+itemtoMove+".mat"));
                         DynamicShop.ccShop.get().set(shopName+"." + clickedIdx + ".itemStack",DynamicShop.ccShop.get().get(shopName+"."+itemtoMove+".itemStack"));
                         DynamicShop.ccShop.get().set(shopName+"." + clickedIdx + ".value",DynamicShop.ccShop.get().get(shopName+"."+itemtoMove+".value"));
+                        DynamicShop.ccShop.get().set(shopName+"." + clickedIdx + ".value2",DynamicShop.ccShop.get().get(shopName+"."+itemtoMove+".value2"));
+                        DynamicShop.ccShop.get().set(shopName+"." + clickedIdx + ".valueMin",DynamicShop.ccShop.get().get(shopName+"."+itemtoMove+".valueMin"));
+                        DynamicShop.ccShop.get().set(shopName+"." + clickedIdx + ".valueMax",DynamicShop.ccShop.get().get(shopName+"."+itemtoMove+".valueMax"));
                         DynamicShop.ccShop.get().set(shopName+"." + clickedIdx + ".median",DynamicShop.ccShop.get().get(shopName+"."+itemtoMove+".median"));
                         DynamicShop.ccShop.get().set(shopName+"." + clickedIdx + ".stock",DynamicShop.ccShop.get().get(shopName+"."+itemtoMove+".stock"));
 
@@ -759,6 +777,27 @@ public class OnClick implements Listener {
                     }
                     DynaShopAPI.OpenShopSettingUI(player,shopName);
                 }
+                // log
+                else if(e.getSlot() >= 30 && e.getSlot() <= 31)
+                {
+                    if(e.getSlot() == 30)
+                    {
+                        if(DynamicShop.ccShop.get().contains(shopName+".Options.log") && DynamicShop.ccShop.get().getBoolean(shopName+".Options.log"))
+                        {
+                            Bukkit.dispatchCommand(player, "DynamicShop shop "+shopName+" log disable");
+                        }
+                        else
+                        {
+                            Bukkit.dispatchCommand(player, "DynamicShop shop "+shopName+" log enable");
+                        }
+                    }
+                    else if(e.getSlot() == 31)
+                    {
+                        Bukkit.dispatchCommand(player, "DynamicShop shop "+shopName+" log clear");
+                    }
+
+                    DynaShopAPI.OpenShopSettingUI(player,shopName);
+                }
             }
             // 거래화면
             else if(e.getView().getTitle().equalsIgnoreCase(DynamicShop.ccLang.get().getString("TRADE_TITLE")))
@@ -800,7 +839,7 @@ public class OnClick implements Listener {
                             }
                             else
                             {
-                                player.sendMessage(DynamicShop.dsPrefix + DynamicShop.ccLang.get().get("BALANCE") + ":§f $" + DynamicShop.getEconomy().format(DynamicShop.getEconomy().getBalance(player)));
+                                player.sendMessage(DynamicShop.dsPrefix + DynamicShop.ccLang.get().get("BALANCE") + ":§f " + DynamicShop.getEconomy().format(DynamicShop.getEconomy().getBalance(player)));
                             }
                             return;
                         }
@@ -872,7 +911,8 @@ public class OnClick implements Listener {
                             String lore = e.getCurrentItem().getItemMeta().getLore().toString();
                             if(lore.contains(DynamicShop.ccLang.get().getString("DELIVERYCHARGE")))
                             {
-                                deliverycharge = Integer.parseInt(lore.split("\\$")[2].replace("]",""));
+                                String[] tempLoreArr = lore.split(": ");
+                                deliverycharge = Integer.parseInt(tempLoreArr[tempLoreArr.length-1].replace("]",""));
                                 if(deliverycharge == -1)
                                 {
                                     player.sendMessage(DynamicShop.dsPrefix + DynamicShop.ccLang.get().getString("DELIVERYCHARGE_NA"));
@@ -985,7 +1025,7 @@ public class OnClick implements Listener {
                                 if(idx != -1)
                                 {
                                     ItemStack tempIs = new ItemStack(e.getClickedInventory().getItem(i).getType());
-                                    DynaShopAPI.AddItemToShop(shopName,idx,tempIs,1,0.01,-1,10000,10000);
+                                    DynaShopAPI.AddItemToShop(shopName,idx,tempIs,1,1,0.01,-1,10000,10000);
                                 }
                                 else
                                 {
@@ -1020,11 +1060,11 @@ public class OnClick implements Listener {
                         ItemStack iStack = new ItemStack(e.getCurrentItem().getType());
                         if(e.isLeftClick())
                         {
-                            DynaShopAPI.OpenItemSettingGUI(player, iStack,1,10,0.01,-1,10000,10000);
+                            DynaShopAPI.OpenItemSettingGUI(player, iStack,1,10,10,0.01,-1,10000,10000);
                         }
                         else
                         {
-                            DynaShopAPI.AddItemToShop(shopName,Integer.parseInt(temp[1]),iStack,-1,-1,-1,-1,-1);
+                            DynaShopAPI.AddItemToShop(shopName,Integer.parseInt(temp[1]),iStack,-1, -1,-1,-1,-1,-1);
                             DynaShopAPI.OpenShopGUI(player, shopName,Integer.parseInt(temp[1])/45+1);
                         }
                     }
@@ -1065,19 +1105,22 @@ public class OnClick implements Listener {
                     }
                 }
 
-                String value = e.getClickedInventory().getItem(2).getItemMeta().getDisplayName();
-                String valueMin = e.getClickedInventory().getItem(3).getItemMeta().getDisplayName();
-                String valueMax = e.getClickedInventory().getItem(4).getItemMeta().getDisplayName();
-                String median = e.getClickedInventory().getItem(5).getItemMeta().getDisplayName();
-                String stock = e.getClickedInventory().getItem(6).getItemMeta().getDisplayName();
+                String valueBuy = e.getClickedInventory().getItem(2).getItemMeta().getDisplayName();
+                String valueSell = e.getClickedInventory().getItem(3).getItemMeta().getDisplayName();
+                String valueMin = e.getClickedInventory().getItem(4).getItemMeta().getDisplayName();
+                String valueMax = e.getClickedInventory().getItem(5).getItemMeta().getDisplayName();
+                String median = e.getClickedInventory().getItem(6).getItemMeta().getDisplayName();
+                String stock = e.getClickedInventory().getItem(7).getItemMeta().getDisplayName();
 
-                value = value.replace(ChatColor.stripColor(DynamicShop.ccLang.get().getString("PRICE")),"");
+                valueBuy = valueBuy.replace(ChatColor.stripColor(DynamicShop.ccLang.get().getString("VALUE_BUY")),"");
+                valueSell = valueSell.replace(ChatColor.stripColor(DynamicShop.ccLang.get().getString("VALUE_SELL")),"");
                 valueMin = valueMin.replace(ChatColor.stripColor(DynamicShop.ccLang.get().getString("PRICE_MIN")),"");
                 valueMax = valueMax.replace(ChatColor.stripColor(DynamicShop.ccLang.get().getString("PRICE_MAX")),"");
 
                 median = median.replace(ChatColor.stripColor(DynamicShop.ccLang.get().getString("MEDIAN")),"");
                 stock = stock.replace(ChatColor.stripColor(DynamicShop.ccLang.get().getString("STOCK")),"");
-                double valueD = Double.parseDouble(value);
+                double valueBuyD = Double.parseDouble(valueBuy);
+                double valueSellD = Double.parseDouble(valueSell);
                 double valueMinD = Double.parseDouble(valueMin);
                 if(valueMinD <= 0) valueMinD = 0.01;
                 double valueMaxD = Double.parseDouble(valueMax);
@@ -1085,14 +1128,15 @@ public class OnClick implements Listener {
                 int medianI = Integer.parseInt(median);
                 int stockI = Integer.parseInt(stock);
 
-                double newValue = valueD;
+                double newBuyValue = valueBuyD;
+                double newSellValue = valueSellD;
                 double newValueMin = valueMinD;
                 double newValueMax = valueMaxD;
                 int newMedian = medianI;
                 int newStock = stockI;
 
                 int tab = 1;
-                for (int i = 1; i<=5; i++)
+                for (int i = 1; i<=6; i++)
                 {
                     if(e.getClickedInventory().getItem(i+1).getType() == Material.RED_STAINED_GLASS_PANE)
                     {
@@ -1119,7 +1163,7 @@ public class OnClick implements Listener {
                         player.sendMessage(DynamicShop.dsPrefix + DynamicShop.ccLang.get().getString("RECOMMAND_APPLIED").replace("{playerNum}",pnum+""));
 
                         DynaShopAPI.OpenItemSettingGUI(player,e.getInventory().getItem(0),tab,
-                                sugValue,newValueMin,newValueMax,sugMid,sugMid);
+                                sugValue,sugValue,newValueMin,newValueMax,sugMid,sugMid);
 
                         DynaShopAPI.PlayerSoundEffect(player,"editItem");
                     }
@@ -1127,10 +1171,10 @@ public class OnClick implements Listener {
                 }
 
                 // 가격,미디언,스톡 탭 이동
-                if(e.getSlot() >= 2 && e.getSlot() <= 6)
+                if(e.getSlot() >= 2 && e.getSlot() <= 7)
                 {
                     DynaShopAPI.PlayerSoundEffect(player,"click");
-                    DynaShopAPI.OpenItemSettingGUI(player,e.getClickedInventory().getItem(0),e.getSlot()-1,valueD,valueMinD,valueMaxD,medianI,stockI);
+                    DynaShopAPI.OpenItemSettingGUI(player,e.getClickedInventory().getItem(0),e.getSlot()-1,valueBuyD,valueSellD,valueMinD,valueMaxD,medianI,stockI);
                 }
                 // + - 버튼들
                 else if(e.getSlot() >= 9 && e.getSlot() < 18)
@@ -1143,58 +1187,70 @@ public class OnClick implements Listener {
 
                         if(tab == 1)
                         {
-                            newValue = valueD + editNum;
-                            if(newValue < 0.01) newValue = 0.01f;
+                            newBuyValue = valueBuyD + editNum;
+                            if(newBuyValue < 0.01) newBuyValue = 0.01f;
+
+                            if(valueBuyD == valueSellD) newSellValue = newBuyValue;
                         }
-                        if(tab == 2)
+                        else if(tab == 2)
+                        {
+                            newSellValue = valueSellD + editNum;
+                            if(newSellValue < 0.01) newSellValue = 0.01f;
+                        }
+                        else if(tab == 3)
                         {
                             if(valueMinD <= 0.01) valueMinD = 0;
                             newValueMin = valueMinD + editNum;
                             if(newValueMin < 0.01) newValueMin = 0.01f;
                         }
-                        if(tab == 3)
+                        else if(tab == 4)
                         {
                             if(valueMaxD < 0) valueMaxD = 0;
                             newValueMax = valueMaxD + editNum;
                             if(newValueMax < -1) newValueMax = -1;
                         }
-                        else if(tab == 4)
+                        else if(tab == 5)
                         {
                             newMedian = medianI + (int)editNum;
                             if(newMedian < -1) newMedian = -1;
                         }
-                        else if(tab == 5)
+                        else if(tab == 6)
                         {
                             newStock = stockI + (int)editNum;
                             if(newStock < -1) newStock = -1;
                         }
 
-                        DynaShopAPI.OpenItemSettingGUI(player,e.getInventory().getItem(0),tab,newValue,newValueMin,newValueMax,newMedian,newStock);
+                        DynaShopAPI.OpenItemSettingGUI(player,e.getInventory().getItem(0),tab,newBuyValue,newSellValue,newValueMin,newValueMax,newMedian,newStock);
                     }
                     else
                     {
                         if(tab == 1)
                         {
-                            newValue = 10;
+                            newBuyValue = 10;
+                            if(valueBuyD == valueSellD) newSellValue = newBuyValue;
                         }
                         else if(tab == 2)
                         {
-                            newValueMin = 0.01;
+                            newSellValue = valueBuyD;
                         }
                         else if(tab == 3)
                         {
-                            newValueMax = -1;
+                            newValueMin = 0.01;
                         }
                         else if(tab == 4)
                         {
-                            newMedian = 10000;
+                            newValueMax = -1;
                         }
                         else if(tab == 5)
+                        {
+                            newMedian = 10000;
+                        }
+                        else if(tab == 6)
                         {
                             newStock = 10000;
                         }
 
-                        DynaShopAPI.OpenItemSettingGUI(player,e.getInventory().getItem(0),tab,newValue,newValueMin,newValueMax,newMedian,newStock);
+                        DynaShopAPI.OpenItemSettingGUI(player,e.getInventory().getItem(0),tab,newBuyValue,newSellValue,newValueMin,newValueMax,newMedian,newStock);
                     }
                     DynaShopAPI.PlayerSoundEffect(player,"editItem");
                 }
@@ -1203,33 +1259,41 @@ public class OnClick implements Listener {
                 {
                     int div = 2;
                     if(e.isShiftClick()) div = 10;
+
                     if(tab == 1)
                     {
-                        if(valueD<=0.01)return;
-                        newValue = valueD/div;
+                        if(valueBuyD<=0.01)return;
+                        newBuyValue = valueBuyD/div;
+
+                        if(valueBuyD == valueSellD) newSellValue = newBuyValue;
                     }
-                    if(tab == 2)
+                    else if(tab == 2)
+                    {
+                        if(valueSellD<=0.01)return;
+                        newSellValue = valueSellD/div;
+                    }
+                    else if(tab == 3)
                     {
                         if(valueMinD<=0.01)return;
                         newValueMin = valueMinD/div;
                     }
-                    if(tab == 3)
+                    else if(tab == 4)
                     {
                         if(valueMaxD<=0.01)return;
                         newValueMax = valueMaxD/div;
                     }
-                    else if(tab == 4)
+                    else if(tab == 5)
                     {
                         if(medianI<=1)return;
                         newMedian = medianI/div;
                     }
-                    else if(tab == 5)
+                    else if(tab == 6)
                     {
                         if(stockI<=1)return;
                         newStock = stockI/div;
                     }
 
-                    DynaShopAPI.OpenItemSettingGUI(player,e.getInventory().getItem(0),tab,newValue,newValueMin,newValueMax,newMedian,newStock);
+                    DynaShopAPI.OpenItemSettingGUI(player,e.getInventory().getItem(0),tab,newBuyValue,newSellValue,newValueMin,newValueMax,newMedian,newStock);
                     DynaShopAPI.PlayerSoundEffect(player,"editItem");
                 }
                 // 곱하기
@@ -1237,33 +1301,41 @@ public class OnClick implements Listener {
                 {
                     int mul = 2;
                     if(e.isShiftClick()) mul = 10;
+
                     if(tab == 1)
                     {
-                        if(valueD<=0)return;
-                        newValue = valueD*mul;
+                        if(valueBuyD<=0)return;
+                        newBuyValue = valueBuyD*mul;
+
+                        if(valueBuyD == valueSellD) newSellValue = newBuyValue;
                     }
                     else if(tab == 2)
+                    {
+                        if(valueSellD<=0)return;
+                        newSellValue = valueSellD*mul;
+                    }
+                    else if(tab == 3)
                     {
                         if(valueMinD<=0)return;
                         newValueMin = valueMinD*mul;
                     }
-                    else if(tab == 3)
+                    else if(tab == 4)
                     {
                         if(valueMaxD<=0)return;
                         newValueMax = valueMaxD*mul;
                     }
-                    else if(tab == 4)
+                    else if(tab == 5)
                     {
                         if(medianI<=0)return;
                         newMedian = medianI*mul;
                     }
-                    else if(tab == 5)
+                    else if(tab == 6)
                     {
                         if(stockI<=0)return;
                         newStock = stockI*mul;
                     }
 
-                    DynaShopAPI.OpenItemSettingGUI(player,e.getInventory().getItem(0),tab,newValue,newValueMin,newValueMax,newMedian,newStock);
+                    DynaShopAPI.OpenItemSettingGUI(player,e.getInventory().getItem(0),tab,newBuyValue,newSellValue,newValueMin,newValueMax,newMedian,newStock);
                     DynaShopAPI.PlayerSoundEffect(player,"editItem");
                 }
                 // 내림 버튼
@@ -1271,26 +1343,31 @@ public class OnClick implements Listener {
                 {
                     if(tab == 1)
                     {
-                        newValue = DynaShopAPI.RoundDown((int)valueD);
+                        newBuyValue = DynaShopAPI.RoundDown((int)valueBuyD);
+                        if(valueBuyD == valueSellD) newSellValue = newBuyValue;
                     }
                     else if(tab == 2)
                     {
-                        newValueMin = DynaShopAPI.RoundDown((int)valueMinD);
+                        newSellValue = DynaShopAPI.RoundDown((int)valueSellD);
                     }
                     else if(tab == 3)
                     {
-                        newValueMax = DynaShopAPI.RoundDown((int)valueMaxD);
+                        newValueMin = DynaShopAPI.RoundDown((int)valueMinD);
                     }
                     else if(tab == 4)
                     {
-                        newMedian = DynaShopAPI.RoundDown(medianI);
+                        newValueMax = DynaShopAPI.RoundDown((int)valueMaxD);
                     }
                     else if(tab == 5)
+                    {
+                        newMedian = DynaShopAPI.RoundDown(medianI);
+                    }
+                    else if(tab == 6)
                     {
                         newStock = DynaShopAPI.RoundDown(stockI);
                     }
 
-                    DynaShopAPI.OpenItemSettingGUI(player,e.getInventory().getItem(0),tab,newValue,newValueMin,newValueMax,newMedian,newStock);
+                    DynaShopAPI.OpenItemSettingGUI(player,e.getInventory().getItem(0),tab,newBuyValue,newSellValue,newValueMin,newValueMax,newMedian,newStock);
                     DynaShopAPI.PlayerSoundEffect(player,"editItem");
                 }
                 // 스톡을 미디안에 맞춤. 또는 그 반대
@@ -1298,34 +1375,48 @@ public class OnClick implements Listener {
                 {
                     if(tab == 2)
                     {
-                        newValueMin = valueD;
+                        newSellValue = valueBuyD;
                     }
                     else if(tab == 3)
                     {
-                        newValueMax = valueD;
+                        newValueMin = valueBuyD;
                     }
                     else if(tab == 4)
                     {
-                        newMedian = stockI;
+                        newValueMax = valueBuyD;
                     }
                     else if(tab == 5)
+                    {
+                        newMedian = stockI;
+                    }
+                    else if(tab == 6)
                     {
                         newStock = medianI;
                     }
 
-                    DynaShopAPI.OpenItemSettingGUI(player,e.getInventory().getItem(0),tab,newValue,newValueMin,newValueMax,newMedian,newStock);
+                    DynaShopAPI.OpenItemSettingGUI(player,e.getInventory().getItem(0),tab,newBuyValue,newSellValue,newValueMin,newValueMax,newMedian,newStock);
                     DynaShopAPI.PlayerSoundEffect(player,"editItem");
                 }
                 //완료
                 else if(e.getSlot() == 8)
                 {
                     // 유효성 검사
-                    if(valueMaxD > 0 && valueD > valueMaxD)
+                    if(valueMaxD > 0 && valueBuyD > valueMaxD)
                     {
                         player.sendMessage(DynamicShop.dsPrefix + DynamicShop.ccLang.get().getString("ERR.DEFAULT_VALUE_OUT_OF_RANGE"));
                         return;
                     }
-                    if(valueMinD > 0 && valueD < valueMinD)
+                    if(valueMinD > 0 && valueBuyD < valueMinD)
+                    {
+                        player.sendMessage(DynamicShop.dsPrefix + DynamicShop.ccLang.get().getString("ERR.DEFAULT_VALUE_OUT_OF_RANGE"));
+                        return;
+                    }
+                    if(valueMaxD > 0 && valueSellD > valueMaxD)
+                    {
+                        player.sendMessage(DynamicShop.dsPrefix + DynamicShop.ccLang.get().getString("ERR.DEFAULT_VALUE_OUT_OF_RANGE"));
+                        return;
+                    }
+                    if(valueMinD > 0 && valueSellD < valueMinD)
                     {
                         player.sendMessage(DynamicShop.dsPrefix + DynamicShop.ccLang.get().getString("ERR.DEFAULT_VALUE_OUT_OF_RANGE"));
                         return;
@@ -1339,7 +1430,7 @@ public class OnClick implements Listener {
                     int existSlot = DynaShopAPI.FindItemFromShop(shopName,e.getClickedInventory().getItem(0));
                     if(-1 != existSlot)
                     {
-                        DynaShopAPI.EditShopItem(shopName,existSlot,valueD,valueMinD,valueMaxD,medianI,stockI);
+                        DynaShopAPI.EditShopItem(shopName,existSlot,valueBuyD,valueSellD,valueMinD,valueMaxD,medianI,stockI);
                         DynaShopAPI.OpenShopGUI(player,shopName,existSlot/45+1);
                         DynamicShop.ccUser.get().set(player.getUniqueId()+".interactItem","");
                         DynaShopAPI.PlayerSoundEffect(player,"addItem");
@@ -1351,14 +1442,11 @@ public class OnClick implements Listener {
                         try
                         {
                             idx = Integer.parseInt(DynamicShop.ccUser.get().getString(player.getUniqueId()+".interactItem").split("/")[1]);
-                        }catch (Exception exception)
-                        {
-
-                        }
+                        }catch (Exception exception){ }
 
                         if(idx != -1)
                         {
-                            DynaShopAPI.AddItemToShop(shopName,idx,e.getClickedInventory().getItem(0),valueD,valueMinD,valueMaxD,medianI,stockI);
+                            DynaShopAPI.AddItemToShop(shopName,idx,e.getClickedInventory().getItem(0),valueBuyD,valueSellD,valueMinD,valueMaxD,medianI,stockI);
                             DynaShopAPI.OpenShopGUI(player,shopName,Integer.parseInt(temp[1])/45+1);
                             DynamicShop.ccUser.get().set(player.getUniqueId()+".interactItem","");
                             DynaShopAPI.PlayerSoundEffect(player,"addItem");
@@ -1460,13 +1548,13 @@ public class OnClick implements Listener {
             {
                 if(e.isLeftClick())
                 {
-                    DynaShopAPI.OpenItemSettingGUI(player, e.getCurrentItem(),1,10,0.01,-1,1000,1000);
+                    DynaShopAPI.OpenItemSettingGUI(player, e.getCurrentItem(),1,10,10,0.01,-1,1000,1000);
                 }
                 else
                 {
                     String[] temp = DynamicShop.ccUser.get().getString(player.getUniqueId()+".interactItem").split("/");
 
-                    DynaShopAPI.AddItemToShop(temp[0],Integer.parseInt(temp[1]),e.getCurrentItem(),-1,-1,-1,-1,-1);
+                    DynaShopAPI.AddItemToShop(temp[0],Integer.parseInt(temp[1]),e.getCurrentItem(),-1,-1,-1,-1,-1,-1);
                     DynaShopAPI.OpenShopGUI(player, temp[0],Integer.parseInt(temp[1])/45+1);
                 }
             }
@@ -1523,6 +1611,9 @@ public class OnClick implements Listener {
 
         if(r.transactionSuccess())
         {
+            //로그 기록
+            DynaShopAPI.AddLog(shopName,tempIS.getType().toString(),-actualAmount,priceSum,"vault",player.getName());
+
             player.sendMessage(DynamicShop.dsPrefix + DynamicShop.ccLang.get().getString("SELL_SUCCESS")
                     .replace("{item}",DynaShopAPI.GetBeautifiedName(tempIS.getType()))
                     .replace("{amount}", Integer.toString(actualAmount))
@@ -1539,7 +1630,7 @@ public class OnClick implements Listener {
                 }
                 else
                 {
-                    player.sendMessage(DynamicShop.dsPrefix + DynamicShop.ccLang.get().getString("DELIVERYCHARGE") + ": $" + deliverycharge);
+                    player.sendMessage(DynamicShop.dsPrefix + DynamicShop.ccLang.get().getString("DELIVERYCHARGE") + ": " + deliverycharge);
                 }
             }
 
@@ -1569,7 +1660,7 @@ public class OnClick implements Listener {
                 break;
             }
 
-            double price = DynaShopAPI.GetCurrentValue(shopName,tradeIdx);
+            double price = DynaShopAPI.GetCurrentPrice(shopName,tradeIdx,true);
 
             if(priceSum + price > econ.getBalance(player)) break;
 
@@ -1631,6 +1722,9 @@ public class OnClick implements Listener {
                     leftAmount -= giveAmount;
                 }
 
+                //로그 기록
+                DynaShopAPI.AddLog(shopName,tempIS.getType().toString(),actualAmount,priceSum,"vault",player.getName());
+
                 player.sendMessage(DynamicShop.dsPrefix + DynamicShop.ccLang.get().getString("BUY_SUCCESS")
                         .replace("{item}",DynaShopAPI.GetBeautifiedName(tempIS.getType()))
                         .replace("{amount}", Integer.toString(actualAmount))
@@ -1640,7 +1734,7 @@ public class OnClick implements Listener {
 
                 if(deliverycharge > 0)
                 {
-                    player.sendMessage(DynamicShop.dsPrefix + DynamicShop.ccLang.get().getString("DELIVERYCHARGE")+": $"+deliverycharge);
+                    player.sendMessage(DynamicShop.dsPrefix + DynamicShop.ccLang.get().getString("DELIVERYCHARGE")+": "+deliverycharge);
                 }
 
                 if(DynamicShop.ccShop.get().contains(shopName+".Options.Balance"))
@@ -1707,6 +1801,9 @@ public class OnClick implements Listener {
         // 실제 거래부----------
         if(DynaShopAPI.AddJobsPoint(player, priceSum))
         {
+            //로그 기록
+            DynaShopAPI.AddLog(shopName,tempIS.getType().toString(),-actualAmount,priceSum,"jobpoint",player.getName());
+
             player.sendMessage(DynamicShop.dsPrefix + DynamicShop.ccLang.get().getString("SELL_SUCCESS_JP")
                     .replace("{item}",DynaShopAPI.GetBeautifiedName(tempIS.getType()))
                     .replace("{amount}", Integer.toString(actualAmount))
@@ -1749,7 +1846,7 @@ public class OnClick implements Listener {
                 break;
             }
 
-            double price = DynaShopAPI.GetCurrentValue(shopName,tradeIdx);
+            double price = DynaShopAPI.GetCurrentPrice(shopName,tradeIdx,true);
 
             if(priceSum + price > DynaShopAPI.GetCurJobPoints(player)) break;
 
@@ -1808,6 +1905,9 @@ public class OnClick implements Listener {
 
                     leftAmount -= giveAmount;
                 }
+
+                //로그 기록
+                DynaShopAPI.AddLog(shopName,tempIS.getType().toString(),actualAmount,priceSum,"jobpoint",player.getName());
 
                 player.sendMessage(DynamicShop.dsPrefix + DynamicShop.ccLang.get().getString("BUY_SUCCESS_JP")
                         .replace("{item}",DynaShopAPI.GetBeautifiedName(tempIS.getType()))

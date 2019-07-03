@@ -24,6 +24,7 @@ import org.bukkit.plugin.java.JavaPlugin;
 import org.bukkit.scheduler.BukkitTask;
 
 import java.io.File;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Random;
@@ -47,6 +48,7 @@ public final class DynamicShop extends JavaPlugin implements Listener {
     public static CustomConfig ccSign;
     public static CustomConfig ccWorth;
     public static CustomConfig ccSound;
+    public static CustomConfig ccLog;
 
     public Random generator = new Random();
 
@@ -64,6 +66,7 @@ public final class DynamicShop extends JavaPlugin implements Listener {
         ccSign = new CustomConfig();
         ccWorth = new CustomConfig();
         ccSound = new CustomConfig();
+        ccLog = new CustomConfig();
 
         // 볼트 이코노미 셋업
         if (!setupEconomy() ) {
@@ -100,12 +103,15 @@ public final class DynamicShop extends JavaPlugin implements Listener {
         SetupSignFile();
         SetupWorthFile();
         SetupSoundFile();
+        SetupLogFile();
 
         // 컨버팅용 폴더 생성
         File folder1 = new File(getDataFolder(), "Convert");
         File folder2 = new File(getDataFolder(), "Convert/Shop");
         folder1.mkdir();
         folder2.mkdir();
+        File folder3 = new File(getDataFolder(), "Log");
+        folder3.mkdir();
 
         if (getServer().getPluginManager().getPlugin("Jobs") == null) {
             console.sendMessage(dsPrefix_server + " Jobs Reborn Not Found");
@@ -354,7 +360,7 @@ public final class DynamicShop extends JavaPlugin implements Listener {
     {
         // 한국어
         {
-            ccLang.setup("Lang_v2_ko-KR");
+            ccLang.setup("Lang_v2_ko-KR",null);
             ccLang.get().addDefault("STARTPAGE.EDITOR_TITLE", "§3시작 화면 편집");
             ccLang.get().addDefault("STARTPAGE.EDIT_NAME", "이름 바꾸기");
             ccLang.get().addDefault("STARTPAGE.EDIT_LORE", "설명 바꾸기");
@@ -380,7 +386,10 @@ public final class DynamicShop extends JavaPlugin implements Listener {
             ccLang.get().addDefault("BUYONLY_LORE", "§f구매만 가능한 아이탬");
             ccLang.get().addDefault("SELL", "§2판매");
             ccLang.get().addDefault("SELLONLY_LORE", "§f판매만 가능한 아이탬");
-            ccLang.get().addDefault("PRICE", "§f가격: ");
+            ccLang.get().addDefault("VALUE_BUY", "§f구매가치: ");
+            ccLang.get().addDefault("VALUE_SELL", "§f판매가치: ");
+            ccLang.get().addDefault("PRICE", "§f구매 가격: ");
+            ccLang.get().addDefault("SELLPRICE", "§f판매 가격: ");
             ccLang.get().addDefault("PRICE_MIN", "§f최소 가격: ");
             ccLang.get().addDefault("PRICE_MAX", "§f최대 가격: ");
             ccLang.get().addDefault("MEDIAN", "§f중앙값: ");
@@ -389,6 +398,7 @@ public final class DynamicShop extends JavaPlugin implements Listener {
             ccLang.get().addDefault("INFSTOCK", "무한 재고");
             ccLang.get().addDefault("STATICPRICE", "고정 가격");
             ccLang.get().addDefault("UNLIMITED", "무제한");
+            ccLang.get().addDefault("TAXIGNORED", "판매세 설정이 무시됩니다.");
             ccLang.get().addDefault("TOGGLE_SELLABLE", "§e클릭: 판매전용 토글");
             ccLang.get().addDefault("TOGGLE_BUYABLE", "§e클릭: 구매전용 토글");
             ccLang.get().addDefault("BALANCE", "§3내 잔액");
@@ -446,9 +456,15 @@ public final class DynamicShop extends JavaPlugin implements Listener {
             ccLang.get().addDefault("UNSET","설정해제");
             ccLang.get().addDefault("NULL(OPEN)","없음 (모두에게 열려있음)");
 
+            ccLang.get().addDefault("LOG.LOG", "§f로그");
+            ccLang.get().addDefault("LOG.CLEAR", "§f로그 삭제됨");
+            ccLang.get().addDefault("LOG.SAVE", "§f로그 저장됨");
+            ccLang.get().addDefault("LOG.DELETE", "§f로그 삭제");
+
             ccLang.get().addDefault("SHOP_CREATED", "§f상점 생성됨!");
             ccLang.get().addDefault("SHOP_DELETED", "§f상점 제거됨!");
             ccLang.get().addDefault("POSITION", "§f위치: ");
+            ccLang.get().addDefault("SHOP_LIST", "§f상점 목록");
 
             ccLang.get().addDefault("TIME.OPEN", "Open");
             ccLang.get().addDefault("TIME.CLOSE", "Close");
@@ -472,8 +488,8 @@ public final class DynamicShop extends JavaPlugin implements Listener {
             ccLang.get().addDefault("TAX.USE_LOCAL", "별도 설정");
 
             ccLang.get().addDefault("OUT_OF_STOCK", "§f재고 없음!");
-            ccLang.get().addDefault("BUY_SUCCESS", "§f{item} {amount}개를 ${price}에 구매함. 잔액: ${bal}");
-            ccLang.get().addDefault("SELL_SUCCESS", "§f{item} {amount}개를 ${price}에 판매함. 잔액: ${bal}");
+            ccLang.get().addDefault("BUY_SUCCESS", "§f{item} {amount}개를 {price}에 구매함. 잔액: {bal}");
+            ccLang.get().addDefault("SELL_SUCCESS", "§f{item} {amount}개를 {price}에 판매함. 잔액: {bal}");
             ccLang.get().addDefault("BUY_SUCCESS_JP", "§f{item} {amount}개를 {price}포인트에 구매함. 남은포인트: {bal}");
             ccLang.get().addDefault("SELL_SUCCESS_JP", "§f{item} {amount}개를 {price}포인트에 판매함. 남은포인트: {bal}");
             ccLang.get().addDefault("QSELL_RESULT", "§f거래한 상점: ");
@@ -481,8 +497,8 @@ public final class DynamicShop extends JavaPlugin implements Listener {
             ccLang.get().addDefault("DELIVERYCHARGE", "§f배달비: {fee}");
             ccLang.get().addDefault("DELIVERYCHARGE_EXEMPTION", "§f배달비: {fee} ({fee2} 면제됨)");
             ccLang.get().addDefault("DELIVERYCHARGE_NA", "§f다른 월드로 배달할 수 없습니다.");
-            ccLang.get().addDefault("NOT_ENOUGH_MONEY", "§f돈이 부족합니다. 잔액: ${bal}");
-            ccLang.get().addDefault("NOT_ENOUGH_POINT", "§f포인트가 부족합니다. 잔액: ${bal}");
+            ccLang.get().addDefault("NOT_ENOUGH_MONEY", "§f돈이 부족합니다. 잔액: {bal}");
+            ccLang.get().addDefault("NOT_ENOUGH_POINT", "§f포인트가 부족합니다. 잔액: {bal}");
             ccLang.get().addDefault("NO_ITEM_TO_SELL", "§f판매 할 아이탬이 없습니다.");
             ccLang.get().addDefault("INVEN_FULL", "§4인벤토리에 빈 공간이 없습니다!");
             ccLang.get().addDefault("IRREVERSIBLE", "§f이 행동은 되돌릴 수 없습니다!");
@@ -552,7 +568,7 @@ public final class DynamicShop extends JavaPlugin implements Listener {
 
         // 영어
         {
-            ccLang.setup("Lang_v2_en-US");
+            ccLang.setup("Lang_v2_en-US",null);
             ccLang.get().addDefault("STARTPAGE.EDITOR_TITLE", "§3Start page editor");
             ccLang.get().addDefault("STARTPAGE.EDIT_NAME", "Change Name");
             ccLang.get().addDefault("STARTPAGE.EDIT_LORE", "Change Lore");
@@ -578,7 +594,10 @@ public final class DynamicShop extends JavaPlugin implements Listener {
             ccLang.get().addDefault("BUYONLY_LORE", "§fThis item is Buy only");
             ccLang.get().addDefault("SELL", "§2Sell");
             ccLang.get().addDefault("SELLONLY_LORE", "§fThis item is Sell only");
-            ccLang.get().addDefault("PRICE", "§fPrice: ");
+            ccLang.get().addDefault("PRICE", "§fBuy Price: ");
+            ccLang.get().addDefault("SELLPRICE", "§fSell Price: ");
+            ccLang.get().addDefault("VALUE_BUY", "§fValue(Buy): ");
+            ccLang.get().addDefault("VALUE_SELL", "§fValue(Sell): ");
             ccLang.get().addDefault("PRICE_MIN", "§fMin Price: ");
             ccLang.get().addDefault("PRICE_MAX", "§fMax Price: ");
             ccLang.get().addDefault("MEDIAN", "§fMedian: ");
@@ -587,6 +606,7 @@ public final class DynamicShop extends JavaPlugin implements Listener {
             ccLang.get().addDefault("INFSTOCK", "Infinite stock");
             ccLang.get().addDefault("STATICPRICE", "Static price");
             ccLang.get().addDefault("UNLIMITED", "Unlimited");
+            ccLang.get().addDefault("TAXIGNORED", "Sales tax will be ignored.");
             ccLang.get().addDefault("TOGGLE_SELLABLE", "§eClick: Toggle Sellable");
             ccLang.get().addDefault("TOGGLE_BUYABLE", "§eClick: Toggle Buyable");
             ccLang.get().addDefault("BALANCE", "§3Balance");
@@ -629,6 +649,11 @@ public final class DynamicShop extends JavaPlugin implements Listener {
             ccLang.get().addDefault("UNSET","Unset");
             ccLang.get().addDefault("NULL(OPEN)","null (Open for everyone)");
 
+            ccLang.get().addDefault("LOG.LOG", "§fLog");
+            ccLang.get().addDefault("LOG.CLEAR", "§fLog deleted");
+            ccLang.get().addDefault("LOG.SAVE", "§fLog saved");
+            ccLang.get().addDefault("LOG.DELETE", "§fDelete Log");
+
             ccLang.get().addDefault("SHOP_SETTING_TITLE", "§3Shop Settings");
             ccLang.get().addDefault("SHOP_INFO", "§3Shop Info");
             ccLang.get().addDefault("PERMISSION", "§fPermission");
@@ -648,6 +673,7 @@ public final class DynamicShop extends JavaPlugin implements Listener {
             ccLang.get().addDefault("SHOP_CREATED", "§fShop Created!");
             ccLang.get().addDefault("SHOP_DELETED", "§fShop Deleted!");
             ccLang.get().addDefault("POSITION", "§fPosition: ");
+            ccLang.get().addDefault("SHOP_LIST", "§fShop list");
 
             ccLang.get().addDefault("TIME.OPEN", "Open");
             ccLang.get().addDefault("TIME.CLOSE", "Close");
@@ -671,16 +697,16 @@ public final class DynamicShop extends JavaPlugin implements Listener {
             ccLang.get().addDefault("TAX.USE_LOCAL", "Separate setting");
 
             ccLang.get().addDefault("OUT_OF_STOCK", "§fOut of stock!");
-            ccLang.get().addDefault("BUY_SUCCESS", "§fBought {item} x{amount} for ${price}. Balance: ${bal}");
-            ccLang.get().addDefault("SELL_SUCCESS", "§fSold {item} x{amount} for ${price}. Balance: ${bal}");
+            ccLang.get().addDefault("BUY_SUCCESS", "§fBought {item} x{amount} for {price}. Balance: {bal}");
+            ccLang.get().addDefault("SELL_SUCCESS", "§fSold {item} x{amount} for {price}. Balance: {bal}");
             ccLang.get().addDefault("BUY_SUCCESS_JP", "§fBought {item} x{amount} for {price}points. Balance: {bal}");
             ccLang.get().addDefault("SELL_SUCCESS_JP", "§fSold {item} x{amount} for {price}points. Balance: {bal}");
             ccLang.get().addDefault("QSELL_RESULT", "§fTo: ");
             ccLang.get().addDefault("QSELL_NA", "§fThere are no shops to trade that item.");
             ccLang.get().addDefault("DELIVERYCHARGE", "§fDelivery charge");
-            ccLang.get().addDefault("DELIVERYCHARGE_EXEMPTION", "§fDelivery charge: ${fee} (${fee2} exempt)");
+            ccLang.get().addDefault("DELIVERYCHARGE_EXEMPTION", "§fDelivery charge: {fee} ({fee2} exempt)");
             ccLang.get().addDefault("DELIVERYCHARGE_NA", "§fCan't deliver to different world.");
-            ccLang.get().addDefault("NOT_ENOUGH_MONEY", "§fNot enough money. Balance: ${bal}");
+            ccLang.get().addDefault("NOT_ENOUGH_MONEY", "§fNot enough money. Balance: {bal}");
             ccLang.get().addDefault("NOT_ENOUGH_POINT", "§fNot enough point. Balance: {bal}");
             ccLang.get().addDefault("NO_ITEM_TO_SELL", "§fNot enough item.");
             ccLang.get().addDefault("INVEN_FULL", "§4Inventory is full!");
@@ -755,7 +781,7 @@ public final class DynamicShop extends JavaPlugin implements Listener {
         {
             ConfigurationSection conf = ccLang.get().getConfigurationSection("");
 
-            ccLang.setup("Lang_v2_"+lang);
+            ccLang.setup("Lang_v2_"+lang,null);
 
             for (String s:conf.getKeys(true))
             {
@@ -768,7 +794,7 @@ public final class DynamicShop extends JavaPlugin implements Listener {
         }
         else
         {
-            ccLang.setup("Lang_v2_"+lang);
+            ccLang.setup("Lang_v2_"+lang,null);
         }
 
         ccLang.get().options().copyDefaults(true);
@@ -777,7 +803,7 @@ public final class DynamicShop extends JavaPlugin implements Listener {
 
     private void SetupShopFile()
     {
-        ccShop.setup("Shop");
+        ccShop.setup("Shop",null);
         ccShop.get().options().header("Shop name can not contain formatting codes, '/' and ' '");
         ccShop.get().options().copyHeader(true);
 
@@ -816,14 +842,14 @@ public final class DynamicShop extends JavaPlugin implements Listener {
 
     private void SetupUserFile()
     {
-        ccUser.setup("User");
+        ccUser.setup("User",null);
         ccUser.get().options().copyDefaults(true);
         ccUser.save();
     }
 
     private void SetupStartpageFile()
     {
-        ccStartpage.setup("Startpage");
+        ccStartpage.setup("Startpage",null);
         ccStartpage.get().options().header("LineBreak: \\, |, bracket is NOT working. Recommended character: /, _, ;, ※");
         ccStartpage.get().addDefault("Options.Title", "§3§lStart Page");
         ccStartpage.get().addDefault("Options.UiSlotCount", 27);
@@ -842,14 +868,14 @@ public final class DynamicShop extends JavaPlugin implements Listener {
 
     private void SetupSignFile()
     {
-        ccSign.setup("Sign");
+        ccSign.setup("Sign",null);
         ccSign.get().options().copyDefaults(true);
         ccSign.save();
     }
 
     private void SetupWorthFile()
     {
-        ccWorth.setup("Worth");
+        ccWorth.setup("Worth",null);
         ccWorth.get().addDefault("ACACIA_BOAT", 2.48);
         ccWorth.get().addDefault("ACACIA_BUTTON", 0.48);
         ccWorth.get().addDefault("ACACIA_DOOR", 1.05);
@@ -1519,7 +1545,7 @@ public final class DynamicShop extends JavaPlugin implements Listener {
 
     private void SetupSoundFile()
     {
-        ccSound.setup("Sound");
+        ccSound.setup("Sound",null);
         ccSound.get().options().header("Enter 0 to mute.\nhttps://hub.spigotmc.org/javadocs/bukkit/org/bukkit/Sound.html");
         ccSound.get().addDefault("sell", "ENTITY_EXPERIENCE_ORB_PICKUP");
         ccSound.get().addDefault("buy", "ENTITY_EXPERIENCE_ORB_PICKUP");
@@ -1530,6 +1556,15 @@ public final class DynamicShop extends JavaPlugin implements Listener {
         ccSound.get().addDefault("tradeview", "ENTITY_CHICKEN_EGG");
         ccSound.get().options().copyDefaults(true);
         ccSound.save();
+    }
+
+    public static void SetupLogFile()
+    {
+        SimpleDateFormat sdf = new SimpleDateFormat ( "yyMMdd-HHmmss");
+        String timeStr = sdf.format (System.currentTimeMillis());
+        ccLog.setup("Log_"+timeStr,"Log");
+        ccLog.get().options().copyDefaults(true);
+        ccLog.save();
     }
 
     // 명령어 자동완성
@@ -1639,6 +1674,7 @@ public final class DynamicShop extends JavaPlugin implements Listener {
                             temp.add("account");
                             temp.add("hideStock");
                             temp.add("sellbuy");
+                            temp.add("log");
                         }
 
                         for (String s:temp)
@@ -2024,6 +2060,26 @@ public final class DynamicShop extends JavaPlugin implements Listener {
                                 }
                             }
                         }
+                        if(args[2].equalsIgnoreCase("log") && sender.hasPermission("dshop.admin.shopedit"))
+                        {
+                            if(args.length == 4)
+                            {
+                                temp.add("enable");
+                                temp.add("disable");
+                                temp.add("clear");
+
+                                for (String s:temp)
+                                {
+                                    if(s.startsWith(args[3])) alist.add(s);
+                                }
+
+                                if(!ccUser.get().getString(senderUuid + ".tmpString").equals("log"))
+                                {
+                                    ccUser.get().set(senderUuid + ".tmpString","log");
+                                    ShowHelp("log",(Player)sender,args);
+                                }
+                            }
+                        }
                     }
                 }
                 else if(args[0].equalsIgnoreCase("createshop") && sender.hasPermission("dshop.admin.createshop"))
@@ -2201,7 +2257,7 @@ public final class DynamicShop extends JavaPlugin implements Listener {
             if(player.hasPermission("dshop.admin.shopedit")||player.hasPermission("dshop.admin.shopedit")||player.hasPermission("dshop.admin.editall"))
             {
                 player.sendMessage(" - " + ccLang.get().getString("HELP.USAGE")
-                        + ": /ds shop <shopname> <addhand | add | edit | editall | sellbuy | permission | maxpage | flag | position | shophours | fluctuation | stockStabilizing | hideStock | account>");
+                        + ": /ds shop <shopname> <addhand | add | edit | editall | sellbuy | permission | maxpage | flag | position | shophours | fluctuation | stockStabilizing | hideStock | account | log>");
             }
 
             if(player.hasPermission("dshop.admin.shopedit")) player.sendMessage("§e - addhand: " + ccLang.get().getString("HELP.SHOPADDHAND"));
@@ -2466,6 +2522,13 @@ public final class DynamicShop extends JavaPlugin implements Listener {
         {
             player.sendMessage(dsPrefix + ccLang.get().getString("HELP.TITLE").replace("{command}","sellbuy"));
             player.sendMessage(" - " + ccLang.get().getString("HELP.USAGE") + ": /ds shop <shop name> sellbuy < sellonly | buyonly | clear >");
+
+            player.sendMessage("");
+        }
+        else if(helpcode.equals("log") && player.hasPermission("dshop.admin.shopedit"))
+        {
+            player.sendMessage(dsPrefix + ccLang.get().getString("HELP.TITLE").replace("{command}","log"));
+            player.sendMessage(" - " + ccLang.get().getString("HELP.USAGE") + ": /ds shop <shop name> log < enable | disable | clear >");
 
             player.sendMessage("");
         }

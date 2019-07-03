@@ -13,8 +13,10 @@ public class CustomConfig {
     private FileConfiguration customFile; // 버킷의 데이터 타입
 
     //Finds or generates the custom config file
-    public void setup(String name){
-        file = new File(Bukkit.getServer().getPluginManager().getPlugin("DynamicShop").getDataFolder(), name + ".yml");
+    public void setup(String name, String folder){
+        String path = name + ".yml";
+        if(folder != null) path = folder+"\\"+path;
+        file = new File(Bukkit.getServer().getPluginManager().getPlugin("DynamicShop").getDataFolder(), path);
 
         if (!file.exists()){
             try{
@@ -54,5 +56,19 @@ public class CustomConfig {
 
     public void reload(){
         customFile = YamlConfiguration.loadConfiguration(file);
+    }
+
+    public static FileConfiguration GetFileFromPath(String name, String folder)
+    {
+        File tempFile = new File(Bukkit.getServer().getPluginManager().getPlugin("DynamicShop").getDataFolder(), folder+"\\"+name + ".yml");
+
+        if (!tempFile.exists())
+        {
+            DynamicShop.console.sendMessage(DynamicShop.dsPrefix_server + name + " not found");
+            return null;
+        }
+
+        FileConfiguration tempCustomFile = YamlConfiguration.loadConfiguration(tempFile);
+        return tempCustomFile;
     }
 }

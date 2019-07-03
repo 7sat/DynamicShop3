@@ -68,7 +68,19 @@ public class OnSignClick  implements Listener
                     blockBehind = tempBlock.getRelative(directional.getFacing().getOppositeFace());
                 }
             }
-            DynamicShop.ccSign.get().set(signId+".attached" , blockBehind.getX()+"_"+blockBehind.getY()+"_"+blockBehind.getZ());
+            if(blockBehind != null)
+            {
+                DynamicShop.ccSign.get().set(signId+".attached" , blockBehind.getX()+"_"+blockBehind.getY()+"_"+blockBehind.getZ());
+            }
+            else
+            {
+                e.setLine(1,"Error");
+                e.setLine(2,"Sign must be ");
+                e.setLine(3,"placed on wall");
+                e.getBlock().getState().update();
+                DynamicShop.console.sendMessage(DynamicShop.dsPrefix_server + "Err. Sign must be placed on wall. " + signId);
+                return;
+            }
 
             try
             {

@@ -184,7 +184,7 @@ public class RootCommand implements CommandExecutor {
                         }
                         // 인자 확인
                         Material mat;
-                        double value;
+                        double buyValue;
                         double valueMin = 0.01;
                         double valueMax = -1;
                         int median;
@@ -199,14 +199,14 @@ public class RootCommand implements CommandExecutor {
                             if(args.length == 7)
                             {
                                 mat = Material.getMaterial(args[3].toUpperCase());
-                                value = Double.parseDouble(args[4]);
+                                buyValue = Double.parseDouble(args[4]);
                                 median = Integer.parseInt(args[5]);
                                 stock = Integer.parseInt(args[6]);
                             }
                             else
                             {
                                 mat = Material.getMaterial(args[3].toUpperCase());
-                                value = Double.parseDouble(args[4]);
+                                buyValue = Double.parseDouble(args[4]);
                                 valueMin = Double.parseDouble(args[5]);
                                 valueMax = Double.parseDouble(args[6]);
                                 median = Integer.parseInt(args[7]);
@@ -218,19 +218,19 @@ public class RootCommand implements CommandExecutor {
                                     player.sendMessage(DynamicShop.dsPrefix + DynamicShop.ccLang.get().getString("ERR.MAX_LOWER_THAN_MIN"));
                                     return true;
                                 }
-                                if(valueMax > 0 && value > valueMax)
+                                if(valueMax > 0 && buyValue > valueMax)
                                 {
                                     player.sendMessage(DynamicShop.dsPrefix + DynamicShop.ccLang.get().getString("ERR.DEFAULT_VALUE_OUT_OF_RANGE"));
                                     return true;
                                 }
-                                if(valueMin > 0 && value < valueMin)
+                                if(valueMin > 0 && buyValue < valueMin)
                                 {
                                     player.sendMessage(DynamicShop.dsPrefix + DynamicShop.ccLang.get().getString("ERR.DEFAULT_VALUE_OUT_OF_RANGE"));
                                     return true;
                                 }
                             }
 
-                            if(value < 0.01 || median == 0 || stock == 0)
+                            if(buyValue < 0.01 || median == 0 || stock == 0)
                             {
                                 player.sendMessage(DynamicShop.dsPrefix + DynamicShop.ccLang.get().getString("ERR.VALUE_ZERO"));
                                 return true;
@@ -270,7 +270,7 @@ public class RootCommand implements CommandExecutor {
                                 player.sendMessage(DynamicShop.dsPrefix + DynamicShop.ccLang.get().getString("ERR.NO_EMPTY_SLOT"));
                                 return  true;
                             }
-                            else if(DynaShopAPI.AddItemToShop(shopName, idx,itemStack,value,valueMin,valueMax,median,stock)) // 아이탬 추가
+                            else if(DynaShopAPI.AddItemToShop(shopName, idx,itemStack,buyValue,buyValue,valueMin,valueMax,median,stock)) // 아이탬 추가
                             {
                                 player.sendMessage(DynamicShop.dsPrefix + DynamicShop.ccLang.get().getString("ITEM_ADDED"));
                                 DynaShopAPI.SendItemInfo(player,shopName,idx,"HELP.ITEM_INFO");
@@ -279,7 +279,7 @@ public class RootCommand implements CommandExecutor {
                         // 기존 아이탬 수정
                         else
                         {
-                            DynaShopAPI.EditShopItem(shopName, idx,value,valueMin,valueMax,median,stock);
+                            DynaShopAPI.EditShopItem(shopName, idx,buyValue,buyValue,valueMin,valueMax,median,stock);
                             player.sendMessage(DynamicShop.dsPrefix + DynamicShop.ccLang.get().getString("ITEM_UPDATED"));
                             DynaShopAPI.SendItemInfo(player,shopName,idx,"HELP.ITEM_INFO");
                         }
@@ -296,7 +296,7 @@ public class RootCommand implements CommandExecutor {
                             return true;
                         }
                         // 인자 확인
-                        double value;
+                        double buyValue;
                         double valueMin = 0.01;
                         double valueMax = -1;
                         int median;
@@ -310,13 +310,13 @@ public class RootCommand implements CommandExecutor {
                         {
                             if(args.length == 6)
                             {
-                                value = Double.parseDouble(args[3]);
+                                buyValue = Double.parseDouble(args[3]);
                                 median = Integer.parseInt(args[4]);
                                 stock = Integer.parseInt(args[5]);
                             }
                             else
                             {
-                                value = Double.parseDouble(args[3]);
+                                buyValue = Double.parseDouble(args[3]);
                                 valueMin = Double.parseDouble(args[4]);
                                 valueMax = Double.parseDouble(args[5]);
                                 median = Integer.parseInt(args[6]);
@@ -328,19 +328,19 @@ public class RootCommand implements CommandExecutor {
                                     player.sendMessage(DynamicShop.dsPrefix + DynamicShop.ccLang.get().getString("ERR.MAX_LOWER_THAN_MIN"));
                                     return true;
                                 }
-                                if(valueMax > 0 && value > valueMax)
+                                if(valueMax > 0 && buyValue > valueMax)
                                 {
                                     player.sendMessage(DynamicShop.dsPrefix + DynamicShop.ccLang.get().getString("ERR.DEFAULT_VALUE_OUT_OF_RANGE"));
                                     return true;
                                 }
-                                if(valueMin > 0 && value < valueMin)
+                                if(valueMin > 0 && buyValue < valueMin)
                                 {
                                     player.sendMessage(DynamicShop.dsPrefix + DynamicShop.ccLang.get().getString("ERR.DEFAULT_VALUE_OUT_OF_RANGE"));
                                     return true;
                                 }
                             }
 
-                            if(value < 0.01 || median == 0 || stock == 0)
+                            if(buyValue < 0.01 || median == 0 || stock == 0)
                             {
                                 player.sendMessage(DynamicShop.dsPrefix + DynamicShop.ccLang.get().getString("ERR.VALUE_ZERO"));
                                 return true;
@@ -377,7 +377,7 @@ public class RootCommand implements CommandExecutor {
                                 player.sendMessage(DynamicShop.dsPrefix + DynamicShop.ccLang.get().getString("ERR.NO_EMPTY_SLOT"));
                                 return  true;
                             }
-                            else if(DynaShopAPI.AddItemToShop(shopName, idx,player.getInventory().getItemInMainHand(),value,valueMin,valueMax,median,stock)) // 아이탬 추가
+                            else if(DynaShopAPI.AddItemToShop(shopName, idx,player.getInventory().getItemInMainHand(),buyValue,buyValue,valueMin,valueMax,median,stock)) // 아이탬 추가
                             {
                                 player.sendMessage(DynamicShop.dsPrefix + DynamicShop.ccLang.get().getString("ITEM_ADDED"));
                                 DynaShopAPI.SendItemInfo(player,shopName,idx,"HELP.ITEM_INFO");
@@ -386,7 +386,7 @@ public class RootCommand implements CommandExecutor {
                         // 기존 아이탬 수정
                         else
                         {
-                            DynaShopAPI.EditShopItem(shopName, idx,value,valueMin,valueMax,median,stock);
+                            DynaShopAPI.EditShopItem(shopName, idx,buyValue,buyValue,valueMin,valueMax,median,stock);
                             player.sendMessage(DynamicShop.dsPrefix + DynamicShop.ccLang.get().getString("ITEM_UPDATED"));
                             DynaShopAPI.SendItemInfo(player,shopName,idx,"HELP.ITEM_INFO");
                         }
@@ -406,7 +406,7 @@ public class RootCommand implements CommandExecutor {
                         }
                         // 인자 확인
                         int idx;
-                        double value;
+                        double buyValue;
                         double valueMin = 0.01;
                         double valueMax = -1;
                         int median;
@@ -425,10 +425,10 @@ public class RootCommand implements CommandExecutor {
                                 player.sendMessage(DynamicShop.dsPrefix + DynamicShop.ccLang.get().getString("ERR.WRONG_ITEMNAME"));
                                 return  true;
                             }
-                            value = Double.parseDouble(args[4]);
+                            buyValue = Double.parseDouble(args[4]);
 
                             // 삭제
-                            if(value <= 0)
+                            if(buyValue <= 0)
                             {
                                 DynaShopAPI.RemoveItemFromShop(shopName, idx);
                                 player.sendMessage(DynamicShop.dsPrefix + DynamicShop.ccLang.get().getString("ITEM_DELETED"));
@@ -460,12 +460,12 @@ public class RootCommand implements CommandExecutor {
                                         player.sendMessage(DynamicShop.dsPrefix + DynamicShop.ccLang.get().getString("ERR.MAX_LOWER_THAN_MIN"));
                                         return true;
                                     }
-                                    if(valueMax > 0 && value > valueMax)
+                                    if(valueMax > 0 && buyValue > valueMax)
                                     {
                                         player.sendMessage(DynamicShop.dsPrefix + DynamicShop.ccLang.get().getString("ERR.DEFAULT_VALUE_OUT_OF_RANGE"));
                                         return true;
                                     }
-                                    if(valueMin > 0 && value < valueMin)
+                                    if(valueMin > 0 && buyValue < valueMin)
                                     {
                                         player.sendMessage(DynamicShop.dsPrefix + DynamicShop.ccLang.get().getString("ERR.DEFAULT_VALUE_OUT_OF_RANGE"));
                                         return true;
@@ -480,7 +480,7 @@ public class RootCommand implements CommandExecutor {
                         }
 
                         // 수정
-                        DynaShopAPI.EditShopItem(shopName, idx,value,valueMin,valueMax,median,stock);
+                        DynaShopAPI.EditShopItem(shopName, idx,buyValue,buyValue,valueMin,valueMax,median,stock);
                         player.sendMessage(DynamicShop.dsPrefix + DynamicShop.ccLang.get().getString("ITEM_UPDATED"));
                         DynaShopAPI.SendItemInfo(player,shopName,idx,"HELP.ITEM_INFO");
                     }
@@ -1262,6 +1262,47 @@ public class RootCommand implements CommandExecutor {
 
                         DynamicShop.ccShop.save();
                         player.sendMessage(DynamicShop.dsPrefix + DynamicShop.ccLang.get().getString("CHANGES_APPLIED") + temp);
+                    }
+
+                    // ds shop shopname log <enable | disable | clear>
+                    else if(args[2].equalsIgnoreCase("log"))
+                    {
+                        // 권한 확인
+                        if(!player.hasPermission("dshop.admin.shopedit"))
+                        {
+                            player.sendMessage(DynamicShop.dsPrefix + DynamicShop.ccLang.get().getString("ERR.NO_PERMISSION"));
+                            return true;
+                        }
+
+                        if(args.length != 4)
+                        {
+                            player.sendMessage(DynamicShop.dsPrefix + DynamicShop.ccLang.get().getString("ERR.WRONG_USAGE"));
+                            return true;
+                        }
+
+                        if(args[3].equalsIgnoreCase("enable"))
+                        {
+                            DynamicShop.ccShop.get().set(shopName+".Options.log",true);
+                            player.sendMessage(DynamicShop.dsPrefix + shopName+"/"+DynamicShop.ccLang.get().getString("LOG.LOG") + ": " + args[3]);
+                        }
+                        else if(args[3].equalsIgnoreCase("disable"))
+                        {
+                            DynamicShop.ccShop.get().set(shopName+".Options.log",null);
+                            player.sendMessage(DynamicShop.dsPrefix + shopName+"/"+DynamicShop.ccLang.get().getString("LOG.LOG") + ": " + args[3]);
+                        }
+                        else if(args[3].equalsIgnoreCase("clear"))
+                        {
+                            DynamicShop.ccLog.get().set(shopName,null);
+                            DynamicShop.ccLog.save();
+                            player.sendMessage(DynamicShop.dsPrefix + shopName+"/"+DynamicShop.ccLang.get().getString("LOG.CLEAR"));
+                        }
+                        else
+                        {
+                            player.sendMessage(DynamicShop.dsPrefix + DynamicShop.ccLang.get().getString("ERR.WRONG_USAGE"));
+                            return true;
+                        }
+
+                        DynamicShop.ccShop.save();
                     }
                 }
             }
