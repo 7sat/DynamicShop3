@@ -17,6 +17,7 @@ import java.io.File;
 import java.text.DecimalFormat;
 import java.text.SimpleDateFormat;
 import java.util.*;
+import java.util.regex.Pattern;
 
 public class DynaShopAPI {
 
@@ -75,6 +76,17 @@ public class DynaShopAPI {
 
         // 정보,설정 버튼
         ArrayList<String> infoLore = new ArrayList<>();
+        if(DynamicShop.ccShop.get().contains(shopName+".Options.lore"))
+        {
+            String loreTxt = DynamicShop.ccShop.get().getString(shopName + ".Options.lore");
+            if(loreTxt.length() > 0)
+            {
+                String[] loreArray = loreTxt.split(Pattern.quote("\\n"));
+                for (String s: loreArray) {
+                    infoLore.add("§f"+s);
+                }
+            }
+        }
         // 권한
         String perm = DynamicShop.ccShop.get().getString(shopName+".Options.permission");
         if(perm.length()==0) perm = "§7(NULL)";
@@ -185,7 +197,7 @@ public class DynaShopAPI {
                     {
                         lore.add(DynamicShop.ccLang.get().getString("STOCK") + stockStr);
                     }
-                    lore.add(DynamicShop.ccLang.get().getString("TRADE_LORE"));
+                    if(DynamicShop.ccLang.get().getString("TRADE_LORE").length() > 0) lore.add(DynamicShop.ccLang.get().getString("TRADE_LORE"));
 
                     if(player.hasPermission("dshop.admin.shopedit"))
                     {

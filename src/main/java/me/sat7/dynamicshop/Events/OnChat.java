@@ -44,7 +44,7 @@ public class OnChat implements Listener {
                 player.sendMessage(DynamicShop.dsPrefix + DynamicShop.ccLang.get().getString("INPUT_CANCELED"));
             }
 
-        },200);
+        },400);
         runnableMap.put(player.getUniqueId(), taskID.getTaskId());
     }
 

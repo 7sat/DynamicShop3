@@ -804,6 +804,8 @@ public final class DynamicShop extends JavaPlugin implements Listener {
         if(ccShop.get().getKeys(false).size() == 0)
         {
             ccShop.get().set("Main.Options.page",2);
+            ccShop.get().set("Main.Options.title","Main");
+            ccShop.get().set("Main.Options.lore","");
             ccShop.get().set("Main.Options.permission","");
             ccShop.get().set("Main.0.mat","DIRT");
             ccShop.get().set("Main.0.value",1);
@@ -814,6 +816,8 @@ public final class DynamicShop extends JavaPlugin implements Listener {
             ccShop.get().set("Main.1.median",10000);
             ccShop.get().set("Main.1.stock",10000);
             ccShop.get().set("OreShop.Options.page",2);
+            ccShop.get().set("OreShop.Options.title","OreShop");
+            ccShop.get().set("OreShop.Options.lore","");
             ccShop.get().set("OreShop.Options.permission","");
             ccShop.get().set("OreShop.1.mat","DIAMOND");
             ccShop.get().set("OreShop.1.value",3000);

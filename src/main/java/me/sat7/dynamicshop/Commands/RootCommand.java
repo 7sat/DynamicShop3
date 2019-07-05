@@ -1393,6 +1393,7 @@ public class RootCommand implements CommandExecutor {
                     }
 
                     DynamicShop.ccShop.get().set(shopname+".Options.title",shopname);
+                    DynamicShop.ccShop.get().set(shopname+".Options.lore","");
                     DynamicShop.ccShop.get().set(shopname+".Options.page",2);
                     if(args.length >= 3)
                     {
