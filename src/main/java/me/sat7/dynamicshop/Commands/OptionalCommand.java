@@ -2,6 +2,7 @@ package me.sat7.dynamicshop.Commands;
 
 import me.sat7.dynamicshop.DynamicShop;
 import org.bukkit.Bukkit;
+import org.bukkit.GameMode;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandExecutor;
 import org.bukkit.command.CommandSender;
@@ -16,6 +17,12 @@ public class OptionalCommand implements CommandExecutor {
 
         if(sender instanceof Player)
         {
+            Player player = (Player)sender;
+            if(player.getGameMode() == GameMode.CREATIVE)
+            {
+                return true;
+            }
+
             if(args.length == 0)
             {
                 Bukkit.dispatchCommand(sender, "DynamicShop shop");

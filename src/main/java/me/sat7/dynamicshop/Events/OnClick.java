@@ -1110,14 +1110,14 @@ public class OnClick implements Listener {
 
                 median = median.replace(ChatColor.stripColor(DynamicShop.ccLang.get().getString("MEDIAN")),"");
                 stock = stock.replace(ChatColor.stripColor(DynamicShop.ccLang.get().getString("STOCK")),"");
-                double valueBuyD = Double.parseDouble(valueBuy);
-                double valueSellD = Double.parseDouble(valueSell);
-                double valueMinD = Double.parseDouble(valueMin);
+                double valueBuyD = Double.parseDouble(ChatColor.stripColor(valueBuy));
+                double valueSellD = Double.parseDouble(ChatColor.stripColor(valueSell));
+                double valueMinD = Double.parseDouble(ChatColor.stripColor(valueMin));
                 if(valueMinD <= 0) valueMinD = 0.01;
-                double valueMaxD = Double.parseDouble(valueMax);
+                double valueMaxD = Double.parseDouble(ChatColor.stripColor(valueMax));
                 if(valueMaxD <= 0) valueMaxD = -1;
-                int medianI = Integer.parseInt(median);
-                int stockI = Integer.parseInt(stock);
+                int medianI = Integer.parseInt(ChatColor.stripColor(median));
+                int stockI = Integer.parseInt(ChatColor.stripColor(stock));
 
                 double newBuyValue = valueBuyD;
                 double newSellValue = valueSellD;

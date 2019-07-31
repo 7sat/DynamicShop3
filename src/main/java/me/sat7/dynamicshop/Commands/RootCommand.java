@@ -5,6 +5,7 @@ import me.sat7.dynamicshop.DynamicShop;
 import net.milkbowl.vault.economy.Economy;
 import net.milkbowl.vault.economy.EconomyResponse;
 import org.bukkit.Bukkit;
+import org.bukkit.GameMode;
 import org.bukkit.Material;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandExecutor;
@@ -24,6 +25,11 @@ public class RootCommand implements CommandExecutor {
         if(sender instanceof Player)
         {
             Player player = (Player)sender;
+
+            if(player.getGameMode() == GameMode.CREATIVE)
+            {
+                return true;
+            }
 
             // user.yml 에 player가 없으면 재생성 시도. 실패시 리턴.
             if(!DynaShopAPI.RecreateUserData(player))
