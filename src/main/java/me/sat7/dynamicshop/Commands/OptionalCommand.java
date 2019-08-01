@@ -20,6 +20,7 @@ public class OptionalCommand implements CommandExecutor {
             Player player = (Player)sender;
             if(player.getGameMode() == GameMode.CREATIVE  && !player.hasPermission("dshop.admin.creative"))
             {
+                player.sendMessage(DynamicShop.ccLang.get().getString("ERR.CREATIVE"));
                 return true;
             }
 

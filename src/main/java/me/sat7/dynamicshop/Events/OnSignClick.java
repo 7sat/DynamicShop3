@@ -173,6 +173,7 @@ public class OnSignClick  implements Listener
                 {
                     if(p.getGameMode() == GameMode.CREATIVE && !p.hasPermission("dshop.admin.creative"))
                     {
+                        p.sendMessage(DynamicShop.ccLang.get().getString("ERR.CREATIVE"));
                         return;
                     }
 
