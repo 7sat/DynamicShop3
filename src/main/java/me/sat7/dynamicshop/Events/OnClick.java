@@ -701,7 +701,7 @@ public class OnClick implements Listener {
                         if(e.isShiftClick()) edit *= 5;
 
                         int result = DynamicShop.ccShop.get().getInt(shopName+".Options.SalesTax") + edit;
-                        if(result < 2) result = 2;
+                        if(result < 0) result = 0;
                         if(result > 99) result = 99;
 
                         DynamicShop.ccShop.get().set(shopName + ".Options.SalesTax", result);

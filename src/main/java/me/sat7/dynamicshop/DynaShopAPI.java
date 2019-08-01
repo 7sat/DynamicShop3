@@ -417,12 +417,15 @@ public class DynaShopAPI {
                     )),1);
             vault.setItem(33,taxToggleBtn);
 
+            int temp = DynamicShop.ccShop.get().getInt(shopName+".Options.SalesTax");
+            if(temp == 0) temp = 1;
+
             ItemStack taxBtn =  CreateItemStack(Material.IRON_INGOT,null,
                     DynamicShop.ccLang.get().getString("TAX.SALESTAX"),
                     new ArrayList<>(Arrays.asList(
                             "§9"+DynamicShop.ccLang.get().getString("CUR_STATE")+": " + DynamicShop.ccShop.get().getInt(shopName + ".Options.SalesTax") + "%",
                             DynamicShop.ccLang.get().getString("L_R_SHIFT")
-                    )),DynamicShop.ccShop.get().getInt(shopName+".Options.SalesTax"));
+                    )), temp);
             vault.setItem(34,taxBtn);
         }
         else

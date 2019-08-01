@@ -297,7 +297,7 @@ public final class DynamicShop extends JavaPlugin implements Listener {
     {
         getConfig().options().copyHeader(true);
         getConfig().options().header(
-                "Language: ex) en-US,ko-KR" + "\nPrefix: Prefix of plugin messages" + "\nSalesTax: 2~99%"
+                "Language: ex) en-US,ko-KR" + "\nPrefix: Prefix of plugin messages" + "\nSalesTax: ~99%"
                 + "\nUseShopCommand: Set this to false if you want to disable /shop command"
                 + "\nDefaultShopName: This shop will open when player run /shop or /ds shop command"
                 + "\nDisplayStockAsStack: ex) true: 10Stacks, false: 640"
@@ -315,7 +315,7 @@ public final class DynamicShop extends JavaPlugin implements Listener {
         {
             salesTax = getConfig().getDouble("SalesTax");
         }
-        if(salesTax <= 2) salesTax = 2;
+        if(salesTax < 0) salesTax = 0;
         if(salesTax > 99) salesTax = 99;
         getConfig().set("SalesTax",salesTax);
 
