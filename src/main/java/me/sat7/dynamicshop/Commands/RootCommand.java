@@ -26,7 +26,7 @@ public class RootCommand implements CommandExecutor {
         {
             Player player = (Player)sender;
 
-            if(player.getGameMode() == GameMode.CREATIVE)
+            if(player.getGameMode() == GameMode.CREATIVE  && !player.hasPermission("dshop.admin.creative"))
             {
                 return true;
             }

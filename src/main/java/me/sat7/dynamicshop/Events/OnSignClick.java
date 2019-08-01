@@ -3,6 +3,7 @@ package me.sat7.dynamicshop.Events;
 import me.sat7.dynamicshop.DynaShopAPI;
 import me.sat7.dynamicshop.DynamicShop;
 import org.bukkit.ChatColor;
+import org.bukkit.GameMode;
 import org.bukkit.Material;
 import org.bukkit.block.Block;
 import org.bukkit.block.BlockFace;
@@ -170,6 +171,11 @@ public class OnSignClick  implements Listener
                 // 상점 존재 확인
                 if(DynamicShop.ccShop.get().contains(shopName))
                 {
+                    if(p.getGameMode() == GameMode.CREATIVE && !p.hasPermission("dshop.admin.creative"))
+                    {
+                        return;
+                    }
+
                     //권한 확인
                     String permission = DynamicShop.ccShop.get().getString(shopName+".Options.permission");
                     if(permission != null && permission.length()>0 )

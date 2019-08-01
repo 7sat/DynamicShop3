@@ -18,7 +18,7 @@ public class OptionalCommand implements CommandExecutor {
         if(sender instanceof Player)
         {
             Player player = (Player)sender;
-            if(player.getGameMode() == GameMode.CREATIVE)
+            if(player.getGameMode() == GameMode.CREATIVE  && !player.hasPermission("dshop.admin.creative"))
             {
                 return true;
             }

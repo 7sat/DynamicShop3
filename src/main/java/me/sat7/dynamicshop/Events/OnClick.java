@@ -340,7 +340,7 @@ public class OnClick implements Listener {
                             DynamicShop.ccUser.get().set(player.getUniqueId()+".interactItem",shopName + "/" + idx); // 선택한 아이탬의 인덱스 저장
                         }
                         // 아이탬 이동, 수정, 또는 장식탬 삭제
-                        else if(player.hasPermission("dshop.admin.editshop"))
+                        else if(player.hasPermission("dshop.admin.shopedit"))
                         {
                             DynaShopAPI.PlayerSoundEffect(player,"click");
 
@@ -391,7 +391,7 @@ public class OnClick implements Listener {
                     int clickedIdx = e.getSlot() + ((curPage-1)*45);
 
                     // 아이탬 이동. 또는 장식 복사
-                    if(e.isRightClick() && player.hasPermission("dshop.admin.editshop") && !itemtoMove.equals(""))
+                    if(e.isRightClick() && player.hasPermission("dshop.admin.shopedit") && !itemtoMove.equals(""))
                     {
                         DynamicShop.ccShop.get().set(shopName+"." + clickedIdx + ".mat",DynamicShop.ccShop.get().get(shopName+"."+itemtoMove+".mat"));
                         DynamicShop.ccShop.get().set(shopName+"." + clickedIdx + ".itemStack",DynamicShop.ccShop.get().get(shopName+"."+itemtoMove+".itemStack"));
@@ -414,7 +414,7 @@ public class OnClick implements Listener {
                         DynamicShop.ccUser.get().set(player.getUniqueId()+".interactItem","");
                     }
                     // 팔렛트 열기
-                    else if(player.hasPermission("dshop.admin.editshop"))
+                    else if(player.hasPermission("dshop.admin.shopedit"))
                     {
                         DynamicShop.ccUser.get().set(player.getUniqueId()+".interactItem",shopName + "/" + clickedIdx); // 선택한 아이탬의 인덱스 저장
                         DynaShopAPI.OpenItemPalette(player,1,"");
@@ -1514,7 +1514,7 @@ public class OnClick implements Listener {
             if(topShopName.length()>0)
             {
                 // 찾은 상점에 판매
-                DynaShopAPI.QuickSellItem(player,e.getCurrentItem(),topShopName,tradeIdx);
+                DynaShopAPI.QuickSellItem(player,e.getCurrentItem(),topShopName,tradeIdx,e.isShiftClick(),e.getSlot());
                 player.sendMessage(DynamicShop.dsPrefix + DynamicShop.ccLang.get().getString("QSELL_RESULT")+topShopName);
             }
             else

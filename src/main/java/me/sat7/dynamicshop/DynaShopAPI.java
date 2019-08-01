@@ -1557,19 +1557,37 @@ public class DynaShopAPI {
     //[ Transaction ]=========================================================
 
     // 퀵판매
-    public static void QuickSellItem(Player player, ItemStack myItem, String shopName, int tradeIdx)
+    public static void QuickSellItem(Player player, ItemStack myItem, String shopName, int tradeIdx, boolean isShiftClick, int slot)
     {
         double priceSum;
 
         // 실제 판매 가능량 확인
-        int actualAmount = myItem.getAmount();
-
-        HashMap<Integer,ItemStack> hashMap = player.getInventory().removeItem(myItem);
-        player.updateInventory();
-        if(!hashMap.isEmpty())
+        int actualAmount = 0;
+        if(isShiftClick)
         {
-            actualAmount -= hashMap.get(0).getAmount();
+            int amount = 0;
+            for (ItemStack item : player.getInventory().getContents()) {
+                if(item == null || item.getType() == null) continue;
+                if (item.getType() == myItem.getType()) {
+                    amount += item.getAmount();
+                    player.getInventory().removeItem(item);
+                }
+            }
+            actualAmount = amount;
         }
+        else
+        {
+            actualAmount = myItem.getAmount();
+            player.getInventory().setItem(slot,null);
+        }
+        player.updateInventory();
+
+//        HashMap<Integer,ItemStack> hashMap = player.getInventory().removeItem(myItem);
+//        player.updateInventory();
+//        if(!hashMap.isEmpty())
+//        {
+//            actualAmount -= hashMap.get(0).getAmount();
+//        }
 
         // 판매할 아이탬이 없음
         if(actualAmount == 0)
