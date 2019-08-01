@@ -28,7 +28,7 @@ public class RootCommand implements CommandExecutor {
 
             if(player.getGameMode() == GameMode.CREATIVE  && !player.hasPermission("dshop.admin.creative"))
             {
-                player.sendMessage(DynamicShop.ccLang.get().getString("ERR.CREATIVE"));
+                player.sendMessage(DynamicShop.dsPrefix+DynamicShop.ccLang.get().getString("ERR.CREATIVE"));
                 return true;
             }
 

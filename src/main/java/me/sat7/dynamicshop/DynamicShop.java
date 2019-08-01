@@ -556,7 +556,7 @@ public final class DynamicShop extends JavaPlugin implements Listener {
             ccLang.get().addDefault("ERR.SHOP_LINK_FAIL", "상점 둘 중 하나는 실제 계좌이어야 합니다.");
             ccLang.get().addDefault("ERR.SHOP_LINK_TARGET_ERR", "목표 상점은 실제 계좌를 가지고 있어야 합니다.");
             ccLang.get().addDefault("ERR.NESTED_STRUCTURE", "계층 구조를 이루는것은 금지되어 있습니다. (ex. aa-bb, bb-cc)");
-            ccLang.get().addDefault("ERR.CREATIVE","Creative mode 에서 이 명령어를 사용할 수 없습니다.");
+            ccLang.get().addDefault("ERR.CREATIVE","§eCreative mode 에서 이 명령어를 사용할 수 없습니다. 권한이 없습니다.");
 
             ccLang.get().options().copyDefaults(true);
             ccLang.save();
@@ -765,7 +765,7 @@ public final class DynamicShop extends JavaPlugin implements Listener {
             ccLang.get().addDefault("ERR.SHOP_LINK_FAIL", "At least one of them must be an actual account.");
             ccLang.get().addDefault("ERR.SHOP_LINK_TARGET_ERR", "Target shop must have actual account.");
             ccLang.get().addDefault("ERR.NESTED_STRUCTURE", "Nested structure is forbidden. (ex. aa-bb, bb-cc)");
-            ccLang.get().addDefault("ERR.CREATIVE","You can not use this command in creative mode.");
+            ccLang.get().addDefault("ERR.CREATIVE","§eYou can not use this command in creative mode. No permission.");
 
             ccLang.get().options().copyDefaults(true);
             ccLang.save();
