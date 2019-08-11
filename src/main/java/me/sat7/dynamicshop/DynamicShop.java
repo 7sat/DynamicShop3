@@ -111,6 +111,7 @@ public final class DynamicShop extends JavaPlugin implements Listener {
         File folder3 = new File(getDataFolder(), "Log");
         folder3.mkdir();
 
+        // Jobs
         if (getServer().getPluginManager().getPlugin("Jobs") == null) {
             console.sendMessage(dsPrefix_server + " Jobs Reborn Not Found");
             jobsRebornActive = false;
@@ -164,8 +165,6 @@ public final class DynamicShop extends JavaPlugin implements Listener {
             RandomChange();
 
         }, 500, 500);
-
-        //Bukkit.getScheduler().cancelTask(task.getTaskId());
     }
 
     private void RandomChange()

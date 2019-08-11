@@ -233,13 +233,13 @@ public class OnClick implements Listener {
                 }
             }
             // 상점
-            else if(DynaShopAPI.CheckInvenIsShopUI(e.getInventory()))
+            else if(DynaShopAPI.CheckInvenIsShopUI(e.getClickedInventory()))
             {
                 e.setCancelled(true);
 
-                String shopName = ChatColor.stripColor(e.getInventory().getItem(53).getItemMeta().getDisplayName());
+                String shopName = ChatColor.stripColor(e.getClickedInventory().getItem(53).getItemMeta().getDisplayName());
 
-                int curPage = e.getInventory().getItem(49).getAmount();
+                int curPage = e.getClickedInventory().getItem(49).getAmount();
 
                 String itemtoMove = "";
                 if(DynamicShop.ccUser.get().contains(player.getUniqueId()+".interactItem"))

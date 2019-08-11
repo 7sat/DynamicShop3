@@ -1585,13 +1585,6 @@ public class DynaShopAPI {
         }
         player.updateInventory();
 
-//        HashMap<Integer,ItemStack> hashMap = player.getInventory().removeItem(myItem);
-//        player.updateInventory();
-//        if(!hashMap.isEmpty())
-//        {
-//            actualAmount -= hashMap.get(0).getAmount();
-//        }
-
         // 판매할 아이탬이 없음
         if(actualAmount == 0)
         {
@@ -2251,10 +2244,22 @@ public class DynaShopAPI {
     // 인벤토리가 ui인지 확인
     public static Boolean CheckInvenIsShopUI(Inventory i)
     {
-
-        return i.getSize() == 54 && i.getItem(53) != null &&
-                DynamicShop.ccShop.get().contains(ChatColor.stripColor(i.getItem(53).getItemMeta().getDisplayName())) &&
-                i.getItem(53).getType().name().contains("SIGN");
+        if(i.getSize() == 54 && i.getItem(53) != null && i.getItem(53).getType().name().contains("SIGN"))
+        {
+            String temp = ChatColor.stripColor(i.getItem(53).getItemMeta().getDisplayName());
+            if(temp.length() > 0 && DynamicShop.ccShop.get().contains(temp))
+            {
+                return true;
+            }
+            else
+            {
+                return false;
+            }
+        }
+        else
+        {
+            return false;
+        }
     }
 
     // 지정된 이름,lore,수량의 아이탬 스택 생성및 반환
