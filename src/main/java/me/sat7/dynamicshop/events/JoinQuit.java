@@ -1,6 +1,8 @@
-package me.sat7.dynamicshop.Events;
+package me.sat7.dynamicshop.events;
 
 import me.sat7.dynamicshop.DynamicShop;
+import me.sat7.dynamicshop.UpdateCheck;
+
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
@@ -24,7 +26,7 @@ public class JoinQuit implements Listener {
                     e.getPlayer().hasPermission("dshop.admin.reload"))
             {
                 e.getPlayer().sendMessage(DynamicShop.dsPrefix+"New update available!");
-                e.getPlayer().sendMessage("https://www.spigotmc.org/resources/65603/");
+                e.getPlayer().sendMessage(UpdateCheck.getResourceUrl());
             }
         }
     }

@@ -1,6 +1,8 @@
-package me.sat7.dynamicshop.Files;
+package me.sat7.dynamicshop.files;
 
 import me.sat7.dynamicshop.DynamicShop;
+import me.sat7.dynamicshop.constants.Constants;
+
 import org.bukkit.Bukkit;
 import org.bukkit.configuration.file.FileConfiguration;
 import org.bukkit.configuration.file.YamlConfiguration;
@@ -34,7 +36,7 @@ public class CustomConfig {
 
         if (!file.exists())
         {
-            DynamicShop.console.sendMessage(DynamicShop.dsPrefix_server + name + " not found");
+            DynamicShop.console.sendMessage(Constants.DYNAMIC_SHOP_PREFIX + name + " not found");
             return false;
         }
 
@@ -64,7 +66,7 @@ public class CustomConfig {
 
         if (!tempFile.exists())
         {
-            DynamicShop.console.sendMessage(DynamicShop.dsPrefix_server + name + " not found");
+            DynamicShop.console.sendMessage(Constants.DYNAMIC_SHOP_PREFIX + name + " not found");
             return null;
         }
 

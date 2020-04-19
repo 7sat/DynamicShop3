@@ -4,7 +4,7 @@ main: me.sat7.dynamicshop.DynamicShop
 depend: [Vault]
 softdepend: [PlaceholderAPI, Jobs]
 api-version: 1.13
-authors: [sat7]
+authors: [sat7, Multitallented]
 description: Full GUI shop with dynamic prices
 commands:
   DynamicShop:
