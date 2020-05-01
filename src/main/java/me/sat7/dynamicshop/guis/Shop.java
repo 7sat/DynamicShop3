@@ -171,13 +171,30 @@ public class Shop {
 
                     double buyPrice = Calc.getCurrentPrice(shopName, s, true);
                     double sellPrice = Calc.getCurrentPrice(shopName, s, false);
+                    /*  */
+                    double buyPrice2 = ShopUtil.ccShop.get().getDouble(shopName+"." + idx + ".value");
+                    
+                    String valueChangedRange = null;
+                	String valueChangedRange2 = null;
+                	
+                    if(buyPrice - buyPrice2 > 0) {
+                    	valueChangedRange = "§a⬆ " + Double.toString(Math.round((buyPrice - buyPrice2)*100)/100.0);
+                    	valueChangedRange2 = "§a⬆ " + Double.toString(Math.round(((buyPrice - buyPrice2)/2)*100)/100.0);
+                    } else if (buyPrice - buyPrice2 < 0) {
+                    	valueChangedRange = "§c⬇ " + Double.toString(Math.round((buyPrice2 - buyPrice)*100)/100.0);
+                    	valueChangedRange2 = "§c⬇ " + Double.toString(Math.round(((buyPrice2 - buyPrice)/2)*100)/100.0);
+                    } else if (buyPrice == buyPrice2) {
+                    	valueChangedRange = "";
+                    	valueChangedRange2 = "";
+                    }
+                    
                     if(buyPrice == sellPrice) sellPrice = buyPrice - ((buyPrice / 100) * Calc.getTaxRate(shopName));
 
                     String tradeType = "default";
                     if(ShopUtil.ccShop.get().contains(shopName+"."+s+".tradeType")) tradeType = ShopUtil.ccShop.get().getString(shopName+"."+s+".tradeType");
-                    if(!tradeType.equalsIgnoreCase("SellOnly")) lore.add(LangUtil.ccLang.get().getString("PRICE") + df.format(buyPrice));
-                    if(!tradeType.equalsIgnoreCase("BuyOnly")) lore.add(LangUtil.ccLang.get().getString("SELLPRICE") + df.format(sellPrice));
-
+                    if(!tradeType.equalsIgnoreCase("SellOnly")) lore.add(LangUtil.ccLang.get().getString("PRICE") + df.format(buyPrice) + " " + valueChangedRange);
+                    if(!tradeType.equalsIgnoreCase("BuyOnly")) lore.add(LangUtil.ccLang.get().getString("SELLPRICE") + df.format(sellPrice) + " " + valueChangedRange2);
+                    /* */
                     if(ShopUtil.ccShop.get().getInt(shopName+"." + s + ".stock") <= 0 || ShopUtil.ccShop.get().getInt(shopName+"." + s + ".median") <= 0)
                     {
                         if(!ShopUtil.ccShop.get().getBoolean(shopName+".Options.hidePricingType"))
