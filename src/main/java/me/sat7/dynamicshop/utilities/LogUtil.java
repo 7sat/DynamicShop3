@@ -47,13 +47,6 @@ public final class LogUtil {
     }
 
     public static void cullLogs() {
-        SimpleDateFormat sdf = new SimpleDateFormat ( "MM-dd-yyyy-HH:mm:ss");
-        String timeStr = sdf.format (System.currentTimeMillis());
-        ccLog.setup("Log_"+timeStr,"Log");
-        ccLog.get().options().copyDefaults(true);
-        ccLog.save();
-
-
         File[] logs = new File(DynamicShop.plugin.getDataFolder() + "/Log").listFiles();
         if (logs.length > 0)
         {
