@@ -6,5 +6,6 @@ DefaultShopName: Main
 DisplayStockAsStack: false
 DeliveryChargeScale: 1
 NumberOfPlayer: 10
+LogCullTimeMinutes: 7200
 OnClickCloseButton_OpenStartPage: true
 OpenStartPageInsteadOfDefaultShop: false

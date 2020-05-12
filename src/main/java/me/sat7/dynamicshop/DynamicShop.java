@@ -184,6 +184,8 @@ public final class DynamicShop extends JavaPlugin implements Listener {
     @Override
     public void onDisable() {
         Bukkit.getScheduler().cancelTasks(this);
+        console.sendMessage(Constants.DYNAMIC_SHOP_PREFIX + " Checking for logs older than defined in config");
+        LogUtil.cullLogs();
         console.sendMessage(Constants.DYNAMIC_SHOP_PREFIX + " Disabled");
     }
 

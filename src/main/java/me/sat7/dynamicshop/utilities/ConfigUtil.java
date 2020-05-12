@@ -183,6 +183,7 @@ public final class ConfigUtil {
         DynamicShop.dsPrefix = dynamicShop.getConfig().getString("Prefix");
         dynamicShop.getConfig().set("UseShopCommand", dynamicShop.getConfig().getBoolean("UseShopCommand"));
         dynamicShop.getConfig().set("DefaultShopName", dynamicShop.getConfig().getString("DefaultShopName"));
+        dynamicShop.getConfig().set("DefaultShopName", dynamicShop.getConfig().getString("DefaultShopName"));
 
         try {
             Bukkit.getScheduler().cancelTask(randomStocktask.getTaskId());
@@ -202,6 +203,8 @@ public final class ConfigUtil {
         if(numPlayer <= 3) numPlayer = 3;
         if(numPlayer > 100) numPlayer = 100;
         dynamicShop.getConfig().set("NumberOfPlayer",numPlayer);
+
+        dynamicShop.getConfig().set("LogCullTimeMinutes", dynamicShop.getConfig().getInt("LogCullTimeMinutes"));
 
         dynamicShop.getConfig().set("OnClickCloseButton_OpenStartPage", dynamicShop.getConfig().getBoolean("OnClickCloseButton_OpenStartPage"));
         dynamicShop.getConfig().set("OpenStartPageInsteadOfDefaultShop", dynamicShop.getConfig().getBoolean("OpenStartPageInsteadOfDefaultShop"));
