@@ -133,6 +133,7 @@
 			<groupId>com.github.Zrips</groupId>
 			<artifactId>Jobs</artifactId>
 			<version>4.15.8</version>
+            <scope>provided</scope>
 		</dependency>
 
         <dependency>
