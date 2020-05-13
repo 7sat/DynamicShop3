@@ -183,7 +183,6 @@ public final class ConfigUtil {
         DynamicShop.dsPrefix = dynamicShop.getConfig().getString("Prefix");
         dynamicShop.getConfig().set("UseShopCommand", dynamicShop.getConfig().getBoolean("UseShopCommand"));
         dynamicShop.getConfig().set("DefaultShopName", dynamicShop.getConfig().getString("DefaultShopName"));
-        dynamicShop.getConfig().set("DefaultShopName", dynamicShop.getConfig().getString("DefaultShopName"));
 
         try {
             Bukkit.getScheduler().cancelTask(randomStocktask.getTaskId());
