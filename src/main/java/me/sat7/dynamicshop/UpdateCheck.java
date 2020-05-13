@@ -28,18 +28,18 @@ public class UpdateCheck {
     void initUpdater() {
         // 업데이트 확인
         try {
-            if(checkForUpdates()) {
-                // this will print when haves update
-                DynamicShop.updateAvailable = true;
-                DynamicShop.console.sendMessage("§3-------------------------------------------------------");
-                DynamicShop.console.sendMessage(Constants.DYNAMIC_SHOP_PREFIX +"Plugin outdated!!");
-                DynamicShop.console.sendMessage(getResourceUrl());
-                DynamicShop.console.sendMessage("§3-------------------------------------------------------");
-            } else if(DynamicShop.plugin.getDescription().getVersion().contains("SNAPSHOT")) {
+            if(DynamicShop.plugin.getDescription().getVersion().contains("SNAPSHOT")) {
                 DynamicShop.updateAvailable = false;
                 DynamicShop.console.sendMessage("§3-------------------------------------------------------");
                 DynamicShop.console.sendMessage(Constants.DYNAMIC_SHOP_PREFIX +" Plugin is running a dev build!");
                 DynamicShop.console.sendMessage("Be careful and monitor what happens!");
+                DynamicShop.console.sendMessage(getResourceUrl());
+                DynamicShop.console.sendMessage("§3-------------------------------------------------------");
+            } else if(checkForUpdates()) {
+                // this will print when outdated
+                DynamicShop.updateAvailable = true;
+                DynamicShop.console.sendMessage("§3-------------------------------------------------------");
+                DynamicShop.console.sendMessage(Constants.DYNAMIC_SHOP_PREFIX +"Plugin outdated!!");
                 DynamicShop.console.sendMessage(getResourceUrl());
                 DynamicShop.console.sendMessage("§3-------------------------------------------------------");
             } else {
