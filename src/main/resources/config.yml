@@ -1,6 +1,7 @@
 Language: en-US
 Prefix: §3§l[dShop] §f
 SalesTax: 25
+ShowTax: true
 UseShopCommand: true
 DefaultShopName: Main
 DisplayStockAsStack: false

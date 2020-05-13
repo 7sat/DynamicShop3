@@ -177,12 +177,12 @@ public final class ConfigUtil {
         if(salesTax < 0) salesTax = 0;
         if(salesTax > 99) salesTax = 99;
         dynamicShop.getConfig().set("SalesTax",salesTax);
+        dynamicShop.getConfig().set("ShowTax",dynamicShop.getConfig().getBoolean("ShowTax"));
 
         dynamicShop.getConfig().set("Language", dynamicShop.getConfig().get("Language"));
         dynamicShop.getConfig().set("Prefix", dynamicShop.getConfig().get("Prefix"));
         DynamicShop.dsPrefix = dynamicShop.getConfig().getString("Prefix");
         dynamicShop.getConfig().set("UseShopCommand", dynamicShop.getConfig().getBoolean("UseShopCommand"));
-        dynamicShop.getConfig().set("DefaultShopName", dynamicShop.getConfig().getString("DefaultShopName"));
         dynamicShop.getConfig().set("DefaultShopName", dynamicShop.getConfig().getString("DefaultShopName"));
 
         try {
