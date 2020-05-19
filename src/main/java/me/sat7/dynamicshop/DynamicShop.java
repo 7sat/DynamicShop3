@@ -69,7 +69,6 @@ public final class DynamicShop extends JavaPlugin implements Listener {
             new BukkitRunnable() {
                 @Override
                 public void run() {
-                    console.sendMessage(Constants.DYNAMIC_SHOP_PREFIX + " Checking for logs older than defined in config");
                     LogUtil.cullLogs();
                 }
             }.runTaskTimer(this, 0L, (20L * 60L * (long) getConfig().getInt("LogCullTimeMinutes")));
