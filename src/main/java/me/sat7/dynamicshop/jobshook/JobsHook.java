@@ -25,7 +25,7 @@ public final class JobsHook {
             return false;
         }
 
-        PlayerPoints pp = Jobs.getPlayerManager().getPlayerInfo(p.getUniqueId()).getJobsPlayer().getPointsData();
+        PlayerPoints pp = Jobs.getPlayerManager().getPointsData().getPlayerPointsInfo(p.getUniqueId());
         // 차감
         if(amount < 0.0)
         {
@@ -53,6 +53,6 @@ public final class JobsHook {
     // JobsReborn. 플레이어의 잔액 확인
     public static double getCurJobPoints(Player p)
     {
-        return Jobs.getPlayerManager().getPlayerInfo(p.getUniqueId()).getJobsPlayer().getPointsData().getCurrentPoints();
+        return Jobs.getPlayerManager().getPointsData().getPlayerPointsInfo(p.getUniqueId()).getCurrentPoints();
     }
 }

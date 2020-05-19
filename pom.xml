@@ -6,7 +6,7 @@
 
     <groupId>me.sat7</groupId>
     <artifactId>DynamicShop</artifactId>
-    <version>2.11.0-SNAPSHOT.{BUILDID}</version>
+    <version>2.11.1-SNAPSHOT.{BUILDID}</version>
     <packaging>jar</packaging>
 
     <name>DynamicShop</name>
@@ -77,7 +77,7 @@
     </build>
 
     <repositories>
-	    <repository>
+	      <repository>
             <id>jitpack.io</id>
             <url>https://jitpack.io</url>
         </repository>
@@ -107,7 +107,7 @@
         <dependency>
             <groupId>org.spigotmc</groupId>
             <artifactId>spigot-api</artifactId>
-            <version>1.14.4-R0.1-SNAPSHOT</version>
+            <version>1.15.2-R0.1-SNAPSHOT</version>
             <scope>provided</scope>
         </dependency>
         <dependency>
@@ -128,14 +128,12 @@
             <version>2.9.2</version>
             <scope>provided</scope>
         </dependency>
-
-		<dependency>
-			<groupId>com.github.Zrips</groupId>
-			<artifactId>Jobs</artifactId>
-			<version>4.15.8</version>
+        <dependency>
+            <groupId>com.github.Zrips</groupId>
+            <artifactId>Jobs</artifactId>
             <scope>provided</scope>
-		</dependency>
-
+            <version>4.15.8</version>
+        </dependency>
         <dependency>
             <groupId>org.projectlombok</groupId>
             <artifactId>lombok</artifactId>
