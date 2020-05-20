@@ -189,18 +189,7 @@ public class Shop {
                     	valueChangedRange = "";
                     	valueChangedRange2 = "";
                     }
-                	/*
-                    if(buyPrice - buyPrice2 > 0) {
-                    	valueChangedRange = "§a⬆ " + Double.toString(Math.round((buyPrice - buyPrice2)*100)/100.0);
-                    	valueChangedRange2 = "§a⬆ " + Double.toString(Math.round(((buyPrice - buyPrice2)/2)*100)/100.0);
-                    } else if (buyPrice - buyPrice2 < 0) {
-                    	valueChangedRange = "§c⬇ " + Double.toString(Math.round((buyPrice2 - buyPrice)*100)/100.0);
-                    	valueChangedRange2 = "§c⬇ " + Double.toString(Math.round(((buyPrice2 - buyPrice)/2)*100)/100.0);
-                    } else if (buyPrice == buyPrice2) {
-                    	valueChangedRange = "";
-                    	valueChangedRange2 = "";
-                    }
-                    */
+
                     if(buyPrice == sellPrice) sellPrice = buyPrice - ((buyPrice / 100) * Calc.getTaxRate(shopName));
 
                     String tradeType = "default";

@@ -34,18 +34,10 @@ public final class Sell {
             int amount = 0;
             for (ItemStack item : player.getInventory().getContents()) {
                 if(item == null || item.getType() == null) continue;
-                if (item.getType() == myItem.getType()) {
-                	if (myItem.hasItemMeta()) {
-                		if(item.getItemMeta().equals(myItem.getItemMeta())) {
-                            amount += item.getAmount();
-                            player.getInventory().removeItem(item);
-                		}
-                	}
-                	else {
-                        amount += item.getAmount();
-                        player.getInventory().removeItem(item);
-                	}
-                }
+            	if(item.isSimilar(myItem)) {
+                    amount += item.getAmount();
+                    player.getInventory().removeItem(item);
+            	}
             }
             actualAmount = amount;
         }
