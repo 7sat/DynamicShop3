@@ -16,15 +16,21 @@ public class TransactionTests {
     }
 
     @Test
-    public void calcCostWithStock1ShouldNotBeMoreThanStockNegative64() {
-        double amount = Calc.calcTotalCost("default",
-                "COBBLESTONE", -64);
-//        assertEquals(10673.75, amount, 0.01);
-        assertEquals(640000.0, amount, 0.01);
-        ShopUtil.ccShop = FileUtil.generate64StockCustomConfig();
-        amount = Calc.calcTotalCost("default", "COBBLESTONE", 64);
-        assertEquals(6400000.0, amount, 0.01);
-//        assertEquals(9389.18, amount, 0.01);
+    public void calcCostWhenOutOfStockShouldBeSameAsInStock() {
+        ShopUtil.ccShop.get().set("default.COBBLESTONE.stock", 0);
+        double amountSell = Calc.calcTotalCost("default", "COBBLESTONE", -1);
+        ShopUtil.ccShop.get().set("default.COBBLESTONE.stock", 1);
+        double amountBuy = Calc.calcTotalCost("default", "COBBLESTONE", 1);
+        assertEquals(amountSell, amountBuy, 0.01);
+    }
+
+    @Test
+    public void calcCostShouldBeTheSameWhenInStock() {
+        ShopUtil.ccShop.get().set("default.COBBLESTONE.stock", 1);
+        double amountSell = Calc.calcTotalCost("default", "COBBLESTONE", -1);
+        ShopUtil.ccShop.get().set("default.COBBLESTONE.stock", 2);
+        double amountBuy = Calc.calcTotalCost("default", "COBBLESTONE", 1);
+        assertEquals(amountSell, amountBuy, 0.01);
     }
 
 }
