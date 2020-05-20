@@ -172,11 +172,24 @@ public class Shop {
                     double buyPrice = Calc.getCurrentPrice(shopName, s, true);
                     double sellPrice = Calc.getCurrentPrice(shopName, s, false);
                     /*  */
-                    double buyPrice2 = ShopUtil.ccShop.get().getDouble(shopName+"." + idx + ".value");
+                    double buyPrice2 = ShopUtil.ccShop.get().getDouble(shopName+"." + s + ".value");
+                    double priceSave1 = ((buyPrice/buyPrice2)*100)-100;
+                    double priceSave2 = 100-((buyPrice/buyPrice2)*100);
                     
                     String valueChangedRange = null;
                 	String valueChangedRange2 = null;
                 	
+                    if(buyPrice - buyPrice2 > 0) {
+                    	valueChangedRange = "§a⬆ " + Math.round(priceSave1*100d)/100d + "%";
+                    	valueChangedRange2 = "§a⬆ " + Math.round(priceSave1*100d)/100d + "%";
+                    } else if (buyPrice - buyPrice2 < 0) {
+                    	valueChangedRange = "§c⬇ " + Math.round(priceSave2*100d)/100d + "%";
+                    	valueChangedRange2 = "§c⬇ " + Math.round(priceSave2*100d)/100d + "%";
+                    } else if (buyPrice == buyPrice2) {
+                    	valueChangedRange = "";
+                    	valueChangedRange2 = "";
+                    }
+                	/*
                     if(buyPrice - buyPrice2 > 0) {
                     	valueChangedRange = "§a⬆ " + Double.toString(Math.round((buyPrice - buyPrice2)*100)/100.0);
                     	valueChangedRange2 = "§a⬆ " + Double.toString(Math.round(((buyPrice - buyPrice2)/2)*100)/100.0);
@@ -187,7 +200,7 @@ public class Shop {
                     	valueChangedRange = "";
                     	valueChangedRange2 = "";
                     }
-                    
+                    */
                     if(buyPrice == sellPrice) sellPrice = buyPrice - ((buyPrice / 100) * Calc.getTaxRate(shopName));
 
                     String tradeType = "default";

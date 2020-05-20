@@ -51,7 +51,10 @@ public class ItemPalette {
             Material[] allMat = Material.values();
             for (Material m: allMat)
             {
-                if(m.name().contains(search.toUpperCase())) paletteList.add(m);
+                ItemStack stack = new ItemStack(m);
+                ItemMeta meta = stack.getItemMeta();
+                if(meta.hasLocalizedName())
+                if(meta.getLocalizedName().contains(search.toUpperCase())) paletteList.add(m);
             }
         }
         else
