@@ -81,12 +81,15 @@ public class Shop {
         }
         // 권한
         String perm = ShopUtil.ccShop.get().getString(shopName+".Options.permission");
-        if(perm.length()==0) perm = "§7(NULL)";
-        infoLore.add(LangUtil.ccLang.get().getString("PERMISSION") + ":");
-        infoLore.add("§7 - "+perm);
+        if(!(perm.length()==0)) {
+            infoLore.add(LangUtil.ccLang.get().getString("PERMISSION") + ":");
+            infoLore.add("§7 - "+perm);
+        }
         // 세금
-        infoLore.add(LangUtil.ccLang.get().getString("TAX.SALESTAX")+":");
-        infoLore.add("§7 - "+ Calc.getTaxRate(shopName) + "%");
+        if(DynamicShop.plugin.getConfig().getBoolean("ShowTax")) {
+            infoLore.add(LangUtil.ccLang.get().getString("TAX.SALESTAX")+":");
+            infoLore.add("§7 - "+ Calc.getTaxRate(shopName) + "%");
+        }
         // 플래그
         if(ShopUtil.ccShop.get().contains(shopName+".Options.flag") && ShopUtil.ccShop.get().getConfigurationSection(shopName+".Options.flag").getKeys(false).size() > 0)
         {

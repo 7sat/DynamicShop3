@@ -25,6 +25,7 @@ import org.bukkit.command.ConsoleCommandSender;
 import org.bukkit.event.Listener;
 import org.bukkit.plugin.RegisteredServiceProvider;
 import org.bukkit.plugin.java.JavaPlugin;
+import org.bukkit.scheduler.BukkitRunnable;
 
 import java.io.File;
 import java.util.List;
@@ -63,6 +64,15 @@ public final class DynamicShop extends JavaPlugin implements Listener {
         setupConfigs();
         makeFolders();
         hookIntoJobs();
+
+        if (getConfig().getBoolean("CullLogs")) {
+            new BukkitRunnable() {
+                @Override
+                public void run() {
+                    LogUtil.cullLogs();
+                }
+            }.runTaskTimer(this, 0L, (20L * 60L * (long) getConfig().getInt("LogCullTimeMinutes")));
+        }
 
         // 완료
         console.sendMessage(Constants.DYNAMIC_SHOP_PREFIX + " Enabled! :)");
