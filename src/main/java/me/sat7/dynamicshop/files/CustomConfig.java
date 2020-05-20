@@ -17,7 +17,7 @@ public class CustomConfig {
     //Finds or generates the custom config file
     public void setup(String name, String folder){
         String path = name + ".yml";
-        if(folder != null) path = folder+"\\"+path;
+        if(folder != null) path = folder+"/"+path;
         file = new File(Bukkit.getServer().getPluginManager().getPlugin("DynamicShop").getDataFolder(), path);
 
         if (!file.exists()){
@@ -32,7 +32,7 @@ public class CustomConfig {
 
     public boolean open(String name, String folder)
     {
-        file = new File(Bukkit.getServer().getPluginManager().getPlugin("DynamicShop").getDataFolder(), folder+"\\"+name + ".yml");
+        file = new File(Bukkit.getServer().getPluginManager().getPlugin("DynamicShop").getDataFolder(), folder+"/"+name + ".yml");
 
         if (!file.exists())
         {
@@ -62,7 +62,7 @@ public class CustomConfig {
 
     public static FileConfiguration GetFileFromPath(String name, String folder)
     {
-        File tempFile = new File(Bukkit.getServer().getPluginManager().getPlugin("DynamicShop").getDataFolder(), folder+"\\"+name + ".yml");
+        File tempFile = new File(Bukkit.getServer().getPluginManager().getPlugin("DynamicShop").getDataFolder(), folder+"/"+name + ".yml");
 
         if (!tempFile.exists())
         {

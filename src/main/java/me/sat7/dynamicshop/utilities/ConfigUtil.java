@@ -177,6 +177,7 @@ public final class ConfigUtil {
         if(salesTax < 0) salesTax = 0;
         if(salesTax > 99) salesTax = 99;
         dynamicShop.getConfig().set("SalesTax",salesTax);
+        dynamicShop.getConfig().set("ShowTax",dynamicShop.getConfig().getBoolean("ShowTax"));
 
         dynamicShop.getConfig().set("Language", dynamicShop.getConfig().get("Language"));
         dynamicShop.getConfig().set("Prefix", dynamicShop.getConfig().get("Prefix"));
@@ -202,6 +203,11 @@ public final class ConfigUtil {
         if(numPlayer <= 3) numPlayer = 3;
         if(numPlayer > 100) numPlayer = 100;
         dynamicShop.getConfig().set("NumberOfPlayer",numPlayer);
+
+        dynamicShop.getConfig().set("SaveLogs", dynamicShop.getConfig().getBoolean("SaveLogs"));
+        dynamicShop.getConfig().set("CullLogs", dynamicShop.getConfig().getBoolean("CullLogs"));
+        dynamicShop.getConfig().set("LogCullAgeMinutes", dynamicShop.getConfig().getInt("LogCullAgeMinutes"));
+        dynamicShop.getConfig().set("LogCullTimeMinutes", dynamicShop.getConfig().getInt("LogCullTimeMinutes"));
 
         dynamicShop.getConfig().set("OnClickCloseButton_OpenStartPage", dynamicShop.getConfig().getBoolean("OnClickCloseButton_OpenStartPage"));
         dynamicShop.getConfig().set("OpenStartPageInsteadOfDefaultShop", dynamicShop.getConfig().getBoolean("OpenStartPageInsteadOfDefaultShop"));
