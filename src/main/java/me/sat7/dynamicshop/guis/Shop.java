@@ -81,12 +81,15 @@ public class Shop {
         }
         // 권한
         String perm = ShopUtil.ccShop.get().getString(shopName+".Options.permission");
-        if(perm.length()==0) perm = "§7(NULL)";
-        infoLore.add(LangUtil.ccLang.get().getString("PERMISSION") + ":");
-        infoLore.add("§7 - "+perm);
+        if(!(perm.length()==0)) {
+            infoLore.add(LangUtil.ccLang.get().getString("PERMISSION") + ":");
+            infoLore.add("§7 - "+perm);
+        }
         // 세금
-        infoLore.add(LangUtil.ccLang.get().getString("TAX.SALESTAX")+":");
-        infoLore.add("§7 - "+ Calc.getTaxRate(shopName) + "%");
+        if(DynamicShop.plugin.getConfig().getBoolean("ShowTax")) {
+            infoLore.add(LangUtil.ccLang.get().getString("TAX.SALESTAX")+":");
+            infoLore.add("§7 - "+ Calc.getTaxRate(shopName) + "%");
+        }
         // 플래그
         if(ShopUtil.ccShop.get().contains(shopName+".Options.flag") && ShopUtil.ccShop.get().getConfigurationSection(shopName+".Options.flag").getKeys(false).size() > 0)
         {
@@ -171,13 +174,32 @@ public class Shop {
 
                     double buyPrice = Calc.getCurrentPrice(shopName, s, true);
                     double sellPrice = Calc.getCurrentPrice(shopName, s, false);
+                    /*  */
+                    double buyPrice2 = ShopUtil.ccShop.get().getDouble(shopName+"." + s + ".value");
+                    double priceSave1 = ((buyPrice/buyPrice2)*100)-100;
+                    double priceSave2 = 100-((buyPrice/buyPrice2)*100);
+                    
+                    String valueChangedRange = null;
+                	String valueChangedRange2 = null;
+                	
+                    if(buyPrice - buyPrice2 > 0) {
+                    	valueChangedRange = "§a⬆ " + Math.round(priceSave1*100d)/100d + "%";
+                    	valueChangedRange2 = "§a⬆ " + Math.round(priceSave1*100d)/100d + "%";
+                    } else if (buyPrice - buyPrice2 < 0) {
+                    	valueChangedRange = "§c⬇ " + Math.round(priceSave2*100d)/100d + "%";
+                    	valueChangedRange2 = "§c⬇ " + Math.round(priceSave2*100d)/100d + "%";
+                    } else if (buyPrice == buyPrice2) {
+                    	valueChangedRange = "";
+                    	valueChangedRange2 = "";
+                    }
+
                     if(buyPrice == sellPrice) sellPrice = buyPrice - ((buyPrice / 100) * Calc.getTaxRate(shopName));
 
                     String tradeType = "default";
                     if(ShopUtil.ccShop.get().contains(shopName+"."+s+".tradeType")) tradeType = ShopUtil.ccShop.get().getString(shopName+"."+s+".tradeType");
-                    if(!tradeType.equalsIgnoreCase("SellOnly")) lore.add(LangUtil.ccLang.get().getString("PRICE") + df.format(buyPrice));
-                    if(!tradeType.equalsIgnoreCase("BuyOnly")) lore.add(LangUtil.ccLang.get().getString("SELLPRICE") + df.format(sellPrice));
-
+                    if(!tradeType.equalsIgnoreCase("SellOnly")) lore.add(LangUtil.ccLang.get().getString("PRICE") + df.format(buyPrice) + " " + valueChangedRange);
+                    if(!tradeType.equalsIgnoreCase("BuyOnly")) lore.add(LangUtil.ccLang.get().getString("SELLPRICE") + df.format(sellPrice) + " " + valueChangedRange2);
+                    /* */
                     if(ShopUtil.ccShop.get().getInt(shopName+"." + s + ".stock") <= 0 || ShopUtil.ccShop.get().getInt(shopName+"." + s + ".median") <= 0)
                     {
                         if(!ShopUtil.ccShop.get().getBoolean(shopName+".Options.hidePricingType"))

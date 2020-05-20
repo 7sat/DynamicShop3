@@ -51,7 +51,7 @@ public class ItemPalette {
             Material[] allMat = Material.values();
             for (Material m: allMat)
             {
-                if(m.name().contains(search.toUpperCase())) paletteList.add(m);
+            	if(m.name().contains(search.toUpperCase())) paletteList.add(m);
             }
         }
         else
