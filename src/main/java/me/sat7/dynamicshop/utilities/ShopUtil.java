@@ -384,14 +384,7 @@ public final class ShopUtil {
         if(i.getSize() == 54 && i.getItem(53) != null && i.getItem(53).getType().name().contains("SIGN"))
         {
             String temp = ChatColor.stripColor(i.getItem(53).getItemMeta().getDisplayName());
-            if(temp.length() > 0 && ccShop.get().contains(temp))
-            {
-                return true;
-            }
-            else
-            {
-                return false;
-            }
+            return temp.length() > 0 && ccShop.get().contains(temp);
         }
         else
         {
