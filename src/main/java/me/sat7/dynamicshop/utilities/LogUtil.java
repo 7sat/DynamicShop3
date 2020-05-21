@@ -1,9 +1,7 @@
 package me.sat7.dynamicshop.utilities;
 
 import java.io.File;
-import java.nio.file.attribute.FileTime;
 import java.text.SimpleDateFormat;
-import java.util.logging.Level;
 
 import me.sat7.dynamicshop.DynamicShop;
 import me.sat7.dynamicshop.constants.Constants;

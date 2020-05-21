@@ -21,11 +21,7 @@ public final class ConfigUtil {
 
     public static void startTaskTimer(DynamicShop dynamicShop)
     {
-        randomStocktask = Bukkit.getScheduler().runTaskTimer(DynamicShop.plugin, () -> {
-
-            randomChange(new Random());
-
-        }, 500, 500);
+        randomStocktask = Bukkit.getScheduler().runTaskTimer(DynamicShop.plugin, () -> randomChange(new Random()), 500, 500);
     }
 
     private static void randomChange(Random generator)

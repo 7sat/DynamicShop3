@@ -38,8 +38,6 @@ public class OnSignClick  implements Listener
 
         if(e.getLine(0).equalsIgnoreCase("[dshop]")|| e.getLine(0).equalsIgnoreCase("[ds]")||e.getLine(0).equalsIgnoreCase("[dynamicshop]"))
         {
-            String shopname = e.getLine(1);
-
             int x = e.getBlock().getX();
             int y = e.getBlock().getY();
             int z = e.getBlock().getZ();

@@ -339,7 +339,6 @@ public class OnClick implements Listener {
                     else
                     {
                         int idx = e.getSlot() + (45 * (curPage - 1));
-                        String mat = ShopUtil.ccShop.get().getString(shopName+"."+idx+".mat");
 
                         // 거래화면 열기
                         if(e.isLeftClick())
@@ -892,7 +891,6 @@ public class OnClick implements Listener {
                         }
 
                         // 거래와 관련된 버튼들
-                        int amount = e.getCurrentItem().getAmount();
                         double priceSum = 0;
 
                         ItemStack tempIS = new ItemStack(e.getCurrentItem().getType(),e.getCurrentItem().getAmount());

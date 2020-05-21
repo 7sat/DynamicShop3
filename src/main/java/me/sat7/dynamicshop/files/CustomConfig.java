@@ -70,7 +70,6 @@ public class CustomConfig {
             return null;
         }
 
-        FileConfiguration tempCustomFile = YamlConfiguration.loadConfiguration(tempFile);
-        return tempCustomFile;
+        return YamlConfiguration.loadConfiguration(tempFile);
     }
 }

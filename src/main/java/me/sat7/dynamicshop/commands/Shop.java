@@ -81,12 +81,12 @@ public final class Shop {
 
                 String[] shopPos1 = shopConf.getString("pos1").split("_");
                 String[] shopPos2 = shopConf.getString("pos2").split("_");
-                int x1 = Integer.valueOf(shopPos1[0]);
-                int y1 = Integer.valueOf(shopPos1[1]);
-                int z1 = Integer.valueOf(shopPos1[2]);
-                int x2 = Integer.valueOf(shopPos2[0]);
-                int y2 = Integer.valueOf(shopPos2[1]);
-                int z2 = Integer.valueOf(shopPos2[2]);
+                int x1 = Integer.parseInt(shopPos1[0]);
+                int y1 = Integer.parseInt(shopPos1[1]);
+                int z1 = Integer.parseInt(shopPos1[2]);
+                int x2 = Integer.parseInt(shopPos2[0]);
+                int y2 = Integer.parseInt(shopPos2[1]);
+                int z2 = Integer.parseInt(shopPos2[2]);
 
                 if(!((x1 <= player.getLocation().getBlockX() && player.getLocation().getBlockX() <= x2)||
                         (x2 <= player.getLocation().getBlockX() && player.getLocation().getBlockX() <= x1))) outside = true;
