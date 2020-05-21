@@ -21,14 +21,8 @@ public class ItemPalette {
     private static ArrayList<Material> sortedMat = new ArrayList<>();
 
     // 파렛트 정렬용
-    public static Comparator<Material> sortMat = new Comparator<Material>() {
-
-        @Override
-        public int compare(Material m1, Material m2) {
-            return getMatName(m1).compareTo(
-                    getMatName(m2));
-        }
-    };
+    public static Comparator<Material> sortMat = (m1, m2) -> getMatName(m1).compareTo(
+            getMatName(m2));
 
     private static String getMatName(Material m2) {
         String name2 = m2.name();

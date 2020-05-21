@@ -104,8 +104,6 @@ public class OnChat implements Listener {
             }
             else if(s.equals("shopname"))
             {
-                ConfigurationSection btnSec = StartPage.ccStartPage.get().getConfigurationSection("Buttons");
-
                 if(!ShopUtil.ccShop.get().contains(e.getMessage()))
                 {
                     p.sendMessage(DynamicShop.dsPrefix + LangUtil.ccLang.get().getString("ERR.SHOP_NOT_FOUND"));
