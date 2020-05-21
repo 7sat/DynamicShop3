@@ -65,11 +65,9 @@ public final class Calc {
             value = ShopUtil.ccShop.get().getDouble(shopName+"." + idx + ".value");
         }
 
-        if(median <= 0 || tempStock <= 0)
-        {
+        if (median < 0 || tempStock < 0) {
             total = value * Math.abs(amount);
-        }
-        else {
+        } else {
             for (int i = 0; i < Math.abs(amount); i++) {
                 double temp = Math.max(median, 1) * value / Math.max(tempStock, 1);
                 double min = ShopUtil.ccShop.get().getDouble(shopName + "." + idx + ".valueMin");

@@ -1,6 +1,7 @@
 package me.sat7.dynamicshop.transactions;
 
 import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertTrue;
 
 import org.junit.Before;
 import org.junit.Test;
@@ -31,6 +32,16 @@ public class TransactionTests {
         ShopUtil.ccShop.get().set("default.COBBLESTONE.stock", 2);
         double amountBuy = Calc.calcTotalCost("default", "COBBLESTONE", 1);
         assertEquals(amountSell, amountBuy, 0.01);
+    }
+
+    @Test
+    public void staticMedianOrStockShouldCalcPrice() {
+        ShopUtil.ccShop.get().set("default.COBBLESTONE.stock", -1);
+        ShopUtil.ccShop.get().set("default.COBBLESTONE.median", -1);
+        double amountSell = Calc.calcTotalCost("default", "COBBLESTONE", -3);
+        assertEquals(30000, amountSell, 0.01);
+        double amountBuy = Calc.calcTotalCost("default", "COBBLESTONE", 3);
+        assertEquals(30000, amountSell, 0.01);
     }
 
 }
