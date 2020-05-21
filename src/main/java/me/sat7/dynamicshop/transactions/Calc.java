@@ -53,7 +53,7 @@ public final class Calc {
     {
         double total = 0;
         int median = ShopUtil.ccShop.get().getInt(shopName+"." + idx + ".median");
-        int tempS = ShopUtil.ccShop.get().getInt(shopName+"." + idx + ".stock");
+        int tempStock = ShopUtil.ccShop.get().getInt(shopName+"." + idx + ".stock");
 
         double value;
         if(amount < 0 && ShopUtil.ccShop.get().contains(shopName+"."+idx+".value2"))
@@ -65,38 +65,27 @@ public final class Calc {
             value = ShopUtil.ccShop.get().getDouble(shopName+"." + idx + ".value");
         }
 
-        if(median <= 0 || tempS <= 0)
-        {
-            total = value * Math.abs(amount);
-        }
-        else
-        {
-            for (int i = 0; i<Math.abs(amount); i++)
-            {
-                double temp = median * value / tempS;
-                double min = ShopUtil.ccShop.get().getDouble(shopName+"."+idx+".valueMin");
-                double max = ShopUtil.ccShop.get().getDouble(shopName+"."+idx+".valueMax");
+        for (int i = 0; i<Math.abs(amount); i++) {
+            double temp = Math.max(median, 1) * value / Math.max(tempStock, 1);
+            double min = ShopUtil.ccShop.get().getDouble(shopName+"."+idx+".valueMin");
+            double max = ShopUtil.ccShop.get().getDouble(shopName+"."+idx+".valueMax");
 
-                if(min != 0 && temp < min)
-                {
-                    temp = min;
-                }
-                if(max != 0 && temp > max)
-                {
-                    temp = max;
-                }
+            if (min != 0 && temp < min) {
+                temp = min;
+            }
+            if (max != 0 && temp > max) {
+                temp = max;
+            }
 
-                total += temp;
+            total += temp;
 
-                if(amount>0)
-                {
-                    tempS--;
-                    if(tempS < 0) break;
+            if (amount>0) {
+                tempStock--;
+                if(tempStock < 0) {
+                    break;
                 }
-                else
-                {
-                    tempS++;
-                }
+            } else {
+                tempStock++;
             }
         }
 

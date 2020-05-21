@@ -12,7 +12,7 @@ import java.io.IOException;
 
 public class CustomConfig {
     private File file; // java의 데이터타입
-    private FileConfiguration customFile; // 버킷의 데이터 타입
+    protected FileConfiguration customFile; // 버킷의 데이터 타입
 
     //Finds or generates the custom config file
     public void setup(String name, String folder){
