@@ -21,6 +21,10 @@ public class Optional implements CommandExecutor {
         if(sender instanceof Player)
         {
             Player player = (Player)sender;
+            if (!player.hasPermission(Constants.USE_SHOP_PERMISSION)) {
+                player.sendMessage(DynamicShop.dsPrefix+ LangUtil.ccLang.get().getString("ERR.PERMISSION"));
+                return true;
+            }
             if(player.getGameMode() == GameMode.CREATIVE  && !player.hasPermission(Constants.ADMIN_CREATIVE_PERMISSION))
             {
                 player.sendMessage(DynamicShop.dsPrefix+ LangUtil.ccLang.get().getString("ERR.CREATIVE"));
