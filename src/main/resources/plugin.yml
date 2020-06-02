@@ -11,3 +11,7 @@ commands:
     description: "Full GUI shop with dynamic prices"
     aliases: [ds]
   shop:
+permissions:
+  dshop.use:
+    description: Allows use of the /ds command
+    default: true
