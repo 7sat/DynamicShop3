@@ -90,7 +90,7 @@ public class OnChat implements Listener {
             {
                 try
                 {
-                    Material tempMat = Material.getMaterial(e.getMessage().toUpperCase());
+                    Material tempMat = Material.getMaterial(e.getMessage().replace("§f", "").toUpperCase());
                     StartPage.ccStartPage.get().set("Buttons." + temp[1] + ".icon",tempMat.name());
                 }
                 catch (Exception exception)
@@ -100,7 +100,7 @@ public class OnChat implements Listener {
             }
             else if(s.equals("btnAction"))
             {
-                StartPage.ccStartPage.get().set("Buttons." + temp[1] + ".action",e.getMessage());
+                StartPage.ccStartPage.get().set("Buttons." + temp[1] + ".action",e.getMessage().replace("§f", ""));
             }
             else if(s.equals("shopname"))
             {
