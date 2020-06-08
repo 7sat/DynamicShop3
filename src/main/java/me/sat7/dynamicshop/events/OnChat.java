@@ -7,6 +7,7 @@ import me.sat7.dynamicshop.utilities.LangUtil;
 import me.sat7.dynamicshop.utilities.ShopUtil;
 
 import org.bukkit.Bukkit;
+import org.bukkit.ChatColor;
 import org.bukkit.Material;
 import org.bukkit.configuration.ConfigurationSection;
 import org.bukkit.entity.Player;
@@ -90,7 +91,7 @@ public class OnChat implements Listener {
             {
                 try
                 {
-                    Material tempMat = Material.getMaterial(e.getMessage().toUpperCase());
+                    Material tempMat = Material.getMaterial(ChatColor.stripColor(e.getMessage()).toUpperCase());
                     StartPage.ccStartPage.get().set("Buttons." + temp[1] + ".icon",tempMat.name());
                 }
                 catch (Exception exception)
@@ -100,7 +101,7 @@ public class OnChat implements Listener {
             }
             else if(s.equals("btnAction"))
             {
-                StartPage.ccStartPage.get().set("Buttons." + temp[1] + ".action",e.getMessage());
+                StartPage.ccStartPage.get().set("Buttons." + temp[1] + ".action",ChatColor.stripColor(e.getMessage()));
             }
             else if(s.equals("shopname"))
             {
