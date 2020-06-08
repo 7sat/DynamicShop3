@@ -65,6 +65,7 @@ public final class TabCompleteUtil {
                     if(sender.hasPermission("dshop.admin.mergeshop")) temp.add("mergeshop");
                     if(sender.hasPermission("dshop.admin.renameshop")) temp.add("renameshop");
                     if(sender.hasPermission("dshop.admin.settax")) temp.add("settax");
+                    if(sender.hasPermission("dshop.admin.settax")) temp.add("settax temp");
                     if(sender.hasPermission("dshop.admin.setdefaultshop")) temp.add("setdefaultshop");
                     if(sender.hasPermission(Constants.DELETE_USER_PERMISSION)) temp.add("deleteOldUser");
                     if(sender.hasPermission("dshop.admin.convert")) temp.add("convert");

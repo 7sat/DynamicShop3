@@ -1,6 +1,7 @@
 package me.sat7.dynamicshop.transactions;
 
 import me.sat7.dynamicshop.DynamicShop;
+import me.sat7.dynamicshop.utilities.ConfigUtil;
 import me.sat7.dynamicshop.utilities.ShopUtil;
 
 public final class Calc {
@@ -112,7 +113,7 @@ public final class Calc {
         }
         else
         {
-            return DynamicShop.plugin.getConfig().getInt("SalesTax");
+            return ConfigUtil.getCurrentTax();
         }
     }
 }

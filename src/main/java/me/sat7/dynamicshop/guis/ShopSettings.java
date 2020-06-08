@@ -3,6 +3,7 @@ package me.sat7.dynamicshop.guis;
 import java.util.ArrayList;
 import java.util.Arrays;
 
+import me.sat7.dynamicshop.utilities.ConfigUtil;
 import org.bukkit.Bukkit;
 import org.bukkit.Material;
 import org.bukkit.configuration.ConfigurationSection;
@@ -179,7 +180,7 @@ public class ShopSettings {
         }
 
         // 세금
-        int globalTax = DynamicShop.plugin.getConfig().getInt("SalesTax");
+        int globalTax = ConfigUtil.getCurrentTax();
         if(ShopUtil.ccShop.get().contains(shopName+".Options.SalesTax"))
         {
             ItemStack taxToggleBtn =  ItemsUtil.createItemStack(Material.IRON_INGOT,null,

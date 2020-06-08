@@ -4,6 +4,7 @@ import java.text.DecimalFormat;
 import java.util.ArrayList;
 import java.util.Collections;
 
+import me.sat7.dynamicshop.utilities.ConfigUtil;
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
 import org.bukkit.Material;
@@ -154,8 +155,8 @@ public class ItemSettings {
                 }
                 else
                 {
-                    taxStr += DynamicShop.plugin.getConfig().getDouble("SalesTax") + "%";
-                    sellPrice = buyPrice - ((buyPrice / 100) * DynamicShop.plugin.getConfig().getDouble("SalesTax"));
+                    taxStr += ConfigUtil.getCurrentTax() + "%";
+                    sellPrice = buyPrice - ((buyPrice / 100) * ConfigUtil.getCurrentTax());
                 }
                 sellPrice = (Math.round(sellPrice*100)/100.0);
 
