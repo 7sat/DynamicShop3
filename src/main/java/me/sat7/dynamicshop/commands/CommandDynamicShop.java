@@ -55,6 +55,9 @@ public class CommandDynamicShop extends BaseCommand {
 
         LangUtil.setupLangFile(DynamicShop.plugin.getConfig().getString("Language"));
 
+        // Reload the tab completions in case the shops list changed
+        DynamicShop.plugin.getCommandHelper().register();
+
         sender.sendMessage(DynamicShop.dsPrefix + LangUtil.ccLang.get().getString("HELP.RELOADED"));
     }
 
