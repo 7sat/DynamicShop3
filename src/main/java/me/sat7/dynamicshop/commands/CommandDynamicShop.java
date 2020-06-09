@@ -497,6 +497,75 @@ public class CommandDynamicShop extends BaseCommand {
                 ItemsUtil.sendItemInfo(player, shopName, idx, "HELP.ITEM_INFO");
             }
         }
+
+        @Description("Edit all of a value")
+        @CommandCompletion("@dsShops stock|median|value|valueMin|valueMax @dsoperators @range:1000")
+        @Subcommand("editall")
+        @Syntax("<shopName> <dataType> <operator> <value>")
+        @CommandPermission("dshop.admin.shopedit")
+        public void onEditAll(CommandSender sender, @Values("@dsShops") String shopName, @Values("stock|median|value|valueMin|valueMax") String dataType, @Values("@dsoperators") String operator, double value) {
+            // 수정
+            for (String s : ShopUtil.ccShop.get().getConfigurationSection(shopName).getKeys(false)) {
+                try {
+                    int i = Integer.parseInt(s);
+                    if (!ShopUtil.ccShop.get().contains(shopName + "." + s + ".value")) {
+                        continue; //장식용임
+                    }
+                } catch (Exception e) {
+                    continue;
+                }
+
+                final double temp = ShopUtil.ccShop.get().getDouble(shopName + "." + s + "." + dataType);
+
+                if (operator.equalsIgnoreCase("=")) {
+                    ShopUtil.ccShop.get().set(shopName + "." + s + "." + dataType, value);
+                } else if (operator.equalsIgnoreCase("+")) {
+                    ShopUtil.ccShop.get().set(shopName + "." + s + "." + dataType, temp + value);
+                } else if (operator.equalsIgnoreCase("-")) {
+                    ShopUtil.ccShop.get().set(shopName + "." + s + "." + dataType, temp - value);
+                } else if (operator.equalsIgnoreCase("/")) {
+                    ShopUtil.ccShop.get().set(shopName + "." + s + "." + dataType, temp / value);
+                } else if (operator.equalsIgnoreCase("*")) {
+                    ShopUtil.ccShop.get().set(shopName + "." + s + "." + dataType, temp * value);
+                }
+
+                if (ShopUtil.ccShop.get().getDouble(shopName + "." + s + ".valueMin") < 0) {
+                    ShopUtil.ccShop.get().set(shopName + "." + s + ".valueMin", null);
+                }
+                if (ShopUtil.ccShop.get().getDouble(shopName + "." + s + ".valueMax") < 0) {
+                    ShopUtil.ccShop.get().set(shopName + "." + s + ".valueMax", null);
+                }
+            }
+            ShopUtil.ccShop.save();
+            sender.sendMessage(DynamicShop.dsPrefix + LangUtil.ccLang.get().getString("ITEM_UPDATED"));
+        }
+
+        @Description("Set permissions of a shop")
+        @CommandCompletion("@dsShops true|false|my.permission")
+        @Subcommand("permission")
+        @Syntax("<shopName> <newPermission>")
+        @CommandPermission("dshop.admin.shopedit")
+        public void onPermission(Player player, @Values("@dsShops") String shopName, @Optional String permission) {
+            if (permission == null) {
+                String s = ShopUtil.ccShop.get().getConfigurationSection(shopName).getConfigurationSection("Options").getString("permission");
+                if (s == null || s.length() == 0) {
+                    s = LangUtil.ccLang.get().getString("NULL(OPEN)");
+                }
+                player.sendMessage(DynamicShop.dsPrefix + s);
+            } else {
+                if (permission.equalsIgnoreCase("true")) {
+                    ShopUtil.ccShop.get().set(shopName + ".Options.permission", "dshop.user.shop." + shopName);
+                    player.sendMessage(DynamicShop.dsPrefix + LangUtil.ccLang.get().get("CHANGES_APPLIED") + "dshop.user.shop." + shopName);
+                } else if (permission.equalsIgnoreCase("false")) {
+                    ShopUtil.ccShop.get().set(shopName + ".Options.permission", "");
+                    player.sendMessage(DynamicShop.dsPrefix + LangUtil.ccLang.get().get("CHANGES_APPLIED") + LangUtil.ccLang.get().getString("NULL(OPEN)"));
+                } else {
+                    ShopUtil.ccShop.get().set(shopName + ".Options.permission", permission);
+                    player.sendMessage(DynamicShop.dsPrefix + LangUtil.ccLang.get().get("CHANGES_APPLIED") + permission);
+                }
+                ShopUtil.ccShop.save();
+            }
+        }
     }
 }
 

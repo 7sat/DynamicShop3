@@ -12,8 +12,6 @@ import org.bukkit.entity.Player;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
-import java.util.List;
-import java.util.stream.Collectors;
 import java.util.stream.IntStream;
 
 public class CommandHelper {
@@ -38,6 +36,8 @@ public class CommandHelper {
             return list;
         });
 
+        mgr.getCommandCompletions().registerAsyncCompletion("dsoperators", c -> Arrays.asList("=", "+", "-", "*", "/"));
+
         mgr.getCommandCompletions().registerAsyncCompletion("dsMax", c -> {
             ArrayList<String> list = new ArrayList<>(Collections.singletonList("-1"));
             IntStream.range(5, 120).forEach(i -> list.add(String.valueOf(i) + ".00"));
@@ -45,7 +45,7 @@ public class CommandHelper {
         });
 
         mgr.getCommandConditions().addCondition("creativeCheck", context -> {
-            if(context.getIssuer().isPlayer()) {
+            if (context.getIssuer().isPlayer()) {
                 Player p = context.getIssuer().getPlayer();
                 if (p.getGameMode() == GameMode.CREATIVE && !p.hasPermission(Constants.ADMIN_CREATIVE_PERMISSION)) {
                     throw new ConditionFailedException(LangUtil.ccLang.get().getString("ERR.CREATIVE"));
