@@ -1,5 +1,7 @@
 package me.sat7.dynamicshop;
 
+import co.aikar.commands.PaperCommandManager;
+import lombok.Getter;
 import me.sat7.dynamicshop.commands.*;
 import me.sat7.dynamicshop.constants.Constants;
 import me.sat7.dynamicshop.events.JoinQuit;
@@ -38,6 +40,8 @@ public final class DynamicShop extends JavaPlugin implements Listener {
     }
 
     public static DynamicShop plugin;
+    @Getter private PaperCommandManager commandManager;
+    @Getter private TabCompletions tabCompletions;
     public static ConsoleCommandSender console;
     public static String dsPrefix = "§3§l[dShop] §f";
 
@@ -111,13 +115,21 @@ public final class DynamicShop extends JavaPlugin implements Listener {
     }
 
     private void initCommands() {
+        commandManager = new PaperCommandManager(this);
+        commandManager.enableUnstableAPI("help");
+        commandManager.registerCommand(new CommandDynamicShop(this));
+        commandManager.registerCommand(new Shop());
+        tabCompletions = new TabCompletions(this);
+        tabCompletions.register();
+
+
         // 명령어 등록 (개별 클레스로 되어있는것들)
-        getCommand("DynamicShop").setExecutor(new Root());
-        getCommand("shop").setExecutor(new Optional());
+        //getCommand("DynamicShop").setExecutor(new CommandDynamicShop());
+        //getCommand("shop").setExecutor(new Optional());
 
         // 자동완성
-        getCommand("DynamicShop").setTabCompleter(this);
-        getCommand("shop").setTabCompleter(this);
+        //getCommand("DynamicShop").setTabCompleter(this);
+        //getCommand("shop").setTabCompleter(this);
     }
 
     private void registerEvents() {

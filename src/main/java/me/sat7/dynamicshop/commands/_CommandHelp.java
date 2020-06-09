@@ -5,8 +5,8 @@ import org.bukkit.entity.Player;
 import me.sat7.dynamicshop.DynamicShop;
 import me.sat7.dynamicshop.utilities.LangUtil;
 
-public final class CommandHelp {
-    private CommandHelp() {
+public final class _CommandHelp {
+    private _CommandHelp() {
 
     }
 
