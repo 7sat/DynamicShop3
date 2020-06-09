@@ -31,7 +31,10 @@ public final class Help {
             if(player.hasPermission("dshop.admin.mergeshop"))player.sendMessage("§e - mergeshop");
             if(player.hasPermission("dshop.admin.renameshop"))player.sendMessage("§e - renameshop");
             if(player.hasPermission("dshop.admin.setdefaultshop"))player.sendMessage("§e - setdefaultshop ");
-            if(player.hasPermission("dshop.admin.settax"))player.sendMessage("§e - settax: "+ LangUtil.ccLang.get().getString("HELP.SETTAX"));
+            if(player.hasPermission("dshop.admin.settax")) {
+                player.sendMessage("§e - settax: "+ LangUtil.ccLang.get().getString("HELP.SETTAX"));
+                player.sendMessage("§e - settax temp: "+ LangUtil.ccLang.get().getString("HELP.SETTAX_TEMP"));
+            }
             if(player.hasPermission(Constants.DELETE_USER_PERMISSION))player.sendMessage("§e - deleteOldUser: " + LangUtil.ccLang.get().getString("HELP.DELETE_OLD_USER"));
             if(player.hasPermission("dshop.admin.convert"))player.sendMessage("§e - convert: " + LangUtil.ccLang.get().getString("HELP.CONVERT"));
             if(player.hasPermission("dshop.admin.reload"))player.sendMessage("§e - reload: " + LangUtil.ccLang.get().getString("HELP.RELOAD"));
@@ -282,6 +285,9 @@ public final class Help {
         {
             player.sendMessage(DynamicShop.dsPrefix + LangUtil.ccLang.get().getString("HELP.TITLE").replace("{command}","settax"));
             player.sendMessage(" - " + LangUtil.ccLang.get().getString("HELP.USAGE") + ": /ds settax <value>");
+
+            player.sendMessage(DynamicShop.dsPrefix + LangUtil.ccLang.get().getString("HELP.TITLE").replace("{command}","settax temp"));
+            player.sendMessage(" - " + LangUtil.ccLang.get().getString("HELP.USAGE") + ": /ds settax temp <tax_value> <minutes_until_reset>");
 
             player.sendMessage("");
         }

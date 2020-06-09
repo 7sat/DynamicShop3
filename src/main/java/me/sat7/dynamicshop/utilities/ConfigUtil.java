@@ -2,6 +2,8 @@ package me.sat7.dynamicshop.utilities;
 
 import java.util.Random;
 
+import lombok.Getter;
+import lombok.Setter;
 import org.bukkit.Bukkit;
 import org.bukkit.configuration.ConfigurationSection;
 import org.bukkit.entity.Player;
@@ -14,12 +16,14 @@ import me.sat7.dynamicshop.constants.Constants;
 public final class ConfigUtil {
     private static int randomStockCount = 1;
     private static BukkitTask randomStocktask;
+    @Getter @Setter
+    private static int currentTax;
 
     private ConfigUtil() {
 
     }
 
-    public static void startTaskTimer(DynamicShop dynamicShop)
+    public static void startTaskTimer()
     {
         randomStocktask = Bukkit.getScheduler().runTaskTimer(DynamicShop.plugin, () -> randomChange(new Random()), 500, 500);
     }
@@ -173,6 +177,7 @@ public final class ConfigUtil {
         if(salesTax < 0) salesTax = 0;
         if(salesTax > 99) salesTax = 99;
         dynamicShop.getConfig().set("SalesTax",salesTax);
+        setCurrentTax((int) salesTax);
         dynamicShop.getConfig().set("ShowTax",dynamicShop.getConfig().getBoolean("ShowTax"));
 
         dynamicShop.getConfig().set("Language", dynamicShop.getConfig().get("Language"));
@@ -210,6 +215,10 @@ public final class ConfigUtil {
 
         dynamicShop.saveConfig();
 
-        startTaskTimer(dynamicShop);
+        startTaskTimer();
+    }
+
+    public static void resetTax() {
+        currentTax = DynamicShop.plugin.getConfig().getInt("SalesTax");
     }
 }

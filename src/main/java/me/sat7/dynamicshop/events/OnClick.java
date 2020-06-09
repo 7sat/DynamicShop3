@@ -7,11 +7,7 @@ import me.sat7.dynamicshop.jobshook.JobsHook;
 import me.sat7.dynamicshop.transactions.Calc;
 import me.sat7.dynamicshop.transactions.Buy;
 import me.sat7.dynamicshop.transactions.Sell;
-import me.sat7.dynamicshop.utilities.LangUtil;
-import me.sat7.dynamicshop.utilities.MathUtil;
-import me.sat7.dynamicshop.utilities.ShopUtil;
-import me.sat7.dynamicshop.utilities.SoundUtil;
-import me.sat7.dynamicshop.utilities.WorthUtil;
+import me.sat7.dynamicshop.utilities.*;
 
 import org.bukkit.*;
 import org.bukkit.configuration.ConfigurationSection;
@@ -1505,7 +1501,7 @@ public class OnClick implements Listener {
 
                     double value = shopConf.getDouble(sameItemIdx+".value");
 
-                    int tax = DynamicShop.plugin.getConfig().getInt("SalesTax");
+                    int tax = ConfigUtil.getCurrentTax();
                     if(shopConf.contains("Options.SalesTax"))
                     {
                         tax = shopConf.getInt("Options.SalesTax");
