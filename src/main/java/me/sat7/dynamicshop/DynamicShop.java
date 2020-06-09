@@ -41,7 +41,7 @@ public final class DynamicShop extends JavaPlugin implements Listener {
 
     public static DynamicShop plugin;
     @Getter private PaperCommandManager commandManager;
-    @Getter private TabCompletions tabCompletions;
+    @Getter private CommandHelper commandHelper;
     public static ConsoleCommandSender console;
     public static String dsPrefix = "§3§l[dShop] §f";
 
@@ -116,11 +116,12 @@ public final class DynamicShop extends JavaPlugin implements Listener {
 
     private void initCommands() {
         commandManager = new PaperCommandManager(this);
+        //Deprecated because snapshot
+        //Feature will not be removed
         commandManager.enableUnstableAPI("help");
         commandManager.registerCommand(new CommandDynamicShop(this));
-        commandManager.registerCommand(new Shop());
-        tabCompletions = new TabCompletions(this);
-        tabCompletions.register();
+        commandHelper = new CommandHelper(this);
+        commandHelper.register();
 
 
         // 명령어 등록 (개별 클레스로 되어있는것들)
