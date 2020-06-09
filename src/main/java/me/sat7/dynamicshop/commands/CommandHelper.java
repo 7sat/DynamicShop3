@@ -11,7 +11,10 @@ import org.bukkit.entity.Player;
 
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Collections;
+import java.util.List;
 import java.util.stream.Collectors;
+import java.util.stream.IntStream;
 
 public class CommandHelper {
     private final DynamicShop plugin;
@@ -28,6 +31,18 @@ public class CommandHelper {
                 "300", "360", "420", "480"));
 
         mgr.getCommandCompletions().registerAsyncCompletion("dsShops", c -> new ArrayList<>(ShopUtil.ccShop.get().getKeys(false)));
+
+        mgr.getCommandCompletions().registerAsyncCompletion("dsMin", c -> {
+            ArrayList<String> list = new ArrayList<>(Collections.singletonList("0.01"));
+            IntStream.range(0, 100).forEach(i -> list.add(String.valueOf(i) + ".00"));
+            return list;
+        });
+
+        mgr.getCommandCompletions().registerAsyncCompletion("dsMax", c -> {
+            ArrayList<String> list = new ArrayList<>(Collections.singletonList("-1"));
+            IntStream.range(5, 120).forEach(i -> list.add(String.valueOf(i) + ".00"));
+            return list;
+        });
 
         mgr.getCommandConditions().addCondition("creativeCheck", context -> {
             if(context.getIssuer().isPlayer()) {

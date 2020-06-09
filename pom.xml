@@ -69,7 +69,7 @@
                         </relocation>
                         <relocation>
                             <pattern>co.aikar.locales</pattern>
-                            <shadedPattern>me.sat7.dynamicshop.lib.locales</shadedPattern>
+                            <shadedPattern>me.sat7.dynamicshop.lib.acflocales</shadedPattern>
                         </relocation>
                     </relocations>
                 </configuration>

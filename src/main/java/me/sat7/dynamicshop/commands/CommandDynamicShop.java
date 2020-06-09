@@ -10,11 +10,11 @@ import me.sat7.dynamicshop.constants.Constants;
 import me.sat7.dynamicshop.guis.StartPage;
 import me.sat7.dynamicshop.utilities.*;
 import org.bukkit.Bukkit;
-import org.bukkit.GameMode;
-import org.bukkit.command.Command;
+import org.bukkit.Material;
 import org.bukkit.command.CommandSender;
 import org.bukkit.configuration.ConfigurationSection;
 import org.bukkit.entity.Player;
+import org.bukkit.inventory.ItemStack;
 
 import java.util.UUID;
 
@@ -342,7 +342,7 @@ public class CommandDynamicShop extends BaseCommand {
         }
 
         @Description("Edit items in a shop")
-        @CommandCompletion("@dsShops @range:100 @range:1000 @range:1000 @range:1000 @range:1000 @range:1000")
+        @CommandCompletion("@dsShops @range:100 @range:1000 @dsMin @dsMax @range:1000 @range:1000")
         @Subcommand("edit")
         @Syntax("<shopName> <item> <price> <minPrice> <maxPrice> <medianStock> <stock>")
         @CommandPermission("dshop.admin.shopedit")
@@ -377,6 +377,125 @@ public class CommandDynamicShop extends BaseCommand {
             ShopUtil.editShopItem(shopName, item, price, price, minPrice, maxPrice, medianStock, stock);
             player.sendMessage(DynamicShop.dsPrefix + LangUtil.ccLang.get().getString("ITEM_UPDATED"));
             ItemsUtil.sendItemInfo(player, shopName, item, "HELP.ITEM_INFO");
+        }
+
+        @Description("Add items to a shop")
+        @CommandCompletion("@dsShops * @range:1000 @dsMin @dsMax @range:1000 @range:1000")
+        @Subcommand("add")
+        @Syntax("<shopName> <material> <price> <minPrice> <maxPrice> <medianStock> <stock>")
+        @CommandPermission("dshop.admin.shopedit")
+        public void onAdd(Player player, @Values("@dsShops") String shopName, Material material, double price, double minPrice, double maxPrice, int medianStock, int stock) {
+            // 유효성 검사
+            if (maxPrice > 0 && minPrice > 0 && minPrice >= maxPrice) {
+                player.sendMessage(DynamicShop.dsPrefix + LangUtil.ccLang.get().getString("ERR.MAX_LOWER_THAN_MIN"));
+                return;
+            }
+            if (maxPrice > 0 && price > maxPrice) {
+                player.sendMessage(DynamicShop.dsPrefix + LangUtil.ccLang.get().getString("ERR.DEFAULT_VALUE_OUT_OF_RANGE"));
+                return;
+            }
+            if (minPrice > 0 && price < minPrice) {
+                player.sendMessage(DynamicShop.dsPrefix + LangUtil.ccLang.get().getString("ERR.DEFAULT_VALUE_OUT_OF_RANGE"));
+                return;
+            }
+
+            if (price < 0.01 || medianStock == 0 || stock == 0) {
+                player.sendMessage(DynamicShop.dsPrefix + LangUtil.ccLang.get().getString("ERR.VALUE_ZERO"));
+                return;
+            }
+
+            // 금지품목
+            if (Material.AIR.equals(material)) {
+                player.sendMessage(DynamicShop.dsPrefix + LangUtil.ccLang.get().getString("ERR.ITEM_FORBIDDEN"));
+                return;
+            }
+
+            // 상점에서 같은 아이탬 찾기
+            ItemStack itemStack;
+            try {
+                itemStack = new ItemStack(material);
+            } catch (Exception e) {
+                player.sendMessage(DynamicShop.dsPrefix + LangUtil.ccLang.get().getString("ERR.WRONG_ITEMNAME"));
+                return;
+            }
+
+            int idx = ShopUtil.findItemFromShop(shopName, itemStack);
+            // 상점에 새 아이탬 추가
+            if (idx == -1) {
+                idx = ShopUtil.findEmptyShopSlot(shopName);
+                if (idx == -1) {
+                    player.sendMessage(DynamicShop.dsPrefix + LangUtil.ccLang.get().getString("ERR.NO_EMPTY_SLOT"));
+                    return;
+                } else if (ShopUtil.addItemToShop(shopName, idx, itemStack, price, price, minPrice, maxPrice, medianStock, stock)) // 아이탬 추가
+                {
+                    player.sendMessage(DynamicShop.dsPrefix + LangUtil.ccLang.get().getString("ITEM_ADDED"));
+                    ItemsUtil.sendItemInfo(player, shopName, idx, "HELP.ITEM_INFO");
+                }
+            }
+            // 기존 아이탬 수정
+            else {
+                ShopUtil.editShopItem(shopName, idx, price, price, minPrice, maxPrice, medianStock, stock);
+                player.sendMessage(DynamicShop.dsPrefix + LangUtil.ccLang.get().getString("ITEM_UPDATED"));
+                ItemsUtil.sendItemInfo(player, shopName, idx, "HELP.ITEM_INFO");
+            }
+        }
+
+        @Description("Add hand item to a shop")
+        @CommandCompletion("@dsShops @range:1000 @dsMin @dsMax @range:1000 @range:1000")
+        @Subcommand("addhand")
+        @Syntax("<shopName> <price> <minPrice> <maxPrice> <medianStock> <stock>")
+        @CommandPermission("dshop.admin.shopedit")
+        public void onAddHand(Player player, @Values("@dsShops") String shopName, double price, double minPrice, double maxPrice, int medianStock, int stock) {
+            // 유효성 검사
+            if (maxPrice > 0 && minPrice > 0 && minPrice >= maxPrice) {
+                player.sendMessage(DynamicShop.dsPrefix + LangUtil.ccLang.get().getString("ERR.MAX_LOWER_THAN_MIN"));
+                return;
+            }
+            if (maxPrice > 0 && price > maxPrice) {
+                player.sendMessage(DynamicShop.dsPrefix + LangUtil.ccLang.get().getString("ERR.DEFAULT_VALUE_OUT_OF_RANGE"));
+                return;
+            }
+            if (minPrice > 0 && price < minPrice) {
+                player.sendMessage(DynamicShop.dsPrefix + LangUtil.ccLang.get().getString("ERR.DEFAULT_VALUE_OUT_OF_RANGE"));
+                return;
+            }
+            if (price < 0.01 || medianStock == 0 || stock == 0) {
+                player.sendMessage(DynamicShop.dsPrefix + LangUtil.ccLang.get().getString("ERR.VALUE_ZERO"));
+                return;
+            }
+
+            // 손에 뭔가 들고있는지 확인
+            if (player.getInventory().getItemInMainHand() == null || Material.AIR.equals(player.getInventory().getItemInMainHand().getType())) {
+                player.sendMessage(DynamicShop.dsPrefix + LangUtil.ccLang.get().getString("ERR.HAND_EMPTY"));
+                return;
+            }
+
+            // 금지품목
+            if (Material.AIR.equals(Material.getMaterial(player.getInventory().getItemInMainHand().getType().toString()))) {
+                player.sendMessage(DynamicShop.dsPrefix + LangUtil.ccLang.get().getString("ERR.ITEM_FORBIDDEN"));
+                return;
+            }
+
+            // 상점에서 같은 아이탬 찾기
+            int idx = ShopUtil.findItemFromShop(shopName, player.getInventory().getItemInMainHand());
+            // 상점에 새 아이탬 추가
+            if (idx == -1) {
+                idx = ShopUtil.findEmptyShopSlot(shopName);
+                if (idx == -1) {
+                    player.sendMessage(DynamicShop.dsPrefix + LangUtil.ccLang.get().getString("ERR.NO_EMPTY_SLOT"));
+                    return;
+                } else if (ShopUtil.addItemToShop(shopName, idx, player.getInventory().getItemInMainHand(), price, price, minPrice, maxPrice, medianStock, stock)) // 아이탬 추가
+                {
+                    player.sendMessage(DynamicShop.dsPrefix + LangUtil.ccLang.get().getString("ITEM_ADDED"));
+                    ItemsUtil.sendItemInfo(player, shopName, idx, "HELP.ITEM_INFO");
+                }
+            }
+            // 기존 아이탬 수정
+            else {
+                ShopUtil.editShopItem(shopName, idx, price, price, minPrice, maxPrice, medianStock, stock);
+                player.sendMessage(DynamicShop.dsPrefix + LangUtil.ccLang.get().getString("ITEM_UPDATED"));
+                ItemsUtil.sendItemInfo(player, shopName, idx, "HELP.ITEM_INFO");
+            }
         }
     }
 }
