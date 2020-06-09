@@ -15,16 +15,16 @@ import org.bukkit.command.CommandSender;
 import org.bukkit.configuration.ConfigurationSection;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
+import org.bukkit.scheduler.BukkitRunnable;
 
 import java.util.UUID;
 
 @CommandPermission(Constants.USE_SHOP_PERMISSION)
 @CommandAlias("dynamicshop|dshop|ds")
 public class CommandDynamicShop extends BaseCommand {
-    private final DynamicShop plugin;
+    private static BukkitRunnable resetTaxTask = null;
 
-    public CommandDynamicShop(DynamicShop ds) {
-        this.plugin = ds;
+    public CommandDynamicShop() {
     }
 
     @Default
@@ -95,7 +95,19 @@ public class CommandDynamicShop extends BaseCommand {
             }
 
             ConfigUtil.setCurrentTax(newValue);
-            Bukkit.getScheduler().runTaskLater(DynamicShop.plugin, ConfigUtil::resetTax, 20L * 60L * tempTaxDurationMinutes);
+
+            class ResetTaxTask extends BukkitRunnable {
+                @Override
+                public void run() {
+                    ConfigUtil.resetTax();
+                }
+            }
+            if (resetTaxTask != null) {
+                resetTaxTask.cancel();
+                resetTaxTask = null;
+            }
+            resetTaxTask = new ResetTaxTask();
+            resetTaxTask.runTaskLater(DynamicShop.plugin, 20L * 60L * tempTaxDurationMinutes);
 
             sender.sendMessage(DynamicShop.dsPrefix + LangUtil.ccLang.get().getString("CHANGES_APPLIED") + newValue);
         }

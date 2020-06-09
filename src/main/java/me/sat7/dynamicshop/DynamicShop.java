@@ -119,18 +119,9 @@ public final class DynamicShop extends JavaPlugin implements Listener {
         //Deprecated because snapshot
         //Feature will not be removed
         commandManager.enableUnstableAPI("help");
-        commandManager.registerCommand(new CommandDynamicShop(this));
+        commandManager.registerCommand(new CommandDynamicShop());
         commandHelper = new CommandHelper(this);
         commandHelper.register();
-
-
-        // 명령어 등록 (개별 클레스로 되어있는것들)
-        //getCommand("DynamicShop").setExecutor(new CommandDynamicShop());
-        //getCommand("shop").setExecutor(new Optional());
-
-        // 자동완성
-        //getCommand("DynamicShop").setTabCompleter(this);
-        //getCommand("shop").setTabCompleter(this);
     }
 
     private void registerEvents() {
