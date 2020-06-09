@@ -1,13 +1,15 @@
 package me.sat7.dynamicshop.commands;
 
 import me.sat7.dynamicshop.utilities.ConfigUtil;
-import org.bukkit.Bukkit;
 import org.bukkit.entity.Player;
 
 import me.sat7.dynamicshop.DynamicShop;
 import me.sat7.dynamicshop.utilities.LangUtil;
+import org.bukkit.scheduler.BukkitRunnable;
 
 public final class SetTax {
+    private static BukkitRunnable resetTaxTask = null;
+
     private SetTax() {
 
     }
@@ -48,7 +50,20 @@ public final class SetTax {
                 if(tempTaxDurationMinutes <= 1) tempTaxDurationMinutes = 1;
 
                 ConfigUtil.setCurrentTax(newValue);
-                Bukkit.getScheduler().runTaskLater(DynamicShop.plugin, ConfigUtil::resetTax, 20L * 60L * tempTaxDurationMinutes);
+
+                class ResetTaxTask extends BukkitRunnable {
+                    @Override
+                    public void run() {
+                        ConfigUtil.resetTax();
+                    }
+                }
+
+                if (resetTaxTask != null) {
+                   resetTaxTask.cancel();
+                   resetTaxTask = null;
+                }
+                resetTaxTask = new ResetTaxTask();
+                resetTaxTask.runTaskLater(DynamicShop.plugin, 20L * 60L * tempTaxDurationMinutes);
 
                 player.sendMessage(DynamicShop.dsPrefix + LangUtil.ccLang.get().getString("CHANGES_APPLIED") + newValue);
                 return true;
