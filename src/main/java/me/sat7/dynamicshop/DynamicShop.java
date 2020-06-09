@@ -2,7 +2,8 @@ package me.sat7.dynamicshop;
 
 import co.aikar.commands.PaperCommandManager;
 import lombok.Getter;
-import me.sat7.dynamicshop.commands.*;
+import me.sat7.dynamicshop.commands.CommandDynamicShop;
+import me.sat7.dynamicshop.commands.CommandHelper;
 import me.sat7.dynamicshop.constants.Constants;
 import me.sat7.dynamicshop.events.JoinQuit;
 import me.sat7.dynamicshop.events.OnChat;
@@ -11,18 +12,10 @@ import me.sat7.dynamicshop.events.OnSignClick;
 import me.sat7.dynamicshop.files.CustomConfig;
 import me.sat7.dynamicshop.guis.StartPage;
 import me.sat7.dynamicshop.jobshook.JobsHook;
-import me.sat7.dynamicshop.utilities.ConfigUtil;
-import me.sat7.dynamicshop.utilities.LangUtil;
-import me.sat7.dynamicshop.utilities.LogUtil;
-import me.sat7.dynamicshop.utilities.ShopUtil;
-import me.sat7.dynamicshop.utilities.SoundUtil;
-import me.sat7.dynamicshop.utilities.TabCompleteUtil;
-import me.sat7.dynamicshop.utilities.WorthUtil;
+import me.sat7.dynamicshop.utilities.*;
 import net.milkbowl.vault.economy.Economy;
 import org.bstats.bukkit.Metrics;
 import org.bukkit.Bukkit;
-import org.bukkit.command.Command;
-import org.bukkit.command.CommandSender;
 import org.bukkit.command.ConsoleCommandSender;
 import org.bukkit.event.Listener;
 import org.bukkit.plugin.RegisteredServiceProvider;
@@ -30,11 +23,11 @@ import org.bukkit.plugin.java.JavaPlugin;
 import org.bukkit.scheduler.BukkitRunnable;
 
 import java.io.File;
-import java.util.List;
 
 public final class DynamicShop extends JavaPlugin implements Listener {
 
     private static Economy econ = null; // 볼트에 물려있는 이코노미
+
     public static Economy getEconomy() {
         return econ;
     }
@@ -57,7 +50,7 @@ public final class DynamicShop extends JavaPlugin implements Listener {
         initCustomConfigs();
 
         // 볼트 이코노미 셋업
-        if (!setupEconomy() ) {
+        if (!setupEconomy()) {
             console.sendMessage(String.format("[%s] - Disabled due to no Vault dependency found!", getDescription().getName()));
             getServer().getPluginManager().disablePlugin(this);
             return;
@@ -96,9 +89,7 @@ public final class DynamicShop extends JavaPlugin implements Listener {
         if (getServer().getPluginManager().getPlugin("Jobs") == null) {
             console.sendMessage(Constants.DYNAMIC_SHOP_PREFIX + " Jobs Reborn Not Found");
             JobsHook.jobsRebornActive = false;
-        }
-        else
-        {
+        } else {
             console.sendMessage(Constants.DYNAMIC_SHOP_PREFIX + " Jobs Reborn Found");
             JobsHook.jobsRebornActive = true;
         }
@@ -125,11 +116,11 @@ public final class DynamicShop extends JavaPlugin implements Listener {
     }
 
     private void registerEvents() {
-        getServer().getPluginManager().registerEvents(this,this);
-        getServer().getPluginManager().registerEvents(new JoinQuit(),this);
-        getServer().getPluginManager().registerEvents(new OnClick(),this);
-        getServer().getPluginManager().registerEvents(new OnSignClick(),this);
-        getServer().getPluginManager().registerEvents(new OnChat(),this);
+        getServer().getPluginManager().registerEvents(this, this);
+        getServer().getPluginManager().registerEvents(new JoinQuit(), this);
+        getServer().getPluginManager().registerEvents(new OnClick(), this);
+        getServer().getPluginManager().registerEvents(new OnSignClick(), this);
+        getServer().getPluginManager().registerEvents(new OnChat(), this);
     }
 
     private void initCustomConfigs() {
@@ -159,24 +150,16 @@ public final class DynamicShop extends JavaPlugin implements Listener {
         LogUtil.setupLogFile();
     }
 
-    private void setupUserFile()
-    {
-        ccUser.setup("User",null);
+    private void setupUserFile() {
+        ccUser.setup("User", null);
         ccUser.get().options().copyDefaults(true);
         ccUser.save();
     }
 
-    private void setupSignFile()
-    {
-        ccSign.setup("Sign",null);
+    private void setupSignFile() {
+        ccSign.setup("Sign", null);
         ccSign.get().options().copyDefaults(true);
         ccSign.save();
-    }
-
-    // 명령어 자동완성
-    @Override
-    public List<String> onTabComplete(CommandSender sender, Command cmd, String commandLabel, String[] args) {
-        return TabCompleteUtil.onTabCompleteBody(this, sender, cmd, commandLabel, args);
     }
 
     // 볼트 이코노미 초기화

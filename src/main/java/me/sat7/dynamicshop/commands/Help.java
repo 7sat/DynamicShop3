@@ -10,12 +10,18 @@ import me.sat7.dynamicshop.utilities.ItemsUtil;
 import me.sat7.dynamicshop.utilities.LangUtil;
 import me.sat7.dynamicshop.utilities.ShopUtil;
 
+/**
+ * This class is no longer used, I am keeping it here for reference when setting up ACF locales
+ */
+@Deprecated
 public final class Help {
+    @Deprecated
     private Help() {
 
     }
 
     // 명령어 도움말 표시
+    @Deprecated
     public static void showHelp(String helpcode, Player player, String[] args)
     {
         if(!DynamicShop.ccUser.get().getBoolean(player.getUniqueId() + ".cmdHelp")) return;

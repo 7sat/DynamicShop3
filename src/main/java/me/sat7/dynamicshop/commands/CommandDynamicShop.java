@@ -2,13 +2,17 @@ package me.sat7.dynamicshop.commands;
 
 import co.aikar.commands.BaseCommand;
 import co.aikar.commands.CommandHelp;
+import co.aikar.commands.InvalidCommandArgument;
 import co.aikar.commands.annotation.Optional;
 import co.aikar.commands.annotation.*;
 import me.sat7.dynamicshop.DynaShopAPI;
 import me.sat7.dynamicshop.DynamicShop;
 import me.sat7.dynamicshop.constants.Constants;
 import me.sat7.dynamicshop.guis.StartPage;
+import me.sat7.dynamicshop.jobshook.JobsHook;
 import me.sat7.dynamicshop.utilities.*;
+import net.milkbowl.vault.economy.Economy;
+import net.milkbowl.vault.economy.EconomyResponse;
 import org.bukkit.Bukkit;
 import org.bukkit.Material;
 import org.bukkit.command.CommandSender;
@@ -238,126 +242,126 @@ public class CommandDynamicShop extends BaseCommand {
 
     @Subcommand("shop")
     @Conditions("creativeCheck")
-    public class ShopCommand extends BaseCommand {
-        @Description("Open the Shop menu")
-        @CommandCompletion("@dsShops")
-        @Syntax("<shop>")
-        @Default
-        @CommandAlias("shop")
-        public void onShop(Player player, @Values("@dsShops") @Optional String shop) {
-            // user.yml 에 player가 없으면 재생성 시도. 실패시 리턴.
-            if (!DynaShopAPI.recreateUserData(player)) {
-                player.sendMessage(DynamicShop.dsPrefix + LangUtil.ccLang.get().getString("ERR.NO_USER_ID"));
-                return;
-            }
-
-            String shopName;
-
-            if (shop == null) {
-                if (DynamicShop.plugin.getConfig().getBoolean("OpenStartPageInsteadOfDefaultShop")) {
-                    DynamicShop.ccUser.get().set(player.getUniqueId() + ".interactItem", "");
-                    DynaShopAPI.openStartPage(player);
-                    return;
-                }
-
-                shopName = DynamicShop.plugin.getConfig().getString("DefaultShopName");
-            } else {
-                shopName = shop;
-            }
-
-            if (!ShopUtil.ccShop.get().contains(shopName)) {
-                player.sendMessage(DynamicShop.dsPrefix + LangUtil.ccLang.get().getString("ERR.SHOP_NOT_FOUND"));
-                return;
-            }
-
-            //권한 확인
-            String s = ShopUtil.ccShop.get().getString(shopName + ".Options.permission");
-            if (s != null && s.length() > 0) {
-                if (!player.hasPermission(s) && !player.hasPermission(s + ".buy") && !player.hasPermission(s + ".sell")) {
-                    player.sendMessage(DynamicShop.dsPrefix + LangUtil.ccLang.get().getString("ERR.NO_PERMISSION"));
-                    return;
-                }
-            }
-
-            // 플래그 확인
-            ConfigurationSection shopConf = ShopUtil.ccShop.get().getConfigurationSection(shopName + ".Options");
-            if (shopConf.contains("flag.signshop")) {
-                if (!player.hasPermission(Constants.REMOTE_ACCESS_PERMISSION)) {
-                    player.sendMessage(DynamicShop.dsPrefix + LangUtil.ccLang.get().getString("ERR.SIGNSHOP_REMOTE_ACCESS"));
-                    return;
-                }
-            }
-
-            if (shopConf.contains("flag.localshop") && !shopConf.contains("flag.deliverycharge") && shopConf.contains("world") && shopConf.contains("pos1") && shopConf.contains("pos2")) {
-                boolean outside = false;
-                if (!player.getWorld().getName().equals(shopConf.getString("world"))) {
-                    outside = true;
-                }
-
-                String[] shopPos1 = shopConf.getString("pos1").split("_");
-                String[] shopPos2 = shopConf.getString("pos2").split("_");
-                int x1 = Integer.parseInt(shopPos1[0]);
-                int y1 = Integer.parseInt(shopPos1[1]);
-                int z1 = Integer.parseInt(shopPos1[2]);
-                int x2 = Integer.parseInt(shopPos2[0]);
-                int y2 = Integer.parseInt(shopPos2[1]);
-                int z2 = Integer.parseInt(shopPos2[2]);
-
-                if (!((x1 <= player.getLocation().getBlockX() && player.getLocation().getBlockX() <= x2) ||
-                        (x2 <= player.getLocation().getBlockX() && player.getLocation().getBlockX() <= x1))) {
-                    outside = true;
-                }
-                if (!((y1 <= player.getLocation().getBlockY() && player.getLocation().getBlockY() <= y2) ||
-                        (y2 <= player.getLocation().getBlockY() && player.getLocation().getBlockY() <= y1))) {
-                    outside = true;
-                }
-                if (!((z1 <= player.getLocation().getBlockZ() && player.getLocation().getBlockZ() <= z2) ||
-                        (z2 <= player.getLocation().getBlockZ() && player.getLocation().getBlockZ() <= z1))) {
-                    outside = true;
-                }
-
-                if (outside && !player.hasPermission(Constants.REMOTE_ACCESS_PERMISSION)) {
-                    player.sendMessage(DynamicShop.dsPrefix + LangUtil.ccLang.get().getString("ERR.LOCALSHOP_REMOTE_ACCESS"));
-                    player.sendMessage(DynamicShop.dsPrefix + LangUtil.ccLang.get().getString("POSITION") + "X" + x1 + " Y" + y1 + " Z" + z1);
-                    return;
-                }
-            }
-            if (shopConf.contains("shophours") && !player.hasPermission("dshop.admin.shopedit")) {
-                int curTime = (int) (player.getWorld().getTime()) / 1000 + 6;
-                if (curTime > 24) {
-                    curTime -= 24;
-                }
-
-                String[] temp = shopConf.getString("shophours").split("~");
-
-                int open = Integer.parseInt(temp[0]);
-                int close = Integer.parseInt(temp[1]);
-
-                if (close > open) {
-                    if (!(open <= curTime && curTime < close)) {
-                        player.sendMessage(DynamicShop.dsPrefix + LangUtil.ccLang.get().getString("TIME.SHOP_IS_CLOSED").
-                                replace("{time}", open + "").replace("{curTime}", curTime + ""));
-                        return;
-                    }
-                } else {
-                    if (!(open <= curTime || curTime < close)) {
-                        player.sendMessage(DynamicShop.dsPrefix + LangUtil.ccLang.get().getString("TIME.SHOP_IS_CLOSED").
-                                replace("{time}", open + "").replace("{curTime}", curTime + ""));
-                        return;
-                    }
-                }
-            }
-
-            DynamicShop.ccUser.get().set(player.getUniqueId() + ".tmpString", "");
-            DynamicShop.ccUser.get().set(player.getUniqueId() + ".interactItem", "");
-            DynaShopAPI.openShopGui(player, shopName, 1);
+    @Description("Open the Shop menu")
+    @CommandCompletion("@dsShops")
+    @Syntax("<shop>")
+    @CommandAlias("shop")
+    public void onShop(Player player, @Values("@dsShops") @Optional String shop) {
+        // user.yml 에 player가 없으면 재생성 시도. 실패시 리턴.
+        if (!DynaShopAPI.recreateUserData(player)) {
+            player.sendMessage(DynamicShop.dsPrefix + LangUtil.ccLang.get().getString("ERR.NO_USER_ID"));
+            return;
         }
 
+        String shopName;
+
+        if (shop == null) {
+            if (DynamicShop.plugin.getConfig().getBoolean("OpenStartPageInsteadOfDefaultShop")) {
+                DynamicShop.ccUser.get().set(player.getUniqueId() + ".interactItem", "");
+                DynaShopAPI.openStartPage(player);
+                return;
+            }
+
+            shopName = DynamicShop.plugin.getConfig().getString("DefaultShopName");
+        } else {
+            shopName = shop;
+        }
+
+        if (!ShopUtil.ccShop.get().contains(shopName)) {
+            player.sendMessage(DynamicShop.dsPrefix + LangUtil.ccLang.get().getString("ERR.SHOP_NOT_FOUND"));
+            return;
+        }
+
+        //권한 확인
+        String s = ShopUtil.ccShop.get().getString(shopName + ".Options.permission");
+        if (s != null && s.length() > 0) {
+            if (!player.hasPermission(s) && !player.hasPermission(s + ".buy") && !player.hasPermission(s + ".sell")) {
+                player.sendMessage(DynamicShop.dsPrefix + LangUtil.ccLang.get().getString("ERR.NO_PERMISSION"));
+                return;
+            }
+        }
+
+        // 플래그 확인
+        ConfigurationSection shopConf = ShopUtil.ccShop.get().getConfigurationSection(shopName + ".Options");
+        if (shopConf.contains("flag.signshop")) {
+            if (!player.hasPermission(Constants.REMOTE_ACCESS_PERMISSION)) {
+                player.sendMessage(DynamicShop.dsPrefix + LangUtil.ccLang.get().getString("ERR.SIGNSHOP_REMOTE_ACCESS"));
+                return;
+            }
+        }
+
+        if (shopConf.contains("flag.localshop") && !shopConf.contains("flag.deliverycharge") && shopConf.contains("world") && shopConf.contains("pos1") && shopConf.contains("pos2")) {
+            boolean outside = false;
+            if (!player.getWorld().getName().equals(shopConf.getString("world"))) {
+                outside = true;
+            }
+
+            String[] shopPos1 = shopConf.getString("pos1").split("_");
+            String[] shopPos2 = shopConf.getString("pos2").split("_");
+            int x1 = Integer.parseInt(shopPos1[0]);
+            int y1 = Integer.parseInt(shopPos1[1]);
+            int z1 = Integer.parseInt(shopPos1[2]);
+            int x2 = Integer.parseInt(shopPos2[0]);
+            int y2 = Integer.parseInt(shopPos2[1]);
+            int z2 = Integer.parseInt(shopPos2[2]);
+
+            if (!((x1 <= player.getLocation().getBlockX() && player.getLocation().getBlockX() <= x2) ||
+                    (x2 <= player.getLocation().getBlockX() && player.getLocation().getBlockX() <= x1))) {
+                outside = true;
+            }
+            if (!((y1 <= player.getLocation().getBlockY() && player.getLocation().getBlockY() <= y2) ||
+                    (y2 <= player.getLocation().getBlockY() && player.getLocation().getBlockY() <= y1))) {
+                outside = true;
+            }
+            if (!((z1 <= player.getLocation().getBlockZ() && player.getLocation().getBlockZ() <= z2) ||
+                    (z2 <= player.getLocation().getBlockZ() && player.getLocation().getBlockZ() <= z1))) {
+                outside = true;
+            }
+
+            if (outside && !player.hasPermission(Constants.REMOTE_ACCESS_PERMISSION)) {
+                player.sendMessage(DynamicShop.dsPrefix + LangUtil.ccLang.get().getString("ERR.LOCALSHOP_REMOTE_ACCESS"));
+                player.sendMessage(DynamicShop.dsPrefix + LangUtil.ccLang.get().getString("POSITION") + "X" + x1 + " Y" + y1 + " Z" + z1);
+                return;
+            }
+        }
+        if (shopConf.contains("shophours") && !player.hasPermission("dshop.admin.shopedit")) {
+            int curTime = (int) (player.getWorld().getTime()) / 1000 + 6;
+            if (curTime > 24) {
+                curTime -= 24;
+            }
+
+            String[] temp = shopConf.getString("shophours").split("~");
+
+            int open = Integer.parseInt(temp[0]);
+            int close = Integer.parseInt(temp[1]);
+
+            if (close > open) {
+                if (!(open <= curTime && curTime < close)) {
+                    player.sendMessage(DynamicShop.dsPrefix + LangUtil.ccLang.get().getString("TIME.SHOP_IS_CLOSED").
+                            replace("{time}", open + "").replace("{curTime}", curTime + ""));
+                    return;
+                }
+            } else {
+                if (!(open <= curTime || curTime < close)) {
+                    player.sendMessage(DynamicShop.dsPrefix + LangUtil.ccLang.get().getString("TIME.SHOP_IS_CLOSED").
+                            replace("{time}", open + "").replace("{curTime}", curTime + ""));
+                    return;
+                }
+            }
+        }
+
+        DynamicShop.ccUser.get().set(player.getUniqueId() + ".tmpString", "");
+        DynamicShop.ccUser.get().set(player.getUniqueId() + ".interactItem", "");
+        DynaShopAPI.openShopGui(player, shopName, 1);
+    }
+
+    @Subcommand("shopedit")
+    @CommandPermission("dshop.admin.shopedit")
+    public class ShopEditCommand extends BaseCommand {
         @Description("Edit items in a shop")
         @CommandCompletion("@dsShops @range:100 @range:1000 @dsMin @dsMax @range:1000 @range:1000")
         @Subcommand("edit")
         @Syntax("<shopName> <item> <price> <minPrice> <maxPrice> <medianStock> <stock>")
-        @CommandPermission("dshop.admin.shopedit")
         public void onEdit(Player player, @Values("@dsShops") String shopName, int item, double price, double minPrice, double maxPrice, int medianStock, int stock) {
             // 인자 확인
             if (!ShopUtil.ccShop.get().getConfigurationSection(shopName).contains(String.valueOf(item))) {
@@ -395,7 +399,6 @@ public class CommandDynamicShop extends BaseCommand {
         @CommandCompletion("@dsShops * @range:1000 @dsMin @dsMax @range:1000 @range:1000")
         @Subcommand("add")
         @Syntax("<shopName> <material> <price> <minPrice> <maxPrice> <medianStock> <stock>")
-        @CommandPermission("dshop.admin.shopedit")
         public void onAdd(Player player, @Values("@dsShops") String shopName, Material material, double price, double minPrice, double maxPrice, int medianStock, int stock) {
             // 유효성 검사
             if (maxPrice > 0 && minPrice > 0 && minPrice >= maxPrice) {
@@ -456,7 +459,6 @@ public class CommandDynamicShop extends BaseCommand {
         @CommandCompletion("@dsShops @range:1000 @dsMin @dsMax @range:1000 @range:1000")
         @Subcommand("addhand")
         @Syntax("<shopName> <price> <minPrice> <maxPrice> <medianStock> <stock>")
-        @CommandPermission("dshop.admin.shopedit")
         public void onAddHand(Player player, @Values("@dsShops") String shopName, double price, double minPrice, double maxPrice, int medianStock, int stock) {
             // 유효성 검사
             if (maxPrice > 0 && minPrice > 0 && minPrice >= maxPrice) {
@@ -514,7 +516,7 @@ public class CommandDynamicShop extends BaseCommand {
         @CommandCompletion("@dsShops stock|median|value|valueMin|valueMax @dsoperators @range:1000")
         @Subcommand("editall")
         @Syntax("<shopName> <dataType> <operator> <value>")
-        @CommandPermission("dshop.admin.shopedit")
+        @CommandPermission("dshop.admin.editall")
         public void onEditAll(CommandSender sender, @Values("@dsShops") String shopName, @Values("stock|median|value|valueMin|valueMax") String dataType, @Values("@dsoperators") String operator, double value) {
             // 수정
             for (String s : ShopUtil.ccShop.get().getConfigurationSection(shopName).getKeys(false)) {
@@ -556,27 +558,394 @@ public class CommandDynamicShop extends BaseCommand {
         @CommandCompletion("@dsShops true|false|my.permission")
         @Subcommand("permission")
         @Syntax("<shopName> <newPermission>")
-        @CommandPermission("dshop.admin.shopedit")
-        public void onPermission(Player player, @Values("@dsShops") String shopName, @Optional String permission) {
+        public void onPermission(CommandSender sender, @Values("@dsShops") String shopName, @Optional String permission) {
             if (permission == null) {
                 String s = ShopUtil.ccShop.get().getConfigurationSection(shopName).getConfigurationSection("Options").getString("permission");
                 if (s == null || s.length() == 0) {
                     s = LangUtil.ccLang.get().getString("NULL(OPEN)");
                 }
-                player.sendMessage(DynamicShop.dsPrefix + s);
+                sender.sendMessage(DynamicShop.dsPrefix + s);
             } else {
                 if (permission.equalsIgnoreCase("true")) {
                     ShopUtil.ccShop.get().set(shopName + ".Options.permission", "dshop.user.shop." + shopName);
-                    player.sendMessage(DynamicShop.dsPrefix + LangUtil.ccLang.get().get("CHANGES_APPLIED") + "dshop.user.shop." + shopName);
+                    sender.sendMessage(DynamicShop.dsPrefix + LangUtil.ccLang.get().get("CHANGES_APPLIED") + "dshop.user.shop." + shopName);
                 } else if (permission.equalsIgnoreCase("false")) {
                     ShopUtil.ccShop.get().set(shopName + ".Options.permission", "");
-                    player.sendMessage(DynamicShop.dsPrefix + LangUtil.ccLang.get().get("CHANGES_APPLIED") + LangUtil.ccLang.get().getString("NULL(OPEN)"));
+                    sender.sendMessage(DynamicShop.dsPrefix + LangUtil.ccLang.get().get("CHANGES_APPLIED") + LangUtil.ccLang.get().getString("NULL(OPEN)"));
                 } else {
                     ShopUtil.ccShop.get().set(shopName + ".Options.permission", permission);
-                    player.sendMessage(DynamicShop.dsPrefix + LangUtil.ccLang.get().get("CHANGES_APPLIED") + permission);
+                    sender.sendMessage(DynamicShop.dsPrefix + LangUtil.ccLang.get().get("CHANGES_APPLIED") + permission);
                 }
                 ShopUtil.ccShop.save();
             }
+        }
+
+        @Description("Set the max pages of a shop")
+        @CommandCompletion("@dsShops @range:20")
+        @Subcommand("maxpages")
+        @Syntax("<shopName> <newValue>")
+        public void onMaxPages(CommandSender sender, @Values("@dsShops") String shopName, int newValue) {
+            if (newValue <= 0) {
+                sender.sendMessage(DynamicShop.dsPrefix + LangUtil.ccLang.get().getString("ERR.VALUE_ZERO"));
+            } else {
+                ShopUtil.ccShop.get().set(shopName + ".Options.page", newValue);
+                sender.sendMessage(DynamicShop.dsPrefix + LangUtil.ccLang.get().get("CHANGES_APPLIED") + newValue);
+                ShopUtil.ccShop.save();
+            }
+        }
+
+        @Description("Set the flags of a shop")
+        @CommandCompletion("@dsShops signshop|localshop|deliverycharge|jobpoint set|unset")
+        @Subcommand("flag")
+        @Syntax("<shopName> <flag> <set|unset>")
+        public void onFlag(CommandSender sender, @Values("@dsShops") String shopName, @Values("signshop|localshop|deliverycharge|jobpoint") String flag, @Values("set|unset") String setunset) {
+            boolean set = setunset.equals("set");
+            if (set) {
+                if (flag.equalsIgnoreCase("signshop")) {
+                    ShopUtil.ccShop.get().set(shopName + ".Options.flag.localshop", null);
+                    ShopUtil.ccShop.get().set(shopName + ".Options.flag.deliverycharge", null);
+                }
+                if (flag.equalsIgnoreCase("localshop")) {
+                    ShopUtil.ccShop.get().set(shopName + ".Options.flag.signshop", null);
+                }
+                if (flag.equalsIgnoreCase("deliverycharge")) {
+                    ShopUtil.ccShop.get().set(shopName + ".Options.flag.localshop", "");
+                    ShopUtil.ccShop.get().set(shopName + ".Options.flag.signshop", null);
+                }
+
+                ShopUtil.ccShop.get().set(shopName + ".Options.flag." + flag.toLowerCase(), "");
+            } else {
+                if (flag.equalsIgnoreCase("localshop")) {
+                    ShopUtil.ccShop.get().set(shopName + ".Options.flag.deliverycharge", null);
+                }
+                ShopUtil.ccShop.get().set(shopName + ".Options.flag." + flag.toLowerCase(), null);
+            }
+            ShopUtil.ccShop.save();
+            sender.sendMessage(DynamicShop.dsPrefix + LangUtil.ccLang.get().get("CHANGES_APPLIED") + flag + ":" + setunset);
+        }
+
+        @Description("Set the position of a shop")
+        @CommandCompletion("@dsShops pos1|pos2|clear")
+        @Subcommand("position")
+        @Syntax("<shopName> <pos1|pos2|clear>")
+        public void onPosition(Player player, @Values("@dsShops") String shopName, @Values("pos1|pos2|clear") String value) {
+            if (value.equalsIgnoreCase("pos1")) {
+                ShopUtil.ccShop.get().set(shopName + ".Options.world", player.getWorld().getName());
+                ShopUtil.ccShop.get().set(shopName + ".Options.pos1", player.getLocation().getBlockX() + "_" + player.getLocation().getBlockY() + "_" + player.getLocation().getBlockZ());
+                ShopUtil.ccShop.save();
+                player.sendMessage(DynamicShop.dsPrefix + "p1");
+            } else if (value.equalsIgnoreCase("pos2")) {
+                ShopUtil.ccShop.get().set(shopName + ".Options.world", player.getWorld().getName());
+                ShopUtil.ccShop.get().set(shopName + ".Options.pos2", player.getLocation().getBlockX() + "_" + player.getLocation().getBlockY() + "_" + player.getLocation().getBlockZ());
+                ShopUtil.ccShop.save();
+                player.sendMessage(DynamicShop.dsPrefix + "p2");
+            } else if (value.equalsIgnoreCase("clear")) {
+                ShopUtil.ccShop.get().set(shopName + ".Options.world", null);
+                ShopUtil.ccShop.get().set(shopName + ".Options.pos1", null);
+                ShopUtil.ccShop.get().set(shopName + ".Options.pos2", null);
+                ShopUtil.ccShop.save();
+                player.sendMessage(DynamicShop.dsPrefix + "clear");
+            }
+        }
+
+        @Description("Set the hours of a shop")
+        @CommandCompletion("@dsShops @range:24 @range:24")
+        @Subcommand("shophours")
+        @Syntax("<shopName> <open> <close>")
+        public void onShopHours(CommandSender sender, @Values("@dsShops") String shopName, @Values("@range:24") int open, @Values("@range:24") int close) {
+            if (open > 24) {
+                open = 24;
+            } else if (open < 1) {
+                open = 1;
+            }
+            if (close > 24) {
+                close = 24;
+            } else if (close < 1) {
+                close = 1;
+            }
+
+            if (open == close) {
+                ShopUtil.ccShop.get().set(shopName + ".Options.shophours", null);
+                ShopUtil.ccShop.save();
+
+                sender.sendMessage(DynamicShop.dsPrefix + LangUtil.ccLang.get().get("CHANGES_APPLIED") + "Open 24 hours");
+            } else {
+                ShopUtil.ccShop.get().set(shopName + ".Options.shophours", open + "~" + close);
+                ShopUtil.ccShop.save();
+
+                sender.sendMessage(DynamicShop.dsPrefix + LangUtil.ccLang.get().get("CHANGES_APPLIED") + open + "~" + close);
+            }
+        }
+
+        @Description("Set the price fluctuation of a shop")
+        @CommandCompletion("@dsShops 30m|1h|2h|4h|off @range:50")
+        @Subcommand("fluctuation")
+        @Syntax("<shopName> <interval> <strength>")
+        public void onFluctuation(CommandSender sender, @Values("@dsShops") String shopName, @Values("30m|1h|2h|4h|off") String interval, @Optional Integer strength) {
+            if (strength == null) {
+                if (interval.equals("off")) {
+                    ShopUtil.ccShop.get().set(shopName + ".Options.fluctuation", null);
+                    ShopUtil.ccShop.save();
+                    sender.sendMessage(DynamicShop.dsPrefix + LangUtil.ccLang.get().get("CHANGES_APPLIED") + "Fluctuation Off");
+                } else {
+                    throw new InvalidCommandArgument(true);
+                }
+            } else {
+                ShopUtil.ccShop.get().set(shopName + ".Options.fluctuation.interval", interval);
+                ShopUtil.ccShop.get().set(shopName + ".Options.fluctuation.strength", strength);
+                ShopUtil.ccShop.save();
+
+                sender.sendMessage(DynamicShop.dsPrefix + LangUtil.ccLang.get().get("CHANGES_APPLIED") + "Interval " + interval + ", strength " + strength);
+            }
+        }
+
+        @Description("Set stock stabilizing of a shop")
+        @CommandCompletion("@dsShops")
+        @Subcommand("stockstabilizing")
+        @Syntax("<shopName> <interval> <strength>")
+        public void onStockStabilizing(CommandSender sender, @Values("@dsShops") String shopName, @Values("30m|1h|2h|4h|off") String interval, @Optional Double strength) {
+            if (strength == null) {
+                if (interval.equals("off")) {
+                    ShopUtil.ccShop.get().set(shopName + ".Options.stockStabilizing", null);
+                    ShopUtil.ccShop.save();
+                    sender.sendMessage(DynamicShop.dsPrefix + LangUtil.ccLang.get().get("CHANGES_APPLIED") + "stockStabilizing Off");
+                } else {
+                    throw new InvalidCommandArgument(true);
+                }
+            } else {
+                ShopUtil.ccShop.get().set(shopName + ".Options.stockStabilizing.interval", interval);
+                ShopUtil.ccShop.get().set(shopName + ".Options.stockStabilizing.strength", strength);
+                ShopUtil.ccShop.save();
+
+                sender.sendMessage(DynamicShop.dsPrefix + LangUtil.ccLang.get().get("CHANGES_APPLIED") + "Interval " + interval + ", strength " + strength);
+            }
+        }
+
+        @Description("Edit shop accounts")
+        @Subcommand("account")
+        public class AccountCommand extends BaseCommand {
+            @Description("Set the balance of a shop")
+            @CommandCompletion("@dsShops @range:1000")
+            @Subcommand("set")
+            @Syntax("<shopName> <value>")
+            public void onSet(CommandSender sender, @Values("@dsShops") String shopName, double balance) {
+                if (balance < 0) {
+                    ShopUtil.ccShop.get().set(shopName + ".Options.Balance", null);
+                    sender.sendMessage(DynamicShop.dsPrefix + LangUtil.ccLang.get().get("CHANGES_APPLIED") + LangUtil.ccLang.get().getString("SHOP_BAL_INF"));
+                } else {
+                    ShopUtil.ccShop.get().set(shopName + ".Options.Balance", balance);
+                    sender.sendMessage(DynamicShop.dsPrefix + LangUtil.ccLang.get().get("CHANGES_APPLIED") + balance);
+                }
+                ShopUtil.ccShop.save();
+            }
+
+            @Description("Link two shops together")
+            @CommandCompletion("@dsShops @dsShops")
+            @Subcommand("linkto")
+            @Syntax("<shopName> <shopName>")
+            public void onLinkTo(CommandSender sender, @Values("@dsShops") String shopName, @Values("@dsShops") String shopName2) {
+                // 타깃 상점이 연동계좌임
+                if (ShopUtil.ccShop.get().contains(shopName2 + ".Options.Balance")) {
+                    try {
+                        Double temp = Double.parseDouble(ShopUtil.ccShop.get().getString(shopName2 + ".Options.Balance"));
+                    } catch (Exception e) {
+                        sender.sendMessage(DynamicShop.dsPrefix + LangUtil.ccLang.get().getString("ERR.SHOP_LINK_TARGET_ERR"));
+                        return;
+                    }
+                }
+
+                // 출발상점을 타깃으로 하는 상점이 있음
+                for (String s : ShopUtil.ccShop.get().getKeys(false)) {
+                    String temp = ShopUtil.ccShop.get().getString(s + ".Options.Balance");
+                    try {
+                        if (temp != null && temp.equals(shopName)) {
+                            sender.sendMessage(DynamicShop.dsPrefix + LangUtil.ccLang.get().getString("ERR.NESTED_STRUCTURE"));
+                            return;
+                        }
+                    } catch (Exception e) {
+                        DynamicShop.console.sendMessage(DynamicShop.dsPrefix + e);
+                    }
+                }
+
+                // 출발 상점과 도착 상점이 같음
+                if (shopName.equals(shopName2)) {
+                    sender.sendMessage(DynamicShop.dsPrefix + LangUtil.ccLang.get().getString("ERR.WRONG_USAGE"));
+                    return;
+                }
+
+                // 출발 상점과 도착 상점의 통화 유형이 다름
+                if (ShopUtil.ccShop.get().contains(shopName + ".Options.flag.jobpoint") != ShopUtil.ccShop.get().contains(shopName2 + ".Options.flag.jobpoint")) {
+                    sender.sendMessage(DynamicShop.dsPrefix + LangUtil.ccLang.get().getString("ERR.SHOP_DIFF_CURRENCY"));
+                    return;
+                }
+
+                ShopUtil.ccShop.get().set(shopName + ".Options.Balance", shopName2);
+                ShopUtil.ccShop.save();
+                sender.sendMessage(DynamicShop.dsPrefix + LangUtil.ccLang.get().getString("CHANGES_APPLIED") + shopName2);
+            }
+
+            @Description("Transfer balance")
+            @CommandCompletion("@dsShops @shopsAndPlayers @range:1000")
+            @Subcommand("transfer")
+            @Syntax("<shopName> <target> <amount>")
+            public void onTransfer(CommandSender sender, @Values("@dsShops") String shopName, @Values("@shopsAndPlayers") String target, double amount) {
+                // 출발 상점이 무한계좌임
+                if (!ShopUtil.ccShop.get().contains(shopName + ".Options.Balance")) {
+                    sender.sendMessage(DynamicShop.dsPrefix + LangUtil.ccLang.get().getString("ERR.SHOP_HAS_INF_BAL").replace("{shop}", shopName));
+                    return;
+                }
+
+                // 출발 상점에 돈이 부족
+                if (ShopUtil.getShopBalance(shopName) < amount) {
+                    if (ShopUtil.ccShop.get().contains(shopName + ".Options.flag.jobpoint")) {
+                        sender.sendMessage(DynamicShop.dsPrefix + LangUtil.ccLang.get().getString("NOT_ENOUGH_POINT").
+                                replace("{bal}", DynaShopAPI.df.format(ShopUtil.getShopBalance(shopName))));
+                    } else {
+                        sender.sendMessage(DynamicShop.dsPrefix + LangUtil.ccLang.get().getString("NOT_ENOUGH_MONEY").
+                                replace("{bal}", DynaShopAPI.df.format(ShopUtil.getShopBalance(shopName))));
+                    }
+                    return;
+                }
+
+                // 다른 상점으로 송금
+                if (ShopUtil.ccShop.get().contains(target)) {
+                    // 도착 상점이 무한계좌임
+                    if (!ShopUtil.ccShop.get().contains(target + ".Options.Balance")) {
+                        sender.sendMessage(DynamicShop.dsPrefix + LangUtil.ccLang.get().getString("ERR.SHOP_HAS_INF_BAL").replace("{shop}", target));
+                        return;
+                    }
+
+                    // 출발 상점과 도착 상점이 같음
+                    if (shopName.equals(target)) {
+                        sender.sendMessage(DynamicShop.dsPrefix + LangUtil.ccLang.get().getString("ERR.WRONG_USAGE"));
+                        return;
+                    }
+
+                    // 출발 상점과 도착 상점의 통화 유형이 다름
+                    if (ShopUtil.ccShop.get().contains(shopName + ".Options.flag.jobpoint") != ShopUtil.ccShop.get().contains(target + ".Options.flag.jobpoint")) {
+                        sender.sendMessage(DynamicShop.dsPrefix + LangUtil.ccLang.get().getString("ERR.SHOP_DIFF_CURRENCY"));
+                        return;
+                    }
+
+                    // 송금.
+                    ShopUtil.addShopBalance(shopName, amount * -1);
+                    ShopUtil.addShopBalance(target, amount);
+                    ShopUtil.ccShop.save();
+                    sender.sendMessage(DynamicShop.dsPrefix + LangUtil.ccLang.get().getString("TRANSFER_SUCCESS"));
+                }
+                // 플레이어에게 송금
+                else {
+                    try {
+                        Player targetPlayer = Bukkit.getPlayer(target);
+
+                        if (!Bukkit.getOnlinePlayers().contains(targetPlayer)) {
+                            sender.sendMessage(DynamicShop.dsPrefix + LangUtil.ccLang.get().getString("ERR.PLAYER_NOT_EXIST"));
+                            return;
+                        }
+
+                        if (ShopUtil.ccShop.get().contains(shopName + ".Options.flag.jobpoint")) {
+                            JobsHook.addJobsPoint(targetPlayer, amount);
+                            ShopUtil.addShopBalance(shopName, amount * -1);
+                            ShopUtil.ccShop.save();
+
+                            sender.sendMessage(DynamicShop.dsPrefix + LangUtil.ccLang.get().getString("TRANSFER_SUCCESS"));
+                        } else {
+                            Economy econ = DynamicShop.getEconomy();
+                            EconomyResponse er = econ.depositPlayer(targetPlayer, amount);
+
+                            if (er.transactionSuccess()) {
+                                ShopUtil.addShopBalance(shopName, amount * -1);
+                                ShopUtil.ccShop.save();
+
+                                sender.sendMessage(DynamicShop.dsPrefix + LangUtil.ccLang.get().getString("TRANSFER_SUCCESS"));
+                            } else {
+                                sender.sendMessage(DynamicShop.dsPrefix + "Transfer failed");
+                            }
+                        }
+                    } catch (Exception e) {
+                        sender.sendMessage(DynamicShop.dsPrefix + "Transfer failed. /" + e);
+                    }
+                }
+            }
+        }
+
+        @Description("Hide the stock of a shop")
+        @CommandCompletion("@dsShops true|false")
+        @Subcommand("hidestock")
+        @Syntax("<shopName> <true|false>")
+        public void onHideStock(CommandSender sender, @Values("@dsShops") String shopName, @Values("true|false") boolean bool) {
+            if (bool) {
+                ShopUtil.ccShop.get().set(shopName + ".Options.hideStock", true);
+                sender.sendMessage(DynamicShop.dsPrefix + LangUtil.ccLang.get().get("CHANGES_APPLIED") + "hideStock true");
+            } else {
+                ShopUtil.ccShop.get().set(shopName + ".Options.hideStock", null);
+                sender.sendMessage(DynamicShop.dsPrefix + LangUtil.ccLang.get().get("CHANGES_APPLIED") + "hideStock false");
+            }
+            ShopUtil.ccShop.save();
+        }
+
+        @Description("Hide the pricing type of a shop")
+        @CommandCompletion("@dsShops true|false")
+        @Subcommand("hidepricingtype")
+        @Syntax("<shopName> <true|false>")
+        public void onHidePricingType(CommandSender sender, @Values("@dsShops") String shopName, @Values("true|false") boolean bool) {
+            if (bool) {
+                ShopUtil.ccShop.get().set(shopName + ".Options.hidePricingType", true);
+                sender.sendMessage(DynamicShop.dsPrefix + LangUtil.ccLang.get().get("CHANGES_APPLIED") + "hidePricingType true");
+            } else {
+                ShopUtil.ccShop.get().set(shopName + ".Options.hidePricingType", null);
+                sender.sendMessage(DynamicShop.dsPrefix + LangUtil.ccLang.get().get("CHANGES_APPLIED") + "hidePricingType false");
+            }
+            ShopUtil.ccShop.save();
+        }
+
+        @Description("Set a shop to buy/sell only")
+        @CommandCompletion("@dsShops SellOnly|BuyOnly|SellBuy")
+        @Subcommand("sellbuy")
+        @Syntax("<shopName> <SellOnly|BuyOnly|SellBuy>")
+        public void onSellBuy(CommandSender sender, @Values("@dsShops") String shopName, @Values("SellOnly|BuyOnly|SellBuy") String type) {
+            for (String s : ShopUtil.ccShop.get().getConfigurationSection(shopName).getKeys(false)) {
+                try {
+                    int i = Integer.parseInt(s);
+                    if (!ShopUtil.ccShop.get().contains(shopName + "." + s + ".value")) {
+                        continue; //장식용임
+                    }
+                } catch (Exception e) {
+                    continue;
+                }
+
+                if (type.equalsIgnoreCase("SellBuy")) {
+                    ShopUtil.ccShop.get().set(shopName + "." + s + ".tradeType", null);
+                } else {
+                    ShopUtil.ccShop.get().set(shopName + "." + s + ".tradeType", type);
+                }
+            }
+
+            ShopUtil.ccShop.save();
+            sender.sendMessage(DynamicShop.dsPrefix + LangUtil.ccLang.get().getString("CHANGES_APPLIED") + type);
+        }
+
+        @Description("Set logging for a shop")
+        @CommandCompletion("@dsShops enable|disable|clear")
+        @Subcommand("log")
+        @Syntax("<shopName> <enable|disable|clear>")
+        public void onLog(CommandSender sender, @Values("@dsShops") String shopName, @Values("enable|disable|clear") String type) {
+            if (type.equalsIgnoreCase("enable")) {
+                ShopUtil.ccShop.get().set(shopName + ".Options.log", true);
+                sender.sendMessage(DynamicShop.dsPrefix + shopName + "/" + LangUtil.ccLang.get().getString("LOG.LOG") + ": " + type);
+            } else if (type.equalsIgnoreCase("disable")) {
+                ShopUtil.ccShop.get().set(shopName + ".Options.log", null);
+                sender.sendMessage(DynamicShop.dsPrefix + shopName + "/" + LangUtil.ccLang.get().getString("LOG.LOG") + ": " + type);
+            } else if (type.equalsIgnoreCase("clear")) {
+                LogUtil.ccLog.get().set(shopName, null);
+                LogUtil.ccLog.save();
+                sender.sendMessage(DynamicShop.dsPrefix + shopName + "/" + LangUtil.ccLang.get().getString("LOG.CLEAR"));
+            } else {
+                sender.sendMessage(DynamicShop.dsPrefix + LangUtil.ccLang.get().getString("ERR.WRONG_USAGE"));
+                return;
+            }
+
+            ShopUtil.ccShop.save();
         }
     }
 }

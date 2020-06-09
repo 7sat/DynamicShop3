@@ -6,12 +6,14 @@ import me.sat7.dynamicshop.DynamicShop;
 import me.sat7.dynamicshop.constants.Constants;
 import me.sat7.dynamicshop.utilities.LangUtil;
 import me.sat7.dynamicshop.utilities.ShopUtil;
+import org.bukkit.Bukkit;
 import org.bukkit.GameMode;
 import org.bukkit.entity.Player;
 
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
+import java.util.stream.Collectors;
 import java.util.stream.IntStream;
 
 public class CommandHelper {
@@ -29,6 +31,14 @@ public class CommandHelper {
                 "300", "360", "420", "480"));
 
         mgr.getCommandCompletions().registerAsyncCompletion("dsShops", c -> new ArrayList<>(ShopUtil.ccShop.get().getKeys(false)));
+
+        mgr.getCommandCompletions().registerAsyncCompletion("shopsAndPlayers", c -> {
+            ArrayList<String> l = new ArrayList<>(ShopUtil.ccShop.get().getKeys(false));
+            Bukkit.getOnlinePlayers().forEach(player -> {
+              l.add(player.getName());
+            });
+            return l;
+        });
 
         mgr.getCommandCompletions().registerAsyncCompletion("dsMin", c -> {
             ArrayList<String> list = new ArrayList<>(Collections.singletonList("0.01"));
