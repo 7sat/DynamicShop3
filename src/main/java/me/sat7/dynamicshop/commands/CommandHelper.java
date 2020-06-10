@@ -1,14 +1,12 @@
 package me.sat7.dynamicshop.commands;
 
-import co.aikar.commands.CommandHelpFormatter;
-import co.aikar.commands.CommandReplacements;
-import co.aikar.commands.ConditionFailedException;
-import co.aikar.commands.PaperCommandManager;
+import co.aikar.commands.*;
 import me.sat7.dynamicshop.DynamicShop;
 import me.sat7.dynamicshop.constants.Constants;
 import me.sat7.dynamicshop.utilities.LangUtil;
 import me.sat7.dynamicshop.utilities.ShopUtil;
 import org.bukkit.Bukkit;
+import org.bukkit.ChatColor;
 import org.bukkit.GameMode;
 import org.bukkit.configuration.file.FileConfiguration;
 import org.bukkit.entity.Player;
@@ -28,6 +26,12 @@ public class CommandHelper {
 
     public void register() {
         PaperCommandManager mgr = plugin.getCommandManager();
+
+        //Set Colors
+        mgr.setFormat(MessageType.ERROR, new BukkitMessageFormatter(ChatColor.DARK_AQUA, ChatColor.AQUA, ChatColor.RED));
+        mgr.setFormat(MessageType.SYNTAX, new BukkitMessageFormatter(ChatColor.DARK_AQUA, ChatColor.AQUA, ChatColor.WHITE));
+        mgr.setFormat(MessageType.INFO, new BukkitMessageFormatter(ChatColor.DARK_AQUA, ChatColor.AQUA, ChatColor.WHITE));
+        mgr.setFormat(MessageType.HELP, new BukkitMessageFormatter(ChatColor.DARK_AQUA, ChatColor.AQUA, ChatColor.WHITE));
 
         //Command Completions
         mgr.getCommandCompletions().registerAsyncCompletion("minutes", c -> Arrays.asList(

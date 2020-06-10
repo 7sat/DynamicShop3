@@ -1,8 +1,6 @@
 package me.sat7.dynamicshop.commands;
 
-import co.aikar.commands.BaseCommand;
-import co.aikar.commands.CommandHelp;
-import co.aikar.commands.InvalidCommandArgument;
+import co.aikar.commands.*;
 import co.aikar.commands.annotation.Optional;
 import co.aikar.commands.annotation.*;
 import me.sat7.dynamicshop.DynaShopAPI;
@@ -21,6 +19,8 @@ import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.scheduler.BukkitRunnable;
 
+import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.UUID;
 
 @CommandPermission(Constants.USE_SHOP_PERMISSION)
@@ -38,6 +38,25 @@ public class CommandDynamicShop extends BaseCommand {
     public void onHelp(CommandSender sender, CommandHelp help) {
         sender.sendMessage(LangUtil.ccLang.get().getString("HELP.TITLE"));
         help.showHelp();
+    }
+
+    @Override
+    public void showSyntax(CommandIssuer issuer, RegisteredCommand<?> cmd) {
+        super.showSyntax(issuer, cmd);
+        ArrayList<String> subText = new ArrayList<>();
+        String command = cmd.getCommand().replace(" ", "_").toUpperCase();
+        if (LangUtil.ccLang.get().isConfigurationSection("HELP." + command)) {
+            LangUtil.ccLang.get().getConfigurationSection("HELP." + command).getKeys(false).forEach(key -> {
+                subText.add(
+                        "  §d- §f" +
+                                LangUtil.ccLang.get().getString("HELP." + command + "." + key, "MISSING_STRING")
+                                        .replace("{IRREVERSIBLE}", LangUtil.ccLang.get().getString("IRREVERSIBLE"))
+                                        .replace("{HELP.PRICE}", LangUtil.ccLang.get().getString("HELP.PRICE"))
+                                        .replace("{HELP.INF_STATIC}", LangUtil.ccLang.get().getString("HELP.INF_STATIC"))
+                );
+            });
+        }
+        subText.forEach(issuer::sendMessage);
     }
 
     @Private
