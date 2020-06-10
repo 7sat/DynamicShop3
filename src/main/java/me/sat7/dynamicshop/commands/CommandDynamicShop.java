@@ -40,6 +40,13 @@ public class CommandDynamicShop extends BaseCommand {
         help.showHelp();
     }
 
+    @Private
+    @Subcommand("testfunction")
+    @CommandPermission("dshop.admin.shopedit")
+    public void onTestFunction(Player player) {
+        player.sendMessage(DynamicShop.dsPrefix+" Button clicked!");
+    }
+
     @Subcommand("reload")
     @CommandPermission("dshop.admin.reload")
     @Description("%HELP.RELOAD")
