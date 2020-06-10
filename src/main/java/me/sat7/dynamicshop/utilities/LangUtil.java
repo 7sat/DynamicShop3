@@ -166,6 +166,7 @@ public final class LangUtil {
             ccLang.get().addDefault("HELP.CREATESHOP", "상점을 새로 만듭니다.");
             ccLang.get().addDefault("HELP.DELETESHOP", "기존의 상점을 제거합니다.");
             ccLang.get().addDefault("HELP.SETTAX", "판매 세금을 설정합니다.");
+            ccLang.get().addDefault("HELP.SETTAX_TEMP", "임시 판매 세 설정");
             ccLang.get().addDefault("HELP.SHOPADDHAND", "손에 들고 있는 아이탬을 상점에 추가합니다.");
             ccLang.get().addDefault("HELP.SHOPADDITEM", "상점에 아이탬을 추가합니다.");
             ccLang.get().addDefault("HELP.SHOPEDIT", "상점에 있는 아이탬을 수정합니다.");
@@ -375,6 +376,7 @@ public final class LangUtil {
             ccLang.get().addDefault("HELP.CREATESHOP", "Create new shop.");
             ccLang.get().addDefault("HELP.DELETESHOP", "Delete exist shop.");
             ccLang.get().addDefault("HELP.SETTAX", "Set sale tax.");
+            ccLang.get().addDefault("HELP.SETTAX_TEMP", "Set sales tax temporarily");
             ccLang.get().addDefault("HELP.SHOPADDHAND", "Add Item to shop.");
             ccLang.get().addDefault("HELP.SHOPADDITEM", "Add Item to shop.");
             ccLang.get().addDefault("HELP.SHOPEDIT", "Edit shop item.");
