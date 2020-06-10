@@ -29,6 +29,12 @@ public class HelpFormatter extends CommandHelpFormatter {
         sendHelpMessage(issuer, entry, formatted);
     }
 
+    @Override
+    public void printSearchEntry(CommandHelp help, CommandIssuer issuer, HelpEntry entry) {
+        String formatted = this.manager.formatMessage(issuer, MessageType.HELP, MessageKeys.HELP_FORMAT, this.getEntryFormatReplacements(help, entry));
+        sendHelpMessage(issuer, entry, formatted);
+    }
+
     private void sendHelpMessage(CommandIssuer issuer, HelpEntry entry, String formatted) {
         // Logs all the command names for use in LangUtil on help command
         // DynamicShop.plugin.getLogger().log(Level.WARNING, entry.getCommand().replace(" ", "_").toUpperCase());
