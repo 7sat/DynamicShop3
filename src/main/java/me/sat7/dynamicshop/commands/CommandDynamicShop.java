@@ -33,15 +33,16 @@ public class CommandDynamicShop extends BaseCommand {
 
     @Default
     @HelpCommand
-    @Description("DynamicShop Help")
+    @Description("%HELP.HELP")
     @Syntax("<command>")
     public void onHelp(CommandSender sender, CommandHelp help) {
+        sender.sendMessage(LangUtil.ccLang.get().getString("HELP.TITLE"));
         help.showHelp();
     }
 
     @Subcommand("reload")
     @CommandPermission("dshop.admin.reload")
-    @Description("Reloads all config files for DynamicShop")
+    @Description("%HELP.RELOAD")
     public void onReload(CommandSender sender) {
         LangUtil.ccLang.reload();
         ShopUtil.ccShop.reload();
@@ -66,9 +67,8 @@ public class CommandDynamicShop extends BaseCommand {
     public class SetTax extends BaseCommand {
 
         @Default
-        @Description("Set the sales tax")
+        @Description("%HELP.SETTAX")
         @CommandCompletion("@range:100")
-        @Syntax("<tax>")
         public void onSetTax(CommandSender sender, int tax) {
             int newValue = tax;
             if (newValue <= 2) {
@@ -85,9 +85,8 @@ public class CommandDynamicShop extends BaseCommand {
         }
 
         @Subcommand("temp")
-        @Description("Set the sales tax temporarily")
+        @Description("%HELP.SETTAX_TEMP")
         @CommandCompletion("@range:100 @minutes")
-        @Syntax("<tax> <minutes>")
         public void onTempSetTax(CommandSender sender, int tax, int minutes) {
             int newValue = tax;
             int tempTaxDurationMinutes = minutes;
@@ -122,14 +121,13 @@ public class CommandDynamicShop extends BaseCommand {
 
     @Subcommand("quicksell|qsell")
     @CommandAlias("quicksell|qsell")
-    @Description("Open the Quick Sell menu")
+    @Description("%HELP.QSELL")
     public void onQuickSell(Player player) {
         DynaShopAPI.openQuickSellGUI(player);
     }
 
     @Subcommand("createshop|create")
-    @Description("Create a new shop")
-    @Syntax("<shopName> <permission>")
+    @Description("%HELP.CREATESHOP")
     @CommandCompletion("shopName true|false|my.permission")
     @CommandPermission("dshop.admin.createshop")
     public void onCreateShop(Player player, String shopName, @Optional String permission) {
@@ -164,8 +162,7 @@ public class CommandDynamicShop extends BaseCommand {
     }
 
     @Subcommand("deleteshop|delete")
-    @Description("Delete a shop")
-    @Syntax("<shopName>")
+    @Description("%HELP.DELETESHOP")
     @CommandCompletion("@dsShops")
     @CommandPermission("dshop.admin.deleteshop")
     public void onDeleteShop(CommandSender sender, @Values("@dsShops") String shopName) {
@@ -175,8 +172,7 @@ public class CommandDynamicShop extends BaseCommand {
     }
 
     @Subcommand("renameshop|rename")
-    @Description("Rename a shop")
-    @Syntax("<oldShopName> <newName>")
+    @Description("%HELP.RENAME_SHOP")
     @CommandCompletion("@dsShops newName")
     @CommandPermission("dshop.admin.renameshop")
     public void onRenameShop(CommandSender sender, @Values("@dsShops") String oldName, String newName) {
@@ -185,8 +181,7 @@ public class CommandDynamicShop extends BaseCommand {
     }
 
     @Subcommand("mergeshop|merge")
-    @Description("Merge two shops")
-    @Syntax("<shopName> <shopName>")
+    @Description("%HELP.MERGE_SHOP")
     @CommandCompletion("@dsShops @dsShops")
     @CommandPermission("dshop.admin.mergeshop")
     public void onMergeShops(CommandSender sender, @Values("@dsShops") String shopOne, @Values("@dsShops") String shopTwo) {
@@ -195,17 +190,15 @@ public class CommandDynamicShop extends BaseCommand {
     }
 
     @Subcommand("convertshop")
-    @Description("Convert a shop")
-    @Syntax("<pluginName>")
+    @Description("%HELP.CONVERT")
     @CommandCompletion("Shop")
     @CommandPermission("dshop.admin.convert")
-    public void onConvertShop(Player player, @Values("Shop") String shopName) {
+    public void onConvertShop(Player player, @Values("Shop") String pluginName) {
         ShopUtil.convertDataFromShop(player);
     }
 
     @Subcommand("setdefaultshop|setdefault")
-    @Description("Set the default shop")
-    @Syntax("<shopName>")
+    @Description("%HELP.SET_DEFAULT_SHOP")
     @CommandCompletion("@dsShops")
     @CommandPermission("dshop.admin.setdefaultshop")
     public void onSetDefaultShop(CommandSender sender, @Values("@dsShops") String shopName) {
@@ -215,8 +208,7 @@ public class CommandDynamicShop extends BaseCommand {
     }
 
     @Subcommand("deleteOldUser|deleteOldUsers")
-    @Description("Delete inactive users")
-    @Syntax("<days>")
+    @Description("%HELP.DELETE_OLD_USER")
     @CommandCompletion("@range:360")
     @CommandPermission(Constants.DELETE_USER_PERMISSION)
     public void onDeleteOldUsers(CommandSender sender, int days) {
@@ -245,9 +237,8 @@ public class CommandDynamicShop extends BaseCommand {
 
     @Subcommand("shop")
     @Conditions("creativeCheck")
-    @Description("Open the Shop menu")
+    @Description("%HELP.SHOP_DESCRIPTION")
     @CommandCompletion("@dsShops")
-    @Syntax("<shop>")
     @CommandAlias("shop")
     public void onShop(Player player, @Values("@dsShops") @Optional String shop) {
         // user.yml 에 player가 없으면 재생성 시도. 실패시 리턴.
@@ -361,10 +352,9 @@ public class CommandDynamicShop extends BaseCommand {
     @Subcommand("shopedit")
     @CommandPermission("dshop.admin.shopedit")
     public class ShopEditCommand extends BaseCommand {
-        @Description("Edit items in a shop")
+        @Description("%HELP.SHOPEDIT")
         @CommandCompletion("@dsShops @range:100 @range:1000 @dsMin @dsMax @range:1000 @range:1000")
         @Subcommand("edit")
-        @Syntax("<shopName> <item> <price> <minPrice> <maxPrice> <medianStock> <stock>")
         public void onEdit(Player player, @Values("@dsShops") String shopName, int item, double price, double minPrice, double maxPrice, int medianStock, int stock) {
             // 인자 확인
             if (!ShopUtil.ccShop.get().getConfigurationSection(shopName).contains(String.valueOf(item))) {
@@ -398,10 +388,9 @@ public class CommandDynamicShop extends BaseCommand {
             ItemsUtil.sendItemInfo(player, shopName, item, "HELP.ITEM_INFO");
         }
 
-        @Description("Add items to a shop")
+        @Description("%HELP.SHOPADDITEM")
         @CommandCompletion("@dsShops * @range:1000 @dsMin @dsMax @range:1000 @range:1000")
         @Subcommand("add")
-        @Syntax("<shopName> <material> <price> <minPrice> <maxPrice> <medianStock> <stock>")
         public void onAdd(Player player, @Values("@dsShops") String shopName, Material material, double price, double minPrice, double maxPrice, int medianStock, int stock) {
             // 유효성 검사
             if (maxPrice > 0 && minPrice > 0 && minPrice >= maxPrice) {
@@ -458,10 +447,9 @@ public class CommandDynamicShop extends BaseCommand {
             }
         }
 
-        @Description("Add hand item to a shop")
+        @Description("%HELP.SHOPADDHAND")
         @CommandCompletion("@dsShops @range:1000 @dsMin @dsMax @range:1000 @range:1000")
         @Subcommand("addhand")
-        @Syntax("<shopName> <price> <minPrice> <maxPrice> <medianStock> <stock>")
         public void onAddHand(Player player, @Values("@dsShops") String shopName, double price, double minPrice, double maxPrice, int medianStock, int stock) {
             // 유효성 검사
             if (maxPrice > 0 && minPrice > 0 && minPrice >= maxPrice) {
@@ -515,10 +503,9 @@ public class CommandDynamicShop extends BaseCommand {
             }
         }
 
-        @Description("Edit all of a value")
+        @Description("%HELP.EDITALL")
         @CommandCompletion("@dsShops stock|median|value|valueMin|valueMax @dsoperators @range:1000")
         @Subcommand("editall")
-        @Syntax("<shopName> <dataType> <operator> <value>")
         @CommandPermission("dshop.admin.editall")
         public void onEditAll(CommandSender sender, @Values("@dsShops") String shopName, @Values("stock|median|value|valueMin|valueMax") String dataType, @Values("@dsoperators") String operator, double value) {
             // 수정
@@ -557,36 +544,34 @@ public class CommandDynamicShop extends BaseCommand {
             sender.sendMessage(DynamicShop.dsPrefix + LangUtil.ccLang.get().getString("ITEM_UPDATED"));
         }
 
-        @Description("Set permissions of a shop")
+        @Description("%HELP.SHOP_PERMISSION")
         @CommandCompletion("@dsShops true|false|my.permission")
         @Subcommand("permission")
-        @Syntax("<shopName> <newPermission>")
-        public void onPermission(CommandSender sender, @Values("@dsShops") String shopName, @Optional String permission) {
-            if (permission == null) {
+        public void onPermission(CommandSender sender, @Values("@dsShops") String shopName, @Optional String newPermission) {
+            if (newPermission == null) {
                 String s = ShopUtil.ccShop.get().getConfigurationSection(shopName).getConfigurationSection("Options").getString("permission");
                 if (s == null || s.length() == 0) {
                     s = LangUtil.ccLang.get().getString("NULL(OPEN)");
                 }
                 sender.sendMessage(DynamicShop.dsPrefix + s);
             } else {
-                if (permission.equalsIgnoreCase("true")) {
+                if (newPermission.equalsIgnoreCase("true")) {
                     ShopUtil.ccShop.get().set(shopName + ".Options.permission", "dshop.user.shop." + shopName);
                     sender.sendMessage(DynamicShop.dsPrefix + LangUtil.ccLang.get().get("CHANGES_APPLIED") + "dshop.user.shop." + shopName);
-                } else if (permission.equalsIgnoreCase("false")) {
+                } else if (newPermission.equalsIgnoreCase("false")) {
                     ShopUtil.ccShop.get().set(shopName + ".Options.permission", "");
                     sender.sendMessage(DynamicShop.dsPrefix + LangUtil.ccLang.get().get("CHANGES_APPLIED") + LangUtil.ccLang.get().getString("NULL(OPEN)"));
                 } else {
-                    ShopUtil.ccShop.get().set(shopName + ".Options.permission", permission);
-                    sender.sendMessage(DynamicShop.dsPrefix + LangUtil.ccLang.get().get("CHANGES_APPLIED") + permission);
+                    ShopUtil.ccShop.get().set(shopName + ".Options.permission", newPermission);
+                    sender.sendMessage(DynamicShop.dsPrefix + LangUtil.ccLang.get().get("CHANGES_APPLIED") + newPermission);
                 }
                 ShopUtil.ccShop.save();
             }
         }
 
-        @Description("Set the max pages of a shop")
+        @Description("%HELP.MAXPAGES")
         @CommandCompletion("@dsShops @range:20")
         @Subcommand("maxpages")
-        @Syntax("<shopName> <newValue>")
         public void onMaxPages(CommandSender sender, @Values("@dsShops") String shopName, int newValue) {
             if (newValue <= 0) {
                 sender.sendMessage(DynamicShop.dsPrefix + LangUtil.ccLang.get().getString("ERR.VALUE_ZERO"));
@@ -597,7 +582,7 @@ public class CommandDynamicShop extends BaseCommand {
             }
         }
 
-        @Description("Set the flags of a shop")
+        @Description("%HELP.SETFLAG")
         @CommandCompletion("@dsShops signshop|localshop|deliverycharge|jobpoint set|unset")
         @Subcommand("flag")
         @Syntax("<shopName> <flag> <set|unset>")
@@ -627,7 +612,7 @@ public class CommandDynamicShop extends BaseCommand {
             sender.sendMessage(DynamicShop.dsPrefix + LangUtil.ccLang.get().get("CHANGES_APPLIED") + flag + ":" + setunset);
         }
 
-        @Description("Set the position of a shop")
+        @Description("%HELP.SET_POSITION")
         @CommandCompletion("@dsShops pos1|pos2|clear")
         @Subcommand("position")
         @Syntax("<shopName> <pos1|pos2|clear>")
@@ -651,10 +636,9 @@ public class CommandDynamicShop extends BaseCommand {
             }
         }
 
-        @Description("Set the hours of a shop")
+        @Description("%TIME.SET_SHOPHOURS")
         @CommandCompletion("@dsShops @range:24 @range:24")
         @Subcommand("shophours")
-        @Syntax("<shopName> <open> <close>")
         public void onShopHours(CommandSender sender, @Values("@dsShops") String shopName, @Values("@range:24") int open, @Values("@range:24") int close) {
             if (open > 24) {
                 open = 24;
@@ -680,10 +664,9 @@ public class CommandDynamicShop extends BaseCommand {
             }
         }
 
-        @Description("Set the price fluctuation of a shop")
+        @Description("%HELP.FLUCTUATION")
         @CommandCompletion("@dsShops 30m|1h|2h|4h|off @range:50")
         @Subcommand("fluctuation")
-        @Syntax("<shopName> <interval> <strength>")
         public void onFluctuation(CommandSender sender, @Values("@dsShops") String shopName, @Values("30m|1h|2h|4h|off") String interval, @Optional Integer strength) {
             if (strength == null) {
                 if (interval.equals("off")) {
@@ -702,10 +685,9 @@ public class CommandDynamicShop extends BaseCommand {
             }
         }
 
-        @Description("Set stock stabilizing of a shop")
+        @Description("%HELP.STABILIZATION")
         @CommandCompletion("@dsShops")
         @Subcommand("stockstabilizing")
-        @Syntax("<shopName> <interval> <strength>")
         public void onStockStabilizing(CommandSender sender, @Values("@dsShops") String shopName, @Values("30m|1h|2h|4h|off") String interval, @Optional Double strength) {
             if (strength == null) {
                 if (interval.equals("off")) {
@@ -724,13 +706,11 @@ public class CommandDynamicShop extends BaseCommand {
             }
         }
 
-        @Description("Edit shop accounts")
         @Subcommand("account")
         public class AccountCommand extends BaseCommand {
-            @Description("Set the balance of a shop")
+            @Description("%HELP.ACCOUNT")
             @CommandCompletion("@dsShops @range:1000")
             @Subcommand("set")
-            @Syntax("<shopName> <value>")
             public void onSet(CommandSender sender, @Values("@dsShops") String shopName, double balance) {
                 if (balance < 0) {
                     ShopUtil.ccShop.get().set(shopName + ".Options.Balance", null);
@@ -742,7 +722,7 @@ public class CommandDynamicShop extends BaseCommand {
                 ShopUtil.ccShop.save();
             }
 
-            @Description("Link two shops together")
+            @Description("%HELP.ACCOUNT_LINK")
             @CommandCompletion("@dsShops @dsShops")
             @Subcommand("linkto")
             @Syntax("<shopName> <shopName>")
@@ -787,10 +767,9 @@ public class CommandDynamicShop extends BaseCommand {
                 sender.sendMessage(DynamicShop.dsPrefix + LangUtil.ccLang.get().getString("CHANGES_APPLIED") + shopName2);
             }
 
-            @Description("Transfer balance")
+            @Description("%HELP.ACCOUNT_TRANSFER")
             @CommandCompletion("@dsShops @shopsAndPlayers @range:1000")
             @Subcommand("transfer")
-            @Syntax("<shopName> <target> <amount>")
             public void onTransfer(CommandSender sender, @Values("@dsShops") String shopName, @Values("@shopsAndPlayers") String target, double amount) {
                 // 출발 상점이 무한계좌임
                 if (!ShopUtil.ccShop.get().contains(shopName + ".Options.Balance")) {
@@ -872,7 +851,7 @@ public class CommandDynamicShop extends BaseCommand {
             }
         }
 
-        @Description("Hide the stock of a shop")
+        @Description("%HELP.HIDE_STOCK")
         @CommandCompletion("@dsShops true|false")
         @Subcommand("hidestock")
         @Syntax("<shopName> <true|false>")
@@ -887,7 +866,7 @@ public class CommandDynamicShop extends BaseCommand {
             ShopUtil.ccShop.save();
         }
 
-        @Description("Hide the pricing type of a shop")
+        @Description("%HELP.HIDE_PRICE")
         @CommandCompletion("@dsShops true|false")
         @Subcommand("hidepricingtype")
         @Syntax("<shopName> <true|false>")
@@ -902,7 +881,7 @@ public class CommandDynamicShop extends BaseCommand {
             ShopUtil.ccShop.save();
         }
 
-        @Description("Set a shop to buy/sell only")
+        @Description("%HELP.SELL_BUY")
         @CommandCompletion("@dsShops SellOnly|BuyOnly|SellBuy")
         @Subcommand("sellbuy")
         @Syntax("<shopName> <SellOnly|BuyOnly|SellBuy>")
@@ -928,7 +907,7 @@ public class CommandDynamicShop extends BaseCommand {
             sender.sendMessage(DynamicShop.dsPrefix + LangUtil.ccLang.get().getString("CHANGES_APPLIED") + type);
         }
 
-        @Description("Set logging for a shop")
+        @Description("%HELP.ON_LOG")
         @CommandCompletion("@dsShops enable|disable|clear")
         @Subcommand("log")
         @Syntax("<shopName> <enable|disable|clear>")

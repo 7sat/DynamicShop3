@@ -4,6 +4,7 @@ import co.aikar.commands.PaperCommandManager;
 import lombok.Getter;
 import me.sat7.dynamicshop.commands.CommandDynamicShop;
 import me.sat7.dynamicshop.commands.CommandHelper;
+import me.sat7.dynamicshop.commands.HelpFormatter;
 import me.sat7.dynamicshop.constants.Constants;
 import me.sat7.dynamicshop.events.JoinQuit;
 import me.sat7.dynamicshop.events.OnChat;
@@ -57,10 +58,10 @@ public final class DynamicShop extends JavaPlugin implements Listener {
         }
 
         registerEvents();
-        initCommands();
         setupConfigs();
         makeFolders();
         hookIntoJobs();
+        initCommands();
 
         if (getConfig().getBoolean("CullLogs")) {
             new BukkitRunnable() {
@@ -107,12 +108,15 @@ public final class DynamicShop extends JavaPlugin implements Listener {
 
     private void initCommands() {
         commandManager = new PaperCommandManager(this);
-        //Deprecated because snapshot
-        //Feature will not be removed
+
         commandManager.enableUnstableAPI("help");
-        commandManager.registerCommand(new CommandDynamicShop());
+        commandManager.setHelpFormatter(new HelpFormatter(commandManager));
+        commandManager.setDefaultHelpPerPage(5);
+
         commandHelper = new CommandHelper(this);
         commandHelper.register();
+
+        commandManager.registerCommand(new CommandDynamicShop());
     }
 
     private void registerEvents() {
