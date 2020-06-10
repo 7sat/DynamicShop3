@@ -8,13 +8,11 @@ import me.sat7.dynamicshop.utilities.ShopUtil;
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
 import org.bukkit.GameMode;
-import org.bukkit.configuration.file.FileConfiguration;
 import org.bukkit.entity.Player;
 
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
-import java.util.stream.Collectors;
 import java.util.stream.IntStream;
 
 public class CommandHelper {
@@ -42,9 +40,7 @@ public class CommandHelper {
 
         mgr.getCommandCompletions().registerAsyncCompletion("shopsAndPlayers", c -> {
             ArrayList<String> l = new ArrayList<>(ShopUtil.ccShop.get().getKeys(false));
-            Bukkit.getOnlinePlayers().forEach(player -> {
-              l.add(player.getName());
-            });
+            Bukkit.getOnlinePlayers().forEach(player -> l.add(player.getName()));
             return l;
         });
 
