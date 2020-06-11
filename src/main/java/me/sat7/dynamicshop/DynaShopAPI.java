@@ -182,8 +182,9 @@ public final class DynaShopAPI {
     /**
      * Get the current stock of an item
      *
-     * @param shopName The shop that has the item
+     * @param shopName  The shop that has the item
      * @param itemStack The item to check the stock of
+     *
      * @return The stock of the item, -1 if the shop does not contain the item
      */
     public static int getStock(@NonNull String shopName, @NonNull ItemStack itemStack) {
@@ -198,14 +199,15 @@ public final class DynaShopAPI {
     /**
      * Get the median stock of an item
      *
-     * @param shopName The shop that has the item
+     * @param shopName  The shop that has the item
      * @param itemStack The item to check the median stock of
+     *
      * @return The median stock of the item, -1 if the shop does not contain the item
      */
     public static int getMedian(@NonNull String shopName, @NonNull ItemStack itemStack) {
         int idx = ShopUtil.findItemFromShop(shopName, itemStack);
         if (idx != -1) {
-            return ShopUtil.ccShop.get().getInt(shopName+"." + idx + ".median");
+            return ShopUtil.ccShop.get().getInt(shopName + "." + idx + ".median");
         } else {
             return idx;
         }
@@ -215,6 +217,7 @@ public final class DynaShopAPI {
      * Get whether a shop is for Vault money or Jobs points
      *
      * @param shopName The shop to check the type of
+     *
      * @return True if it is a Job Point shop, False if it is a Vault economy money shop
      */
     public static boolean isJobsPointShop(@NonNull String shopName) {
