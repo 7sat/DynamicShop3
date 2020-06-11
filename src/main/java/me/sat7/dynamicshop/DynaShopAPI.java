@@ -171,7 +171,7 @@ public final class DynaShopAPI {
         if (validateShopName(shopName)) {
             int idx = ShopUtil.findItemFromShop(shopName, itemStack);
             if (idx != -1) {
-                return Calc.getCurrentPrice(shopName, String.valueOf(ShopUtil.findItemFromShop(shopName, itemStack)), true);
+                return Calc.getCurrentPrice(shopName, String.valueOf(idx), true);
             } else {
                 return idx;
             }
@@ -194,7 +194,7 @@ public final class DynaShopAPI {
         if (validateShopName(shopName)) {
             int idx = ShopUtil.findItemFromShop(shopName, itemStack);
             if (idx != -1) {
-                return Calc.getCurrentPrice(shopName, String.valueOf(ShopUtil.findItemFromShop(shopName, itemStack)), false);
+                return Calc.getCurrentPrice(shopName, String.valueOf(idx), false);
             } else {
                 return idx;
             }
@@ -217,7 +217,7 @@ public final class DynaShopAPI {
         if (validateShopName(shopName)) {
             int idx = ShopUtil.findItemFromShop(shopName, itemStack);
             if (idx != -1) {
-                return ShopUtil.ccShop.get().getInt(shopName + "." + ShopUtil.findItemFromShop(shopName, itemStack) + ".stock");
+                return ShopUtil.ccShop.get().getInt(shopName + "." + idx + ".stock");
             } else {
                 return idx;
             }
