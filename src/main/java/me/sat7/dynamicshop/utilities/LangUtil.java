@@ -161,7 +161,7 @@ public final class LangUtil {
             ccLang.get().addDefault("IRREVERSIBLE", "§f이 행동은 되돌릴 수 없습니다!");
 
             ccLang.get().addDefault("HELP.HELP", "DynamicShop Help");
-            ccLang.get().addDefault("HELP.SHOP", "상점을 엽니다.");
+            ccLang.get().addDefault("HELP.SHOP_DESCRIPTION", "상점을 엽니다.");
             ccLang.get().addDefault("HELP.CREATESHOP", "상점을 새로 만듭니다.");
             ccLang.get().addDefault("HELP.DELETESHOP", "기존의 상점을 제거합니다.");
             ccLang.get().addDefault("HELP.RENAME_SHOP", "Rename a shop.");
