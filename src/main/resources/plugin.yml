@@ -15,3 +15,6 @@ permissions:
   dshop.use:
     description: Allows use of the /ds command
     default: true
+  dshop.use.qsell:
+    description: Allows use of the /ds qsell command
+    default: true

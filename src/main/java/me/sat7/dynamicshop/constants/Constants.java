@@ -8,6 +8,7 @@ public final class Constants {
     public static final String REMOTE_ACCESS_PERMISSION = "dshop.admin.remoteaccess";
     public static final String DELETE_USER_PERMISSION = "dshop.admin.deleteOldUser";
     public static final String USE_SHOP_PERMISSION = "dshop.use";
+    public static final String USE_QSELL_PERMISSION = "dshop.use.qsell";
     public static final String SHOP_EDIT_PERMISSION = "dshop.admin.shopedit";
     public static final String DYNAMIC_SHOP_RELOAD_PERMISSION = "dshop.admin.reload";
     public static final String SET_TAX_PERMISSION = "dshop.admin.settax";

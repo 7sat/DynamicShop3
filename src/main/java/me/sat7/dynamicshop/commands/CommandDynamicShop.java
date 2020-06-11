@@ -160,6 +160,7 @@ public class CommandDynamicShop extends BaseCommand {
     @Subcommand("quicksell|qsell")
     @CommandAlias("quicksell|qsell")
     @Description("%HELP.QSELL")
+    @CommandPermission(Constants.USE_QSELL_PERMISSION)
     public void onQuickSell(Player player) {
         DynaShopAPI.openQuickSellGUI(player);
     }
