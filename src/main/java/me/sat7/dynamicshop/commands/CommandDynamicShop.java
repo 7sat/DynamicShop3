@@ -61,13 +61,13 @@ public class CommandDynamicShop extends BaseCommand {
 
     @Private
     @Subcommand("testfunction")
-    @CommandPermission("dshop.admin.shopedit")
+    @CommandPermission(Constants.SHOP_EDIT_PERMISSION)
     public void onTestFunction(Player player) {
         player.sendMessage(DynamicShop.dsPrefix+" Button clicked!");
     }
 
     @Subcommand("reload")
-    @CommandPermission("dshop.admin.reload")
+    @CommandPermission(Constants.DYNAMIC_SHOP_RELOAD_PERMISSION)
     @Description("%HELP.RELOAD")
     public void onReload(CommandSender sender) {
         LangUtil.ccLang.reload();
@@ -89,7 +89,7 @@ public class CommandDynamicShop extends BaseCommand {
     }
 
     @Subcommand("settax")
-    @CommandPermission("dshop.admin.settax")
+    @CommandPermission(Constants.SET_TAX_PERMISSION)
     public class SetTax extends BaseCommand {
 
         @Default
@@ -155,7 +155,7 @@ public class CommandDynamicShop extends BaseCommand {
     @Subcommand("createshop|create")
     @Description("%HELP.CREATESHOP")
     @CommandCompletion("shopName true|false|my.permission")
-    @CommandPermission("dshop.admin.createshop")
+    @CommandPermission(Constants.CREATE_SHOP_PERMISSION)
     public void onCreateShop(Player player, String shopName, @Optional String permission) {
 
         if (ShopUtil.ccShop.get().contains(shopName)) {
@@ -190,7 +190,7 @@ public class CommandDynamicShop extends BaseCommand {
     @Subcommand("deleteshop|delete")
     @Description("%HELP.DELETESHOP")
     @CommandCompletion("@dsShops")
-    @CommandPermission("dshop.admin.deleteshop")
+    @CommandPermission(Constants.DELETE_SHOP_PERMISSION)
     public void onDeleteShop(CommandSender sender, @Values("@dsShops") String shopName) {
         ShopUtil.ccShop.get().set(shopName, null);
         ShopUtil.ccShop.save();
@@ -200,7 +200,7 @@ public class CommandDynamicShop extends BaseCommand {
     @Subcommand("renameshop|rename")
     @Description("%HELP.RENAME_SHOP")
     @CommandCompletion("@dsShops newName")
-    @CommandPermission("dshop.admin.renameshop")
+    @CommandPermission(Constants.RENAME_SHOP_PERMISSION)
     public void onRenameShop(CommandSender sender, @Values("@dsShops") String oldName, String newName) {
         ShopUtil.renameShop(oldName, newName);
         sender.sendMessage(DynamicShop.dsPrefix + LangUtil.ccLang.get().getString("CHANGES_APPLIED") + newName);
@@ -209,7 +209,7 @@ public class CommandDynamicShop extends BaseCommand {
     @Subcommand("mergeshop|merge")
     @Description("%HELP.MERGE_SHOP")
     @CommandCompletion("@dsShops @dsShops")
-    @CommandPermission("dshop.admin.mergeshop")
+    @CommandPermission(Constants.MERGE_SHOP_PERMISSION)
     public void onMergeShops(CommandSender sender, @Values("@dsShops") String shopOne, @Values("@dsShops") String shopTwo) {
         ShopUtil.mergeShop(shopOne, shopTwo);
         sender.sendMessage(DynamicShop.dsPrefix + LangUtil.ccLang.get().getString("CHANGES_APPLIED") + shopOne);
@@ -218,7 +218,7 @@ public class CommandDynamicShop extends BaseCommand {
     @Subcommand("convertshop")
     @Description("%HELP.CONVERT")
     @CommandCompletion("Shop")
-    @CommandPermission("dshop.admin.convert")
+    @CommandPermission(Constants.CONVERT_SHOP_PERMISSION)
     public void onConvertShop(Player player, @Values("Shop") String pluginName) {
         ShopUtil.convertDataFromShop(player);
     }
@@ -226,7 +226,7 @@ public class CommandDynamicShop extends BaseCommand {
     @Subcommand("setdefaultshop|setdefault")
     @Description("%HELP.SET_DEFAULT_SHOP")
     @CommandCompletion("@dsShops")
-    @CommandPermission("dshop.admin.setdefaultshop")
+    @CommandPermission(Constants.SET_DEFAULT_SHOP_PERMISSION)
     public void onSetDefaultShop(CommandSender sender, @Values("@dsShops") String shopName) {
         DynamicShop.plugin.getConfig().set("DefaultShopName", shopName);
         DynamicShop.plugin.saveConfig();
@@ -344,7 +344,7 @@ public class CommandDynamicShop extends BaseCommand {
                 return;
             }
         }
-        if (shopConf.contains("shophours") && !player.hasPermission("dshop.admin.shopedit")) {
+        if (shopConf.contains("shophours") && !player.hasPermission(Constants.SHOP_EDIT_PERMISSION)) {
             int curTime = (int) (player.getWorld().getTime()) / 1000 + 6;
             if (curTime > 24) {
                 curTime -= 24;
@@ -376,7 +376,7 @@ public class CommandDynamicShop extends BaseCommand {
     }
 
     @Subcommand("shopedit")
-    @CommandPermission("dshop.admin.shopedit")
+    @CommandPermission(Constants.SHOP_EDIT_PERMISSION)
     public class ShopEditCommand extends BaseCommand {
         @Description("%HELP.SHOPEDIT")
         @CommandCompletion("@dsShops @range:100 @range:1000 @dsMin @dsMax @range:1000 @range:1000")
