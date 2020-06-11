@@ -95,10 +95,16 @@ public final class DynaShopAPI {
      * @param shopName The shop name to check tax for or null
      *
      * @return The tax rate
+     *
+     * @throws IllegalArgumentException When the shop does not exist and is not null
      */
     public static int getTaxRate(String shopName) {
         if (shopName != null) {
-            return Calc.getTaxRate(shopName);
+            if (validateShopName(shopName)) {
+                return Calc.getTaxRate(shopName);
+            } else {
+                throw new IllegalArgumentException("Shop: " + shopName + " does not exist");
+            }
         } else {
             return ConfigUtil.getCurrentTax();
         }
@@ -119,30 +125,36 @@ public final class DynaShopAPI {
      * @param shopName The name of the shop to get the items from
      *
      * @return ArrayList of ItemStack containing the items for sale in the shop
+     *
+     * @throws IllegalArgumentException When the shop does not exist
      */
     public static ArrayList<ItemStack> getShopItems(@NonNull String shopName) {
-        ArrayList<ItemStack> list = new ArrayList<>();
-        for (String s : ShopUtil.ccShop.get().getConfigurationSection(shopName).getKeys(false)) {
-            try {
-                int i = Integer.parseInt(s);
-            } catch (Exception e) {
-                continue;
-            }
+        if (validateShopName(shopName)) {
+            ArrayList<ItemStack> list = new ArrayList<>();
+            for (String s : ShopUtil.ccShop.get().getConfigurationSection(shopName).getKeys(false)) {
+                try {
+                    int i = Integer.parseInt(s);
+                } catch (Exception e) {
+                    continue;
+                }
 
-            if (!ShopUtil.ccShop.get().contains(shopName + "." + s + ".value")) {
-                continue; // 장식용임
-            }
+                if (!ShopUtil.ccShop.get().contains(shopName + "." + s + ".value")) {
+                    continue; // 장식용임
+                }
 
-            Material m;
-            String itemName = ShopUtil.ccShop.get().getString(shopName + "." + s + ".mat"); // 메테리얼
-            try {
-                Material mat = Material.getMaterial(itemName);
-                list.add(new ItemStack(mat));
-            } catch (Exception e) {
-                continue;
+                Material m;
+                String itemName = ShopUtil.ccShop.get().getString(shopName + "." + s + ".mat"); // 메테리얼
+                try {
+                    Material mat = Material.getMaterial(itemName);
+                    list.add(new ItemStack(mat));
+                } catch (Exception e) {
+                    continue;
+                }
             }
+            return list;
+        } else {
+            throw new IllegalArgumentException("Shop: " + shopName + " does not exist");
         }
-        return list;
     }
 
     /**
@@ -152,13 +164,19 @@ public final class DynaShopAPI {
      * @param itemStack The item to check the price of
      *
      * @return The buy price of the item, -1 if the shop does not contain the item
+     *
+     * @throws IllegalArgumentException When the shop does not exist
      */
     public static double getBuyPrice(@NonNull String shopName, @NonNull ItemStack itemStack) {
-        int idx = ShopUtil.findItemFromShop(shopName, itemStack);
-        if (idx != -1) {
-            return Calc.getCurrentPrice(shopName, String.valueOf(ShopUtil.findItemFromShop(shopName, itemStack)), true);
+        if (validateShopName(shopName)) {
+            int idx = ShopUtil.findItemFromShop(shopName, itemStack);
+            if (idx != -1) {
+                return Calc.getCurrentPrice(shopName, String.valueOf(ShopUtil.findItemFromShop(shopName, itemStack)), true);
+            } else {
+                return idx;
+            }
         } else {
-            return idx;
+            throw new IllegalArgumentException("Shop: " + shopName + " does not exist");
         }
     }
 
@@ -169,13 +187,19 @@ public final class DynaShopAPI {
      * @param itemStack The item to check the price of
      *
      * @return The sell price of the item, -1 if the shop does not contain the item
+     *
+     * @throws IllegalArgumentException When the shop does not exist
      */
     public static double getSellPrice(@NonNull String shopName, @NonNull ItemStack itemStack) {
-        int idx = ShopUtil.findItemFromShop(shopName, itemStack);
-        if (idx != -1) {
-            return Calc.getCurrentPrice(shopName, String.valueOf(ShopUtil.findItemFromShop(shopName, itemStack)), false);
+        if (validateShopName(shopName)) {
+            int idx = ShopUtil.findItemFromShop(shopName, itemStack);
+            if (idx != -1) {
+                return Calc.getCurrentPrice(shopName, String.valueOf(ShopUtil.findItemFromShop(shopName, itemStack)), false);
+            } else {
+                return idx;
+            }
         } else {
-            return idx;
+            throw new IllegalArgumentException("Shop: " + shopName + " does not exist");
         }
     }
 
@@ -186,13 +210,19 @@ public final class DynaShopAPI {
      * @param itemStack The item to check the stock of
      *
      * @return The stock of the item, -1 if the shop does not contain the item
+     *
+     * @throws IllegalArgumentException When the shop does not exist
      */
     public static int getStock(@NonNull String shopName, @NonNull ItemStack itemStack) {
-        int idx = ShopUtil.findItemFromShop(shopName, itemStack);
-        if (idx != -1) {
-            return ShopUtil.ccShop.get().getInt(shopName + "." + ShopUtil.findItemFromShop(shopName, itemStack) + ".stock");
+        if (validateShopName(shopName)) {
+            int idx = ShopUtil.findItemFromShop(shopName, itemStack);
+            if (idx != -1) {
+                return ShopUtil.ccShop.get().getInt(shopName + "." + ShopUtil.findItemFromShop(shopName, itemStack) + ".stock");
+            } else {
+                return idx;
+            }
         } else {
-            return idx;
+            throw new IllegalArgumentException("Shop: " + shopName + " does not exist");
         }
     }
 
@@ -203,13 +233,19 @@ public final class DynaShopAPI {
      * @param itemStack The item to check the median stock of
      *
      * @return The median stock of the item, -1 if the shop does not contain the item
+     *
+     * @throws IllegalArgumentException When the shop does not exist
      */
-    public static int getMedian(@NonNull String shopName, @NonNull ItemStack itemStack) {
-        int idx = ShopUtil.findItemFromShop(shopName, itemStack);
-        if (idx != -1) {
-            return ShopUtil.ccShop.get().getInt(shopName + "." + idx + ".median");
+    public static int getMedian(@NonNull String shopName, @NonNull ItemStack itemStack) throws IllegalArgumentException {
+        if (validateShopName(shopName)) {
+            int idx = ShopUtil.findItemFromShop(shopName, itemStack);
+            if (idx != -1) {
+                return ShopUtil.ccShop.get().getInt(shopName + "." + idx + ".median");
+            } else {
+                return idx;
+            }
         } else {
-            return idx;
+            throw new IllegalArgumentException("Shop: " + shopName + " does not exist");
         }
     }
 
@@ -219,8 +255,25 @@ public final class DynaShopAPI {
      * @param shopName The shop to check the type of
      *
      * @return True if it is a Job Point shop, False if it is a Vault economy money shop
+     *
+     * @throws IllegalArgumentException When the shop does not exist
      */
-    public static boolean isJobsPointShop(@NonNull String shopName) {
-        return ShopUtil.ccShop.get().contains(shopName + ".Options.flag.jobpoint");
+    public static boolean isJobsPointShop(@NonNull String shopName) throws IllegalArgumentException {
+        if (validateShopName(shopName)) {
+            return ShopUtil.ccShop.get().contains(shopName + ".Options.flag.jobpoint");
+        } else {
+            throw new IllegalArgumentException("Shop: " + shopName + " does not exist");
+        }
+    }
+
+    /**
+     * Check if a shop exists
+     *
+     * @param shopName The shop name to check for
+     *
+     * @return True if it exists
+     */
+    public static boolean validateShopName(@NonNull String shopName) {
+        return getShops().contains(shopName);
     }
 }
