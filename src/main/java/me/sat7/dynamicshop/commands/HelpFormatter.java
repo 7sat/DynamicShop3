@@ -48,7 +48,7 @@ public class HelpFormatter extends CommandHelpFormatter {
         if (LangUtil.ccLang.get().isConfigurationSection("HELP." + command)) {
             LangUtil.ccLang.get().getConfigurationSection("HELP." + command).getKeys(false).forEach(key -> {
                 messages.add(
-                        "  §d- §f" +
+                        "  §1- §f" +
                                 LangUtil.ccLang.get().getString("HELP." + command + "." + key, "MISSING_STRING")
                                         .replace("{IRREVERSIBLE}", LangUtil.ccLang.get().getString("IRREVERSIBLE"))
                                         .replace("{HELP.PRICE}", LangUtil.ccLang.get().getString("HELP.PRICE"))

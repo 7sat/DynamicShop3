@@ -101,7 +101,8 @@ public class CommandHelper {
                 "HELP.HIDE_STOCK", LangUtil.ccLang.get().getString("HELP.HIDE_STOCK"),
                 "HELP.HIDE_PRICE", LangUtil.ccLang.get().getString("HELP.HIDE_PRICE"),
                 "HELP.SELL_BUY", LangUtil.ccLang.get().getString("HELP.SELL_BUY"),
-                "HELP.ON_LOG", LangUtil.ccLang.get().getString("HELP.ON_LOG")
+                "HELP.ON_LOG", LangUtil.ccLang.get().getString("HELP.ON_LOG"),
+                "HELP.ABOUT", LangUtil.ccLang.get().getString("HELP.ABOUT")
         );
     }
 

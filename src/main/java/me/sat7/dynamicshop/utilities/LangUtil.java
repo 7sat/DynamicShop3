@@ -160,7 +160,6 @@ public final class LangUtil {
             ccLang.get().addDefault("INVEN_FULL", "§4인벤토리에 빈 공간이 없습니다!");
             ccLang.get().addDefault("IRREVERSIBLE", "§f이 행동은 되돌릴 수 없습니다!");
 
-            ccLang.get().addDefault("HELP.TITLE", "§f-----[§b§o DynamicShop §dHelp §f]-----");
             ccLang.get().addDefault("HELP.HELP", "DynamicShop Help");
             ccLang.get().addDefault("HELP.SHOP", "상점을 엽니다.");
             ccLang.get().addDefault("HELP.CREATESHOP", "상점을 새로 만듭니다.");
@@ -196,9 +195,10 @@ public final class LangUtil {
             ccLang.get().addDefault("HELP.HIDE_PRICE", "Hide the pricing type of a shop");
             ccLang.get().addDefault("HELP.SELL_BUY", "Set a shop to buy/sell only");
             ccLang.get().addDefault("HELP.ON_LOG", "Set logging for a shop");
+            ccLang.get().addDefault("HELP.ABOUT", "Show the plugin version");
 
             ccLang.get().addDefault("HELP.DYNAMICSHOP_DELETEOLDUSER.1", "{IRREVERSIBLE}");
-            ccLang.get().addDefault("HELP.DYNAMICSHOP_CREATESHOP.1", "퍼미션(나중에 바꿀 수 있습니다.)\n     §atrue§7:§f dshop.user.shop.상점이름\n     §4false§7:§f 아무나 접근가능(기본값)\n     §6임의 입력§7:§f 해당 퍼미션 필요");
+            ccLang.get().addDefault("HELP.DYNAMICSHOP_CREATESHOP.1", "퍼미션(나중에 바꿀 수 있습니다.)\n     §b- §atrue§7:§f dshop.user.shop.상점이름\n     §b- §4false§7:§f 아무나 접근가능(기본값)\n     §b- §6임의 입력§7:§f 해당 퍼미션 필요");
             ccLang.get().addDefault("HELP.DYNAMICSHOP_CONVERTSHOP.1", "This is beta feature. Currently only support 'Shop'");
             ccLang.get().addDefault("HELP.DYNAMICSHOP_CONVERTSHOP.2", "You need to Copy pages yml file\n     to DynamicShop/Convert/Shop");
             ccLang.get().addDefault("HELP.DYNAMICSHOP_CONVERTSHOP.3", "Item meta will be lost");
@@ -395,7 +395,6 @@ public final class LangUtil {
             ccLang.get().addDefault("INVEN_FULL", "§4Inventory is full!");
             ccLang.get().addDefault("IRREVERSIBLE", "§fThis action is irreversible!");
 
-            ccLang.get().addDefault("HELP.TITLE", "§f-----[§b§o DynamicShop §dHelp §f]-----");
             ccLang.get().addDefault("HELP.HELP", "DynamicShop Help");
             ccLang.get().addDefault("HELP.SHOP_DESCRIPTION", "Open Shop GUI.");
             ccLang.get().addDefault("HELP.CREATESHOP", "Create new shop.");
@@ -431,9 +430,10 @@ public final class LangUtil {
             ccLang.get().addDefault("HELP.HIDE_PRICE", "Hide the pricing type of a shop");
             ccLang.get().addDefault("HELP.SELL_BUY", "Set a shop to buy/sell only");
             ccLang.get().addDefault("HELP.ON_LOG", "Set logging for a shop");
+            ccLang.get().addDefault("HELP.ABOUT", "Show the plugin version");
 
             ccLang.get().addDefault("HELP.DYNAMICSHOP_DELETEOLDUSER.1", "{IRREVERSIBLE}");
-            ccLang.get().addDefault("HELP.DYNAMICSHOP_CREATESHOP.1", "Permission(You can change this later.)\n     §atrue§7: §fdshop.user.shop.shopname\n     §4false§7: §fno permission needed(Default)\n     §6user input§7: §fneed that permission");
+            ccLang.get().addDefault("HELP.DYNAMICSHOP_CREATESHOP.1", "§b<permission>§7: §7§o(You can change this later.)\n     §b- §atrue§7: §fdshop.user.shop.shopname\n     §b- §4false§7: §fno permission needed(Default)\n     §b- §6user input§7: §fneed that permission");
             ccLang.get().addDefault("HELP.DYNAMICSHOP_CONVERTSHOP.1", "This is beta feature. Currently only support 'Shop'");
             ccLang.get().addDefault("HELP.DYNAMICSHOP_CONVERTSHOP.2", "You need to Copy pages yml file\n     to DynamicShop/Convert/Shop");
             ccLang.get().addDefault("HELP.DYNAMICSHOP_CONVERTSHOP.3", "Item meta will be lost");

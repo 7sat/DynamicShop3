@@ -36,8 +36,20 @@ public class CommandDynamicShop extends BaseCommand {
     @Description("%HELP.HELP")
     @Syntax("<command>")
     public void onHelp(CommandSender sender, CommandHelp help) {
-        sender.sendMessage(LangUtil.ccLang.get().getString("HELP.TITLE"));
+        String m = "§f----[§b§o " + LangUtil.ccLang.get().getString("HELP.HELP") + " §f]----";
+        sender.sendMessage(m);
         help.showHelp();
+    }
+
+    @Subcommand("about")
+    @Description("%HELP.ABOUT")
+    public void onAbout(CommandSender sender) {
+        String[] m = new String[]{
+                "§1=============================",
+                DynamicShop.plugin.getName() + " §b§o" + DynamicShop.plugin.getDescription().getVersion(),
+                "§1============================="
+        };
+        sender.sendMessage(m);
     }
 
     @Override
@@ -48,7 +60,7 @@ public class CommandDynamicShop extends BaseCommand {
         if (LangUtil.ccLang.get().isConfigurationSection("HELP." + command)) {
             LangUtil.ccLang.get().getConfigurationSection("HELP." + command).getKeys(false).forEach(key -> {
                 subText.add(
-                        "  §d- §f" +
+                        "  §1- §f" +
                                 LangUtil.ccLang.get().getString("HELP." + command + "." + key, "MISSING_STRING")
                                         .replace("{IRREVERSIBLE}", LangUtil.ccLang.get().getString("IRREVERSIBLE"))
                                         .replace("{HELP.PRICE}", LangUtil.ccLang.get().getString("HELP.PRICE"))
@@ -215,7 +227,7 @@ public class CommandDynamicShop extends BaseCommand {
         sender.sendMessage(DynamicShop.dsPrefix + LangUtil.ccLang.get().getString("CHANGES_APPLIED") + shopOne);
     }
 
-    @Subcommand("convertshop")
+    @Subcommand("convertshop|convert")
     @Description("%HELP.CONVERT")
     @CommandCompletion("Shop")
     @CommandPermission(Constants.CONVERT_SHOP_PERMISSION)
@@ -572,7 +584,7 @@ public class CommandDynamicShop extends BaseCommand {
 
         @Description("%HELP.SHOP_PERMISSION")
         @CommandCompletion("@dsShops true|false|my.permission")
-        @Subcommand("permission")
+        @Subcommand("permission|perm")
         public void onPermission(CommandSender sender, @Values("@dsShops") String shopName, @Optional String newPermission) {
             if (newPermission == null) {
                 String s = ShopUtil.ccShop.get().getConfigurationSection(shopName).getConfigurationSection("Options").getString("permission");
@@ -640,7 +652,7 @@ public class CommandDynamicShop extends BaseCommand {
 
         @Description("%HELP.SET_POSITION")
         @CommandCompletion("@dsShops pos1|pos2|clear")
-        @Subcommand("position")
+        @Subcommand("position|pos")
         @Syntax("<shopName> <pos1|pos2|clear>")
         public void onPosition(Player player, @Values("@dsShops") String shopName, @Values("pos1|pos2|clear") String value) {
             if (value.equalsIgnoreCase("pos1")) {
@@ -664,7 +676,7 @@ public class CommandDynamicShop extends BaseCommand {
 
         @Description("%TIME.SET_SHOPHOURS")
         @CommandCompletion("@dsShops @range:24 @range:24")
-        @Subcommand("shophours")
+        @Subcommand("shophours|hours")
         public void onShopHours(CommandSender sender, @Values("@dsShops") String shopName, @Values("@range:24") int open, @Values("@range:24") int close) {
             if (open > 24) {
                 open = 24;
@@ -713,7 +725,7 @@ public class CommandDynamicShop extends BaseCommand {
 
         @Description("%HELP.STABILIZATION")
         @CommandCompletion("@dsShops")
-        @Subcommand("stockstabilizing")
+        @Subcommand("stockstabilizing|stabilization")
         public void onStockStabilizing(CommandSender sender, @Values("@dsShops") String shopName, @Values("30m|1h|2h|4h|off") String interval, @Optional Double strength) {
             if (strength == null) {
                 if (interval.equals("off")) {
@@ -736,7 +748,7 @@ public class CommandDynamicShop extends BaseCommand {
         public class AccountCommand extends BaseCommand {
             @Description("%HELP.ACCOUNT")
             @CommandCompletion("@dsShops @range:1000")
-            @Subcommand("set")
+            @Subcommand("set|setbalance")
             public void onSet(CommandSender sender, @Values("@dsShops") String shopName, double balance) {
                 if (balance < 0) {
                     ShopUtil.ccShop.get().set(shopName + ".Options.Balance", null);
@@ -795,7 +807,7 @@ public class CommandDynamicShop extends BaseCommand {
 
             @Description("%HELP.ACCOUNT_TRANSFER")
             @CommandCompletion("@dsShops @shopsAndPlayers @range:1000")
-            @Subcommand("transfer")
+            @Subcommand("transfer|transferbalance")
             public void onTransfer(CommandSender sender, @Values("@dsShops") String shopName, @Values("@shopsAndPlayers") String target, double amount) {
                 // 출발 상점이 무한계좌임
                 if (!ShopUtil.ccShop.get().contains(shopName + ".Options.Balance")) {
