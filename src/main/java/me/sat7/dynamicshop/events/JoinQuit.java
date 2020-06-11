@@ -3,6 +3,7 @@ package me.sat7.dynamicshop.events;
 import me.sat7.dynamicshop.DynamicShop;
 import me.sat7.dynamicshop.UpdateCheck;
 
+import me.sat7.dynamicshop.constants.Constants;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
@@ -22,8 +23,8 @@ public class JoinQuit implements Listener {
 
         if(DynamicShop.updateAvailable)
         {
-            if(e.getPlayer().hasPermission("dshop.admin.shopedit") ||
-                    e.getPlayer().hasPermission("dshop.admin.reload"))
+            if(e.getPlayer().hasPermission(Constants.SHOP_EDIT_PERMISSION) ||
+                    e.getPlayer().hasPermission(Constants.DYNAMIC_SHOP_RELOAD_PERMISSION))
             {
                 e.getPlayer().sendMessage(DynamicShop.dsPrefix+"New update available!");
                 e.getPlayer().sendMessage(UpdateCheck.getResourceUrl());
