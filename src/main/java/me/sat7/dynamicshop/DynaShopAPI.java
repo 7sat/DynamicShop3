@@ -15,11 +15,11 @@ import java.text.DecimalFormat;
 import java.util.ArrayList;
 
 public final class DynaShopAPI {
+    public static DecimalFormat df = new DecimalFormat("0.00");
+
     private DynaShopAPI() {
 
     }
-
-    public static DecimalFormat df = new DecimalFormat("0.00");
 
     //[ UI ]=========================================================
 
@@ -93,9 +93,7 @@ public final class DynaShopAPI {
      * Will return the global tax if shopName is null.
      *
      * @param shopName The shop name to check tax for or null
-     *
      * @return The tax rate
-     *
      * @throws IllegalArgumentException When the shop does not exist and is not null
      */
     public static int getTaxRate(String shopName) {
@@ -123,9 +121,7 @@ public final class DynaShopAPI {
      * Get the items in a shop
      *
      * @param shopName The name of the shop to get the items from
-     *
      * @return ArrayList of ItemStack containing the items for sale in the shop
-     *
      * @throws IllegalArgumentException When the shop does not exist
      */
     public static ArrayList<ItemStack> getShopItems(@NonNull String shopName) {
@@ -162,9 +158,7 @@ public final class DynaShopAPI {
      *
      * @param shopName  The shop that has the item
      * @param itemStack The item to check the price of
-     *
      * @return The buy price of the item, -1 if the shop does not contain the item
-     *
      * @throws IllegalArgumentException When the shop does not exist
      */
     public static double getBuyPrice(@NonNull String shopName, @NonNull ItemStack itemStack) {
@@ -185,9 +179,7 @@ public final class DynaShopAPI {
      *
      * @param shopName  The shop that has the item
      * @param itemStack The item to check the price of
-     *
      * @return The sell price of the item, -1 if the shop does not contain the item
-     *
      * @throws IllegalArgumentException When the shop does not exist
      */
     public static double getSellPrice(@NonNull String shopName, @NonNull ItemStack itemStack) {
@@ -208,9 +200,7 @@ public final class DynaShopAPI {
      *
      * @param shopName  The shop that has the item
      * @param itemStack The item to check the stock of
-     *
      * @return The stock of the item, -1 if the shop does not contain the item
-     *
      * @throws IllegalArgumentException When the shop does not exist
      */
     public static int getStock(@NonNull String shopName, @NonNull ItemStack itemStack) {
@@ -231,9 +221,7 @@ public final class DynaShopAPI {
      *
      * @param shopName  The shop that has the item
      * @param itemStack The item to check the median stock of
-     *
      * @return The median stock of the item, -1 if the shop does not contain the item
-     *
      * @throws IllegalArgumentException When the shop does not exist
      */
     public static int getMedian(@NonNull String shopName, @NonNull ItemStack itemStack) throws IllegalArgumentException {
@@ -253,9 +241,7 @@ public final class DynaShopAPI {
      * Get whether a shop is for Vault money or Jobs points
      *
      * @param shopName The shop to check the type of
-     *
      * @return True if it is a Job Point shop, False if it is a Vault economy money shop
-     *
      * @throws IllegalArgumentException When the shop does not exist
      */
     public static boolean isJobsPointShop(@NonNull String shopName) throws IllegalArgumentException {
@@ -270,7 +256,6 @@ public final class DynaShopAPI {
      * Check if a shop exists
      *
      * @param shopName The shop name to check for
-     *
      * @return True if it exists
      */
     public static boolean validateShopName(@NonNull String shopName) {
