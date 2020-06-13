@@ -66,8 +66,9 @@ public class Root implements CommandExecutor {
         // qsell
         else if(args[0].equalsIgnoreCase("qsell"))
         {
-            DynaShopAPI.openQuickSellGUI(player);
-
+            if (sender.hasPermission(Constants.USE_QSELL_PERMISSION)) {
+                DynaShopAPI.openQuickSellGUI(player);
+            }
             return true;
         }
 
