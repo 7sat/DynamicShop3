@@ -32,7 +32,7 @@ public final class Sell {
         if(isShiftClick)
         {
             int amount = 0;
-            for (ItemStack item : player.getInventory().getContents()) {
+            for (ItemStack item : player.getInventory().getStorageContents()) {
                 if(item == null || item.getType() == null) continue;
             	if(item.isSimilar(myItem)) {
                     amount += item.getAmount();
