@@ -186,7 +186,8 @@ public final class DynaShopAPI {
         if (validateShopName(shopName)) {
             int idx = ShopUtil.findItemFromShop(shopName, itemStack);
             if (idx != -1) {
-                return Calc.getCurrentPrice(shopName, String.valueOf(idx), false);
+                double price = Calc.getCurrentPrice(shopName, String.valueOf(idx), false);
+                return price - ((price/100) * getTaxRate(shopName));
             } else {
                 return idx;
             }

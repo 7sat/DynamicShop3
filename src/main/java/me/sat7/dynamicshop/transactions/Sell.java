@@ -2,6 +2,8 @@ package me.sat7.dynamicshop.transactions;
 
 import java.util.HashMap;
 
+import me.sat7.dynamicshop.events.ShopBuySellEvent;
+import org.bukkit.Bukkit;
 import org.bukkit.Sound;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
@@ -23,8 +25,11 @@ public final class Sell {
     }
 
     // 퀵판매
-    public static void quickSellItem(Player player, ItemStack myItem, String shopName, int tradeIdx, boolean isShiftClick, int slot)
+    public static void quickSellItem(Player player, ItemStack tempIS, String shopName, int tradeIdx, boolean isShiftClick, int slot)
     {
+        double priceSellOld = DynaShopAPI.getSellPrice(shopName, tempIS);
+        double priceBuyOld = Calc.getCurrentPrice(shopName,String.valueOf(tradeIdx),true);
+        int stockOld = ShopUtil.ccShop.get().getInt(shopName+"." + tradeIdx + ".stock");
         double priceSum;
 
         // 실제 판매 가능량 확인
@@ -34,7 +39,7 @@ public final class Sell {
             int amount = 0;
             for (ItemStack item : player.getInventory().getStorageContents()) {
                 if(item == null || item.getType() == null) continue;
-            	if(item.isSimilar(myItem)) {
+            	if(item.isSimilar(tempIS)) {
                     amount += item.getAmount();
                     player.getInventory().removeItem(item);
             	}
@@ -43,7 +48,7 @@ public final class Sell {
         }
         else
         {
-            actualAmount = myItem.getAmount();
+            actualAmount = tempIS.getAmount();
             player.getInventory().setItem(slot,null);
         }
         player.updateInventory();
@@ -73,10 +78,10 @@ public final class Sell {
             ShopUtil.ccShop.save();
 
             //로그 기록
-            LogUtil.addLog(shopName,myItem.getType().toString(),-actualAmount,priceSum,"jobpoint",player.getName());
+            LogUtil.addLog(shopName,tempIS.getType().toString(),-actualAmount,priceSum,"jobpoint",player.getName());
 
             player.sendMessage(DynamicShop.dsPrefix + LangUtil.ccLang.get().getString("SELL_SUCCESS")
-                    .replace("{item}",myItem.getType().name())
+                    .replace("{item}",tempIS.getType().name())
                     .replace("{amount}", Integer.toString(actualAmount))
                     .replace("{price}",econ.format(r.amount))
                     .replace("{bal}",econ.format(econ.getBalance((player)))));
@@ -86,6 +91,9 @@ public final class Sell {
             {
                 ShopUtil.addShopBalance(shopName,priceSum*-1);
             }
+
+            ShopBuySellEvent event = new ShopBuySellEvent(false, priceBuyOld, Calc.getCurrentPrice(shopName,String.valueOf(tradeIdx),true), priceSellOld, DynaShopAPI.getSellPrice(shopName, tempIS), stockOld, DynaShopAPI.getStock(shopName, tempIS), DynaShopAPI.getMedian(shopName, tempIS), shopName, tempIS, player);
+            Bukkit.getPluginManager().callEvent(event);
         }
         else
         {
@@ -96,6 +104,9 @@ public final class Sell {
     // 판매
     public static void sellItemCash(Player player, String shopName, String tradeIdx, ItemStack tempIS, double priceSum, double deliverycharge, boolean infiniteStock)
     {
+        double priceSellOld = DynaShopAPI.getSellPrice(shopName, tempIS);
+        double priceBuyOld = Calc.getCurrentPrice(shopName,String.valueOf(tradeIdx),true);
+        int stockOld = ShopUtil.ccShop.get().getInt(shopName+"." + tradeIdx + ".stock");
         // 상점에 돈이 없음
         if(ShopUtil.getShopBalance(shopName) != -1 && ShopUtil.getShopBalance(shopName) < Calc.calcTotalCost(shopName,tradeIdx,tempIS.getAmount()))
         {
@@ -172,6 +183,9 @@ public final class Sell {
 
             ShopUtil.ccShop.save();
             DynaShopAPI.openItemTradeGui(player, shopName, tradeIdx);
+
+            ShopBuySellEvent event = new ShopBuySellEvent(false, priceBuyOld, Calc.getCurrentPrice(shopName,String.valueOf(tradeIdx),true), priceSellOld, DynaShopAPI.getSellPrice(shopName, tempIS), stockOld, DynaShopAPI.getStock(shopName, tempIS), DynaShopAPI.getMedian(shopName, tempIS), shopName, tempIS, player);
+            Bukkit.getPluginManager().callEvent(event);
         } else {
             player.sendMessage(String.format("[Vault] An error occured: %s", r.errorMessage));
         }
@@ -180,6 +194,9 @@ public final class Sell {
     // 판매 jp
     public static void sellItemJobPoint(Player player, String shopName, String tradeIdx, ItemStack tempIS, double priceSum, double deliverycharge, boolean infiniteStock)
     {
+        double priceSellOld = DynaShopAPI.getSellPrice(shopName, tempIS);
+        double priceBuyOld = Calc.getCurrentPrice(shopName,String.valueOf(tradeIdx),true);
+        int stockOld = ShopUtil.ccShop.get().getInt(shopName+"." + tradeIdx + ".stock");
         // 상점에 돈이 없음
         if(ShopUtil.getShopBalance(shopName) != -1 && ShopUtil.getShopBalance(shopName) < Calc.calcTotalCost(shopName,tradeIdx,tempIS.getAmount()))
         {
@@ -253,6 +270,9 @@ public final class Sell {
 
             ShopUtil.ccShop.save();
             DynaShopAPI.openItemTradeGui(player, shopName, tradeIdx);
+
+            ShopBuySellEvent event = new ShopBuySellEvent(false, priceBuyOld, Calc.getCurrentPrice(shopName,String.valueOf(tradeIdx),true), priceSellOld, DynaShopAPI.getSellPrice(shopName, tempIS), stockOld, DynaShopAPI.getStock(shopName, tempIS), DynaShopAPI.getMedian(shopName, tempIS), shopName, tempIS, player);
+            Bukkit.getPluginManager().callEvent(event);
         }
     }
 }

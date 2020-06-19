@@ -2,6 +2,8 @@ package me.sat7.dynamicshop.transactions;
 
 import java.util.HashMap;
 
+import me.sat7.dynamicshop.events.ShopBuySellEvent;
+import org.bukkit.Bukkit;
 import org.bukkit.Location;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
@@ -27,9 +29,11 @@ public final class Buy {
     public static void buyItemCash(Player player, String shopName, String tradeIdx, ItemStack tempIS, double priceSum, double deliverycharge, boolean infiniteStock)
     {
         Economy econ = DynamicShop.getEconomy();
+        double priceBuyOld = Calc.getCurrentPrice(shopName,tradeIdx,true);
+        double priceSellOld = DynaShopAPI.getSellPrice(shopName, tempIS);
+        int stockOld = ShopUtil.ccShop.get().getInt(shopName+"." + tradeIdx + ".stock");
 
         int actualAmount = 0;
-        int stockOld = ShopUtil.ccShop.get().getInt(shopName+"." + tradeIdx + ".stock");
 
         for (int i = 0; i<tempIS.getAmount(); i++)
         {
@@ -122,6 +126,9 @@ public final class Buy {
 
                 DynaShopAPI.openItemTradeGui(player,shopName, tradeIdx);
                 ShopUtil.ccShop.save();
+
+                ShopBuySellEvent event = new ShopBuySellEvent(true, priceBuyOld, Calc.getCurrentPrice(shopName,tradeIdx,true), priceSellOld, DynaShopAPI.getSellPrice(shopName, tempIS), stockOld, DynaShopAPI.getStock(shopName, tempIS), DynaShopAPI.getMedian(shopName, tempIS), shopName, tempIS, player);
+                Bukkit.getPluginManager().callEvent(event);
             }
             else
             {
@@ -139,6 +146,8 @@ public final class Buy {
     {
         int actualAmount = 0;
         int stockOld = ShopUtil.ccShop.get().getInt(shopName+"." + tradeIdx + ".stock");
+        double priceBuyOld = Calc.getCurrentPrice(shopName,tradeIdx,true);
+        double priceSellOld = DynaShopAPI.getSellPrice(shopName, tempIS);
 
         for (int i = 0; i<tempIS.getAmount(); i++)
         {
@@ -229,6 +238,9 @@ public final class Buy {
 
                 DynaShopAPI.openItemTradeGui(player,shopName, tradeIdx);
                 ShopUtil.ccShop.save();
+
+                ShopBuySellEvent event = new ShopBuySellEvent(true, priceBuyOld, Calc.getCurrentPrice(shopName,tradeIdx,true), priceSellOld, DynaShopAPI.getSellPrice(shopName, tempIS), stockOld, DynaShopAPI.getStock(shopName, tempIS), DynaShopAPI.getMedian(shopName, tempIS), shopName, tempIS, player);
+                Bukkit.getPluginManager().callEvent(event);
             }
         }
     }
