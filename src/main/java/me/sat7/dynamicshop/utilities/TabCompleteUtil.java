@@ -2,12 +2,14 @@ package me.sat7.dynamicshop.utilities;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.stream.Collectors;
 
 import org.bukkit.Bukkit;
 import org.bukkit.Material;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandSender;
 import org.bukkit.configuration.ConfigurationSection;
+import org.bukkit.entity.HumanEntity;
 import org.bukkit.entity.Player;
 
 import me.sat7.dynamicshop.DynamicShop;
@@ -64,6 +66,7 @@ public final class TabCompleteUtil {
                     if(sender.hasPermission("dshop.admin.deleteshop")) temp.add("deleteshop");
                     if(sender.hasPermission("dshop.admin.mergeshop")) temp.add("mergeshop");
                     if(sender.hasPermission("dshop.admin.renameshop")) temp.add("renameshop");
+                    if(sender.hasPermission("dshop.admin.openshop")) temp.add("openshop");
                     if(sender.hasPermission("dshop.admin.settax")) temp.add("settax");
                     if(sender.hasPermission("dshop.admin.settax")) temp.add("settax temp");
                     if(sender.hasPermission("dshop.admin.setdefaultshop")) temp.add("setdefaultshop");
@@ -596,6 +599,31 @@ public final class TabCompleteUtil {
                     {
                         DynamicShop.ccUser.get().set(senderUuid + ".tmpString","mergeshop");
                         Help.showHelp("mergeshop",(Player)sender,args);
+                    }
+                }
+                else if(args[0].equalsIgnoreCase("openshop") && sender.hasPermission("dshop.admin.openshop"))
+                {
+                    if (args.length == 2)
+                    {
+                        temp.addAll(ShopUtil.ccShop.get().getKeys(false));
+
+                        for (String s:temp)
+                        {
+                            if(s.startsWith(args[args.length-1])) alist.add(s);
+                        }
+                    } else if (args.length == 3) {
+                        temp.addAll(Bukkit.getOnlinePlayers().stream().map(HumanEntity::getName).collect(Collectors.toList()));
+
+                        for (String s:temp)
+                        {
+                            if(s.startsWith(args[args.length-1])) alist.add(s);
+                        }
+                    }
+
+                    if(!DynamicShop.ccUser.get().getString(senderUuid + ".tmpString").equals("openshop"))
+                    {
+                        DynamicShop.ccUser.get().set(senderUuid + ".tmpString","openshop");
+                        Help.showHelp("openshop",(Player)sender,args);
                     }
                 }
                 else if(args[0].equalsIgnoreCase("renameshop") && sender.hasPermission("dshop.admin.renameshop"))
