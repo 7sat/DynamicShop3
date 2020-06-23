@@ -18,8 +18,12 @@ public class Root implements CommandExecutor {
     {
         if(!(sender instanceof Player))
         {
-            DynamicShop.console.sendMessage(Constants.DYNAMIC_SHOP_PREFIX + " You can't run this command in console");
-            return true;
+            if (!args[0].equalsIgnoreCase("openshop")) {
+                DynamicShop.console.sendMessage(Constants.DYNAMIC_SHOP_PREFIX + " You can't run this command in console");
+                return true;
+            } else {
+                return OpenShop.openShop(args, sender);
+            }
         }
         Player player = (Player)sender;
 
@@ -82,6 +86,10 @@ public class Root implements CommandExecutor {
         else if(args[0].equalsIgnoreCase("createshop"))
         {
             return CreateShop.createShop(args, player);
+        }
+
+        if (args[0].equalsIgnoreCase("openshop")) {
+            return OpenShop.openShop(args, sender);
         }
 
         // deleteShop
