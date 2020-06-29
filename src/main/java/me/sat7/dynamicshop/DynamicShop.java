@@ -1,6 +1,7 @@
 package me.sat7.dynamicshop;
 
-import me.sat7.dynamicshop.commands.*;
+import me.sat7.dynamicshop.commands.Optional;
+import me.sat7.dynamicshop.commands.Root;
 import me.sat7.dynamicshop.constants.Constants;
 import me.sat7.dynamicshop.events.JoinQuit;
 import me.sat7.dynamicshop.events.OnChat;
@@ -9,13 +10,7 @@ import me.sat7.dynamicshop.events.OnSignClick;
 import me.sat7.dynamicshop.files.CustomConfig;
 import me.sat7.dynamicshop.guis.StartPage;
 import me.sat7.dynamicshop.jobshook.JobsHook;
-import me.sat7.dynamicshop.utilities.ConfigUtil;
-import me.sat7.dynamicshop.utilities.LangUtil;
-import me.sat7.dynamicshop.utilities.LogUtil;
-import me.sat7.dynamicshop.utilities.ShopUtil;
-import me.sat7.dynamicshop.utilities.SoundUtil;
-import me.sat7.dynamicshop.utilities.TabCompleteUtil;
-import me.sat7.dynamicshop.utilities.WorthUtil;
+import me.sat7.dynamicshop.utilities.*;
 import net.milkbowl.vault.economy.Economy;
 import org.bstats.bukkit.Metrics;
 import org.bukkit.Bukkit;
@@ -26,13 +21,16 @@ import org.bukkit.event.Listener;
 import org.bukkit.plugin.RegisteredServiceProvider;
 import org.bukkit.plugin.java.JavaPlugin;
 import org.bukkit.scheduler.BukkitRunnable;
+import org.bukkit.scheduler.BukkitTask;
 
 import java.io.File;
 import java.util.List;
+import java.util.Random;
 
 public final class DynamicShop extends JavaPlugin implements Listener {
 
     private static Economy econ = null; // 볼트에 물려있는 이코노미
+
     public static Economy getEconomy() {
         return econ;
     }
@@ -44,6 +42,9 @@ public final class DynamicShop extends JavaPlugin implements Listener {
     public static CustomConfig ccUser;
     public static CustomConfig ccSign;
 
+    private BukkitTask randomChangeTask;
+    private BukkitTask cullLogsTask;
+
     public static boolean updateAvailable = false;
 
     @Override
@@ -53,7 +54,7 @@ public final class DynamicShop extends JavaPlugin implements Listener {
         initCustomConfigs();
 
         // 볼트 이코노미 셋업
-        if (!setupEconomy() ) {
+        if (!setupEconomy()) {
             console.sendMessage(String.format("[%s] - Disabled due to no Vault dependency found!", getDescription().getName()));
             getServer().getPluginManager().disablePlugin(this);
             return;
@@ -62,17 +63,12 @@ public final class DynamicShop extends JavaPlugin implements Listener {
         registerEvents();
         initCommands();
         setupConfigs();
+        startRandomChangeTask();
+
         makeFolders();
         hookIntoJobs();
 
-        if (getConfig().getBoolean("CullLogs")) {
-            new BukkitRunnable() {
-                @Override
-                public void run() {
-                    LogUtil.cullLogs();
-                }
-            }.runTaskTimer(this, 0L, (20L * 60L * (long) getConfig().getInt("LogCullTimeMinutes")));
-        }
+        startCullLogsTask();
 
         // 완료
         console.sendMessage(Constants.DYNAMIC_SHOP_PREFIX + " Enabled! :)");
@@ -87,14 +83,28 @@ public final class DynamicShop extends JavaPlugin implements Listener {
         metrics.addCustomChart(new Metrics.SimplePie("chart_id", () -> "My value"));
     }
 
+    public void startCullLogsTask() {
+        if (getConfig().getBoolean("CullLogs")) {
+            if (cullLogsTask != null) {
+                cullLogsTask.cancel();
+            }
+            cullLogsTask = Bukkit.getScheduler().runTaskTimerAsynchronously(this, LogUtil::cullLogs, 0L, (20L * 60L * (long) getConfig().getInt("LogCullTimeMinutes")));
+        }
+    }
+
+    public void startRandomChangeTask() {
+        if (randomChangeTask != null) {
+            randomChangeTask.cancel();
+        }
+        randomChangeTask = Bukkit.getScheduler().runTaskTimer(DynamicShop.plugin, () -> ConfigUtil.randomChange(new Random()), 500, 500);
+    }
+
     private void hookIntoJobs() {
         // Jobs
         if (getServer().getPluginManager().getPlugin("Jobs") == null) {
             console.sendMessage(Constants.DYNAMIC_SHOP_PREFIX + " Jobs Reborn Not Found");
             JobsHook.jobsRebornActive = false;
-        }
-        else
-        {
+        } else {
             console.sendMessage(Constants.DYNAMIC_SHOP_PREFIX + " Jobs Reborn Found");
             JobsHook.jobsRebornActive = true;
         }
@@ -121,11 +131,11 @@ public final class DynamicShop extends JavaPlugin implements Listener {
     }
 
     private void registerEvents() {
-        getServer().getPluginManager().registerEvents(this,this);
-        getServer().getPluginManager().registerEvents(new JoinQuit(),this);
-        getServer().getPluginManager().registerEvents(new OnClick(),this);
-        getServer().getPluginManager().registerEvents(new OnSignClick(),this);
-        getServer().getPluginManager().registerEvents(new OnChat(),this);
+        getServer().getPluginManager().registerEvents(this, this);
+        getServer().getPluginManager().registerEvents(new JoinQuit(), this);
+        getServer().getPluginManager().registerEvents(new OnClick(), this);
+        getServer().getPluginManager().registerEvents(new OnSignClick(), this);
+        getServer().getPluginManager().registerEvents(new OnChat(), this);
     }
 
     private void initCustomConfigs() {
@@ -155,16 +165,14 @@ public final class DynamicShop extends JavaPlugin implements Listener {
         LogUtil.setupLogFile();
     }
 
-    private void setupUserFile()
-    {
-        ccUser.setup("User",null);
+    private void setupUserFile() {
+        ccUser.setup("User", null);
         ccUser.get().options().copyDefaults(true);
         ccUser.save();
     }
 
-    private void setupSignFile()
-    {
-        ccSign.setup("Sign",null);
+    private void setupSignFile() {
+        ccSign.setup("Sign", null);
         ccSign.get().options().copyDefaults(true);
         ccSign.save();
     }

@@ -31,6 +31,8 @@ public final class Reload {
 
         DynamicShop.plugin.reloadConfig();
         ConfigUtil.configSetup(DynamicShop.plugin);
+        DynamicShop.plugin.startRandomChangeTask();
+        DynamicShop.plugin.startCullLogsTask();
 
         LangUtil.setupLangFile(DynamicShop.plugin.getConfig().getString("Language"));
 
