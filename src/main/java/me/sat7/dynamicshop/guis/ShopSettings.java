@@ -126,7 +126,7 @@ public class ShopSettings {
                     new ArrayList<>(Arrays.asList(
                             "§9"+ LangUtil.ccLang.get().getString("CUR_STATE")+": ~" + flucConf.get("strength") + "%",
                             "§e"+ LangUtil.ccLang.get().getString("CLICK")+": "+ LangUtil.ccLang.get().getString("L_R_SHIFT"))),
-                    flucConf.getInt("strength"));
+                    (int) flucConf.getDouble("strength"));
             inventory.setItem(17,flucStrengthBtn);
         }
         else

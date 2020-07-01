@@ -553,7 +553,7 @@ public class OnClick implements Listener {
                     if(ShopUtil.ccShop.get().contains(shopName+".Options.fluctuation"))
                     {
                         Integer interval = ShopUtil.ccShop.get().getInt(shopName+".Options.fluctuation.interval");
-                        int strength = ShopUtil.ccShop.get().getInt(shopName+".Options.fluctuation.strength");
+                        double strength = ShopUtil.ccShop.get().getDouble(shopName+".Options.fluctuation.strength");
                         ArrayList<Integer> intervalOptions = new ArrayList<>();
                         intervalOptions.add(1);
                         intervalOptions.add(2);
@@ -595,7 +595,7 @@ public class OnClick implements Listener {
                         {
                             strength += edit;
 
-                            if(strength < 1) strength = 1;
+                            if(strength < 0.01) strength = 0.01;
                             if(strength > 60) strength = 60;
 
                             Bukkit.dispatchCommand(player, "DynamicShop shop "+shopName+" fluctuation "+intervalArg.get(intervalIdx)+" "+strength);

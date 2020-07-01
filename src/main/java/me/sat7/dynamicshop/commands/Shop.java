@@ -851,7 +851,7 @@ public final class Shop {
 
                     try
                     {
-                        int strength = Integer.parseInt(args[4]);
+                        double strength = Double.parseDouble(args[4]);
                         ShopUtil.ccShop.get().set(args[1]+".Options.fluctuation.interval",interval);
                         ShopUtil.ccShop.get().set(args[1]+".Options.fluctuation.strength",strength);
                         ShopUtil.ccShop.save();
