@@ -407,7 +407,7 @@ public final class ShopUtil {
         {
             try
             {
-                CustomConfig cc = new CustomConfig();
+                CustomConfig cc = new CustomConfig(DynamicShop.plugin);
                 String filename = f.getName().replace(".yml","");
                 if(cc.open(filename,"Convert/Shop"))
                 {

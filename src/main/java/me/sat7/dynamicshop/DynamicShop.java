@@ -139,14 +139,14 @@ public final class DynamicShop extends JavaPlugin implements Listener {
     }
 
     private void initCustomConfigs() {
-        LangUtil.ccLang = new CustomConfig();
-        ShopUtil.ccShop = new CustomConfig();
-        ccUser = new CustomConfig();
-        StartPage.ccStartPage = new CustomConfig();
-        ccSign = new CustomConfig();
-        WorthUtil.ccWorth = new CustomConfig();
-        SoundUtil.ccSound = new CustomConfig();
-        LogUtil.ccLog = new CustomConfig();
+        LangUtil.ccLang = new CustomConfig(this);
+        ShopUtil.ccShop = new CustomConfig(this);
+        ccUser = new CustomConfig(this);
+        StartPage.ccStartPage = new CustomConfig(this);
+        ccSign = new CustomConfig(this);
+        WorthUtil.ccWorth = new CustomConfig(this);
+        SoundUtil.ccSound = new CustomConfig(this);
+        LogUtil.ccLog = new CustomConfig(this);
     }
 
     private void setupConfigs() {

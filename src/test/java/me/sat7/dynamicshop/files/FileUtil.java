@@ -1,5 +1,6 @@
 package me.sat7.dynamicshop.files;
 
+import me.sat7.dynamicshop.DynamicShop;
 import org.bukkit.configuration.file.FileConfiguration;
 import org.bukkit.configuration.file.YamlConfiguration;
 
@@ -20,7 +21,7 @@ public final class FileUtil {
         config.set("default.COBBLESTONE.valueMax", 10000000000.0);
         config.set("default.Options.SalesTax", 0.0);
 
-        CustomConfig customConfig = new CustomConfig();
+        CustomConfig customConfig = new CustomConfig(DynamicShop.plugin);
         customConfig.customFile = config;
         return customConfig;
     }
@@ -36,13 +37,13 @@ public final class FileUtil {
         config.set("default.COBBLESTONE.valueMax", 100000.0);
         config.set("default.Options.SalesTax", 0.0);
 
-        CustomConfig customConfig = new CustomConfig();
+        CustomConfig customConfig = new CustomConfig(DynamicShop.plugin);
         customConfig.customFile = config;
         return customConfig;
     }
 
     public static CustomConfig setCustomConfig(FileConfiguration config) {
-        CustomConfig customConfig = new CustomConfig();
+        CustomConfig customConfig = new CustomConfig(DynamicShop.plugin);
         customConfig.customFile = config;
         return customConfig;
     }
