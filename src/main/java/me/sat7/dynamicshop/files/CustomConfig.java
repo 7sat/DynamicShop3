@@ -24,7 +24,7 @@ public class CustomConfig {
     public void setup(String name, String folder) {
         String path = name + ".yml";
         if (folder != null) path = folder + "/" + path;
-        file = new File(Bukkit.getServer().getPluginManager().getPlugin("DynamicShop").getDataFolder(), path);
+        file = new File(dynamicShop.getDataFolder(), path);
 
         if (!file.exists()) {
             try {
@@ -37,7 +37,7 @@ public class CustomConfig {
     }
 
     public boolean open(String name, String folder) {
-        file = new File(Bukkit.getServer().getPluginManager().getPlugin("DynamicShop").getDataFolder(), folder + "/" + name + ".yml");
+        file = new File(dynamicShop.getDataFolder(), folder + "/" + name + ".yml");
 
         if (!file.exists()) {
             DynamicShop.console.sendMessage(Constants.DYNAMIC_SHOP_PREFIX + name + " not found");
@@ -58,7 +58,7 @@ public class CustomConfig {
                 try {
                     customFile.save(file);
                 } catch (IOException e) {
-                    System.out.println("Couldn't save file");
+                    DynamicShop.console.sendMessage("Couldn't save file");
                 }
                 saveTask.cancel();
             });
