@@ -132,7 +132,7 @@ public class Shop {
         // 어드민이면 우클릭
         if(player.hasPermission("dshop.admin.shopedit")) infoLore.add(LangUtil.ccLang.get().getString("RMB_EDIT"));
 
-        ItemStack infoBtn =  ItemsUtil.createItemStack(Material.LEGACY_SIGN,null, "§3"+shopName, infoLore,1);
+        ItemStack infoBtn =  ItemsUtil.createItemStack(Material.OAK_SIGN,null, "§3"+shopName, infoLore,1);
         inventory.setItem(53,infoBtn);
 
         // 상품목록 등록
