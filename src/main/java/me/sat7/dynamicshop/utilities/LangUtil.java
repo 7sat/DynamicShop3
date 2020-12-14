@@ -15,7 +15,7 @@ public final class LangUtil {
 
     public static void setupLangFile(String lang)
     {
-        // 한국어
+        // 한국어 Korean 韩语
         {
             ccLang.setup("Lang_v2_ko-KR",null);
             ccLang.get().addDefault("STARTPAGE.EDITOR_TITLE", "§3시작 화면 편집");
@@ -224,7 +224,7 @@ public final class LangUtil {
             ccLang.save();
         }
 
-        // 영어 English
+        // English 영어 英语
         {
             ccLang.setup("Lang_v2_en-US",null);
             ccLang.get().addDefault("STARTPAGE.EDITOR_TITLE", "§3Start page editor");
@@ -434,7 +434,7 @@ public final class LangUtil {
             ccLang.save();
         }
 
-        // 简体中文 Simplifed Chinese
+        // 简体中文 중국어간체 Chinese(Simplified)
         {
             ccLang.setup("Lang_v2_zh-CN",null);
             ccLang.get().addDefault("STARTPAGE.EDITOR_TITLE", "§3开始页面管理编辑");
