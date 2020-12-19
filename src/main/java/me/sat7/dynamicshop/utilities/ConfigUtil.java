@@ -128,7 +128,7 @@ public final class ConfigUtil {
     public static void configSetup(DynamicShop dynamicShop) {
         dynamicShop.getConfig().options().copyHeader(true);
         dynamicShop.getConfig().options().header(
-                "Language: ex) en-US,ko-KR" + "\nPrefix: Prefix of plugin messages" + "\nSalesTax: ~99%"
+                "Language: ex) en-US,ko-KR,zh-CN" + "\nPrefix: Prefix of plugin messages" + "\nSalesTax: ~99%"
                         + "\nUseShopCommand: Set this to false if you want to disable /shop command"
                         + "\nDefaultShopName: This shop will open when player run /shop or /ds shop command"
                         + "\nDisplayStockAsStack: ex) true: 10Stacks, false: 640"
