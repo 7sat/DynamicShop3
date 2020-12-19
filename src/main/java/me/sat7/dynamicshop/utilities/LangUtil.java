@@ -224,7 +224,7 @@ public final class LangUtil {
             ccLang.save();
         }
 
-        // English 영어 英语
+        // 영어 English 英语
         {
             ccLang.setup("Lang_v2_en-US",null);
             ccLang.get().addDefault("STARTPAGE.EDITOR_TITLE", "§3Start page editor");
@@ -434,7 +434,7 @@ public final class LangUtil {
             ccLang.save();
         }
 
-        // 简体中文 중국어간체 Chinese(Simplified)
+        // 간체한어 Chinese(Simplified) 简体中文
         {
             ccLang.setup("Lang_v2_zh-CN",null);
             ccLang.get().addDefault("STARTPAGE.EDITOR_TITLE", "§3开始页面管理编辑");
