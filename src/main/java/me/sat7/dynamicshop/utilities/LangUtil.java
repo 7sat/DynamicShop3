@@ -564,7 +564,7 @@ public final class LangUtil {
             ccLang.get().addDefault("TAX.USE_GLOBAL", "使用全局税率 ({tax}%)");
             ccLang.get().addDefault("TAX.USE_LOCAL", "单独设置税率");
 
-            ccLang.get().addDefault("OUT_OF_STOCK", "§f库存告急!");
+            ccLang.get().addDefault("OUT_OF_STOCK", "§f库存告罄!");
             ccLang.get().addDefault("BUY_SUCCESS", "§f以 ${price} 的价格购买了 {item} x{amount}。余额: ${bal}");
             ccLang.get().addDefault("SELL_SUCCESS", "§f以 ${price} 的价格出售了 {item} x{amount}。余额: ${bal}");
             ccLang.get().addDefault("BUY_SUCCESS_JP", "§f以 ${price} 的工作点数购买了 {item} x{amount}。 余额: ${bal}");
