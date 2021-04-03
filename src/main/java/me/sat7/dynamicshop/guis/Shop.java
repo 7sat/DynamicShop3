@@ -3,6 +3,7 @@ package me.sat7.dynamicshop.guis;
 import java.text.DecimalFormat;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.List;
 import java.util.regex.Pattern;
 
 import org.bukkit.Bukkit;
@@ -152,7 +153,8 @@ public class Shop {
 
                 // 커스텀 메타 설정
                 ItemMeta meta = itemStack.getItemMeta();
-                ArrayList<String> lore = new ArrayList<>();
+                List<String> lore = meta.hasLore()?meta.getLore():new ArrayList<String>();
+                if (meta.hasLore()) lore.add("");
 
                 // 상품
                 if(ShopUtil.ccShop.get().contains(shopName+"."+s+".value"))
