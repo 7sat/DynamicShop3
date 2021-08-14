@@ -7,6 +7,7 @@ import me.sat7.dynamicshop.utilities.ShopUtil;
 import org.bukkit.Bukkit;
 import org.bukkit.command.CommandSender;
 import org.bukkit.configuration.ConfigurationSection;
+import org.bukkit.configuration.file.FileConfiguration;
 import org.bukkit.entity.Player;
 
 public class OpenShop {
@@ -15,9 +16,10 @@ public class OpenShop {
         String shopName = null;
         if (args.length == 2) {
             target = Bukkit.getPlayer(args[1]);
+            FileConfiguration config = DynamicShop.ccUser.get(target);
             if (target != null) {
                 if (DynamicShop.plugin.getConfig().getBoolean("OpenStartPageInsteadOfDefaultShop")) {
-                    DynamicShop.ccUser.get().set(target.getUniqueId() + ".interactItem", "");
+                    config.set("interactItem", "");
                     DynaShopAPI.openStartPage(target);
                     return false;
                 }
@@ -67,9 +69,9 @@ public class OpenShop {
                 }
             }
 
-
-            DynamicShop.ccUser.get().set(target.getUniqueId() + ".tmpString", "");
-            DynamicShop.ccUser.get().set(target.getUniqueId() + ".interactItem", "");
+            FileConfiguration config = DynamicShop.ccUser.get(target);
+            config.set("tmpString", "");
+            config.set("interactItem", "");
             DynaShopAPI.openShopGui(target, shopName, 1);
         }
 

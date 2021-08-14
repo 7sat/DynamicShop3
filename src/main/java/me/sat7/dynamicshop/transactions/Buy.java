@@ -83,7 +83,7 @@ public final class Buy {
                 int leftAmount = actualAmount;
                 while (leftAmount>0)
                 {
-                    int giveAmount = tempIS.getType().getMaxStackSize();
+                    int giveAmount = 64;
                     if(giveAmount > leftAmount) giveAmount = leftAmount;
 
                     ItemStack iStack = new ItemStack(tempIS.getType(),giveAmount);

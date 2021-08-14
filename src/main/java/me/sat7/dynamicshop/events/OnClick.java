@@ -11,6 +11,7 @@ import me.sat7.dynamicshop.utilities.*;
 
 import org.bukkit.*;
 import org.bukkit.configuration.ConfigurationSection;
+import org.bukkit.configuration.file.FileConfiguration;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
@@ -49,14 +50,13 @@ public class OnClick implements Listener {
         }
 
         Player player = (Player)e.getWhoClicked();
+        FileConfiguration config = DynamicShop.ccUser.get(player);
 
         // 클릭된 인벤토리가 UI임
         if(e.getClickedInventory() != player.getInventory())
         {
             // UUID 확인
-            String pUuid = player.getUniqueId().toString();
-
-            if(DynamicShop.ccUser.get().getConfigurationSection(pUuid)==null)
+            if(config==null)
             {
                 if(!DynaShopAPI.recreateUserData(player))
                 {
@@ -113,7 +113,7 @@ public class OnClick implements Listener {
                     {
                         if(e.getCurrentItem() == null || e.getCurrentItem().getType() == Material.AIR) return;
 
-                        DynamicShop.ccUser.get().set(player.getUniqueId()+".interactItem","startpage/" + e.getSlot()); // 선택한 아이탬의 인덱스 저장
+                        config.set("interactItem","startpage/" + e.getSlot()); // 선택한 아이탬의 인덱스 저장
                         DynaShopAPI.openStartPageSettingGui(player);
                     }
                     // 이동
@@ -122,7 +122,7 @@ public class OnClick implements Listener {
                         String itemtoMove = "";
                         try
                         {
-                            String[] temp = DynamicShop.ccUser.get().getString(player.getUniqueId()+".interactItem").split("/");
+                            String[] temp = config.getString("interactItem").split("/");
                             itemtoMove = temp[1];
                         }
                         catch (Exception ignored) { }
@@ -131,7 +131,7 @@ public class OnClick implements Listener {
                         {
                             if(e.getCurrentItem() == null || e.getCurrentItem().getType() == Material.AIR) return;
 
-                            DynamicShop.ccUser.get().set(player.getUniqueId()+".interactItem","startpage/" + e.getSlot()); // 선택한 아이탬의 인덱스 저장
+                            config.set("interactItem","startpage/" + e.getSlot()); // 선택한 아이탬의 인덱스 저장
                             player.sendMessage(DynamicShop.dsPrefix + LangUtil.ccLang.get().getString("ITEM_MOVE_SELECTED"));
                         }
                         else
@@ -151,7 +151,7 @@ public class OnClick implements Listener {
                             StartPage.ccStartPage.save();
 
                             DynaShopAPI.openStartPage(player);
-                            DynamicShop.ccUser.get().set(player.getUniqueId()+".interactItem","");
+                            config.set("interactItem","");
                         }
                     }
                 }
@@ -164,7 +164,7 @@ public class OnClick implements Listener {
                 e.setCancelled(true);
                 SoundUtil.playerSoundEffect(player,"click");
 
-                String[] temp = DynamicShop.ccUser.get().getString(player.getUniqueId()+".interactItem").split("/");
+                String[] temp = config.getString("interactItem").split("/");
 
                 // 돌아가기
                 if(e.getSlot() == 0)
@@ -177,7 +177,7 @@ public class OnClick implements Listener {
                     StartPage.ccStartPage.get().set("Buttons." + temp[1],null);
                     StartPage.ccStartPage.save();
 
-                    DynamicShop.ccUser.get().set(player.getUniqueId()+".interactItem","");
+                    config.set("interactItem","");
 
                     DynaShopAPI.openStartPage(player);
                 }
@@ -186,7 +186,7 @@ public class OnClick implements Listener {
                 {
                     player.sendMessage(DynamicShop.dsPrefix+ LangUtil.ccLang.get().getString("STARTPAGE.ENTER_NAME"));
                     ShopUtil.closeInventoryWithDelay(player);
-                    DynamicShop.ccUser.get().set(player.getUniqueId()+".tmpString","waitforInput"+"btnName");
+                    config.set("tmpString","waitforInput"+"btnName");
                     OnChat.WaitForInput(player);
                 }
                 //설명
@@ -194,7 +194,7 @@ public class OnClick implements Listener {
                 {
                     player.sendMessage(DynamicShop.dsPrefix+ LangUtil.ccLang.get().getString("STARTPAGE.ENTER_LORE"));
                     ShopUtil.closeInventoryWithDelay(player);
-                    DynamicShop.ccUser.get().set(player.getUniqueId()+".tmpString","waitforInput"+"btnLore");
+                    config.set("tmpString","waitforInput"+"btnLore");
                     OnChat.WaitForInput(player);
                 }
                 //아이콘
@@ -202,7 +202,7 @@ public class OnClick implements Listener {
                 {
                     player.sendMessage(DynamicShop.dsPrefix+ LangUtil.ccLang.get().getString("STARTPAGE.ENTER_ICON"));
                     ShopUtil.closeInventoryWithDelay(player);
-                    DynamicShop.ccUser.get().set(player.getUniqueId()+".tmpString","waitforInput"+"btnIcon");
+                    config.set("tmpString","waitforInput"+"btnIcon");
                     OnChat.WaitForInput(player);
                 }
                 //액션
@@ -210,7 +210,7 @@ public class OnClick implements Listener {
                 {
                     player.sendMessage(DynamicShop.dsPrefix+ LangUtil.ccLang.get().getString("STARTPAGE.ENTER_ACTION"));
                     ShopUtil.closeInventoryWithDelay(player);
-                    DynamicShop.ccUser.get().set(player.getUniqueId()+".tmpString","waitforInput"+"btnAction");
+                    config.set("tmpString","waitforInput"+"btnAction");
                     OnChat.WaitForInput(player);
                 }
                 // 상점 숏컷
@@ -218,7 +218,7 @@ public class OnClick implements Listener {
                 {
                     player.sendMessage(DynamicShop.dsPrefix+ LangUtil.ccLang.get().getString("STARTPAGE.ENTER_SHOPNAME"));
                     ShopUtil.closeInventoryWithDelay(player);
-                    DynamicShop.ccUser.get().set(player.getUniqueId()+".tmpString","waitforInput"+"shopname");
+                    config.set("tmpString","waitforInput"+"shopname");
 
                     StringBuilder shopList = new StringBuilder(LangUtil.ccLang.get().getString("SHOP_LIST") + ": ");
                     for (String s: ShopUtil.ccShop.get().getKeys(false))
@@ -235,7 +235,7 @@ public class OnClick implements Listener {
                 {
                     player.sendMessage(DynamicShop.dsPrefix+ LangUtil.ccLang.get().getString("STARTPAGE.ENTER_COLOR"));
                     ShopUtil.closeInventoryWithDelay(player);
-                    DynamicShop.ccUser.get().set(player.getUniqueId()+".tmpString","waitforInput"+"deco");
+                    config.set("tmpString","waitforInput"+"deco");
                     OnChat.WaitForInput(player);
                 }
             }
@@ -249,9 +249,9 @@ public class OnClick implements Listener {
                 int curPage = e.getClickedInventory().getItem(49).getAmount();
 
                 String itemtoMove = "";
-                if(DynamicShop.ccUser.get().contains(player.getUniqueId()+".interactItem"))
+                if(config.contains("interactItem"))
                 {
-                    String[] temp = DynamicShop.ccUser.get().getString(player.getUniqueId()+".interactItem").split("/");
+                    String[] temp = config.getString("interactItem").split("/");
                     if(temp.length>1) itemtoMove = temp[1];
                 }
 
@@ -303,8 +303,8 @@ public class OnClick implements Listener {
                                 {
                                     ShopUtil.closeInventoryWithDelay(player);
 
-                                    DynamicShop.ccUser.get().set(player.getUniqueId()+".interactItem",shopName+"/"+curPage);
-                                    DynamicShop.ccUser.get().set(player.getUniqueId()+".tmpString","waitforPageDelete");
+                                    config.set("interactItem",shopName+"/"+curPage);
+                                    config.set("tmpString","waitforPageDelete");
                                     OnChat.WaitForInput(player);
 
                                     player.sendMessage(DynamicShop.dsPrefix + LangUtil.ccLang.get().getString("RUSURE"));
@@ -323,7 +323,7 @@ public class OnClick implements Listener {
                     else if(e.getSlot() == 53 && e.isRightClick() && player.hasPermission("dshop.admin.shopedit"))
                     {
                         SoundUtil.playerSoundEffect(player,"click");
-                        DynamicShop.ccUser.get().set(player.getUniqueId()+".interactItem",shopName + "/" + 0); // 선택한 아이탬의 인덱스 저장
+                        config.set("interactItem",shopName + "/" + 0); // 선택한 아이탬의 인덱스 저장
                         DynaShopAPI.openShopSettingGui(player, shopName);
                         return;
                     }
@@ -343,14 +343,14 @@ public class OnClick implements Listener {
 
                             SoundUtil.playerSoundEffect(player,"tradeview");
                             DynaShopAPI.openItemTradeGui(player,shopName, String.valueOf(idx));
-                            DynamicShop.ccUser.get().set(player.getUniqueId()+".interactItem",shopName + "/" + idx); // 선택한 아이탬의 인덱스 저장
+                            config.set("interactItem",shopName + "/" + idx); // 선택한 아이탬의 인덱스 저장
                         }
                         // 아이탬 이동, 수정, 또는 장식탬 삭제
                         else if(player.hasPermission("dshop.admin.shopedit"))
                         {
                             SoundUtil.playerSoundEffect(player,"click");
 
-                            DynamicShop.ccUser.get().set(player.getUniqueId()+".interactItem",shopName + "/" + idx); // 선택한 아이탬의 인덱스 저장
+                            config.set("interactItem",shopName + "/" + idx); // 선택한 아이탬의 인덱스 저장
                             if(e.isShiftClick())
                             {
                                 if(ShopUtil.ccShop.get().contains(shopName+"."+idx+".value"))
@@ -417,12 +417,12 @@ public class OnClick implements Listener {
                         ShopUtil.ccShop.save();
 
                         DynaShopAPI.openShopGui(player,shopName,curPage);
-                        DynamicShop.ccUser.get().set(player.getUniqueId()+".interactItem","");
+                        config.set("interactItem","");
                     }
                     // 팔렛트 열기
                     else if(player.hasPermission("dshop.admin.shopedit"))
                     {
-                        DynamicShop.ccUser.get().set(player.getUniqueId()+".interactItem",shopName + "/" + clickedIdx); // 선택한 아이탬의 인덱스 저장
+                        config.set("interactItem",shopName + "/" + clickedIdx); // 선택한 아이탬의 인덱스 저장
                         DynaShopAPI.openItemPalette(player,1,"");
                     }
                 }
@@ -433,14 +433,14 @@ public class OnClick implements Listener {
                 e.setCancelled(true);
                 SoundUtil.playerSoundEffect(player,"click");
 
-                String[] temp = DynamicShop.ccUser.get().getString(player.getUniqueId()+".interactItem").split("/");
+                String[] temp = config.getString("interactItem").split("/");
                 String shopName = temp[0];
 
                 // 닫기버튼
                 if(e.getSlot() == 27)
                 {
                     DynaShopAPI.openShopGui(player,temp[0],1);
-                    DynamicShop.ccUser.get().set(player.getUniqueId()+".interactItem","");
+                    config.set("interactItem","");
                 }
                 // 권한
                 else if(e.getSlot() == 0)
@@ -801,7 +801,7 @@ public class OnClick implements Listener {
             {
                 e.setCancelled(true);
 
-                String[] temp = DynamicShop.ccUser.get().getString(player.getUniqueId()+".interactItem").split("/");
+                String[] temp = config.getString("interactItem").split("/");
                 String shopName = temp[0];
                 String tradeIdx = temp[1];
 
@@ -811,11 +811,11 @@ public class OnClick implements Listener {
                     if(e.getSlot() == 9)
                     {
                         SoundUtil.playerSoundEffect(player,"click");
-                        DynamicShop.ccUser.get().set(player.getUniqueId().toString()+".interactItem","");
+                        config.set("interactItem","");
 
-                        if(DynamicShop.ccUser.get().getString(player.getUniqueId() + ".tmpString").equalsIgnoreCase("sign"))
+                        if(config.getString("tmpString").equalsIgnoreCase("sign"))
                         {
-                            DynamicShop.ccUser.get().set(player.getUniqueId()+".tmpString","");
+                            config.set("tmpString","");
                             player.closeInventory();
                         }
                         else
@@ -980,14 +980,14 @@ public class OnClick implements Listener {
                 e.setCancelled(true);
                 SoundUtil.playerSoundEffect(player,"click");
 
-                String[] temp = DynamicShop.ccUser.get().getString(player.getUniqueId()+".interactItem").split("/");
+                String[] temp = config.getString("interactItem").split("/");
                 String shopName = temp[0];
                 int curPage = e.getInventory().getItem(49).getAmount();
 
                 // 닫기 버튼
                 if(e.getSlot() == 45)
                 {
-                    DynamicShop.ccUser.get().set(player.getUniqueId().toString()+".interactItem","");
+                    config.set("interactItem","");
                     DynaShopAPI.openShopGui(player,shopName,1);
                 }
                 // 페이지 버튼
@@ -1039,7 +1039,7 @@ public class OnClick implements Listener {
                 {
                     player.closeInventory();
 
-                    DynamicShop.ccUser.get().set(player.getUniqueId()+".tmpString","waitforPalette");
+                    config.set("tmpString","waitforPalette");
                     OnChat.WaitForInput(player);
 
                     player.sendMessage(DynamicShop.dsPrefix + LangUtil.ccLang.get().getString("SEARCH_ITEM"));
@@ -1071,7 +1071,7 @@ public class OnClick implements Listener {
             {
                 e.setCancelled(true);
 
-                String[] temp = DynamicShop.ccUser.get().getString(player.getUniqueId()+".interactItem").split("/");
+                String[] temp = config.getString("interactItem").split("/");
                 String shopName = temp[0];
 
                 if(e.getCurrentItem() == null)
@@ -1095,7 +1095,7 @@ public class OnClick implements Listener {
                         ShopUtil.removeItemFromShop(shopName, idx);
                         player.sendMessage(DynamicShop.dsPrefix + LangUtil.ccLang.get().getString("ITEM_DELETED"));
                         DynaShopAPI.openShopGui(player,shopName,Integer.parseInt(temp[1])/45+1);
-                        DynamicShop.ccUser.get().set(player.getUniqueId()+".interactItem","");
+                        config.set("interactItem","");
                         SoundUtil.playerSoundEffect(player,"deleteItem");
                         return;
                     }
@@ -1434,7 +1434,7 @@ public class OnClick implements Listener {
                     {
                         ShopUtil.editShopItem(shopName,existSlot,valueBuyD,valueSellD,valueMinD,valueMaxD,medianI,stockI);
                         DynaShopAPI.openShopGui(player,shopName,existSlot/45+1);
-                        DynamicShop.ccUser.get().set(player.getUniqueId()+".interactItem","");
+                        config.set("interactItem","");
                         SoundUtil.playerSoundEffect(player,"addItem");
                     }
                     else
@@ -1443,14 +1443,14 @@ public class OnClick implements Listener {
 
                         try
                         {
-                            idx = Integer.parseInt(DynamicShop.ccUser.get().getString(player.getUniqueId()+".interactItem").split("/")[1]);
+                            idx = Integer.parseInt(config.getString("interactItem").split("/")[1]);
                         }catch (Exception ignored){ }
 
                         if(idx != -1)
                         {
                             ShopUtil.addItemToShop(shopName,idx,e.getClickedInventory().getItem(0),valueBuyD,valueSellD,valueMinD,valueMaxD,medianI,stockI);
                             DynaShopAPI.openShopGui(player,shopName,Integer.parseInt(temp[1])/45+1);
-                            DynamicShop.ccUser.get().set(player.getUniqueId()+".interactItem","");
+                            config.set("interactItem","");
                             SoundUtil.playerSoundEffect(player,"addItem");
                         }
                     }
@@ -1554,7 +1554,7 @@ public class OnClick implements Listener {
                 }
                 else
                 {
-                    String[] temp = DynamicShop.ccUser.get().getString(player.getUniqueId()+".interactItem").split("/");
+                    String[] temp = config.getString("interactItem").split("/");
 
                     ShopUtil.addItemToShop(temp[0],Integer.parseInt(temp[1]),e.getCurrentItem(),-1,-1,-1,-1,-1,-1);
                     DynaShopAPI.openShopGui(player, temp[0],Integer.parseInt(temp[1])/45+1);

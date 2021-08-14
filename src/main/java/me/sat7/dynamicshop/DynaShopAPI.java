@@ -7,6 +7,7 @@ import me.sat7.dynamicshop.transactions.Calc;
 import me.sat7.dynamicshop.utilities.ConfigUtil;
 import me.sat7.dynamicshop.utilities.ShopUtil;
 import org.bukkit.Material;
+import org.bukkit.configuration.file.FileConfiguration;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.Inventory;
 import org.bukkit.inventory.ItemStack;
@@ -70,17 +71,18 @@ public final class DynaShopAPI {
 
     // 유저 데이터를 다시 만들고 만들어졌는지 확인함.
     public static boolean recreateUserData(Player player) {
-        if (DynamicShop.ccUser.get().contains(player.getUniqueId().toString())) {
+    	FileConfiguration config = DynamicShop.ccUser.get(player);
+        if (config != null) {
             return true;
         }
+        config = DynamicShop.ccUser.create(player);
+        config.set("tmpString", "");
+        config.set("interactItem", "");
+        config.set("cmdHelp", true);
+        config.set("lastJoin", System.currentTimeMillis());
+        DynamicShop.ccUser.save(player);
 
-        DynamicShop.ccUser.get().set(player.getUniqueId().toString() + ".tmpString", "");
-        DynamicShop.ccUser.get().set(player.getUniqueId().toString() + ".interactItem", "");
-        DynamicShop.ccUser.get().set(player.getUniqueId().toString() + ".cmdHelp", true);
-        DynamicShop.ccUser.get().set(player.getUniqueId().toString() + ".lastJoin", System.currentTimeMillis());
-        DynamicShop.ccUser.save();
-
-        return DynamicShop.ccUser.get().contains(player.getUniqueId().toString());
+        return true;
     }
 
     // 스타트페이지 셋팅창

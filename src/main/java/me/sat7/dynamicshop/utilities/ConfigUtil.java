@@ -118,7 +118,7 @@ public final class ConfigUtil {
         if (needToUpdateUI) {
             for (Player p : DynamicShop.plugin.getServer().getOnlinePlayers()) {
                 if (p.getOpenInventory().getTitle().equalsIgnoreCase(LangUtil.ccLang.get().getString("TRADE_TITLE"))) {
-                    String[] temp = DynamicShop.ccUser.get().getString(p.getUniqueId() + ".interactItem").split("/");
+                    String[] temp = DynamicShop.ccUser.get(p).getString("interactItem").split("/");
                     DynaShopAPI.openItemTradeGui(p, temp[0], temp[1]);
                 }
             }

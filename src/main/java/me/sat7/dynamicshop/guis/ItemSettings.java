@@ -22,7 +22,7 @@ import me.sat7.dynamicshop.utilities.ShopUtil;
 public class ItemSettings {
 
     public Inventory getGui(Player player, int tab, DSItem dsItem) {
-        String[] temp = DynamicShop.ccUser.get().getString(player.getUniqueId()+".interactItem").split("/");
+        String[] temp = DynamicShop.ccUser.get(player).getString("interactItem").split("/");
         String shopName = temp[0];
 
         // UI 요소 생성

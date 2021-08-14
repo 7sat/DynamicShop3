@@ -8,6 +8,7 @@ import me.sat7.dynamicshop.events.OnChat;
 import me.sat7.dynamicshop.events.OnClick;
 import me.sat7.dynamicshop.events.OnSignClick;
 import me.sat7.dynamicshop.files.CustomConfig;
+import me.sat7.dynamicshop.files.IndividualCustomConfig;
 import me.sat7.dynamicshop.guis.StartPage;
 import me.sat7.dynamicshop.jobshook.JobsHook;
 import me.sat7.dynamicshop.utilities.*;
@@ -17,10 +18,10 @@ import org.bukkit.Bukkit;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandSender;
 import org.bukkit.command.ConsoleCommandSender;
+import org.bukkit.entity.Player;
 import org.bukkit.event.Listener;
 import org.bukkit.plugin.RegisteredServiceProvider;
 import org.bukkit.plugin.java.JavaPlugin;
-import org.bukkit.scheduler.BukkitRunnable;
 import org.bukkit.scheduler.BukkitTask;
 
 import java.io.File;
@@ -39,7 +40,7 @@ public final class DynamicShop extends JavaPlugin implements Listener {
     public static ConsoleCommandSender console;
     public static String dsPrefix = "§3§l[dShop] §f";
 
-    public static CustomConfig ccUser;
+    public static IndividualCustomConfig<Player> ccUser;
     public static CustomConfig ccSign;
 
     private BukkitTask randomChangeTask;
@@ -132,7 +133,7 @@ public final class DynamicShop extends JavaPlugin implements Listener {
 
     private void registerEvents() {
         getServer().getPluginManager().registerEvents(this, this);
-        getServer().getPluginManager().registerEvents(new JoinQuit(), this);
+        getServer().getPluginManager().registerEvents(new JoinQuit(this), this);
         getServer().getPluginManager().registerEvents(new OnClick(), this);
         getServer().getPluginManager().registerEvents(new OnSignClick(), this);
         getServer().getPluginManager().registerEvents(new OnChat(), this);
@@ -141,7 +142,7 @@ public final class DynamicShop extends JavaPlugin implements Listener {
     private void initCustomConfigs() {
         LangUtil.ccLang = new CustomConfig();
         ShopUtil.ccShop = new CustomConfig();
-        ccUser = new CustomConfig();
+        ccUser = new IndividualCustomConfig<Player>();
         StartPage.ccStartPage = new CustomConfig();
         ccSign = new CustomConfig();
         WorthUtil.ccWorth = new CustomConfig();
@@ -166,9 +167,12 @@ public final class DynamicShop extends JavaPlugin implements Listener {
     }
 
     private void setupUserFile() {
-        ccUser.setup("User", null);
-        ccUser.get().options().copyDefaults(true);
-        ccUser.save();
+        ccUser.setup("User", player -> player.getUniqueId().toString(), (player, config) -> {
+            config.set("tmpString", "");
+            config.set("interactItem", "");
+            config.set("cmdHelp", true);
+            config.set("lastJoin", System.currentTimeMillis());
+        });
     }
 
     private void setupSignFile() {

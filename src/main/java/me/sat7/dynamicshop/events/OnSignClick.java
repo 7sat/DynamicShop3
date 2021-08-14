@@ -14,6 +14,7 @@ import org.bukkit.block.BlockFace;
 import org.bukkit.block.Sign;
 import org.bukkit.block.data.BlockData;
 import org.bukkit.block.data.Directional;
+import org.bukkit.configuration.file.FileConfiguration;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
@@ -196,9 +197,10 @@ public class OnSignClick  implements Listener
 
                         if(idx != -1)
                         {
-                            DynamicShop.ccUser.get().set(p.getUniqueId().toString()+".interactItem",shopName+"/"+idx);
-                            DynamicShop.ccUser.get().set(p.getUniqueId().toString()+".tmpString","sign");
-                            DynamicShop.ccUser.save();
+                        	FileConfiguration config = DynamicShop.ccUser.get(p);
+                            config.set("interactItem",shopName+"/"+idx);
+                            config.set("tmpString","sign");
+                            DynamicShop.ccUser.save(p);
 
                             DynaShopAPI.openItemTradeGui(p,shopName,String.valueOf(idx));
                         }

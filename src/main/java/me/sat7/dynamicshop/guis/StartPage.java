@@ -43,7 +43,7 @@ public class StartPage {
     public Inventory getGui(Player player) {
         Inventory ui = Bukkit.createInventory(player, ccStartPage.get().getInt("Options.UiSlotCount"), ccStartPage.get().getString("Options.Title"));
 
-        DynamicShop.ccUser.get().set(player.getUniqueId()+".interactItem","");
+        DynamicShop.ccUser.get(player).set("interactItem","");
 
         //아이콘, 이름, 로어, 인덱스, 커맨드
         ConfigurationSection cs = ccStartPage.get().getConfigurationSection("Buttons");

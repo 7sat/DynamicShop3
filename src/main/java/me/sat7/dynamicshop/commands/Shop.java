@@ -3,6 +3,7 @@ package me.sat7.dynamicshop.commands;
 import org.bukkit.Bukkit;
 import org.bukkit.Material;
 import org.bukkit.configuration.ConfigurationSection;
+import org.bukkit.configuration.file.FileConfiguration;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
 
@@ -24,13 +25,13 @@ public final class Shop {
 
     static boolean shopCommand(String[] args, Player player) {
         String shopName = "";
-
+        FileConfiguration config = DynamicShop.ccUser.get(player);
         // ds shop (defaultShop)
         if(args.length == 1)
         {
             if(DynamicShop.plugin.getConfig().getBoolean("OpenStartPageInsteadOfDefaultShop"))
             {
-                DynamicShop.ccUser.get().set(player.getUniqueId()+".interactItem","");
+                config.set("interactItem","");
                 DynaShopAPI.openStartPage(player);
                 return true;
             }
@@ -132,8 +133,8 @@ public final class Shop {
                 }
             }
 
-            DynamicShop.ccUser.get().set(player.getUniqueId() + ".tmpString","");
-            DynamicShop.ccUser.get().set(player.getUniqueId()+".interactItem","");
+            config.set("tmpString","");
+            config.set("interactItem","");
             DynaShopAPI.openShopGui(player,shopName,1);
             return true;
         }

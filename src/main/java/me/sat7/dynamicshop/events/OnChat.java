@@ -10,6 +10,7 @@ import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
 import org.bukkit.Material;
 import org.bukkit.configuration.ConfigurationSection;
+import org.bukkit.configuration.file.FileConfiguration;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
@@ -30,22 +31,24 @@ public class OnChat implements Listener {
         {
             cancelRunnable(player);
         }
+        
+        FileConfiguration config = DynamicShop.ccUser.get(player);
 
         BukkitTask taskID = Bukkit.getScheduler().runTaskLater(DynamicShop.plugin, () -> {
 
-            if(DynamicShop.ccUser.get().getString(player.getUniqueId()+".tmpString").equals("waitforPalette"))
+            if(config.getString("tmpString").equals("waitforPalette"))
             {
-                DynamicShop.ccUser.get().set(player.getUniqueId()+".tmpString","");
+                config.set("tmpString","");
                 player.sendMessage(DynamicShop.dsPrefix + LangUtil.ccLang.get().getString("SEARCH_CANCELED"));
             }
-            else if(DynamicShop.ccUser.get().getString(player.getUniqueId()+".tmpString").contains("waitforInput"))
+            else if(config.getString("tmpString").contains("waitforInput"))
             {
-                DynamicShop.ccUser.get().set(player.getUniqueId()+".tmpString","");
+                config.set("tmpString","");
                 player.sendMessage(DynamicShop.dsPrefix + LangUtil.ccLang.get().getString("INPUT_CANCELED"));
             }
-            else if(DynamicShop.ccUser.get().getString(player.getUniqueId()+".tmpString").equals("waitforPageDelete"))
+            else if(config.getString("tmpString").equals("waitforPageDelete"))
             {
-                DynamicShop.ccUser.get().set(player.getUniqueId()+".tmpString","");
+                config.set("tmpString","");
                 player.sendMessage(DynamicShop.dsPrefix + LangUtil.ccLang.get().getString("INPUT_CANCELED"));
             }
 
@@ -63,21 +66,22 @@ public class OnChat implements Listener {
     public void onPlayerChat(PlayerChatEvent e)
     {
         Player p = e.getPlayer();
+        FileConfiguration config = DynamicShop.ccUser.get(p);
 
-        if(DynamicShop.ccUser.get().getString(p.getUniqueId()+".tmpString").equals("waitforPalette"))
+        if(config.getString("tmpString").equals("waitforPalette"))
         {
             e.setCancelled(true);
 
-            DynamicShop.ccUser.get().set(p.getUniqueId()+".tmpString","");
+            config.set("tmpString","");
             DynaShopAPI.openItemPalette(p,1,e.getMessage());
             cancelRunnable(p);
         }
-        else if(DynamicShop.ccUser.get().getString(p.getUniqueId()+".tmpString").contains("waitforInput"))
+        else if(config.getString("tmpString").contains("waitforInput"))
         {
             e.setCancelled(true);
 
-            String s = DynamicShop.ccUser.get().getString(p.getUniqueId()+".tmpString").replace("waitforInput","");
-            String[] temp = DynamicShop.ccUser.get().getString(p.getUniqueId()+".interactItem").split("/");
+            String s = config.getString("tmpString").replace("waitforInput","");
+            String[] temp = config.getString("interactItem").split("/");
 
             if(s.equals("btnName"))
             {
@@ -135,17 +139,17 @@ public class OnChat implements Listener {
 
             StartPage.ccStartPage.save();
 
-            DynamicShop.ccUser.get().set(p.getUniqueId()+".tmpString","");
+            config.set("tmpString","");
             DynaShopAPI.openStartPage(p);
             cancelRunnable(p);
         }
-        else if(DynamicShop.ccUser.get().getString(p.getUniqueId()+".tmpString").contains("waitforPageDelete"))
+        else if(config.getString("tmpString").contains("waitforPageDelete"))
         {
             e.setCancelled(true);
 
             if(e.getMessage().equals("delete"))
             {
-                String[] temp = DynamicShop.ccUser.get().getString(p.getUniqueId()+".interactItem").split("/");
+                String[] temp = config.getString("interactItem").split("/");
                 ShopUtil.deleteShopPage(temp[0],Integer.parseInt(temp[1]));
                 DynaShopAPI.openShopGui(p,temp[0],1);
             }
@@ -154,8 +158,8 @@ public class OnChat implements Listener {
                 p.sendMessage(DynamicShop.dsPrefix + LangUtil.ccLang.get().getString("INPUT_CANCELED"));
             }
 
-            DynamicShop.ccUser.get().set(p.getUniqueId()+".interactItem","");
-            DynamicShop.ccUser.get().set(p.getUniqueId()+".tmpString","");
+            config.set("interactItem","");
+            config.set("tmpString","");
             cancelRunnable(p);
         }
     }

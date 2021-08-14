@@ -36,7 +36,7 @@ public class StartPageSettings {
         inven.setItem(3,loreBtn);
 
         // 아이콘 버튼
-        String[] temp = DynamicShop.ccUser.get().getString(player.getUniqueId()+".interactItem").split("/");
+        String[] temp = DynamicShop.ccUser.get(player).getString("interactItem").split("/");
         ItemStack iconBtn = ItemsUtil.createItemStack(Material.getMaterial(StartPage.ccStartPage.get().getString("Buttons."+temp[1]+".icon")),null,
                 LangUtil.ccLang.get().getString("STARTPAGE.EDIT_ICON"), null,1);
         inven.setItem(4,iconBtn);

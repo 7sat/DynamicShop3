@@ -18,7 +18,7 @@ public final class Help {
     // 명령어 도움말 표시
     public static void showHelp(String helpcode, Player player, String[] args)
     {
-        if(!DynamicShop.ccUser.get().getBoolean(player.getUniqueId() + ".cmdHelp")) return;
+        if(!DynamicShop.ccUser.get(player).getBoolean("cmdHelp")) return;
 
         if(helpcode.equals("main"))
         {
