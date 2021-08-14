@@ -89,7 +89,7 @@ public class IndividualCustomConfig<T> {
     }
     
     private File getFile(T name) {
-    	return new File(DynamicShop.plugin.getDataFolder(), function.apply(name) + ".yml");
+    	return new File(folder, function.apply(name) + ".yml");
     }
 
     public void reload(T name){
@@ -103,7 +103,7 @@ public class IndividualCustomConfig<T> {
     
     public void remove(String config) {
     	customConfigs.remove(config);
-    	new File(DynamicShop.plugin.getDataFolder(), config + ".yml").delete();
+    	new File(folder, config + ".yml").delete();
     }
     
     public void remove(T name) {
