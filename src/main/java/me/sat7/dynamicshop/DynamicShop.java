@@ -28,6 +28,8 @@ import java.io.File;
 import java.util.List;
 import java.util.Random;
 
+import static me.sat7.dynamicshop.UpdateChecker.getResourceUrl;
+
 public final class DynamicShop extends JavaPlugin implements Listener {
 
     private static Economy econ = null; // 볼트에 물려있는 이코노미
@@ -73,7 +75,41 @@ public final class DynamicShop extends JavaPlugin implements Listener {
 
         // 완료
         console.sendMessage(Constants.DYNAMIC_SHOP_PREFIX + " Enabled! :)");
-        new UpdateCheck();
+        new UpdateChecker(this, UpdateChecker.PROJECT_ID).getVersion(version ->
+        {
+            try
+            {
+                if(DynamicShop.plugin.getDescription().getVersion().contains("SNAPSHOT")) {
+                    DynamicShop.updateAvailable = false;
+                    DynamicShop.console.sendMessage("§3-------------------------------------------------------");
+                    DynamicShop.console.sendMessage(Constants.DYNAMIC_SHOP_PREFIX +" Plugin is running a dev build!");
+                    DynamicShop.console.sendMessage("Be careful and monitor what happens!");
+                    DynamicShop.console.sendMessage(getResourceUrl());
+                    DynamicShop.console.sendMessage("§3-------------------------------------------------------");
+                }
+                if (this.getDescription().getVersion().equals(version))
+                {
+                    DynamicShop.updateAvailable = false;
+                    DynamicShop.console.sendMessage("§3-------------------------------------------------------");
+                    DynamicShop.console.sendMessage(Constants.DYNAMIC_SHOP_PREFIX +" Plugin is up to date!");
+                    DynamicShop.console.sendMessage("Please rate my plugin if you like it");
+                    DynamicShop.console.sendMessage(getResourceUrl());
+                    DynamicShop.console.sendMessage("§3-------------------------------------------------------");
+                }
+                else
+                {
+                    DynamicShop.updateAvailable = true;
+                    DynamicShop.console.sendMessage("§3-------------------------------------------------------");
+                    DynamicShop.console.sendMessage(Constants.DYNAMIC_SHOP_PREFIX +"Plugin outdated!!");
+                    DynamicShop.console.sendMessage(getResourceUrl());
+                    DynamicShop.console.sendMessage("§3-------------------------------------------------------");
+                }
+            }
+            catch (Exception e)
+            {
+                DynamicShop.console.sendMessage(Constants.DYNAMIC_SHOP_PREFIX +"Failed to check update. Try again later.");
+            }
+        });
 
         // bstats
         //System.setProperty("bstats.relocatecheck", "false"); // 빌드가 외부로 나갈때는 이 라인이 주석처리되야함.
