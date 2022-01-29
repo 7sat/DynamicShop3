@@ -554,24 +554,6 @@ public class OnClick implements Listener {
                     {
                         Integer interval = ShopUtil.ccShop.get().getInt(shopName+".Options.fluctuation.interval");
                         double strength = ShopUtil.ccShop.get().getDouble(shopName+".Options.fluctuation.strength");
-                        ArrayList<Integer> intervalOptions = new ArrayList<>();
-                        intervalOptions.add(1);
-                        intervalOptions.add(2);
-                        intervalOptions.add(4);
-                        intervalOptions.add(8);
-                        intervalOptions.add(24);
-                        int intervalIdx = intervalOptions.indexOf(interval);
-
-                        ArrayList<String> intervalArg = new ArrayList<>();
-                        intervalArg.add("30m");
-                        intervalArg.add("1h");
-                        intervalArg.add("2h");
-                        intervalArg.add("4h");
-                        intervalArg.add("12h");
-
-                        int edit = -1;
-                        if(e.isRightClick()) edit = 1;
-                        if(e.isShiftClick()) edit *= 5;
 
                         if(e.getSlot()==15)
                         {
@@ -579,26 +561,29 @@ public class OnClick implements Listener {
                         }
                         else if(e.getSlot() == 16)
                         {
-                            intervalIdx += edit;
+                            int edit = -1;
+                            if(e.isRightClick()) edit = 1;
+                            if(e.isShiftClick()) edit *= 5;
 
-                            if(intervalIdx < 0) intervalIdx = 0;
+                            interval += edit;
 
-                            if(intervalIdx > 4)
-                            {
-                                intervalIdx = 4;
-                            }
+                            if(interval < 1) interval = 1;
+                            if(interval > 999) interval = 999;
 
-
-                            Bukkit.dispatchCommand(player, "DynamicShop shop "+shopName+" fluctuation "+intervalArg.get(intervalIdx)+" "+strength);
+                            Bukkit.dispatchCommand(player, "DynamicShop shop "+shopName+" fluctuation "+interval+" "+strength);
                         }
                         else if(e.getSlot() == 17)
                         {
+                            double edit = -0.1;
+                            if(e.isRightClick()) edit = 0.1;
+                            if(e.isShiftClick()) edit *= 5;
+
                             strength += edit;
 
-                            if(strength < 0.01) strength = 0.01;
-                            if(strength > 60) strength = 60;
+                            if(strength < 0.1) strength = 0.1;
+                            if(strength > 64) strength = 64;
 
-                            Bukkit.dispatchCommand(player, "DynamicShop shop "+shopName+" fluctuation "+intervalArg.get(intervalIdx)+" "+strength);
+                            Bukkit.dispatchCommand(player, "DynamicShop shop "+shopName+" fluctuation "+interval+" "+strength);
                         }
 
                         DynaShopAPI.openShopSettingGui(player,shopName);
@@ -607,7 +592,7 @@ public class OnClick implements Listener {
                     {
                         if(e.getSlot()==15)
                         {
-                            Bukkit.dispatchCommand(player, "DynamicShop shop "+shopName+" fluctuation 1h 1");
+                            Bukkit.dispatchCommand(player, "DynamicShop shop "+shopName+" fluctuation 12 0.1");
                             DynaShopAPI.openShopSettingGui(player,shopName);
                         }
                     }
@@ -619,20 +604,6 @@ public class OnClick implements Listener {
                     {
                         Integer interval = ShopUtil.ccShop.get().getInt(shopName+".Options.stockStabilizing.interval");
                         double strength = ShopUtil.ccShop.get().getDouble(shopName+".Options.stockStabilizing.strength");
-                        ArrayList<Integer> intervalOptions = new ArrayList<>();
-                        intervalOptions.add(1);
-                        intervalOptions.add(2);
-                        intervalOptions.add(4);
-                        intervalOptions.add(8);
-                        intervalOptions.add(24);
-                        int intervalIdx = intervalOptions.indexOf(interval);
-
-                        ArrayList<String> intervalArg = new ArrayList<>();
-                        intervalArg.add("30m");
-                        intervalArg.add("1h");
-                        intervalArg.add("2h");
-                        intervalArg.add("4h");
-                        intervalArg.add("12h");
 
                         if(e.getSlot()==24)
                         {
@@ -640,20 +611,15 @@ public class OnClick implements Listener {
                         }
                         else if(e.getSlot() == 25)
                         {
-                            double edit = -1;
+                            int edit = -1;
                             if(e.isRightClick()) edit = 1;
                             if(e.isShiftClick()) edit *= 5;
 
-                            intervalIdx += edit;
+                            interval += edit;
+                            if(interval < 1) interval = 1;
+                            if(interval > 999) interval = 999;
 
-                            if(intervalIdx < 0) intervalIdx = 0;
-
-                            if(intervalIdx > 4)
-                            {
-                                intervalIdx = 4;
-                            }
-
-                            Bukkit.dispatchCommand(player, "DynamicShop shop "+shopName+" stockStabilizing "+intervalArg.get(intervalIdx)+" "+strength);
+                            Bukkit.dispatchCommand(player, "DynamicShop shop "+shopName+" stockStabilizing "+interval+" "+strength);
                         }
                         else if(e.getSlot() == 26)
                         {
@@ -668,7 +634,7 @@ public class OnClick implements Listener {
 
                             strength = (Math.round(strength*100)/100.0);
 
-                            Bukkit.dispatchCommand(player, "DynamicShop shop "+shopName+" stockStabilizing "+intervalArg.get(intervalIdx)+" "+strength);
+                            Bukkit.dispatchCommand(player, "DynamicShop shop "+shopName+" stockStabilizing "+interval+" "+strength);
                         }
 
                         DynaShopAPI.openShopSettingGui(player,shopName);
@@ -677,7 +643,7 @@ public class OnClick implements Listener {
                     {
                         if(e.getSlot()==24)
                         {
-                            Bukkit.dispatchCommand(player, "DynamicShop shop "+shopName+" stockStabilizing 12h 0.5");
+                            Bukkit.dispatchCommand(player, "DynamicShop shop "+shopName+" stockStabilizing 24 0.1");
                             DynaShopAPI.openShopSettingGui(player,shopName);
                         }
                     }
@@ -771,6 +737,19 @@ public class OnClick implements Listener {
                         }
 
                         Bukkit.dispatchCommand(player, "DynamicShop shop "+shopName+" flag jobpoint set");
+                    }
+                    DynaShopAPI.openShopSettingGui(player,shopName);
+                }
+                // showValueChange
+                else if(e.getSlot() == 13)
+                {
+                    if(ShopUtil.ccShop.get().contains(shopName+".Options.flag.showvaluechange"))
+                    {
+                        Bukkit.dispatchCommand(player, "DynamicShop shop "+shopName+" flag showvaluechange unset");
+                    }
+                    else
+                    {
+                        Bukkit.dispatchCommand(player, "DynamicShop shop "+shopName+" flag showvaluechange set");
                     }
                     DynaShopAPI.openShopSettingGui(player,shopName);
                 }
@@ -997,12 +976,12 @@ public class OnClick implements Listener {
                     if(e.isLeftClick())
                     {
                         targetPage -= 1;
-                        if(targetPage<1)targetPage = 20;
+                        if(targetPage<1)targetPage = 30;
                     }
                     else if(e.isRightClick())
                     {
                         targetPage += 1;
-                        if(targetPage>20)targetPage = 1;
+                        if(targetPage>30)targetPage = 1;
                     }
                     String search = e.getClickedInventory().getItem(53).getItemMeta().getLore().toString().replace("[","").replace("]","");
                     DynaShopAPI.openItemPalette(player,targetPage,search);
@@ -1145,21 +1124,30 @@ public class OnClick implements Listener {
                 if(e.getSlot() == 31)
                 {
                     String sug = e.getClickedInventory().getItem(0).getType().name();
-                    double sugValue = WorthUtil.ccWorth.get().getDouble(sug);
 
-                    if(sugValue == 0)
+                    double worth = WorthUtil.ccWorth.get().getDouble(sug);
+                    if(worth == 0)
+                    {
+                        sug = sug.replace("-","");
+                        sug = sug.replace("_","");
+                        sug = sug.toLowerCase();
+
+                        worth = WorthUtil.ccWorth.get().getDouble(sug);
+                    }
+
+                    if(worth == 0)
                     {
                         player.sendMessage(DynamicShop.dsPrefix + LangUtil.ccLang.get().getString("ERR.NO_RECOMMAND_DATA"));
                     }
                     else
                     {
-                        int pnum = DynamicShop.plugin.getConfig().getInt("NumberOfPlayer");
-                        int sugMid = (int)(4/(Math.pow(sugValue,0.35))*1000*pnum);
+                        int numberOfPlayer = DynamicShop.plugin.getConfig().getInt("NumberOfPlayer");
+                        int sugMid = ShopUtil.CalcRecommendedMedian(worth, numberOfPlayer);
 
-                        player.sendMessage(DynamicShop.dsPrefix + LangUtil.ccLang.get().getString("RECOMMAND_APPLIED").replace("{playerNum}",pnum+""));
+                        player.sendMessage(DynamicShop.dsPrefix + LangUtil.ccLang.get().getString("RECOMMAND_APPLIED").replace("{playerNum}",numberOfPlayer+""));
 
                         DynaShopAPI.openItemSettingGui(player,e.getInventory().getItem(0),tab,
-                                sugValue,sugValue,newValueMin,newValueMax,sugMid,sugMid);
+                                worth,worth,newValueMin,newValueMax,sugMid,sugMid);
 
                         SoundUtil.playerSoundEffect(player,"editItem");
                     }
@@ -1456,6 +1444,11 @@ public class OnClick implements Listener {
                     }
                 }
             }
+            // 퀵셀
+            else if(e.getView().getTitle().equalsIgnoreCase(LangUtil.ccLang.get().getString("QUICKSELL_TITLE")))
+            {
+                e.setCancelled(true);
+            }
         }
         // 퀵셀
         else if(e.getView().getTitle().equalsIgnoreCase(LangUtil.ccLang.get().getString("QUICKSELL_TITLE")))
@@ -1518,9 +1511,17 @@ public class OnClick implements Listener {
 
             if(topShopName.length()>0)
             {
-                // 찾은 상점에 판매
-                Sell.quickSellItem(player,e.getCurrentItem(),topShopName,tradeIdx,e.isShiftClick(),e.getSlot());
-                player.sendMessage(DynamicShop.dsPrefix + LangUtil.ccLang.get().getString("QSELL_RESULT")+topShopName);
+                if(e.isLeftClick())
+                {
+                    // 찾은 상점에 판매
+                    Sell.quickSellItem(player,e.getCurrentItem(),topShopName,tradeIdx,e.isShiftClick(),e.getSlot());
+                    //player.sendMessage(DynamicShop.dsPrefix + LangUtil.ccLang.get().getString("QSELL_RESULT")+topShopName);
+                }
+                else if (e.isRightClick())
+                {
+                    player.closeInventory();
+                    DynaShopAPI.openShopGui(player, topShopName, 1);
+                }
             }
             else
             {

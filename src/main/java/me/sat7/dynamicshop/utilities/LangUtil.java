@@ -38,6 +38,8 @@ public final class LangUtil {
             ccLang.get().addDefault("PALETTE_LORE", "§e좌클릭: 이 아이탬을 상점에 등록");
             ccLang.get().addDefault("ITEM_SETTING_TITLE", "§3아이탬 셋팅");
             ccLang.get().addDefault("QUICKSELL_TITLE", "§3빠른 판매");
+            ccLang.get().addDefault("QUICKSELL_GUIDE_TITLE", "§3§l빠른 판매 도움말");
+            ccLang.get().addDefault("QUICKSELL_GUIDE_LORE", "§a판매할 아이탬을 좌클릭 하세요.\n§a씨프트 좌클릭으로 같은 유형의 아이탬을 모두 팝니다.\n§a우클릭으로 해당 아이탬 상점으로 이동합니다.");
             ccLang.get().addDefault("TRADE_LORE", "§f클릭: 거래화면");
             ccLang.get().addDefault("BUY", "§c구매");
             ccLang.get().addDefault("BUYONLY_LORE", "§f구매만 가능한 아이탬");
@@ -97,6 +99,7 @@ public final class LangUtil {
             ccLang.get().addDefault("LOCALSHOP_LORE2", "§f상점의 위치를 설정해야만 합니다.");
             ccLang.get().addDefault("DELIVERYCHARG_LORE", "§f배달비를 지불하고 localshop에서 원격으로 거래합니다.");
             ccLang.get().addDefault("JOBPOINT_LORE", "§fJobs 플러그인의 job point로 거래합니다.");
+            ccLang.get().addDefault("SHOW_VALUE_CHANGE_LORE", "§f가격 변화량을 표시합니다.");
             ccLang.get().addDefault("SEARCH", "§f찾기");
             ccLang.get().addDefault("SEARCH_ITEM", "§f찾으려는 아이템의 이름을 입력하세요.");
             ccLang.get().addDefault("SEARCH_CANCELED", "§f검색 취소됨.");
@@ -185,6 +188,7 @@ public final class LangUtil {
             ccLang.get().addDefault("HELP.DELETE_OLD_USER", "장기간 접속하지 않은 유저의 데이터를 삭제합니다.");
             ccLang.get().addDefault("HELP.CONVERT", "다른 상점 플러그인의 정보를 변환합니다.");
             ccLang.get().addDefault("HELP.ACCOUNT", "상점의 계좌 잔액을 설정합니다. -1 = 무제한");
+            ccLang.get().addDefault("HELP.SET_TO_REC_ALL", "§c상점의 모든 아이템 설정값을 권장값으로 초기화합니다.");
 
             ccLang.get().addDefault("ITEM_ADDED", "아이탬 추가됨!");
             ccLang.get().addDefault("ITEM_UPDATED", "아이탬 수정됨!");
@@ -192,6 +196,11 @@ public final class LangUtil {
             ccLang.get().addDefault("CHANGES_APPLIED", "변경사항 적용됨. 새로운 값: ");
             ccLang.get().addDefault("RECOMMAND_APPLIED", "추천 값 적용됨. {playerNum}명 기준입니다. config파일에서 이 값을 바꿀 수 있습니다.");
             ccLang.get().addDefault("TRANSFER_SUCCESS", "송금 완료");
+
+            ccLang.get().addDefault("ARROW_UP", "§a⬆");
+            ccLang.get().addDefault("ARROW_DOWN", "§c⬇");
+
+            ccLang.get().addDefault("SHOPINFO","§f[SHOP_LORE][PERMISSION][TAX][SHOP_BALANCE][SHOP_HOUR][SHOP_POS]");
 
             ccLang.get().addDefault("ERR.NO_USER_ID", "§6플레이어 uuid를 찾을 수 없습니다. 상점 이용 불가능.");
             ccLang.get().addDefault("ERR.ITEM_NOT_EXIST", "상점에 해당 아이탬이 존재하지 않습니다.");
@@ -210,7 +219,7 @@ public final class LangUtil {
             ccLang.get().addDefault("ERR.LOCALSHOP_REMOTE_ACCESS", "해당 상점은 직접 방문해야만 사용할 수 있습니다.");
             ccLang.get().addDefault("ERR.MAX_LOWER_THAN_MIN", "최대 가격은 최소 가격보다 커야합니다.");
             ccLang.get().addDefault("ERR.DEFAULT_VALUE_OUT_OF_RANGE", "기본 가격은 최소 가격과 최대 가격 사이의 값이어야 합니다.");
-            ccLang.get().addDefault("ERR.NO_RECOMMAND_DATA", "Worth.yml 파일에 이 아이탬의 정보가 없습니다. 추천값 사용 불가.");
+            ccLang.get().addDefault("ERR.NO_RECOMMAND_DATA", "Worth.yml 파일에 이 아이탬의 정보가 없습니다.");
             ccLang.get().addDefault("ERR.JOBSREBORN_NOT_FOUND", "Jobs reborn 플러그인을 찾을 수 없습니다.");
             ccLang.get().addDefault("ERR.SHOP_HAS_INF_BAL", "{shop} 상점은 무한계좌 상점입니다.");
             ccLang.get().addDefault("ERR.SHOP_DIFF_CURRENCY", "두 상점이 서로 다른 통화를 사용합니다.");
@@ -247,6 +256,8 @@ public final class LangUtil {
             ccLang.get().addDefault("PALETTE_LORE", "§eLMB: Register this item on shop");
             ccLang.get().addDefault("ITEM_SETTING_TITLE", "§3Item Settings");
             ccLang.get().addDefault("QUICKSELL_TITLE", "§3Quick Sell");
+            ccLang.get().addDefault("QUICKSELL_GUIDE_TITLE", "§3§lQuick Sell Guide");
+            ccLang.get().addDefault("QUICKSELL_GUIDE_LORE", "§aLeft-click the item you want to sell.\n§aShift left click to sell all items of the same type.\n§aRight-click to go to the item shop.");
             ccLang.get().addDefault("TRADE_LORE", "§fClick: Go to Tradeview");
             ccLang.get().addDefault("BUY", "§cBuy");
             ccLang.get().addDefault("BUYONLY_LORE", "§fThis item is Buy only");
@@ -327,6 +338,7 @@ public final class LangUtil {
             ccLang.get().addDefault("LOCALSHOP_LORE2", "§fThis flag requires a position value to work.");
             ccLang.get().addDefault("DELIVERYCHARG_LORE", "§fPay delivery charge, Buy items from a distance.");
             ccLang.get().addDefault("JOBPOINT_LORE", "§fJobs Reborn point shop.");
+            ccLang.get().addDefault("SHOW_VALUE_CHANGE_LORE", "§fShow Value Change.");
 
             ccLang.get().addDefault("SHOP_CREATED", "§fShop Created!");
             ccLang.get().addDefault("SHOP_DELETED", "§fShop Deleted!");
@@ -395,6 +407,7 @@ public final class LangUtil {
             ccLang.get().addDefault("HELP.DELETE_OLD_USER", "Delete Old Inactive User data from User.yml.");
             ccLang.get().addDefault("HELP.CONVERT", "Convert data from other shop plugin");
             ccLang.get().addDefault("HELP.ACCOUNT", "Set shop account balance. -1 = Infinite");
+            ccLang.get().addDefault("HELP.SET_TO_REC_ALL", "§cResets all item settings§r in the store to the recommended values.");
 
             ccLang.get().addDefault("ITEM_ADDED", "Item Added!");
             ccLang.get().addDefault("ITEM_UPDATED", "Item Updated!");
@@ -402,6 +415,11 @@ public final class LangUtil {
             ccLang.get().addDefault("CHANGES_APPLIED", "Changes applied. New value: ");
             ccLang.get().addDefault("RECOMMAND_APPLIED", "Suggestion applied. Based on {playerNum}players. This value can be edited in config");
             ccLang.get().addDefault("TRANSFER_SUCCESS", "Transfer success.");
+
+            ccLang.get().addDefault("ARROW_UP", "§a⬆");
+            ccLang.get().addDefault("ARROW_DOWN", "§c⬇");
+
+            ccLang.get().addDefault("SHOPINFO","§f[SHOP_LORE][PERMISSION][TAX][SHOP_BALANCE][SHOP_HOUR][SHOP_POS]");
 
             ccLang.get().addDefault("ERR.NO_USER_ID", "§6Cant find your uuid from server. Shop Unavailable.");
             ccLang.get().addDefault("ERR.ITEM_NOT_EXIST", "Item not exist.");

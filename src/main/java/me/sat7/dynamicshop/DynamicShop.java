@@ -12,15 +12,16 @@ import me.sat7.dynamicshop.guis.StartPage;
 import me.sat7.dynamicshop.jobshook.JobsHook;
 import me.sat7.dynamicshop.utilities.*;
 import net.milkbowl.vault.economy.Economy;
+
 import org.bstats.bukkit.Metrics;
+import org.bukkit.plugin.java.JavaPlugin;
+
 import org.bukkit.Bukkit;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandSender;
 import org.bukkit.command.ConsoleCommandSender;
 import org.bukkit.event.Listener;
 import org.bukkit.plugin.RegisteredServiceProvider;
-import org.bukkit.plugin.java.JavaPlugin;
-import org.bukkit.scheduler.BukkitRunnable;
 import org.bukkit.scheduler.BukkitTask;
 
 import java.io.File;
@@ -75,12 +76,10 @@ public final class DynamicShop extends JavaPlugin implements Listener {
         new UpdateCheck();
 
         // bstats
-        Metrics metrics = new Metrics(this);
+        //System.setProperty("bstats.relocatecheck", "false"); // 빌드가 외부로 나갈때는 이 라인이 주석처리되야함.
 
-        // Optional: Add custom charts
-        // todo: 이거 지워야함... 그냥 지우니까 에러뜸.
-        // TODO delete this without it causing errors
-        metrics.addCustomChart(new Metrics.SimplePie("chart_id", () -> "My value"));
+        int pluginId = 4258;
+        Metrics metrics = new Metrics(this, pluginId);
     }
 
     public void startCullLogsTask() {

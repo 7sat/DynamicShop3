@@ -32,6 +32,8 @@ public final class SetTax {
                 DynamicShop.plugin.getConfig().set("SalesTax",newValue);
                 DynamicShop.plugin.saveConfig();
 
+                ConfigUtil.setCurrentTax(newValue);
+
                 player.sendMessage(DynamicShop.dsPrefix + LangUtil.ccLang.get().getString("CHANGES_APPLIED") + newValue);
                 return true;
             }

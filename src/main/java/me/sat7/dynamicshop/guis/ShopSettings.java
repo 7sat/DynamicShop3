@@ -113,20 +113,28 @@ public class ShopSettings {
                     1);
             inventory.setItem(15,flucToggleBtn);
 
+            int tempCount = flucConf.getInt("interval")/2;
+            if(tempCount < 1) tempCount = 1;
+            if(tempCount > 64) tempCount = 64;
+
             ItemStack flucIntervalBtn =  ItemsUtil.createItemStack(Material.COMPARATOR,null,
                     LangUtil.ccLang.get().getString("FLUC.INTERVAL"),
                     new ArrayList<>(Arrays.asList(
                             "§9"+ LangUtil.ccLang.get().getString("CUR_STATE")+": " + flucConf.getInt("interval")/2.0 + "h",
                             "§e"+ LangUtil.ccLang.get().getString("CLICK")+": "+ LangUtil.ccLang.get().getString("L_R_SHIFT"))),
-                    flucConf.getInt("interval"));
+                    tempCount);
             inventory.setItem(16,flucIntervalBtn);
+
+            tempCount = (int)flucConf.getDouble("strength") * 10;
+            if(tempCount < 1) tempCount = 1;
+            if(tempCount > 64) tempCount = 64;
 
             ItemStack flucStrengthBtn =  ItemsUtil.createItemStack(Material.COMPARATOR,null,
                     LangUtil.ccLang.get().getString("FLUC.STRENGTH"),
                     new ArrayList<>(Arrays.asList(
                             "§9"+ LangUtil.ccLang.get().getString("CUR_STATE")+": ~" + flucConf.get("strength") + "%",
-                            "§e"+ LangUtil.ccLang.get().getString("CLICK")+": "+ LangUtil.ccLang.get().getString("L_R_SHIFT"))),
-                    (int) flucConf.getDouble("strength"));
+                            "§e"+ LangUtil.ccLang.get().getString("CLICK")+": "+ LangUtil.ccLang.get().getString("STOCKSTABILIZING.L_R_SHIFT"))),
+                    tempCount);
             inventory.setItem(17,flucStrengthBtn);
         }
         else
@@ -152,20 +160,28 @@ public class ShopSettings {
                     1);
             inventory.setItem(24,ssTogleBtn);
 
+            int tempCount = stockStableConf.getInt("interval")/2;
+            if(tempCount < 1) tempCount = 1;
+            if(tempCount > 64) tempCount = 64;
+
             ItemStack intervalBtn =  ItemsUtil.createItemStack(Material.COMPARATOR,null,
                     LangUtil.ccLang.get().getString("FLUC.INTERVAL"),
                     new ArrayList<>(Arrays.asList(
                             "§9"+ LangUtil.ccLang.get().getString("CUR_STATE")+": " + stockStableConf.getInt("interval")/2.0 + "h",
                             "§e"+ LangUtil.ccLang.get().getString("CLICK")+": "+ LangUtil.ccLang.get().getString("L_R_SHIFT"))),
-                    stockStableConf.getInt("interval"));
+                    tempCount);
             inventory.setItem(25,intervalBtn);
+
+            tempCount = (int)stockStableConf.getDouble("strength") * 10;
+            if(tempCount < 1) tempCount = 1;
+            if(tempCount > 64) tempCount = 64;
 
             ItemStack strengthBtn =  ItemsUtil.createItemStack(Material.COMPARATOR,null,
                     LangUtil.ccLang.get().getString("FLUC.STRENGTH"),
                     new ArrayList<>(Arrays.asList(
                             "§9"+ LangUtil.ccLang.get().getString("CUR_STATE")+": ~" + stockStableConf.get("strength") + "%",
                             "§e"+ LangUtil.ccLang.get().getString("CLICK")+": "+ LangUtil.ccLang.get().getString("STOCKSTABILIZING.L_R_SHIFT"))),
-                    (int)(stockStableConf.getDouble("strength")*10));
+                    tempCount);
             inventory.setItem(26,strengthBtn);
         }
         else
@@ -316,6 +332,31 @@ public class ShopSettings {
                 LangUtil.ccLang.get().getString("FLAG")+": jobpoint",
                 f4Lore,1);
         inventory.setItem(12,flag4);
+
+        String cur5;
+        String set5;
+        Material icon5;
+        if(confSec_Options.contains("flag.showvaluechange"))
+        {
+            icon5 = Material.GREEN_STAINED_GLASS_PANE;
+            cur5 = LangUtil.ccLang.get().getString("SET");
+            set5 = LangUtil.ccLang.get().getString("UNSET");
+        }
+        else
+        {
+            icon5 = Material.BLACK_STAINED_GLASS_PANE;
+            cur5 = LangUtil.ccLang.get().getString("UNSET");
+            set5 = LangUtil.ccLang.get().getString("SET");
+        }
+        ArrayList<String> f5Lore = new ArrayList<>();
+        f5Lore.add(LangUtil.ccLang.get().getString("SHOW_VALUE_CHANGE_LORE"));
+        f5Lore.add("§9"+ LangUtil.ccLang.get().getString("CUR_STATE")+": " + cur5);
+        f5Lore.add("§e"+ LangUtil.ccLang.get().getString("CLICK")+": " + set5);
+
+        ItemStack flag5 =  ItemsUtil.createItemStack(icon5,null,
+                LangUtil.ccLang.get().getString("FLAG")+": showvaluechange",
+                f5Lore,1);
+        inventory.setItem(13,flag5);
 
         // 로그 버튼
         String log_cur;

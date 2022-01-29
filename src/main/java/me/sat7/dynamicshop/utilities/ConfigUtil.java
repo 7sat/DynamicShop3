@@ -35,10 +35,10 @@ public final class ConfigUtil {
             if (confSec != null) {
                 int interval = confSec.getInt("interval");
 
-                if (interval != 1 && interval != 2 && interval != 4 && interval != 8 && interval != 24) {
+                if (interval < 1 || interval > 999) {
                     DynamicShop.console.sendMessage(Constants.DYNAMIC_SHOP_PREFIX + " Wrong value at " + shop + ".Options.fluctuation.interval");
-                    DynamicShop.console.sendMessage(Constants.DYNAMIC_SHOP_PREFIX + " Reset to 2");
-                    confSec.set("interval", 2);
+                    DynamicShop.console.sendMessage(Constants.DYNAMIC_SHOP_PREFIX + " Reset to 8");
+                    confSec.set("interval", 8);
                     interval = 2;
                     ShopUtil.ccShop.save();
                 }
@@ -75,7 +75,7 @@ public final class ConfigUtil {
             if (confSec2 != null) {
                 int interval = confSec2.getInt("interval");
 
-                if (interval != 1 && interval != 2 && interval != 4 && interval != 8 && interval != 24) {
+                if (interval < 1 || interval > 999) {
                     DynamicShop.console.sendMessage(Constants.DYNAMIC_SHOP_PREFIX + " Wrong value at " + shop + ".Options.stockStabilizing.interval");
                     DynamicShop.console.sendMessage(Constants.DYNAMIC_SHOP_PREFIX + " Reset to 24");
                     confSec2.set("interval", 24);
@@ -147,7 +147,6 @@ public final class ConfigUtil {
         if (salesTax > 99) salesTax = 99;
         dynamicShop.getConfig().set("SalesTax", salesTax);
         setCurrentTax((int) salesTax);
-        dynamicShop.getConfig().set("ShowTax", dynamicShop.getConfig().getBoolean("ShowTax"));
 
         dynamicShop.getConfig().set("Language", dynamicShop.getConfig().get("Language"));
         dynamicShop.getConfig().set("Prefix", dynamicShop.getConfig().get("Prefix"));

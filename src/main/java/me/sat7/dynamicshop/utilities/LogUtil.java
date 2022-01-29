@@ -16,7 +16,7 @@ public final class LogUtil {
 
     public static void setupLogFile() {
         if(DynamicShop.plugin.getConfig().getBoolean("SaveLogs")) {
-            SimpleDateFormat sdf = new SimpleDateFormat ( "MM-dd-yyyy-HH:mm:ss");
+            SimpleDateFormat sdf = new SimpleDateFormat ( "MM-dd-yyyy-HH-mm-ss");
             String timeStr = sdf.format (System.currentTimeMillis());
             ccLog.setup("Log_"+timeStr,"Log");
             ccLog.get().options().copyDefaults(true);
@@ -28,7 +28,7 @@ public final class LogUtil {
     public static void addLog(String shopName, String itemName, int amount, double value, String curr, String player) {
         if(DynamicShop.plugin.getConfig().getBoolean("SaveLogs")) {
             if(ShopUtil.ccShop.get().contains(shopName+".Options.log") && ShopUtil.ccShop.get().getBoolean(shopName+".Options.log")) {
-                SimpleDateFormat sdf = new SimpleDateFormat ( "MM-dd-yyyy-HH:mm:ss");
+                SimpleDateFormat sdf = new SimpleDateFormat ( "MM-dd-yyyy-HH-mm-ss");
                 String timeStr = sdf.format (System.currentTimeMillis());
 
                 int i = 0;

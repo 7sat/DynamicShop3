@@ -3,6 +3,7 @@ package me.sat7.dynamicshop.utilities;
 import java.io.File;
 import java.util.ArrayList;
 
+import me.sat7.dynamicshop.DynaShopAPI;
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
 import org.bukkit.Material;
@@ -538,5 +539,51 @@ public final class ShopUtil {
 
         ccShop.get().options().copyDefaults(true);
         ccShop.save();
+    }
+
+    public static void SetToRecommendedValueAll(String shop, Player player)
+    {
+        for (String itemIndex : ShopUtil.ccShop.get().getConfigurationSection(shop).getKeys(false))
+        {
+            try
+            {
+                int i = Integer.parseInt(itemIndex); // options에 대해 적용하지 않기 위해.
+
+                if (!ShopUtil.ccShop.get().contains(shop + "." + itemIndex + ".value"))
+                    continue; // 장식용은 스킵
+
+                String itemName = ShopUtil.ccShop.get().getString(shop + "." + itemIndex + ".mat");
+
+                double worth = WorthUtil.ccWorth.get().getDouble(itemName);
+                if(worth == 0)
+                {
+                    itemName = itemName.replace("-","");
+                    itemName = itemName.replace("_","");
+                    itemName = itemName.toLowerCase();
+
+                    worth = WorthUtil.ccWorth.get().getDouble(itemName);
+                }
+
+                if (worth != 0)
+                {
+                    int numberOfPlayer = DynamicShop.plugin.getConfig().getInt("NumberOfPlayer");
+                    int sugMid = CalcRecommendedMedian(worth, numberOfPlayer);
+
+                    ShopUtil.editShopItem(shop, i, worth, worth, 0.01f, -1, sugMid, sugMid);
+                }
+                else
+                {
+                    if (player != null)
+                        player.sendMessage(DynamicShop.dsPrefix + LangUtil.ccLang.get().getString("ERR.NO_RECOMMAND_DATA") + " : " + itemName);
+                }
+            } catch (Exception ignored)
+            {
+            }
+        }
+    }
+
+    public static int CalcRecommendedMedian(double worth, int numberOfPlayer)
+    {
+        return (int) (4 / (Math.pow(worth, 0.35)) * 1000 * numberOfPlayer);
     }
 }

@@ -52,7 +52,7 @@ public class CustomConfig {
         try{
             customFile.save(file);
         }catch (IOException e){
-            System.out.println("Couldn't save file");
+            System.out.println("Couldn't save file :" + e);
         }
     }
 

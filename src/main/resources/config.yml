@@ -1,7 +1,6 @@
 Language: en-US
 Prefix: §3§l[dShop] §f
 SalesTax: 25
-ShowTax: true
 UseShopCommand: true
 DefaultShopName: Main
 DisplayStockAsStack: false
@@ -12,4 +11,4 @@ CullLogs: true
 LogCullAgeMinutes: 7200
 LogCullTimeMinutes: 120
 OnClickCloseButton_OpenStartPage: true
-OpenStartPageInsteadOfDefaultShop: false
+OpenStartPageInsteadOfDefaultShop: true

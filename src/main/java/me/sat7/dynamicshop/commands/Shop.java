@@ -658,7 +658,8 @@ public final class Shop {
                     if(args[3].equalsIgnoreCase("signshop") ||
                             args[3].equalsIgnoreCase("localshop") ||
                             args[3].equalsIgnoreCase("deliverycharge")||
-                            args[3].equalsIgnoreCase("jobpoint"))
+                            args[3].equalsIgnoreCase("jobpoint") ||
+                            args[3].equalsIgnoreCase("showValueChange"))
                     {
                         if(set)
                         {
@@ -806,6 +807,11 @@ public final class Shop {
                     player.sendMessage(DynamicShop.dsPrefix + LangUtil.ccLang.get().getString("ERR.NO_PERMISSION"));
                     return true;
                 }
+                else if (args.length < 4)
+                {
+                    player.sendMessage(DynamicShop.dsPrefix + LangUtil.ccLang.get().getString("ERR.WRONG_USAGE"));
+                    return true;
+                }
                 else if (args.length == 4)
                 {
                     if(args[3].equals("off"))
@@ -823,29 +829,20 @@ public final class Shop {
                 else if(args.length>=5)
                 {
                     int interval;
-                    if(args[3].equals("30m"))
+                    try
                     {
-                        interval = 1;
+                        Integer temp = Integer.parseInt(args[3]);
+
+                        if(temp < 1)
+                            temp = 1;
+                        if(temp > 999)
+                            temp = 999;
+
+                        interval = temp;
                     }
-                    else if(args[3].equals("1h"))
+                    catch (Exception e)
                     {
-                        interval = 2;
-                    }
-                    else if(args[3].equals("2h"))
-                    {
-                        interval = 4;
-                    }
-                    else if(args[3].equals("4h"))
-                    {
-                        interval = 8;
-                    }
-                    else if(args[3].equals("12h"))
-                    {
-                        interval = 24;
-                    }
-                    else
-                    {
-                        player.sendMessage(DynamicShop.dsPrefix + LangUtil.ccLang.get().getString("ERR.WRONG_USAGE"));
+                        player.sendMessage(DynamicShop.dsPrefix + LangUtil.ccLang.get().getString("ERR.WRONG_DATATYPE"));
                         return true;
                     }
 
@@ -875,6 +872,11 @@ public final class Shop {
                     player.sendMessage(DynamicShop.dsPrefix + LangUtil.ccLang.get().getString("ERR.NO_PERMISSION"));
                     return true;
                 }
+                else if (args.length < 4)
+                {
+                    player.sendMessage(DynamicShop.dsPrefix + LangUtil.ccLang.get().getString("ERR.WRONG_USAGE"));
+                    return true;
+                }
                 else if (args.length == 4)
                 {
                     if(args[3].equals("off"))
@@ -892,29 +894,20 @@ public final class Shop {
                 else if(args.length>=5)
                 {
                     int interval;
-                    if(args[3].equals("30m"))
+                    try
                     {
-                        interval = 1;
+                        Integer temp = Integer.parseInt(args[3]);
+
+                        if(temp < 1)
+                            temp = 1;
+                        if(temp > 999)
+                            temp = 999;
+
+                        interval = temp;
                     }
-                    else if(args[3].equals("1h"))
+                    catch (Exception e)
                     {
-                        interval = 2;
-                    }
-                    else if(args[3].equals("2h"))
-                    {
-                        interval = 4;
-                    }
-                    else if(args[3].equals("4h"))
-                    {
-                        interval = 8;
-                    }
-                    else if(args[3].equals("12h"))
-                    {
-                        interval = 24;
-                    }
-                    else
-                    {
-                        player.sendMessage(DynamicShop.dsPrefix + LangUtil.ccLang.get().getString("ERR.WRONG_USAGE"));
+                        player.sendMessage(DynamicShop.dsPrefix + LangUtil.ccLang.get().getString("ERR.WRONG_DATATYPE"));
                         return true;
                     }
 
@@ -1300,6 +1293,11 @@ public final class Shop {
                 }
 
                 ShopUtil.ccShop.save();
+            }
+            // ds shop shopname setToRecommendedValueAll
+            else if(args[2].equalsIgnoreCase("setToRecAll"))
+            {
+                SetToRecAll.setToRecAll(args, player);
             }
         }
         return false;
