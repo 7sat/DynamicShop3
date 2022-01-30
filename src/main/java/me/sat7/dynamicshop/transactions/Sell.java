@@ -78,7 +78,7 @@ public final class Sell {
             ShopUtil.ccShop.save();
 
             //로그 기록
-            LogUtil.addLog(shopName,tempIS.getType().toString(),-actualAmount,priceSum,"jobpoint",player.getName());
+            LogUtil.addLog(shopName,tempIS.getType().toString(),-actualAmount,priceSum,"vault",player.getName());
 
             player.sendMessage(DynamicShop.dsPrefix + LangUtil.ccLang.get().getString("SELL_SUCCESS")
                     .replace("{item}",tempIS.getType().name())
