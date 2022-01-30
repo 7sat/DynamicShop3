@@ -1,4 +1,4 @@
-# SSDynamicShop
+# DynamicShop
 Spaghetti from hell. Good Luck.
 
 [Link]
