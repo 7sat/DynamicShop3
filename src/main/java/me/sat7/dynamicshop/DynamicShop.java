@@ -114,8 +114,15 @@ public final class DynamicShop extends JavaPlugin implements Listener {
         // bstats
         //System.setProperty("bstats.relocatecheck", "false"); // 빌드가 외부로 나갈때는 이 라인이 주석처리되야함.
 
-        int pluginId = 4258;
-        Metrics metrics = new Metrics(this, pluginId);
+        try
+        {
+            int pluginId = 4258;
+            Metrics metrics = new Metrics(this, pluginId);
+        }
+        catch (Exception e)
+        {
+            DynamicShop.console.sendMessage(Constants.DYNAMIC_SHOP_PREFIX +"Failed to Init bstats : " + e);
+        }
     }
 
     public void startCullLogsTask() {

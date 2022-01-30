@@ -12,3 +12,4 @@ LogCullAgeMinutes: 7200
 LogCullTimeMinutes: 120
 OnClickCloseButton_OpenStartPage: true
 OpenStartPageInsteadOfDefaultShop: true
+ShopInfoButtonIcon : OAK_SIGN

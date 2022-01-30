@@ -172,6 +172,7 @@ public final class ConfigUtil {
 
         dynamicShop.getConfig().set("OnClickCloseButton_OpenStartPage", dynamicShop.getConfig().getBoolean("OnClickCloseButton_OpenStartPage"));
         dynamicShop.getConfig().set("OpenStartPageInsteadOfDefaultShop", dynamicShop.getConfig().getBoolean("OpenStartPageInsteadOfDefaultShop"));
+        dynamicShop.getConfig().set("ShopInfoButtonIcon", dynamicShop.getConfig().getString("ShopInfoButtonIcon"));
 
         dynamicShop.saveConfig();
     }

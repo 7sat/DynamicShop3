@@ -382,8 +382,13 @@ public final class ShopUtil {
     // 인벤토리가 ui인지 확인
     public static Boolean checkInvenIsShopUI(Inventory i)
     {
-        if(i.getSize() == 54 && i.getItem(53) != null && i.getItem(53).getType().name().contains("SIGN"))
+        if(i.getSize() == 54 && i.getItem(53) != null)
         {
+            String infoBtnIconName = GetShopInfoIconMat();
+
+            if (false == i.getItem(53).getType().name().equals(infoBtnIconName))
+                return false;
+
             String temp = ChatColor.stripColor(i.getItem(53).getItemMeta().getDisplayName());
             return temp.length() > 0 && ccShop.get().contains(temp);
         }
@@ -391,6 +396,19 @@ public final class ShopUtil {
         {
             return false;
         }
+    }
+
+    public static String GetShopInfoIconMat()
+    {
+        String infoBtnIconName = DynamicShop.plugin.getConfig().getString("ShopInfoButtonIcon");
+        Material mat = Material.getMaterial(infoBtnIconName);
+        if(mat == null)
+        {
+            DynamicShop.plugin.getConfig().set("ShopInfoButtonIcon", "GOLD_BLOCK");
+            DynamicShop.plugin.saveConfig();
+            infoBtnIconName = "GOLD_BLOCK";
+        }
+        return infoBtnIconName;
     }
 
     // Shop 플러그인에서 데이터 가져오기

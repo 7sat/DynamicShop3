@@ -168,7 +168,8 @@ public class Shop {
             shopLore += LangUtil.ccLang.get().getString("RMB_EDIT");
         }
 
-        ItemStack infoBtn =  ItemsUtil.createItemStack(Material.OAK_SIGN,null, "§3"+shopName, new ArrayList<String>(Arrays.asList(shopLore.split("\n"))),1);
+        String infoBtnIconName = ShopUtil.GetShopInfoIconMat();
+        ItemStack infoBtn =  ItemsUtil.createItemStack(Material.getMaterial(infoBtnIconName),null, "§3"+shopName, new ArrayList<String>(Arrays.asList(shopLore.split("\n"))),1);
         inventory.setItem(53,infoBtn);
 
         // 상품목록 등록
