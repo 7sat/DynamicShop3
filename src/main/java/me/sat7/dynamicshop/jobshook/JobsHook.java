@@ -1,5 +1,6 @@
 package me.sat7.dynamicshop.jobshook;
 
+import com.gamingmesh.jobs.container.JobsPlayer;
 import org.bukkit.entity.Player;
 
 import com.gamingmesh.jobs.Jobs;
@@ -25,7 +26,7 @@ public final class JobsHook {
             return false;
         }
 
-        PlayerPoints pp = Jobs.getPlayerManager().getPointsData().getPlayerPointsInfo(p.getUniqueId());
+        PlayerPoints pp = JobsHook.getJobsPlayerPoints(p);
         // 차감
         if(amount < 0.0)
         {
@@ -53,6 +54,13 @@ public final class JobsHook {
     // JobsReborn. 플레이어의 잔액 확인
     public static double getCurJobPoints(Player p)
     {
-        return Jobs.getPlayerManager().getPointsData().getPlayerPointsInfo(p.getUniqueId()).getCurrentPoints();
+        JobsPlayer jobsPlayer = Jobs.getPlayerManager().getJobsPlayer(p);
+        return jobsPlayer.getPointsData().getCurrentPoints();
+    }
+
+    public static PlayerPoints getJobsPlayerPoints(Player p)
+    {
+        JobsPlayer jobsPlayer = Jobs.getPlayerManager().getJobsPlayer(p);
+        return jobsPlayer.getPointsData();
     }
 }
