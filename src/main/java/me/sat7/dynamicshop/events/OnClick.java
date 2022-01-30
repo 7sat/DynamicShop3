@@ -91,13 +91,14 @@ public class OnClick implements Listener {
                     }
 
                     String actionStr = StartPage.ccStartPage.get().getString("Buttons."+e.getSlot()+".action");
-                    if(actionStr.length() > 0)
+                    if (actionStr != null && actionStr.length() > 0)
                     {
                         String[] action = actionStr.split(StartPage.ccStartPage.get().getString("Options.LineBreak"));
 
                         //player.closeInventory();
 
-                        for (String s:action) {
+                        for (String s : action)
+                        {
                             Bukkit.dispatchCommand(player, s);
                         }
                     }
@@ -549,7 +550,7 @@ public class OnClick implements Listener {
                 {
                     if(ShopUtil.ccShop.get().contains(shopName+".Options.fluctuation"))
                     {
-                        Integer interval = ShopUtil.ccShop.get().getInt(shopName+".Options.fluctuation.interval");
+                        int interval = ShopUtil.ccShop.get().getInt(shopName+".Options.fluctuation.interval");
                         double strength = ShopUtil.ccShop.get().getDouble(shopName+".Options.fluctuation.strength");
 
                         if(e.getSlot()==15)
@@ -601,7 +602,7 @@ public class OnClick implements Listener {
                 {
                     if(ShopUtil.ccShop.get().contains(shopName+".Options.stockStabilizing"))
                     {
-                        Integer interval = ShopUtil.ccShop.get().getInt(shopName+".Options.stockStabilizing.interval");
+                        int interval = ShopUtil.ccShop.get().getInt(shopName+".Options.stockStabilizing.interval");
                         double strength = ShopUtil.ccShop.get().getDouble(shopName+".Options.stockStabilizing.strength");
 
                         if(e.getSlot()==24)
@@ -789,7 +790,7 @@ public class OnClick implements Listener {
                     if(e.getSlot() == 9)
                     {
                         SoundUtil.playerSoundEffect(player,"click");
-                        DynamicShop.ccUser.get().set(player.getUniqueId().toString()+".interactItem","");
+                        DynamicShop.ccUser.get().set(player.getUniqueId() +".interactItem","");
 
                         if(DynamicShop.ccUser.get().getString(player.getUniqueId() + ".tmpString").equalsIgnoreCase("sign"))
                         {
@@ -870,12 +871,8 @@ public class OnClick implements Listener {
                         ItemStack tempIS = new ItemStack(e.getCurrentItem().getType(),e.getCurrentItem().getAmount());
                         tempIS.setItemMeta((ItemMeta) ShopUtil.ccShop.get().get(shopName + "." + tradeIdx + ".itemStack"));
 
-                        boolean infiniteStock = false;
                         // 무한재고&고정가격
-                        if(ShopUtil.ccShop.get().getInt(shopName+"." + tradeIdx + ".stock") <= 0)
-                        {
-                            infiniteStock = true;
-                        }
+                        boolean infiniteStock = ShopUtil.ccShop.get().getInt(shopName + "." + tradeIdx + ".stock") <= 0;
 
                         // 로컬샵이면 아에 창을 못열었고 딜리버리샵인데 월드가 다르면 배달불가.
                         ConfigurationSection optionS = ShopUtil.ccShop.get().getConfigurationSection(shopName).getConfigurationSection("Options");
@@ -965,7 +962,7 @@ public class OnClick implements Listener {
                 // 닫기 버튼
                 if(e.getSlot() == 45)
                 {
-                    DynamicShop.ccUser.get().set(player.getUniqueId().toString()+".interactItem","");
+                    DynamicShop.ccUser.get().set(player.getUniqueId() +".interactItem","");
                     DynaShopAPI.openShopGui(player,shopName,1);
                 }
                 // 페이지 버튼
