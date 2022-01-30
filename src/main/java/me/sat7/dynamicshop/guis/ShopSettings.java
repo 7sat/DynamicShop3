@@ -125,7 +125,7 @@ public class ShopSettings {
                     tempCount);
             inventory.setItem(16,flucIntervalBtn);
 
-            tempCount = (int)flucConf.getDouble("strength") * 10;
+            tempCount = (int)(flucConf.getDouble("strength") * 10);
             if(tempCount < 1) tempCount = 1;
             if(tempCount > 64) tempCount = 64;
 
@@ -172,7 +172,7 @@ public class ShopSettings {
                     tempCount);
             inventory.setItem(25,intervalBtn);
 
-            tempCount = (int)stockStableConf.getDouble("strength") * 10;
+            tempCount = (int)(stockStableConf.getDouble("strength") * 10);
             if(tempCount < 1) tempCount = 1;
             if(tempCount > 64) tempCount = 64;
 

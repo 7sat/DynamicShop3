@@ -580,6 +580,8 @@ public class OnClick implements Listener {
                             if(strength < 0.1) strength = 0.1;
                             if(strength > 64) strength = 64;
 
+                            strength = Math.round(strength * 100) / 100.0;
+
                             Bukkit.dispatchCommand(player, "DynamicShop shop "+shopName+" fluctuation "+interval+" "+strength);
                         }
 
