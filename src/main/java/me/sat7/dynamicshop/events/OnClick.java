@@ -4,7 +4,6 @@ import me.sat7.dynamicshop.DynaShopAPI;
 import me.sat7.dynamicshop.DynamicShop;
 import me.sat7.dynamicshop.guis.StartPage;
 import me.sat7.dynamicshop.jobshook.JobsHook;
-import me.sat7.dynamicshop.transactions.Calc;
 import me.sat7.dynamicshop.transactions.Buy;
 import me.sat7.dynamicshop.transactions.Sell;
 import me.sat7.dynamicshop.utilities.*;
@@ -18,8 +17,6 @@ import org.bukkit.event.inventory.InventoryClickEvent;
 import org.bukkit.event.inventory.InventoryDragEvent;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.ItemMeta;
-
-import java.util.*;
 
 public class OnClick implements Listener {
 
@@ -1460,54 +1457,9 @@ public class OnClick implements Listener {
                 return;
             }
 
-            String topShopName = "";
-            double topPrice = -1;
-            int tradeIdx = -1;
-
-            // 접근가능한 상점중 최고가 찾기
-            for (String shop: ShopUtil.ccShop.get().getKeys(false))
-            {
-                ConfigurationSection shopConf = ShopUtil.ccShop.get().getConfigurationSection(shop);
-
-                // 권한 없는 상점
-                String permission = shopConf.getString("Options.permission");
-                if(permission != null && permission.length()>0 && !player.hasPermission(permission) && !player.hasPermission(permission+".sell"))
-                {
-                    continue;
-                }
-
-                // 표지판 전용 상점, 지역상점, 잡포인트 상점
-                if(shopConf.contains("Options.flag.localshop") || shopConf.contains("Options.flag.signshop") || shopConf.contains("Options.flag.jobpoint")) continue;
-
-                int sameItemIdx = ShopUtil.findItemFromShop(shop,e.getCurrentItem());
-
-                if(sameItemIdx != -1)
-                {
-                    String tradeType = shopConf.getString(sameItemIdx+".tradeType");
-                    if(tradeType != null && tradeType.equals("BuyOnly")) continue; // 구매만 가능함
-
-                    // 상점에 돈이 없음
-                    if(ShopUtil.getShopBalance(shop) != -1 && ShopUtil.getShopBalance(shop) < Calc.calcTotalCost(shop,String.valueOf(sameItemIdx),e.getCurrentItem().getAmount()))
-                    {
-                        continue;
-                    }
-
-                    double value = shopConf.getDouble(sameItemIdx+".value");
-
-                    int tax = ConfigUtil.getCurrentTax();
-                    if(shopConf.contains("Options.SalesTax"))
-                    {
-                        tax = shopConf.getInt("Options.SalesTax");
-                    }
-
-                    if(topPrice <  value - ((value / 100) * tax))
-                    {
-                        topShopName = shop;
-                        topPrice = shopConf.getDouble(sameItemIdx+".value");
-                        tradeIdx = sameItemIdx;
-                    }
-                }
-            }
+            String[] targetShopInfo = ShopUtil.FindTheBestShopToSell(player, e.getCurrentItem());
+            String topShopName = targetShopInfo[0];
+            int tradeIdx = Integer.parseInt(targetShopInfo[1]);
 
             if(topShopName.length()>0)
             {

@@ -3,7 +3,7 @@ package me.sat7.dynamicshop.utilities;
 import java.io.File;
 import java.util.ArrayList;
 
-import me.sat7.dynamicshop.DynaShopAPI;
+import me.sat7.dynamicshop.transactions.Calc;
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
 import org.bukkit.Material;
@@ -603,5 +603,60 @@ public final class ShopUtil {
     public static int CalcRecommendedMedian(double worth, int numberOfPlayer)
     {
         return (int) (4 / (Math.pow(worth, 0.35)) * 1000 * numberOfPlayer);
+    }
+
+    public static String[] FindTheBestShopToSell(Player player, ItemStack itemStack)
+    {
+        String topShopName = "";
+        double topPrice = -1;
+        int tradeIdx = -1;
+
+        // 접근가능한 상점중 최고가 찾기
+        for (String shop: ShopUtil.ccShop.get().getKeys(false))
+        {
+            ConfigurationSection shopConf = ShopUtil.ccShop.get().getConfigurationSection(shop);
+
+            // 권한 없는 상점
+            String permission = shopConf.getString("Options.permission");
+            if(permission != null && permission.length()>0 && !player.hasPermission(permission) && !player.hasPermission(permission+".sell"))
+            {
+                continue;
+            }
+
+            // 표지판 전용 상점, 지역상점, 잡포인트 상점
+            if(shopConf.contains("Options.flag.localshop") || shopConf.contains("Options.flag.signshop") || shopConf.contains("Options.flag.jobpoint")) continue;
+
+            int sameItemIdx = ShopUtil.findItemFromShop(shop, itemStack);
+
+            if(sameItemIdx != -1)
+            {
+                String tradeType = shopConf.getString(sameItemIdx+".tradeType");
+                if(tradeType != null && tradeType.equals("BuyOnly")) continue; // 구매만 가능함
+
+                // 상점에 돈이 없음
+                if (ShopUtil.getShopBalance(shop) != -1 && ShopUtil.getShopBalance(shop) < Calc.calcTotalCost(shop, String.valueOf(sameItemIdx), itemStack.getAmount()))
+                {
+                    continue;
+                }
+
+                double value = shopConf.getDouble(sameItemIdx+".value");
+
+                int tax = ConfigUtil.getCurrentTax();
+                if(shopConf.contains("Options.SalesTax"))
+                {
+                    tax = shopConf.getInt("Options.SalesTax");
+                }
+
+                if(topPrice <  value - ((value / 100) * tax))
+                {
+                    topShopName = shop;
+                    topPrice = shopConf.getDouble(sameItemIdx+".value");
+                    tradeIdx = sameItemIdx;
+                }
+            }
+        }
+
+        String[] ret = {topShopName, Integer.toString(tradeIdx)};
+        return ret;
     }
 }

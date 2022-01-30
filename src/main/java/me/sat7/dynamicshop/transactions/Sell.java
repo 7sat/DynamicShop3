@@ -25,7 +25,7 @@ public final class Sell {
     }
 
     // 퀵판매
-    public static void quickSellItem(Player player, ItemStack tempIS, String shopName, int tradeIdx, boolean isShiftClick, int slot)
+    public static double quickSellItem(Player player, ItemStack tempIS, String shopName, int tradeIdx, boolean isShiftClick, int slot)
     {
         double priceSellOld = DynaShopAPI.getSellPrice(shopName, tempIS);
         double priceBuyOld = Calc.getCurrentPrice(shopName,String.valueOf(tradeIdx),true);
@@ -57,7 +57,7 @@ public final class Sell {
         if(actualAmount == 0)
         {
             player.sendMessage(DynamicShop.dsPrefix + LangUtil.ccLang.get().getString("NO_ITEM_TO_SELL"));
-            return;
+            return 0;
         }
 
         priceSum = Calc.calcTotalCost(shopName,String.valueOf(tradeIdx),-actualAmount);
@@ -99,6 +99,8 @@ public final class Sell {
         {
             player.sendMessage(String.format("[Vault] An error occured: %s", r.errorMessage));
         }
+
+        return priceSum;
     }
 
     // 판매

@@ -4,6 +4,7 @@ import lombok.NonNull;
 import me.sat7.dynamicshop.guis.*;
 import me.sat7.dynamicshop.models.DSItem;
 import me.sat7.dynamicshop.transactions.Calc;
+import me.sat7.dynamicshop.transactions.Sell;
 import me.sat7.dynamicshop.utilities.ConfigUtil;
 import me.sat7.dynamicshop.utilities.ShopUtil;
 import org.bukkit.Material;
@@ -261,5 +262,34 @@ public final class DynaShopAPI {
      */
     public static boolean validateShopName(@NonNull String shopName) {
         return getShops().contains(shopName);
+    }
+
+    /**
+     * Find the best shop to sell.
+     * Depending on the player's permission and the state of the store, there may not be an appropriate target.
+     *
+     * @param player seller
+     * @return [0]shopName. return "" if null. [1]tradeIdx. return -1 if null.
+     */
+    public static String[] FindTheBestShopToSell(Player player, ItemStack itemStack, boolean openTradeView)
+    {
+        String[] ret = ShopUtil.FindTheBestShopToSell(player, itemStack);
+
+        if(openTradeView)
+        {
+            openItemTradeGui(player, ret[0], ret[1]);
+        }
+
+        return ret;
+    }
+
+    public static double QuickSell(Player player, ItemStack itemStack)
+    {
+        String[] ret = ShopUtil.FindTheBestShopToSell(player, itemStack);
+
+        if(false == validateShopName(ret[0]))
+            return 0;
+
+        return Sell.quickSellItem(player, itemStack, ret[0], Integer.parseInt(ret[1]), true, -1);
     }
 }
