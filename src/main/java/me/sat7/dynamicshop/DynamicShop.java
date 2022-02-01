@@ -23,10 +23,13 @@ import org.bukkit.plugin.RegisteredServiceProvider;
 import org.bukkit.scheduler.BukkitTask;
 
 import java.io.File;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Random;
+import java.util.UUID;
 
 import static me.sat7.dynamicshop.UpdateChecker.getResourceUrl;
+import static me.sat7.dynamicshop.utilities.ConfigUtil.configVersion;
 
 public final class DynamicShop extends JavaPlugin implements Listener
 {
@@ -51,6 +54,8 @@ public final class DynamicShop extends JavaPlugin implements Listener
     public static boolean updateAvailable = false;
 
     public static UIManager uiManager;
+    public static HashMap<UUID, String> userTempData = new HashMap<>();
+    public static HashMap<UUID, String> userInteractItem = new HashMap<>();
 
     @Override
     public void onEnable()
@@ -223,12 +228,27 @@ public final class DynamicShop extends JavaPlugin implements Listener
         WorthUtil.setupWorthFile();
         SoundUtil.setupSoundFile();
         LogUtil.setupLogFile();
+
+        //셋업이 다 끝난 후
+        getConfig().set("Version", configVersion);
+        saveConfig();
     }
 
     private void setupUserFile()
     {
         ccUser.setup("User", null);
         ccUser.get().options().copyDefaults(true);
+
+        int userVersion = getConfig().getInt("Version");
+        if (userVersion < configVersion)
+        {
+            for (String s : ccUser.get().getKeys(false))
+            {
+                ccUser.get().getConfigurationSection(s).set("tmpString", null);
+                ccUser.get().getConfigurationSection(s).set("interactItem", null);
+            }
+        }
+
         ccUser.save();
     }
 

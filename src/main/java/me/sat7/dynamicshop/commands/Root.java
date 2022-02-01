@@ -51,7 +51,7 @@ public class Root implements CommandExecutor
         // 스타트페이지
         if (args.length == 0)
         {
-            DynamicShop.ccUser.get().set(player.getUniqueId() + ".interactItem", "");
+            DynamicShop.userInteractItem.put(player.getUniqueId(), "");
             DynaShopAPI.openStartPage(player);
             return true;
         }

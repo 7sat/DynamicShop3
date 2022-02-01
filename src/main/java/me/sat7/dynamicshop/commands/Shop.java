@@ -33,7 +33,7 @@ public final class Shop
         {
             if (DynamicShop.plugin.getConfig().getBoolean("OpenStartPageInsteadOfDefaultShop"))
             {
-                DynamicShop.ccUser.get().set(player.getUniqueId() + ".interactItem", "");
+                DynamicShop.userInteractItem.put(player.getUniqueId(), "");
                 DynaShopAPI.openStartPage(player);
                 return true;
             }
@@ -137,8 +137,8 @@ public final class Shop
                 }
             }
 
-            DynamicShop.ccUser.get().set(player.getUniqueId() + ".tmpString", "");
-            DynamicShop.ccUser.get().set(player.getUniqueId() + ".interactItem", "");
+            DynamicShop.userTempData.put(player.getUniqueId(), "");
+            DynamicShop.userInteractItem.put(player.getUniqueId(), "");
             DynaShopAPI.openShopGui(player, shopName, 1);
             return true;
         }

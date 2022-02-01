@@ -2,6 +2,7 @@ package me.sat7.dynamicshop.guis;
 
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.UUID;
 
 import me.sat7.dynamicshop.DynaShopAPI;
 import me.sat7.dynamicshop.events.OnChat;
@@ -47,7 +48,7 @@ public class StartPageSettings extends InGameUI
         inven.setItem(3, loreBtn);
 
         // 아이콘 버튼
-        String[] temp = DynamicShop.ccUser.get().getString(player.getUniqueId() + ".interactItem").split("/");
+        String[] temp = DynamicShop.userInteractItem.get(player.getUniqueId()).split("/");
         ItemStack iconBtn = ItemsUtil.createItemStack(Material.getMaterial(StartPage.ccStartPage.get().getString("Buttons." + temp[1] + ".icon")), null,
                 LangUtil.ccLang.get().getString("STARTPAGE.EDIT_ICON"), null, 1);
         inven.setItem(4, iconBtn);
@@ -81,7 +82,9 @@ public class StartPageSettings extends InGameUI
         if (player == null)
             return;
 
-        String[] temp = DynamicShop.ccUser.get().getString(player.getUniqueId() + ".interactItem").split("/");
+        UUID uuid = player.getUniqueId();
+
+        String[] temp = DynamicShop.userInteractItem.get(player.getUniqueId()).split("/");
 
         // 돌아가기
         if (e.getSlot() == 0)
@@ -94,7 +97,7 @@ public class StartPageSettings extends InGameUI
             StartPage.ccStartPage.get().set("Buttons." + temp[1], null);
             StartPage.ccStartPage.save();
 
-            DynamicShop.ccUser.get().set(player.getUniqueId() + ".interactItem", "");
+            DynamicShop.userInteractItem.put(player.getUniqueId(), "");
 
             DynaShopAPI.openStartPage(player);
         }
@@ -103,7 +106,7 @@ public class StartPageSettings extends InGameUI
         {
             player.sendMessage(DynamicShop.dsPrefix + LangUtil.ccLang.get().getString("STARTPAGE.ENTER_NAME"));
             ShopUtil.closeInventoryWithDelay(player);
-            DynamicShop.ccUser.get().set(player.getUniqueId() + ".tmpString", "waitforInput" + "btnName");
+            DynamicShop.userTempData.put(uuid,"waitforInput" + "btnName");
             OnChat.WaitForInput(player);
         }
         //설명
@@ -111,7 +114,7 @@ public class StartPageSettings extends InGameUI
         {
             player.sendMessage(DynamicShop.dsPrefix + LangUtil.ccLang.get().getString("STARTPAGE.ENTER_LORE"));
             ShopUtil.closeInventoryWithDelay(player);
-            DynamicShop.ccUser.get().set(player.getUniqueId() + ".tmpString", "waitforInput" + "btnLore");
+            DynamicShop.userTempData.put(uuid,"waitforInput" + "btnLore");
             OnChat.WaitForInput(player);
         }
         //아이콘
@@ -119,7 +122,7 @@ public class StartPageSettings extends InGameUI
         {
             player.sendMessage(DynamicShop.dsPrefix + LangUtil.ccLang.get().getString("STARTPAGE.ENTER_ICON"));
             ShopUtil.closeInventoryWithDelay(player);
-            DynamicShop.ccUser.get().set(player.getUniqueId() + ".tmpString", "waitforInput" + "btnIcon");
+            DynamicShop.userTempData.put(uuid,"waitforInput" + "btnIcon");
             OnChat.WaitForInput(player);
         }
         //액션
@@ -127,7 +130,7 @@ public class StartPageSettings extends InGameUI
         {
             player.sendMessage(DynamicShop.dsPrefix + LangUtil.ccLang.get().getString("STARTPAGE.ENTER_ACTION"));
             ShopUtil.closeInventoryWithDelay(player);
-            DynamicShop.ccUser.get().set(player.getUniqueId() + ".tmpString", "waitforInput" + "btnAction");
+            DynamicShop.userTempData.put(uuid,"waitforInput" + "btnAction");
             OnChat.WaitForInput(player);
         }
         // 상점 숏컷
@@ -135,7 +138,7 @@ public class StartPageSettings extends InGameUI
         {
             player.sendMessage(DynamicShop.dsPrefix + LangUtil.ccLang.get().getString("STARTPAGE.ENTER_SHOPNAME"));
             ShopUtil.closeInventoryWithDelay(player);
-            DynamicShop.ccUser.get().set(player.getUniqueId() + ".tmpString", "waitforInput" + "shopname");
+            DynamicShop.userTempData.put(uuid,"waitforInput" + "shopname");
 
             StringBuilder shopList = new StringBuilder(LangUtil.ccLang.get().getString("SHOP_LIST") + ": ");
             for (String s : ShopUtil.ccShop.get().getKeys(false))
@@ -152,7 +155,7 @@ public class StartPageSettings extends InGameUI
         {
             player.sendMessage(DynamicShop.dsPrefix + LangUtil.ccLang.get().getString("STARTPAGE.ENTER_COLOR"));
             ShopUtil.closeInventoryWithDelay(player);
-            DynamicShop.ccUser.get().set(player.getUniqueId() + ".tmpString", "waitforInput" + "deco");
+            DynamicShop.userTempData.put(uuid,"waitforInput" + "deco");
             OnChat.WaitForInput(player);
         }
     }

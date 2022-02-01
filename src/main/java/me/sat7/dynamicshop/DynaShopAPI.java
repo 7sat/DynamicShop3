@@ -101,8 +101,8 @@ public final class DynaShopAPI
             return true;
         }
 
-        DynamicShop.ccUser.get().set(player.getUniqueId().toString() + ".tmpString", "");
-        DynamicShop.ccUser.get().set(player.getUniqueId().toString() + ".interactItem", "");
+        DynamicShop.userTempData.put(player.getUniqueId(), "");
+        DynamicShop.userInteractItem.put(player.getUniqueId(), "");
         DynamicShop.ccUser.get().set(player.getUniqueId().toString() + ".cmdHelp", true);
         DynamicShop.ccUser.get().set(player.getUniqueId().toString() + ".lastJoin", System.currentTimeMillis());
         DynamicShop.ccUser.save();

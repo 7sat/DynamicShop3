@@ -30,6 +30,12 @@ import java.util.List;
 
 public class OnSignClick implements Listener
 {
+    /*
+    TODO 상점명이 유효하지 않을때 경고가 없음 (첫줄에 DS를 넣고 두번째줄에 아무거나 입력시 발생)
+    아이템명이 유효하지 않을때 경고가 없음
+     */
+
+
     // 생성
     @EventHandler
     public void onSignChange(SignChangeEvent e)
@@ -197,8 +203,8 @@ public class OnSignClick implements Listener
 
                         if (idx != -1)
                         {
-                            DynamicShop.ccUser.get().set(p.getUniqueId().toString() + ".interactItem", shopName + "/" + idx);
-                            DynamicShop.ccUser.get().set(p.getUniqueId().toString() + ".tmpString", "sign");
+                            DynamicShop.userInteractItem.put(p.getUniqueId(), shopName + "/" + idx);
+                            DynamicShop.userTempData.put(p.getUniqueId(), "sign");
                             DynamicShop.ccUser.save();
 
                             DynaShopAPI.openItemTradeGui(p, shopName, String.valueOf(idx));

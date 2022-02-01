@@ -5,6 +5,8 @@ import org.bukkit.entity.Player;
 import me.sat7.dynamicshop.DynamicShop;
 import me.sat7.dynamicshop.utilities.LangUtil;
 
+import java.util.UUID;
+
 public final class CommandHelp
 {
     private CommandHelp()
@@ -20,16 +22,18 @@ public final class CommandHelp
             return true;
         }
 
+        UUID uuid = player.getUniqueId();
+
         if (args[1].equalsIgnoreCase("on"))
         {
             player.sendMessage(DynamicShop.dsPrefix + "켜짐");
-            DynamicShop.ccUser.get().set(player.getUniqueId() + ".tmpString", "");
+            DynamicShop.userTempData.put(uuid, "");
             DynamicShop.ccUser.get().set(player.getUniqueId() + ".cmdHelp", true);
             DynamicShop.ccUser.save();
         } else if (args[1].equalsIgnoreCase("off"))
         {
             player.sendMessage(DynamicShop.dsPrefix + "꺼짐");
-            DynamicShop.ccUser.get().set(player.getUniqueId() + ".tmpString", "");
+            DynamicShop.userTempData.put(uuid, "");
             DynamicShop.ccUser.get().set(player.getUniqueId() + ".cmdHelp", false);
             DynamicShop.ccUser.save();
         } else

@@ -319,9 +319,9 @@ public class Shop extends InGameUI
         int curPage = e.getClickedInventory().getItem(49).getAmount();
 
         String itemtoMove = "";
-        if (DynamicShop.ccUser.get().contains(player.getUniqueId() + ".interactItem"))
+        if (DynamicShop.userInteractItem.get(player.getUniqueId()) != null)
         {
-            String[] temp = DynamicShop.ccUser.get().getString(player.getUniqueId() + ".interactItem").split("/");
+            String[] temp = DynamicShop.userInteractItem.get(player.getUniqueId()).split("/");
             if (temp.length > 1) itemtoMove = temp[1];
         }
 
@@ -371,8 +371,8 @@ public class Shop extends InGameUI
                         {
                             ShopUtil.closeInventoryWithDelay(player);
 
-                            DynamicShop.ccUser.get().set(player.getUniqueId() + ".interactItem", shopName + "/" + curPage);
-                            DynamicShop.ccUser.get().set(player.getUniqueId() + ".tmpString", "waitforPageDelete");
+                            DynamicShop.userInteractItem.put(player.getUniqueId(), shopName + "/" + curPage);
+                            DynamicShop.userTempData.put(player.getUniqueId(), "waitforPageDelete");
                             OnChat.WaitForInput(player);
 
                             player.sendMessage(DynamicShop.dsPrefix + LangUtil.ccLang.get().getString("RUSURE"));
@@ -390,7 +390,7 @@ public class Shop extends InGameUI
             else if (e.getSlot() == 53 && e.isRightClick() && player.hasPermission("dshop.admin.shopedit"))
             {
                 SoundUtil.playerSoundEffect(player, "click");
-                DynamicShop.ccUser.get().set(player.getUniqueId() + ".interactItem", shopName + "/" + 0); // 선택한 아이탬의 인덱스 저장
+                DynamicShop.userInteractItem.put(player.getUniqueId(), shopName + "/" + 0); // 선택한 아이탬의 인덱스 저장
                 DynaShopAPI.openShopSettingGui(player, shopName);
                 return;
             } else if (e.getSlot() > 45)
@@ -409,14 +409,14 @@ public class Shop extends InGameUI
 
                     SoundUtil.playerSoundEffect(player, "tradeview");
                     DynaShopAPI.openItemTradeGui(player, shopName, String.valueOf(idx));
-                    DynamicShop.ccUser.get().set(player.getUniqueId() + ".interactItem", shopName + "/" + idx); // 선택한 아이탬의 인덱스 저장
+                    DynamicShop.userInteractItem.put(player.getUniqueId(), shopName + "/" + idx); // 선택한 아이탬의 인덱스 저장
                 }
                 // 아이탬 이동, 수정, 또는 장식탬 삭제
                 else if (player.hasPermission("dshop.admin.shopedit"))
                 {
                     SoundUtil.playerSoundEffect(player, "click");
 
-                    DynamicShop.ccUser.get().set(player.getUniqueId() + ".interactItem", shopName + "/" + idx); // 선택한 아이탬의 인덱스 저장
+                    DynamicShop.userInteractItem.put(player.getUniqueId(), shopName + "/" + idx); // 선택한 아이탬의 인덱스 저장
                     if (e.isShiftClick())
                     {
                         if (ShopUtil.ccShop.get().contains(shopName + "." + idx + ".value"))
@@ -481,12 +481,12 @@ public class Shop extends InGameUI
                 ShopUtil.ccShop.save();
 
                 DynaShopAPI.openShopGui(player, shopName, curPage);
-                DynamicShop.ccUser.get().set(player.getUniqueId() + ".interactItem", "");
+                DynamicShop.userInteractItem.put(player.getUniqueId(), "");
             }
             // 팔렛트 열기
             else if (player.hasPermission("dshop.admin.shopedit"))
             {
-                DynamicShop.ccUser.get().set(player.getUniqueId() + ".interactItem", shopName + "/" + clickedIdx); // 선택한 아이탬의 인덱스 저장
+                DynamicShop.userInteractItem.put(player.getUniqueId(), shopName + "/" + clickedIdx); // 선택한 아이탬의 인덱스 저장
                 DynaShopAPI.openItemPalette(player, 1, "");
             }
         }

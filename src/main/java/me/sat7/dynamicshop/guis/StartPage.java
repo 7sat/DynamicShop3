@@ -52,7 +52,7 @@ public class StartPage extends InGameUI
     {
         Inventory ui = Bukkit.createInventory(player, ccStartPage.get().getInt("Options.UiSlotCount"), ccStartPage.get().getString("Options.Title"));
 
-        DynamicShop.ccUser.get().set(player.getUniqueId() + ".interactItem", "");
+        DynamicShop.userInteractItem.put(player.getUniqueId(), "");
 
         //아이콘, 이름, 로어, 인덱스, 커맨드
         ConfigurationSection cs = ccStartPage.get().getConfigurationSection("Buttons");
@@ -153,7 +153,7 @@ public class StartPage extends InGameUI
             {
                 if (e.getCurrentItem() == null || e.getCurrentItem().getType() == Material.AIR) return;
 
-                DynamicShop.ccUser.get().set(player.getUniqueId() + ".interactItem", "startpage/" + e.getSlot()); // 선택한 아이탬의 인덱스 저장
+                DynamicShop.userInteractItem.put(player.getUniqueId(), "startpage/" + e.getSlot()); // 선택한 아이탬의 인덱스 저장
                 DynaShopAPI.openStartPageSettingGui(player);
             }
             // 이동
@@ -162,7 +162,7 @@ public class StartPage extends InGameUI
                 String itemtoMove = "";
                 try
                 {
-                    String[] temp = DynamicShop.ccUser.get().getString(player.getUniqueId() + ".interactItem").split("/");
+                    String[] temp = DynamicShop.userInteractItem.get(player.getUniqueId()).split("/");
                     itemtoMove = temp[1];
                 } catch (Exception ignored)
                 {
@@ -172,7 +172,7 @@ public class StartPage extends InGameUI
                 {
                     if (e.getCurrentItem() == null || e.getCurrentItem().getType() == Material.AIR) return;
 
-                    DynamicShop.ccUser.get().set(player.getUniqueId() + ".interactItem", "startpage/" + e.getSlot()); // 선택한 아이탬의 인덱스 저장
+                    DynamicShop.userInteractItem.put(player.getUniqueId(), "startpage/" + e.getSlot()); // 선택한 아이탬의 인덱스 저장
                     player.sendMessage(DynamicShop.dsPrefix + LangUtil.ccLang.get().getString("ITEM_MOVE_SELECTED"));
                 } else
                 {
@@ -191,7 +191,7 @@ public class StartPage extends InGameUI
                     StartPage.ccStartPage.save();
 
                     DynaShopAPI.openStartPage(player);
-                    DynamicShop.ccUser.get().set(player.getUniqueId() + ".interactItem", "");
+                    DynamicShop.userInteractItem.put(player.getUniqueId(), "");
                 }
             }
         }

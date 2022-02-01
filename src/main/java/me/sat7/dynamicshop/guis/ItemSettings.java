@@ -28,7 +28,7 @@ public class ItemSettings extends InGameUI
 
     public Inventory getGui(Player player, int tab, DSItem dsItem)
     {
-        String[] temp = DynamicShop.ccUser.get().getString(player.getUniqueId() + ".interactItem").split("/");
+        String[] temp = DynamicShop.userInteractItem.get(player.getUniqueId()).split("/");
         String shopName = temp[0];
 
         // UI 요소 생성
@@ -266,7 +266,7 @@ public class ItemSettings extends InGameUI
         if (player == null)
             return;
 
-        String[] temp = DynamicShop.ccUser.get().getString(player.getUniqueId() + ".interactItem").split("/");
+        String[] temp = DynamicShop.userInteractItem.get(player.getUniqueId()).split("/");
         String shopName = temp[0];
 
         if (e.getCurrentItem() == null)
@@ -290,7 +290,7 @@ public class ItemSettings extends InGameUI
                 ShopUtil.removeItemFromShop(shopName, idx);
                 player.sendMessage(DynamicShop.dsPrefix + LangUtil.ccLang.get().getString("ITEM_DELETED"));
                 DynaShopAPI.openShopGui(player, shopName, Integer.parseInt(temp[1]) / 45 + 1);
-                DynamicShop.ccUser.get().set(player.getUniqueId() + ".interactItem", "");
+                DynamicShop.userInteractItem.put(player.getUniqueId(), "");
                 SoundUtil.playerSoundEffect(player, "deleteItem");
                 return;
             }
@@ -607,7 +607,7 @@ public class ItemSettings extends InGameUI
             {
                 ShopUtil.editShopItem(shopName, existSlot, valueBuyD, valueSellD, valueMinD, valueMaxD, medianI, stockI);
                 DynaShopAPI.openShopGui(player, shopName, existSlot / 45 + 1);
-                DynamicShop.ccUser.get().set(player.getUniqueId() + ".interactItem", "");
+                DynamicShop.userInteractItem.put(player.getUniqueId(), "");
                 SoundUtil.playerSoundEffect(player, "addItem");
             } else
             {
@@ -615,7 +615,7 @@ public class ItemSettings extends InGameUI
 
                 try
                 {
-                    idx = Integer.parseInt(DynamicShop.ccUser.get().getString(player.getUniqueId() + ".interactItem").split("/")[1]);
+                    idx = Integer.parseInt(DynamicShop.userInteractItem.get(player.getUniqueId()).split("/")[1]);
                 } catch (Exception ignored)
                 {
                 }
@@ -624,7 +624,7 @@ public class ItemSettings extends InGameUI
                 {
                     ShopUtil.addItemToShop(shopName, idx, e.getClickedInventory().getItem(0), valueBuyD, valueSellD, valueMinD, valueMaxD, medianI, stockI);
                     DynaShopAPI.openShopGui(player, shopName, Integer.parseInt(temp[1]) / 45 + 1);
-                    DynamicShop.ccUser.get().set(player.getUniqueId() + ".interactItem", "");
+                    DynamicShop.userInteractItem.put(player.getUniqueId(), "");
                     SoundUtil.playerSoundEffect(player, "addItem");
                 }
             }

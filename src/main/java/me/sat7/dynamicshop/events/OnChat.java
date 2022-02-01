@@ -34,18 +34,19 @@ public class OnChat implements Listener
 
         BukkitTask taskID = Bukkit.getScheduler().runTaskLater(DynamicShop.plugin, () ->
         {
+            UUID uuid = player.getUniqueId();
 
-            if (DynamicShop.ccUser.get().getString(player.getUniqueId() + ".tmpString").equals("waitforPalette"))
+            if (DynamicShop.userTempData.get(uuid).equals("waitforPalette"))
             {
-                DynamicShop.ccUser.get().set(player.getUniqueId() + ".tmpString", "");
+                DynamicShop.userTempData.put(uuid, "");
                 player.sendMessage(DynamicShop.dsPrefix + LangUtil.ccLang.get().getString("SEARCH_CANCELED"));
-            } else if (DynamicShop.ccUser.get().getString(player.getUniqueId() + ".tmpString").contains("waitforInput"))
+            } else if (DynamicShop.userTempData.get(uuid).contains("waitforInput"))
             {
-                DynamicShop.ccUser.get().set(player.getUniqueId() + ".tmpString", "");
+                DynamicShop.userTempData.put(uuid, "");
                 player.sendMessage(DynamicShop.dsPrefix + LangUtil.ccLang.get().getString("INPUT_CANCELED"));
-            } else if (DynamicShop.ccUser.get().getString(player.getUniqueId() + ".tmpString").equals("waitforPageDelete"))
+            } else if (DynamicShop.userTempData.get(uuid).equals("waitforPageDelete"))
             {
-                DynamicShop.ccUser.get().set(player.getUniqueId() + ".tmpString", "");
+                DynamicShop.userTempData.put(uuid, "");
                 player.sendMessage(DynamicShop.dsPrefix + LangUtil.ccLang.get().getString("INPUT_CANCELED"));
             }
 
@@ -65,20 +66,21 @@ public class OnChat implements Listener
     public void onPlayerChat(PlayerChatEvent e)
     {
         Player p = e.getPlayer();
+        UUID uuid = p.getUniqueId();
 
-        if (DynamicShop.ccUser.get().getString(p.getUniqueId() + ".tmpString").equals("waitforPalette"))
+        if (DynamicShop.userTempData.get(uuid).equals("waitforPalette"))
         {
             e.setCancelled(true);
 
-            DynamicShop.ccUser.get().set(p.getUniqueId() + ".tmpString", "");
+            DynamicShop.userTempData.put(uuid, "");
             DynaShopAPI.openItemPalette(p, 1, e.getMessage());
             cancelRunnable(p);
-        } else if (DynamicShop.ccUser.get().getString(p.getUniqueId() + ".tmpString").contains("waitforInput"))
+        } else if (DynamicShop.userTempData.get(uuid).contains("waitforInput"))
         {
             e.setCancelled(true);
 
-            String s = DynamicShop.ccUser.get().getString(p.getUniqueId() + ".tmpString").replace("waitforInput", "");
-            String[] temp = DynamicShop.ccUser.get().getString(p.getUniqueId() + ".interactItem").split("/");
+            String s = DynamicShop.userTempData.get(uuid).replace("waitforInput", "");
+            String[] temp = DynamicShop.userInteractItem.get(uuid).split("/");
 
             if (s.equals("btnName"))
             {
@@ -129,16 +131,16 @@ public class OnChat implements Listener
 
             StartPage.ccStartPage.save();
 
-            DynamicShop.ccUser.get().set(p.getUniqueId() + ".tmpString", "");
+            DynamicShop.userTempData.put(uuid, "");
             DynaShopAPI.openStartPage(p);
             cancelRunnable(p);
-        } else if (DynamicShop.ccUser.get().getString(p.getUniqueId() + ".tmpString").contains("waitforPageDelete"))
+        } else if (DynamicShop.userTempData.get(uuid).contains("waitforPageDelete"))
         {
             e.setCancelled(true);
 
             if (e.getMessage().equals("delete"))
             {
-                String[] temp = DynamicShop.ccUser.get().getString(p.getUniqueId() + ".interactItem").split("/");
+                String[] temp = DynamicShop.userInteractItem.get(uuid).split("/");
                 ShopUtil.deleteShopPage(temp[0], Integer.parseInt(temp[1]));
                 DynaShopAPI.openShopGui(p, temp[0], 1);
             } else
@@ -146,8 +148,8 @@ public class OnChat implements Listener
                 p.sendMessage(DynamicShop.dsPrefix + LangUtil.ccLang.get().getString("INPUT_CANCELED"));
             }
 
-            DynamicShop.ccUser.get().set(p.getUniqueId() + ".interactItem", "");
-            DynamicShop.ccUser.get().set(p.getUniqueId() + ".tmpString", "");
+            DynamicShop.userInteractItem.put(uuid, "");
+            DynamicShop.userTempData.put(uuid, "");
             cancelRunnable(p);
         }
     }

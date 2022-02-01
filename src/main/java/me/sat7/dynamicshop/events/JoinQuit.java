@@ -17,8 +17,8 @@ public class JoinQuit implements Listener
     public void onPlayerJoin(PlayerJoinEvent e)
     {
         Player player = e.getPlayer();
-        DynamicShop.ccUser.get().set(player.getUniqueId().toString() + ".tmpString", "");
-        DynamicShop.ccUser.get().set(player.getUniqueId().toString() + ".interactItem", "");
+        DynamicShop.userTempData.put(player.getUniqueId(), "");
+        DynamicShop.userInteractItem.put(player.getUniqueId(), "");
         DynamicShop.ccUser.get().set(player.getUniqueId().toString() + ".lastJoin", System.currentTimeMillis());
         DynamicShop.ccUser.get().addDefault(player.getUniqueId().toString() + ".cmdHelp", true);
         DynamicShop.ccUser.save();
@@ -38,5 +38,7 @@ public class JoinQuit implements Listener
     public void OnPlayerQuit(PlayerQuitEvent e)
     {
         UIManager.OnPlayerQuit(e.getPlayer());
+        DynamicShop.userTempData.remove(e.getPlayer().getUniqueId());
+        DynamicShop.userInteractItem.remove(e.getPlayer().getUniqueId());
     }
 }

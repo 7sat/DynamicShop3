@@ -151,7 +151,7 @@ public class ItemPalette extends InGameUI
     {
         Player player = (Player) e.getWhoClicked();
 
-        String[] temp = DynamicShop.ccUser.get().getString(player.getUniqueId() + ".interactItem").split("/");
+        String[] temp = DynamicShop.userInteractItem.get(player.getUniqueId()).split("/");
         String shopName = temp[0];
         @SuppressWarnings("ConstantConditions")
         int curPage = e.getInventory().getItem(49).getAmount();
@@ -159,7 +159,7 @@ public class ItemPalette extends InGameUI
         // 닫기 버튼
         if (e.getSlot() == 45)
         {
-            DynamicShop.ccUser.get().set(player.getUniqueId() + ".interactItem", "");
+            DynamicShop.userInteractItem.put(player.getUniqueId(), "");
             DynaShopAPI.openShopGui(player, shopName, 1);
         }
         // 페이지 버튼
@@ -216,7 +216,7 @@ public class ItemPalette extends InGameUI
         {
             player.closeInventory();
 
-            DynamicShop.ccUser.get().set(player.getUniqueId() + ".tmpString", "waitforPalette");
+            DynamicShop.userTempData.put(player.getUniqueId(), "waitforPalette");
             OnChat.WaitForInput(player);
 
             player.sendMessage(DynamicShop.dsPrefix + LangUtil.ccLang.get().getString("SEARCH_ITEM"));
@@ -250,7 +250,7 @@ public class ItemPalette extends InGameUI
                 DynaShopAPI.openItemSettingGui(player, e.getCurrentItem(), 1, 10, 10, 0.01, -1, 1000, 1000);
             } else
             {
-                String[] temp = DynamicShop.ccUser.get().getString(player.getUniqueId() + ".interactItem").split("/");
+                String[] temp = DynamicShop.userInteractItem.get(player.getUniqueId()).split("/");
 
                 ShopUtil.addItemToShop(temp[0], Integer.parseInt(temp[1]), e.getCurrentItem(), -1, -1, -1, -1, -1, -1);
                 DynaShopAPI.openShopGui(player, temp[0], Integer.parseInt(temp[1]) / 45 + 1);

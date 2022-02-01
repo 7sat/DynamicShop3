@@ -242,7 +242,7 @@ public class ItemTrade extends InGameUI
         if (player == null)
             return;
 
-        String[] temp = DynamicShop.ccUser.get().getString(player.getUniqueId() + ".interactItem").split("/");
+        String[] temp = DynamicShop.userInteractItem.get(player.getUniqueId()).split("/");
         String shopName = temp[0];
         String tradeIdx = temp[1];
 
@@ -252,11 +252,12 @@ public class ItemTrade extends InGameUI
             if (e.getSlot() == 9)
             {
                 SoundUtil.playerSoundEffect(player, "click");
-                DynamicShop.ccUser.get().set(player.getUniqueId() + ".interactItem", "");
+                DynamicShop.userInteractItem.put(player.getUniqueId(), "");
 
-                if (DynamicShop.ccUser.get().getString(player.getUniqueId() + ".tmpString").equalsIgnoreCase("sign"))
+                // 표지판을 클릭해서 거래화면에 진입한 경우에는 상점UI로 돌아가는 대신 인벤토리를 닫음
+                if (DynamicShop.userTempData.get(player.getUniqueId()).equalsIgnoreCase("sign"))
                 {
-                    DynamicShop.ccUser.get().set(player.getUniqueId() + ".tmpString", "");
+                    DynamicShop.userTempData.put(player.getUniqueId(), "");
                     player.closeInventory();
                 } else
                 {

@@ -3,6 +3,7 @@ package me.sat7.dynamicshop.utilities;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Locale;
+import java.util.UUID;
 import java.util.stream.Collectors;
 
 import org.bukkit.Bukkit;
@@ -28,7 +29,8 @@ public final class TabCompleteUtil
     {
         if (!(sender instanceof Player)) return null;
 
-        String senderUuid = ((Player) sender).getUniqueId().toString();
+        UUID uuid = ((Player) sender).getUniqueId();
+        String senderUuid = uuid.toString();
 
         try
         {
@@ -58,9 +60,9 @@ public final class TabCompleteUtil
             {
                 if (args.length == 1)
                 {
-                    if (!DynamicShop.ccUser.get().getString(senderUuid + ".tmpString").equals("main"))
+                    if (!DynamicShop.userTempData.get(uuid).equals("main"))
                     {
-                        DynamicShop.ccUser.get().set(senderUuid + ".tmpString", "main");
+                        DynamicShop.userTempData.put(uuid,"main");
                         Help.showHelp("main", (Player) sender, args);
                     }
 
@@ -87,9 +89,9 @@ public final class TabCompleteUtil
                 {
                     if (args.length == 2)
                     {
-                        if (!DynamicShop.ccUser.get().getString(senderUuid + ".tmpString").equals("shop"))
+                        if (!DynamicShop.userTempData.get(uuid).equals("shop"))
                         {
-                            DynamicShop.ccUser.get().set(senderUuid + ".tmpString", "shop");
+                            DynamicShop.userTempData.put(uuid,"shop");
                             Help.showHelp("shop", (Player) sender, args);
                         }
 
@@ -142,18 +144,18 @@ public final class TabCompleteUtil
                     {
                         if (args[2].equalsIgnoreCase("addhand") && sender.hasPermission("dshop.admin.shopedit"))
                         {
-                            if (!DynamicShop.ccUser.get().getString(senderUuid + ".tmpString").equals("addhand"))
+                            if (!DynamicShop.userTempData.get(uuid).equals("addhand"))
                             {
-                                DynamicShop.ccUser.get().set(senderUuid + ".tmpString", "addhand");
+                                DynamicShop.userTempData.put(uuid,"addhand");
                                 Help.showHelp("add_hand", (Player) sender, args);
                             }
                         } else if (args[2].equalsIgnoreCase("add") && sender.hasPermission("dshop.admin.shopedit"))
                         {
                             if (args.length == 4)
                             {
-                                if (!DynamicShop.ccUser.get().getString(senderUuid + ".tmpString").equals("add"))
+                                if (!DynamicShop.userTempData.get(uuid).equals("add"))
                                 {
-                                    DynamicShop.ccUser.get().set(senderUuid + ".tmpString", "add");
+                                    DynamicShop.userTempData.put(uuid,"add");
                                     Help.showHelp("add", (Player) sender, args);
                                 }
 
@@ -169,12 +171,13 @@ public final class TabCompleteUtil
                             } else if (args.length == 5)
                             {
                                 String mat = args[3].toUpperCase();
-                                if (!(DynamicShop.ccUser.get().getString(senderUuid + ".tmpString").contains("add") &&
-                                        DynamicShop.ccUser.get().getString(senderUuid + ".tmpString").length() > 3))
+                                String userTempStr = DynamicShop.userTempData.get(uuid);
+
+                                if (!(userTempStr.contains("add") && userTempStr.length() > 3))
                                 {
                                     if (Material.matchMaterial(mat) != null)
                                     {
-                                        DynamicShop.ccUser.get().set(senderUuid + ".tmpString", "add" + args[3]);
+                                        DynamicShop.userTempData.put(uuid,"add" + args[3]);
                                         Help.showHelp("add" + args[3], (Player) sender, args);
                                     }
                                 }
@@ -183,9 +186,9 @@ public final class TabCompleteUtil
                         {
                             if (args.length == 4)
                             {
-                                if (!DynamicShop.ccUser.get().getString(senderUuid + ".tmpString").equals("edit"))
+                                if (!DynamicShop.userTempData.get(uuid).equals("edit"))
                                 {
-                                    DynamicShop.ccUser.get().set(senderUuid + ".tmpString", "edit");
+                                    DynamicShop.userTempData.put(uuid,"edit");
                                     Help.showHelp("edit", (Player) sender, args);
                                 }
 
@@ -216,20 +219,20 @@ public final class TabCompleteUtil
                                 mat = mat.substring(mat.indexOf("/") + 1);
                                 mat = mat.toUpperCase();
 
-                                if (!(DynamicShop.ccUser.get().getString(senderUuid + ".tmpString").equals("edit" + mat)))
+                                if (!(DynamicShop.userTempData.get(uuid).equals("edit" + mat)))
                                 {
                                     if (Material.matchMaterial(mat) != null)
                                     {
-                                        DynamicShop.ccUser.get().set(senderUuid + ".tmpString", "edit" + mat);
+                                        DynamicShop.userTempData.put(uuid,"edit" + mat);
                                         Help.showHelp("edit" + mat, (Player) sender, args);
                                     }
                                 }
                             }
                         } else if (args[2].equalsIgnoreCase("editall") && sender.hasPermission("dshop.admin.shopedit"))
                         {
-                            if (!DynamicShop.ccUser.get().getString(senderUuid + ".tmpString").equals("editall"))
+                            if (!DynamicShop.userTempData.get(uuid).equals("editall"))
                             {
-                                DynamicShop.ccUser.get().set(senderUuid + ".tmpString", "editall");
+                                DynamicShop.userTempData.put(uuid,"editall");
                                 Help.showHelp("edit_all", (Player) sender, args);
                             }
                             if (args.length == 4)
@@ -274,16 +277,16 @@ public final class TabCompleteUtil
                             }
                         } else if (args[2].equalsIgnoreCase("setToRecAll") && sender.hasPermission("dshop.admin.shopedit"))
                         {
-                            if (!DynamicShop.ccUser.get().getString(senderUuid + ".tmpString").equalsIgnoreCase("setToRecAll"))
+                            if (!DynamicShop.userTempData.get(uuid).equalsIgnoreCase("setToRecAll"))
                             {
-                                DynamicShop.ccUser.get().set(senderUuid + ".tmpString", "edit");
+                                DynamicShop.userTempData.put(uuid,"edit");
                                 Help.showHelp("set_to_rec_all", (Player) sender, args);
                             }
                         } else if (args[2].equalsIgnoreCase("permission") && sender.hasPermission("dshop.admin.shopedit"))
                         {
-                            if (!DynamicShop.ccUser.get().getString(senderUuid + ".tmpString").equals("permission"))
+                            if (!DynamicShop.userTempData.get(uuid).equals("permission"))
                             {
-                                DynamicShop.ccUser.get().set(senderUuid + ".tmpString", "permission");
+                                DynamicShop.userTempData.put(uuid,"permission");
                                 Help.showHelp("permission", (Player) sender, args);
                             }
                             if (args.length >= 4)
@@ -298,9 +301,9 @@ public final class TabCompleteUtil
                             }
                         } else if (args[2].equalsIgnoreCase("maxpage") && sender.hasPermission("dshop.admin.shopedit"))
                         {
-                            if (!DynamicShop.ccUser.get().getString(senderUuid + ".tmpString").equals("maxpage"))
+                            if (!DynamicShop.userTempData.get(uuid).equals("maxpage"))
                             {
-                                DynamicShop.ccUser.get().set(senderUuid + ".tmpString", "maxpage");
+                                DynamicShop.userTempData.put(uuid,"maxpage");
                                 Help.showHelp("max_page", (Player) sender, args);
                             }
                         } else if (args[2].equalsIgnoreCase("flag") && sender.hasPermission("dshop.admin.shopedit"))
@@ -328,9 +331,9 @@ public final class TabCompleteUtil
                                 }
                             }
 
-                            if (!DynamicShop.ccUser.get().getString(senderUuid + ".tmpString").equals("flag"))
+                            if (!DynamicShop.userTempData.get(uuid).equals("flag"))
                             {
-                                DynamicShop.ccUser.get().set(senderUuid + ".tmpString", "flag");
+                                DynamicShop.userTempData.put(uuid,"flag");
                                 Help.showHelp("flag", (Player) sender, args);
                             }
                         } else if (args[2].equalsIgnoreCase("position") && sender.hasPermission("dshop.admin.shopedit"))
@@ -347,30 +350,30 @@ public final class TabCompleteUtil
                                 }
                             }
 
-                            if (!DynamicShop.ccUser.get().getString(senderUuid + ".tmpString").equals("position"))
+                            if (!DynamicShop.userTempData.get(uuid).equals("position"))
                             {
-                                DynamicShop.ccUser.get().set(senderUuid + ".tmpString", "position");
+                                DynamicShop.userTempData.put(uuid,"position");
                                 Help.showHelp("position", (Player) sender, args);
                             }
                         } else if (args[2].equalsIgnoreCase("shophours") && sender.hasPermission("dshop.admin.shopedit"))
                         {
-                            if (!DynamicShop.ccUser.get().getString(senderUuid + ".tmpString").equals("shophours"))
+                            if (!DynamicShop.userTempData.get(uuid).equals("shophours"))
                             {
-                                DynamicShop.ccUser.get().set(senderUuid + ".tmpString", "shophours");
+                                DynamicShop.userTempData.put(uuid,"shophours");
                                 Help.showHelp("shophours", (Player) sender, args);
                             }
                         } else if (args[2].equalsIgnoreCase("fluctuation") && sender.hasPermission("dshop.admin.shopedit"))
                         {
-                            if (!DynamicShop.ccUser.get().getString(senderUuid + ".tmpString").equals("fluctuation"))
+                            if (!DynamicShop.userTempData.get(uuid).equals("fluctuation"))
                             {
-                                DynamicShop.ccUser.get().set(senderUuid + ".tmpString", "fluctuation");
+                                DynamicShop.userTempData.put(uuid,"fluctuation");
                                 Help.showHelp("fluctuation", (Player) sender, args);
                             }
                         } else if (args[2].equalsIgnoreCase("stockStabilizing") && sender.hasPermission("dshop.admin.shopedit"))
                         {
-                            if (!DynamicShop.ccUser.get().getString(senderUuid + ".tmpString").equals("stockStabilizing"))
+                            if (!DynamicShop.userTempData.get(uuid).equals("stockStabilizing"))
                             {
-                                DynamicShop.ccUser.get().set(senderUuid + ".tmpString", "stockStabilizing");
+                                DynamicShop.userTempData.put(uuid,"stockStabilizing");
                                 Help.showHelp("stock_stabilizing", (Player) sender, args);
                             }
                         } else if (args[2].equalsIgnoreCase("account") && sender.hasPermission("dshop.admin.shopedit"))
@@ -386,9 +389,9 @@ public final class TabCompleteUtil
                                     if (s.startsWith(args[3])) alist.add(s);
                                 }
 
-                                if (!DynamicShop.ccUser.get().getString(senderUuid + ".tmpString").equals("account"))
+                                if (!DynamicShop.userTempData.get(uuid).equals("account"))
                                 {
-                                    DynamicShop.ccUser.get().set(senderUuid + ".tmpString", "account");
+                                    DynamicShop.userTempData.put(uuid,"account");
                                     Help.showHelp("account", (Player) sender, args);
                                 }
                             } else if (args.length == 5)
@@ -400,16 +403,16 @@ public final class TabCompleteUtil
 
                                 if (args[3].equals("set"))
                                 {
-                                    if (!DynamicShop.ccUser.get().getString(senderUuid + ".tmpString").equals("accountSet"))
+                                    if (!DynamicShop.userTempData.get(uuid).equals("accountSet"))
                                     {
-                                        DynamicShop.ccUser.get().set(senderUuid + ".tmpString", "accountSet");
+                                        DynamicShop.userTempData.put(uuid,"accountSet");
                                         Help.showHelp("account_set", (Player) sender, args);
                                     }
                                 } else if (args[3].equals("transfer"))
                                 {
-                                    if (!DynamicShop.ccUser.get().getString(senderUuid + ".tmpString").equals("accountTransfer"))
+                                    if (!DynamicShop.userTempData.get(uuid).equals("accountTransfer"))
                                     {
-                                        DynamicShop.ccUser.get().set(senderUuid + ".tmpString", "accountTransfer");
+                                        DynamicShop.userTempData.put(uuid,"accountTransfer");
                                         Help.showHelp("account_transfer", (Player) sender, args);
                                     }
 
@@ -419,9 +422,9 @@ public final class TabCompleteUtil
                                     }
                                 } else if (args[3].equals("linkto"))
                                 {
-                                    if (!DynamicShop.ccUser.get().getString(senderUuid + ".tmpString").equals("accountLinkto"))
+                                    if (!DynamicShop.userTempData.get(uuid).equals("accountLinkto"))
                                     {
-                                        DynamicShop.ccUser.get().set(senderUuid + ".tmpString", "accountLinkto");
+                                        DynamicShop.userTempData.put(uuid,"accountLinkto");
                                         Help.showHelp("account_link_to", (Player) sender, args);
                                     }
                                 }
@@ -443,9 +446,9 @@ public final class TabCompleteUtil
                                     if (s.startsWith(args[3])) alist.add(s);
                                 }
 
-                                if (!DynamicShop.ccUser.get().getString(senderUuid + ".tmpString").equals("hideStock"))
+                                if (!DynamicShop.userTempData.get(uuid).equals("hideStock"))
                                 {
-                                    DynamicShop.ccUser.get().set(senderUuid + ".tmpString", "hideStock");
+                                    DynamicShop.userTempData.put(uuid,"hideStock");
                                     Help.showHelp("hide_stock", (Player) sender, args);
                                 }
                             }
@@ -461,9 +464,9 @@ public final class TabCompleteUtil
                                     if (s.startsWith(args[3])) alist.add(s);
                                 }
 
-                                if (!DynamicShop.ccUser.get().getString(senderUuid + ".tmpString").equals("hidePricingType"))
+                                if (!DynamicShop.userTempData.get(uuid).equals("hidePricingType"))
                                 {
-                                    DynamicShop.ccUser.get().set(senderUuid + ".tmpString", "hidePricingType");
+                                    DynamicShop.userTempData.put(uuid,"hidePricingType");
                                     Help.showHelp("hide_pricing_type", (Player) sender, args);
                                 }
                             }
@@ -480,9 +483,9 @@ public final class TabCompleteUtil
                                     if (s.startsWith(args[3])) alist.add(s);
                                 }
 
-                                if (!DynamicShop.ccUser.get().getString(senderUuid + ".tmpString").equals("sellbuy"))
+                                if (!DynamicShop.userTempData.get(uuid).equals("sellbuy"))
                                 {
-                                    DynamicShop.ccUser.get().set(senderUuid + ".tmpString", "sellbuy");
+                                    DynamicShop.userTempData.put(uuid,"sellbuy");
                                     Help.showHelp("sellbuy", (Player) sender, args);
                                 }
                             }
@@ -499,9 +502,9 @@ public final class TabCompleteUtil
                                     if (s.startsWith(args[3])) alist.add(s);
                                 }
 
-                                if (!DynamicShop.ccUser.get().getString(senderUuid + ".tmpString").equals("log"))
+                                if (!DynamicShop.userTempData.get(uuid).equals("log"))
                                 {
-                                    DynamicShop.ccUser.get().set(senderUuid + ".tmpString", "log");
+                                    DynamicShop.userTempData.put(uuid,"log");
                                     Help.showHelp("log", (Player) sender, args);
                                 }
                             }
@@ -520,9 +523,9 @@ public final class TabCompleteUtil
                         }
                     }
 
-                    if (!DynamicShop.ccUser.get().getString(senderUuid + ".tmpString").equals("createshop"))
+                    if (!DynamicShop.userTempData.get(uuid).equals("createshop"))
                     {
-                        DynamicShop.ccUser.get().set(senderUuid + ".tmpString", "createshop");
+                        DynamicShop.userTempData.put(uuid,"createshop");
                         Help.showHelp("create_shop", (Player) sender, args);
                     }
                 } else if (args[0].equalsIgnoreCase("deleteshop") && sender.hasPermission("dshop.admin.deleteshop"))
@@ -534,9 +537,9 @@ public final class TabCompleteUtil
                         if (s.startsWith(args[1])) alist.add(s);
                     }
 
-                    if (!DynamicShop.ccUser.get().getString(senderUuid + ".tmpString").equals("deleteshop"))
+                    if (!DynamicShop.userTempData.get(uuid).equals("deleteshop"))
                     {
-                        DynamicShop.ccUser.get().set(senderUuid + ".tmpString", "deleteshop");
+                        DynamicShop.userTempData.put(uuid,"deleteshop");
                         Help.showHelp("delete_shop", (Player) sender, args);
                     }
                 } else if (args[0].equalsIgnoreCase("mergeshop") && sender.hasPermission("dshop.admin.mergeshop"))
@@ -551,9 +554,9 @@ public final class TabCompleteUtil
                         }
                     }
 
-                    if (!DynamicShop.ccUser.get().getString(senderUuid + ".tmpString").equals("mergeshop"))
+                    if (!DynamicShop.userTempData.get(uuid).equals("mergeshop"))
                     {
-                        DynamicShop.ccUser.get().set(senderUuid + ".tmpString", "mergeshop");
+                        DynamicShop.userTempData.put(uuid,"mergeshop");
                         Help.showHelp("merge_shop", (Player) sender, args);
                     }
                 } else if (args[0].equalsIgnoreCase("open_shop") && sender.hasPermission("dshop.admin.openshop"))
@@ -576,9 +579,9 @@ public final class TabCompleteUtil
                         }
                     }
 
-                    if (!DynamicShop.ccUser.get().getString(senderUuid + ".tmpString").equals("openshop"))
+                    if (!DynamicShop.userTempData.get(uuid).equals("openshop"))
                     {
-                        DynamicShop.ccUser.get().set(senderUuid + ".tmpString", "openshop");
+                        DynamicShop.userTempData.put(uuid,"openshop");
                         Help.showHelp("open_shop", (Player) sender, args);
                     }
                 } else if (args[0].equalsIgnoreCase("renameshop") && sender.hasPermission("dshop.admin.renameshop"))
@@ -593,9 +596,9 @@ public final class TabCompleteUtil
                         }
                     }
 
-                    if (!DynamicShop.ccUser.get().getString(senderUuid + ".tmpString").equals("renameshop"))
+                    if (!DynamicShop.userTempData.get(uuid).equals("renameshop"))
                     {
-                        DynamicShop.ccUser.get().set(senderUuid + ".tmpString", "renameshop");
+                        DynamicShop.userTempData.put(uuid,"renameshop");
                         Help.showHelp("rename_shop", (Player) sender, args);
                     }
                 } else if (args[0].equalsIgnoreCase("cmdHelp"))
@@ -605,17 +608,17 @@ public final class TabCompleteUtil
                         alist.add("on");
                         alist.add("off");
 
-                        if (!DynamicShop.ccUser.get().getString(senderUuid + ".tmpString").equals("cmdHelp"))
+                        if (!DynamicShop.userTempData.get(uuid).equals("cmdHelp"))
                         {
-                            DynamicShop.ccUser.get().set(senderUuid + ".tmpString", "cmdHelp");
+                            DynamicShop.userTempData.put(uuid,"cmdHelp");
                             Help.showHelp("cmd_help", (Player) sender, args);
                         }
                     }
                 } else if (args[0].equalsIgnoreCase("settax"))
                 {
-                    if (!DynamicShop.ccUser.get().getString(senderUuid + ".tmpString").equals("settax"))
+                    if (!DynamicShop.userTempData.get(uuid).equals("settax"))
                     {
-                        DynamicShop.ccUser.get().set(senderUuid + ".tmpString", "settax");
+                        DynamicShop.userTempData.put(uuid,"settax");
                         Help.showHelp("set_tax", (Player) sender, args);
                     }
                 } else if (args[0].equalsIgnoreCase("setdefaultshop"))
@@ -627,16 +630,16 @@ public final class TabCompleteUtil
                         if (s.startsWith(args[1])) alist.add(s);
                     }
 
-                    if (!DynamicShop.ccUser.get().getString(senderUuid + ".tmpString").equals("setdefaultshop"))
+                    if (!DynamicShop.userTempData.get(uuid).equals("setdefaultshop"))
                     {
-                        DynamicShop.ccUser.get().set(senderUuid + ".tmpString", "setdefaultshop");
+                        DynamicShop.userTempData.put(uuid,"setdefaultshop");
                         Help.showHelp("set_default_shop", (Player) sender, args);
                     }
                 } else if (args[0].equalsIgnoreCase("deleteOldUser"))
                 {
-                    if (!DynamicShop.ccUser.get().getString(senderUuid + ".tmpString").equals("deleteOldUser"))
+                    if (!DynamicShop.userTempData.get(uuid).equals("deleteOldUser"))
                     {
-                        DynamicShop.ccUser.get().set(senderUuid + ".tmpString", "deleteOldUser");
+                        DynamicShop.userTempData.put(uuid,"deleteOldUser");
                         Help.showHelp("delete_old_user", (Player) sender, args);
                     }
                 } else if (args[0].equalsIgnoreCase("convert"))
@@ -653,9 +656,9 @@ public final class TabCompleteUtil
                         if (s.startsWith(args[1])) alist.add(s);
                     }
 
-                    if (!DynamicShop.ccUser.get().getString(senderUuid + ".tmpString").equals("convert"))
+                    if (!DynamicShop.userTempData.get(uuid).equals("convert"))
                     {
-                        DynamicShop.ccUser.get().set(senderUuid + ".tmpString", "convert");
+                        DynamicShop.userTempData.put(uuid,"convert");
                         Help.showHelp("convert", (Player) sender, args);
                     }
                 }

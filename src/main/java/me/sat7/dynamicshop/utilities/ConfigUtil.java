@@ -17,6 +17,8 @@ public final class ConfigUtil
     @Setter
     private static int currentTax;
 
+    public final static int configVersion = 2;
+
     private ConfigUtil()
     {
 
@@ -139,7 +141,7 @@ public final class ConfigUtil
             {
                 if (p.getOpenInventory().getTitle().equalsIgnoreCase(LangUtil.ccLang.get().getString("TRADE_TITLE")))
                 {
-                    String[] temp = DynamicShop.ccUser.get().getString(p.getUniqueId() + ".interactItem").split("/");
+                    String[] temp = DynamicShop.userInteractItem.get(p.getUniqueId()).split("/");
                     DynaShopAPI.openItemTradeGui(p, temp[0], temp[1]);
                 }
             }

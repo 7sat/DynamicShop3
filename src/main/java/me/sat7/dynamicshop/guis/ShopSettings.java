@@ -393,14 +393,14 @@ public class ShopSettings extends InGameUI
         if (player == null)
             return;
 
-        String[] temp = DynamicShop.ccUser.get().getString(player.getUniqueId() + ".interactItem").split("/");
+        String[] temp = DynamicShop.userInteractItem.get(player.getUniqueId()).split("/");
         String shopName = temp[0];
 
         // 닫기버튼
         if (e.getSlot() == 27)
         {
             DynaShopAPI.openShopGui(player, temp[0], 1);
-            DynamicShop.ccUser.get().set(player.getUniqueId() + ".interactItem", "");
+            DynamicShop.userInteractItem.put(player.getUniqueId(), "");
         }
         // 권한
         else if (e.getSlot() == 0)
