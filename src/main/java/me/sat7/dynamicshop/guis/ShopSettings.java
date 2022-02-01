@@ -3,11 +3,14 @@ package me.sat7.dynamicshop.guis;
 import java.util.ArrayList;
 import java.util.Arrays;
 
+import me.sat7.dynamicshop.DynaShopAPI;
+import me.sat7.dynamicshop.jobshook.JobsHook;
 import me.sat7.dynamicshop.utilities.ConfigUtil;
 import org.bukkit.Bukkit;
 import org.bukkit.Material;
 import org.bukkit.configuration.ConfigurationSection;
 import org.bukkit.entity.Player;
+import org.bukkit.event.inventory.InventoryClickEvent;
 import org.bukkit.inventory.Inventory;
 import org.bukkit.inventory.ItemStack;
 
@@ -16,7 +19,13 @@ import me.sat7.dynamicshop.utilities.ItemsUtil;
 import me.sat7.dynamicshop.utilities.LangUtil;
 import me.sat7.dynamicshop.utilities.ShopUtil;
 
-public class ShopSettings {
+public class ShopSettings extends InGameUI {
+
+    public ShopSettings()
+    {
+        uiType = UI_TYPE.ShopSettings;
+    }
+
     public Inventory getGui(Player player, String shopName) {
         Inventory inventory = Bukkit.createInventory(player,36, LangUtil.ccLang.get().getString("SHOP_SETTING_TITLE"));
 
@@ -384,5 +393,336 @@ public class ShopSettings {
                 null,1);
         inventory.setItem(31,logClearBtn);
         return inventory;
+    }
+
+    @Override
+    public void OnClickUpperInventory(InventoryClickEvent e)
+    {
+        Player player = (Player) e.getWhoClicked();
+        if (player == null)
+            return;
+
+        String[] temp = DynamicShop.ccUser.get().getString(player.getUniqueId() + ".interactItem").split("/");
+        String shopName = temp[0];
+
+        // 닫기버튼
+        if (e.getSlot() == 27)
+        {
+            DynaShopAPI.openShopGui(player, temp[0], 1);
+            DynamicShop.ccUser.get().set(player.getUniqueId() + ".interactItem", "");
+        }
+        // 권한
+        else if (e.getSlot() == 0)
+        {
+            if (ShopUtil.ccShop.get().getString(shopName + ".Options.permission").isEmpty())
+            {
+                Bukkit.dispatchCommand(player, "DynamicShop shop " + shopName + " permission true");
+            } else
+            {
+                Bukkit.dispatchCommand(player, "DynamicShop shop " + shopName + " permission false");
+            }
+            DynaShopAPI.openShopSettingGui(player, shopName);
+        }
+        // 최대 페이지
+        else if (e.getSlot() == 1)
+        {
+            int oldvalue = ShopUtil.ccShop.get().getInt(shopName + ".Options.page");
+            int targetValue;
+
+            if (e.isRightClick())
+            {
+                targetValue = oldvalue + 1;
+                if (e.isShiftClick()) targetValue += 4;
+                if (targetValue >= 20) targetValue = 20;
+                Bukkit.dispatchCommand(player, "DynamicShop shop " + shopName + " maxpage " + targetValue);
+            } else
+            {
+                targetValue = oldvalue - 1;
+                if (e.isShiftClick()) targetValue -= 4;
+                if (targetValue <= 1) targetValue = 1;
+                Bukkit.dispatchCommand(player, "DynamicShop shop " + shopName + " maxpage " + targetValue);
+            }
+            DynaShopAPI.openShopSettingGui(player, shopName);
+        }
+        // 영업시간
+        else if (e.getSlot() >= 6 && e.getSlot() <= 8)
+        {
+            if (ShopUtil.ccShop.get().contains(shopName + ".Options.shophours"))
+            {
+                String[] shopHour = ShopUtil.ccShop.get().getString(shopName + ".Options.shophours").split("~");
+                Integer open = Integer.parseInt(shopHour[0]);
+                int close = Integer.parseInt(shopHour[1]);
+                int edit = -1;
+                if (e.isRightClick()) edit = 1;
+                if (e.isShiftClick()) edit *= 5;
+
+                if (e.getSlot() == 6)
+                {
+                    Bukkit.dispatchCommand(player, "DynamicShop shop " + shopName + " shophours 0 0");
+                } else if (e.getSlot() == 7)
+                {
+                    open += edit;
+
+                    if (open.equals(close))
+                    {
+                        if (e.isRightClick())
+                        {
+                            open += 1;
+                        } else
+                        {
+                            open -= 1;
+                        }
+                    }
+
+                    if (open < 1) open = 1;
+                    if (open > 24) open = 24;
+
+                    Bukkit.dispatchCommand(player, "DynamicShop shop " + shopName + " shophours " + open + " " + close);
+                } else if (e.getSlot() == 8)
+                {
+                    close += edit;
+
+                    if (open.equals(close))
+                    {
+                        if (e.isRightClick())
+                        {
+                            close += 1;
+                        } else
+                        {
+                            close -= 1;
+                        }
+                    }
+
+                    if (close < 1) close = 1;
+                    if (close > 24) close = 24;
+
+                    Bukkit.dispatchCommand(player, "DynamicShop shop " + shopName + " shophours " + open + " " + close);
+                }
+
+                DynaShopAPI.openShopSettingGui(player, shopName);
+            } else
+            {
+                if (e.getSlot() == 6)
+                {
+                    Bukkit.dispatchCommand(player, "DynamicShop shop " + shopName + " shophours 20 6");
+                    DynaShopAPI.openShopSettingGui(player, shopName);
+                }
+            }
+        }
+        // 랜덤스톡
+        else if (e.getSlot() >= 15 && e.getSlot() <= 17)
+        {
+            if (ShopUtil.ccShop.get().contains(shopName + ".Options.fluctuation"))
+            {
+                int interval = ShopUtil.ccShop.get().getInt(shopName + ".Options.fluctuation.interval");
+                double strength = ShopUtil.ccShop.get().getDouble(shopName + ".Options.fluctuation.strength");
+
+                if (e.getSlot() == 15)
+                {
+                    Bukkit.dispatchCommand(player, "DynamicShop shop " + shopName + " fluctuation off");
+                } else if (e.getSlot() == 16)
+                {
+                    int edit = -1;
+                    if (e.isRightClick()) edit = 1;
+                    if (e.isShiftClick()) edit *= 5;
+
+                    interval += edit;
+
+                    if (interval < 1) interval = 1;
+                    if (interval > 999) interval = 999;
+
+                    Bukkit.dispatchCommand(player, "DynamicShop shop " + shopName + " fluctuation " + interval + " " + strength);
+                } else if (e.getSlot() == 17)
+                {
+                    double edit = -0.1;
+                    if (e.isRightClick()) edit = 0.1;
+                    if (e.isShiftClick()) edit *= 5;
+
+                    strength += edit;
+
+                    if (strength < 0.1) strength = 0.1;
+                    if (strength > 64) strength = 64;
+
+                    strength = Math.round(strength * 100) / 100.0;
+
+                    Bukkit.dispatchCommand(player, "DynamicShop shop " + shopName + " fluctuation " + interval + " " + strength);
+                }
+
+                DynaShopAPI.openShopSettingGui(player, shopName);
+            } else
+            {
+                if (e.getSlot() == 15)
+                {
+                    Bukkit.dispatchCommand(player, "DynamicShop shop " + shopName + " fluctuation 12 0.1");
+                    DynaShopAPI.openShopSettingGui(player, shopName);
+                }
+            }
+        }
+        // 스톡 안정화
+        else if (e.getSlot() >= 24 && e.getSlot() <= 26)
+        {
+            if (ShopUtil.ccShop.get().contains(shopName + ".Options.stockStabilizing"))
+            {
+                int interval = ShopUtil.ccShop.get().getInt(shopName + ".Options.stockStabilizing.interval");
+                double strength = ShopUtil.ccShop.get().getDouble(shopName + ".Options.stockStabilizing.strength");
+
+                if (e.getSlot() == 24)
+                {
+                    Bukkit.dispatchCommand(player, "DynamicShop shop " + shopName + " stockStabilizing off");
+                } else if (e.getSlot() == 25)
+                {
+                    int edit = -1;
+                    if (e.isRightClick()) edit = 1;
+                    if (e.isShiftClick()) edit *= 5;
+
+                    interval += edit;
+                    if (interval < 1) interval = 1;
+                    if (interval > 999) interval = 999;
+
+                    Bukkit.dispatchCommand(player, "DynamicShop shop " + shopName + " stockStabilizing " + interval + " " + strength);
+                } else if (e.getSlot() == 26)
+                {
+                    double edit = -0.1;
+                    if (e.isRightClick()) edit = 0.1;
+                    if (e.isShiftClick()) edit *= 5;
+
+                    strength += edit;
+
+                    if (strength < 0.1) strength = 0.1;
+                    if (strength > 25) strength = 25;
+
+                    strength = (Math.round(strength * 100) / 100.0);
+
+                    Bukkit.dispatchCommand(player, "DynamicShop shop " + shopName + " stockStabilizing " + interval + " " + strength);
+                }
+
+                DynaShopAPI.openShopSettingGui(player, shopName);
+            } else
+            {
+                if (e.getSlot() == 24)
+                {
+                    Bukkit.dispatchCommand(player, "DynamicShop shop " + shopName + " stockStabilizing 24 0.1");
+                    DynaShopAPI.openShopSettingGui(player, shopName);
+                }
+            }
+        }
+        // 세금
+        else if (e.getSlot() == 33 || e.getSlot() == 34)
+        {
+            // 전역,지역 토글
+            if (e.getSlot() == 33)
+            {
+                if (ShopUtil.ccShop.get().contains(shopName + ".Options.SalesTax"))
+                {
+                    ShopUtil.ccShop.get().set(shopName + ".Options.SalesTax", null);
+                } else
+                {
+                    ShopUtil.ccShop.get().set(shopName + ".Options.SalesTax", DynamicShop.plugin.getConfig().getInt("SalesTax"));
+                }
+
+                DynaShopAPI.openShopSettingGui(player, shopName);
+            }
+            // 수치설정
+            else if (ShopUtil.ccShop.get().contains(shopName + ".Options.SalesTax"))
+            {
+                int edit = -1;
+                if (e.isRightClick()) edit = 1;
+                if (e.isShiftClick()) edit *= 5;
+
+                int result = ShopUtil.ccShop.get().getInt(shopName + ".Options.SalesTax") + edit;
+                if (result < 0) result = 0;
+                if (result > 99) result = 99;
+
+                ShopUtil.ccShop.get().set(shopName + ".Options.SalesTax", result);
+
+                DynaShopAPI.openShopSettingGui(player, shopName);
+            }
+            ShopUtil.ccShop.save();
+        }
+        // signshop
+        else if (e.getSlot() == 9)
+        {
+            if (ShopUtil.ccShop.get().contains(shopName + ".Options.flag.signshop"))
+            {
+                Bukkit.dispatchCommand(player, "DynamicShop shop " + shopName + " flag signshop unset");
+            } else
+            {
+                Bukkit.dispatchCommand(player, "DynamicShop shop " + shopName + " flag signshop set");
+            }
+            DynaShopAPI.openShopSettingGui(player, shopName);
+        }
+        // localshop
+        else if (e.getSlot() == 10)
+        {
+            if (ShopUtil.ccShop.get().contains(shopName + ".Options.flag.localshop"))
+            {
+                Bukkit.dispatchCommand(player, "DynamicShop shop " + shopName + " flag localshop unset");
+            } else
+            {
+                Bukkit.dispatchCommand(player, "DynamicShop shop " + shopName + " flag localshop set");
+            }
+            DynaShopAPI.openShopSettingGui(player, shopName);
+        }
+        // deliverycharge
+        else if (e.getSlot() == 11)
+        {
+            if (ShopUtil.ccShop.get().contains(shopName + ".Options.flag.deliverycharge"))
+            {
+                Bukkit.dispatchCommand(player, "DynamicShop shop " + shopName + " flag deliverycharge unset");
+            } else
+            {
+                Bukkit.dispatchCommand(player, "DynamicShop shop " + shopName + " flag deliverycharge set");
+            }
+            DynaShopAPI.openShopSettingGui(player, shopName);
+        }
+        // jobpoint
+        else if (e.getSlot() == 12)
+        {
+            if (ShopUtil.ccShop.get().contains(shopName + ".Options.flag.jobpoint"))
+            {
+                Bukkit.dispatchCommand(player, "DynamicShop shop " + shopName + " flag jobpoint unset");
+            } else
+            {
+                if (!JobsHook.jobsRebornActive)
+                {
+                    player.sendMessage(DynamicShop.dsPrefix + LangUtil.ccLang.get().getString("ERR.JOBSREBORN_NOT_FOUND"));
+                    return;
+                }
+
+                Bukkit.dispatchCommand(player, "DynamicShop shop " + shopName + " flag jobpoint set");
+            }
+            DynaShopAPI.openShopSettingGui(player, shopName);
+        }
+        // showValueChange
+        else if (e.getSlot() == 13)
+        {
+            if (ShopUtil.ccShop.get().contains(shopName + ".Options.flag.showvaluechange"))
+            {
+                Bukkit.dispatchCommand(player, "DynamicShop shop " + shopName + " flag showvaluechange unset");
+            } else
+            {
+                Bukkit.dispatchCommand(player, "DynamicShop shop " + shopName + " flag showvaluechange set");
+            }
+            DynaShopAPI.openShopSettingGui(player, shopName);
+        }
+        // log
+        else if (e.getSlot() >= 30 && e.getSlot() <= 31)
+        {
+            if (e.getSlot() == 30)
+            {
+                if (ShopUtil.ccShop.get().contains(shopName + ".Options.log") && ShopUtil.ccShop.get().getBoolean(shopName + ".Options.log"))
+                {
+                    Bukkit.dispatchCommand(player, "DynamicShop shop " + shopName + " log disable");
+                } else
+                {
+                    Bukkit.dispatchCommand(player, "DynamicShop shop " + shopName + " log enable");
+                }
+            } else if (e.getSlot() == 31)
+            {
+                Bukkit.dispatchCommand(player, "DynamicShop shop " + shopName + " log clear");
+            }
+
+            DynaShopAPI.openShopSettingGui(player, shopName);
+        }
     }
 }

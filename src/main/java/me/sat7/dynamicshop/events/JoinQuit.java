@@ -3,10 +3,12 @@ package me.sat7.dynamicshop.events;
 import me.sat7.dynamicshop.DynamicShop;
 import me.sat7.dynamicshop.UpdateChecker;
 
+import me.sat7.dynamicshop.guis.UIManager;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
 import org.bukkit.event.player.PlayerJoinEvent;
+import org.bukkit.event.player.PlayerQuitEvent;
 
 public class JoinQuit implements Listener {
 
@@ -29,5 +31,11 @@ public class JoinQuit implements Listener {
                 e.getPlayer().sendMessage(UpdateChecker.getResourceUrl());
             }
         }
+    }
+
+    @EventHandler
+    public void OnPlayerQuit(PlayerQuitEvent e)
+    {
+        UIManager.OnPlayerQuit(e.getPlayer());
     }
 }

@@ -3,12 +3,10 @@ package me.sat7.dynamicshop;
 import me.sat7.dynamicshop.commands.Optional;
 import me.sat7.dynamicshop.commands.Root;
 import me.sat7.dynamicshop.constants.Constants;
-import me.sat7.dynamicshop.events.JoinQuit;
-import me.sat7.dynamicshop.events.OnChat;
-import me.sat7.dynamicshop.events.OnClick;
-import me.sat7.dynamicshop.events.OnSignClick;
+import me.sat7.dynamicshop.events.*;
 import me.sat7.dynamicshop.files.CustomConfig;
 import me.sat7.dynamicshop.guis.StartPage;
+import me.sat7.dynamicshop.guis.UIManager;
 import me.sat7.dynamicshop.jobshook.JobsHook;
 import me.sat7.dynamicshop.utilities.*;
 import net.milkbowl.vault.economy.Economy;
@@ -49,6 +47,8 @@ public final class DynamicShop extends JavaPlugin implements Listener {
     private BukkitTask cullLogsTask;
 
     public static boolean updateAvailable = false;
+
+    public static UIManager uiManager;
 
     @Override
     public void onEnable() {
@@ -178,6 +178,9 @@ public final class DynamicShop extends JavaPlugin implements Listener {
         getServer().getPluginManager().registerEvents(new OnClick(), this);
         getServer().getPluginManager().registerEvents(new OnSignClick(), this);
         getServer().getPluginManager().registerEvents(new OnChat(), this);
+
+        uiManager = new UIManager();
+        getServer().getPluginManager().registerEvents(uiManager, this);
     }
 
     private void initCustomConfigs() {
@@ -246,5 +249,4 @@ public final class DynamicShop extends JavaPlugin implements Listener {
         Bukkit.getScheduler().cancelTasks(this);
         console.sendMessage(Constants.DYNAMIC_SHOP_PREFIX + " Disabled");
     }
-
 }

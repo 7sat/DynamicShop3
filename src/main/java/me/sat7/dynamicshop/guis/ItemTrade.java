@@ -4,12 +4,17 @@ import java.text.DecimalFormat;
 import java.util.ArrayList;
 import java.util.Arrays;
 
+import me.sat7.dynamicshop.DynaShopAPI;
+import me.sat7.dynamicshop.transactions.Buy;
+import me.sat7.dynamicshop.transactions.Sell;
+import me.sat7.dynamicshop.utilities.SoundUtil;
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
 import org.bukkit.Location;
 import org.bukkit.Material;
 import org.bukkit.configuration.ConfigurationSection;
 import org.bukkit.entity.Player;
+import org.bukkit.event.inventory.InventoryClickEvent;
 import org.bukkit.inventory.Inventory;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.ItemMeta;
@@ -21,7 +26,12 @@ import me.sat7.dynamicshop.utilities.ItemsUtil;
 import me.sat7.dynamicshop.utilities.LangUtil;
 import me.sat7.dynamicshop.utilities.ShopUtil;
 
-public class ItemTrade {
+public class ItemTrade extends InGameUI {
+
+    public ItemTrade()
+    {
+        uiType = UI_TYPE.ItemTrade;
+    }
 
     public Inventory getGui(Player player, String shopName, String tradeIdx) {
         // UI 요소 생성
@@ -224,5 +234,173 @@ public class ItemTrade {
 
         inven.setItem(9,closeBtn);
         return inven;
+    }
+
+    @Override
+    public void OnClickUpperInventory(InventoryClickEvent e)
+    {
+        Player player = (Player) e.getWhoClicked();
+        if (player == null)
+            return;
+
+        String[] temp = DynamicShop.ccUser.get().getString(player.getUniqueId() + ".interactItem").split("/");
+        String shopName = temp[0];
+        String tradeIdx = temp[1];
+
+        if (e.getCurrentItem() != null && e.getCurrentItem().getItemMeta() != null)
+        {
+            // 닫기
+            if (e.getSlot() == 9)
+            {
+                SoundUtil.playerSoundEffect(player, "click");
+                DynamicShop.ccUser.get().set(player.getUniqueId() + ".interactItem", "");
+
+                if (DynamicShop.ccUser.get().getString(player.getUniqueId() + ".tmpString").equalsIgnoreCase("sign"))
+                {
+                    DynamicShop.ccUser.get().set(player.getUniqueId() + ".tmpString", "");
+                    player.closeInventory();
+                } else
+                {
+                    DynaShopAPI.openShopGui(player, shopName, 1);
+                }
+            }
+            // 구매 또는 판매
+            else
+            {
+                // 잔액확인 버튼
+                if (e.getSlot() == 0)
+                {
+                    SoundUtil.playerSoundEffect(player, "click");
+                    if (ShopUtil.ccShop.get().contains(shopName + ".Options.flag.jobpoint"))
+                    {
+                        player.sendMessage(DynamicShop.dsPrefix + LangUtil.ccLang.get().get("BALANCE") + ":§f " + DynaShopAPI.df.format(JobsHook.getCurJobPoints(player)) + "Points");
+                    } else
+                    {
+                        player.sendMessage(DynamicShop.dsPrefix + LangUtil.ccLang.get().get("BALANCE") + ":§f " + DynamicShop.getEconomy().format(DynamicShop.getEconomy().getBalance(player)));
+                    }
+                    return;
+                }
+
+                // 판매 토글
+                if (e.getSlot() == 1)
+                {
+                    if (player.hasPermission("dshop.admin.shopedit"))
+                    {
+                        SoundUtil.playerSoundEffect(player, "click");
+                        String path = shopName + "." + tradeIdx + ".tradeType";
+                        String tradeType = ShopUtil.ccShop.get().getString(path);
+                        if (tradeType == null || !tradeType.equals("SellOnly"))
+                        {
+                            ShopUtil.ccShop.get().set(path, "SellOnly");
+                        } else
+                        {
+                            ShopUtil.ccShop.get().set(path, null);
+                        }
+
+                        DynaShopAPI.openItemTradeGui(player, shopName, tradeIdx);
+                        ShopUtil.ccShop.save();
+                    }
+                    return;
+                }
+                // 구매 토글
+                if (e.getSlot() == 10)
+                {
+                    if (player.hasPermission("dshop.admin.shopedit"))
+                    {
+                        SoundUtil.playerSoundEffect(player, "click");
+                        String path = shopName + "." + tradeIdx + ".tradeType";
+                        String tradeType = ShopUtil.ccShop.get().getString(path);
+                        if (tradeType == null || !tradeType.equals("BuyOnly"))
+                        {
+                            ShopUtil.ccShop.get().set(path, "BuyOnly");
+                        } else
+                        {
+                            ShopUtil.ccShop.get().set(path, null);
+                        }
+
+                        DynaShopAPI.openItemTradeGui(player, shopName, tradeIdx);
+                        ShopUtil.ccShop.save();
+                    }
+                    return;
+                }
+
+                // 거래와 관련된 버튼들
+                double priceSum = 0;
+
+                ItemStack tempIS = new ItemStack(e.getCurrentItem().getType(), e.getCurrentItem().getAmount());
+                tempIS.setItemMeta((ItemMeta) ShopUtil.ccShop.get().get(shopName + "." + tradeIdx + ".itemStack"));
+
+                // 무한재고&고정가격
+                boolean infiniteStock = ShopUtil.ccShop.get().getInt(shopName + "." + tradeIdx + ".stock") <= 0;
+
+                // 로컬샵이면 아에 창을 못열었고 딜리버리샵인데 월드가 다르면 배달불가.
+                ConfigurationSection optionS = ShopUtil.ccShop.get().getConfigurationSection(shopName).getConfigurationSection("Options");
+                int deliverycharge = 0;
+                if (optionS.contains("world") && optionS.contains("pos1") && optionS.contains("pos2") && optionS.contains("flag.deliverycharge"))
+                {
+                    String lore = e.getCurrentItem().getItemMeta().getLore().toString();
+                    if (lore.contains(LangUtil.ccLang.get().getString("DELIVERYCHARGE")))
+                    {
+                        String[] tempLoreArr = lore.split(": ");
+                        deliverycharge = Integer.parseInt(tempLoreArr[tempLoreArr.length - 1].replace("]", ""));
+                        if (deliverycharge == -1)
+                        {
+                            player.sendMessage(DynamicShop.dsPrefix + LangUtil.ccLang.get().getString("DELIVERYCHARGE_NA"));
+                            return;
+                        } else
+                        {
+                            if (e.getSlot() <= 9)
+                            {
+                                priceSum -= deliverycharge;
+                            } else
+                            {
+                                priceSum += deliverycharge;
+                            }
+                        }
+                    } else
+                    {
+                        deliverycharge = 0;
+                    }
+                }
+
+                String permission = optionS.getString("permission");
+                // 판매
+                if (e.getSlot() <= 10)
+                {
+                    // 판매권한 확인
+                    if (permission != null && permission.length() > 0 && !player.hasPermission(permission) && !player.hasPermission(permission + ".sell"))
+                    {
+                        player.sendMessage(DynamicShop.dsPrefix + LangUtil.ccLang.get().getString("ERR.NO_PERMISSION"));
+                        return;
+                    }
+
+                    if (optionS.contains("flag.jobpoint"))
+                    {
+                        Sell.sellItemJobPoint(player, shopName, tradeIdx, tempIS, priceSum, deliverycharge, infiniteStock);
+                    } else
+                    {
+                        Sell.sellItemCash(player, shopName, tradeIdx, tempIS, priceSum, deliverycharge, infiniteStock);
+                    }
+                }
+                // 구매
+                else
+                {
+                    // 구매 권한 확인
+                    if (permission != null && permission.length() > 0 && !player.hasPermission(permission) && !player.hasPermission(permission + ".buy"))
+                    {
+                        player.sendMessage(DynamicShop.dsPrefix + LangUtil.ccLang.get().getString("ERR.NO_PERMISSION"));
+                        return;
+                    }
+
+                    if (optionS.contains("flag.jobpoint"))
+                    {
+                        Buy.buyItemJobPoint(player, shopName, tradeIdx, tempIS, priceSum, deliverycharge, infiniteStock);
+                    } else
+                    {
+                        Buy.buyItemCash(player, shopName, tradeIdx, tempIS, priceSum, deliverycharge, infiniteStock);
+                    }
+                }
+            }
+        }
     }
 }

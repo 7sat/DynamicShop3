@@ -4,9 +4,13 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Comparator;
 
+import me.sat7.dynamicshop.DynaShopAPI;
+import me.sat7.dynamicshop.events.OnChat;
+import me.sat7.dynamicshop.utilities.ShopUtil;
 import org.bukkit.Bukkit;
 import org.bukkit.Material;
 import org.bukkit.entity.Player;
+import org.bukkit.event.inventory.InventoryClickEvent;
 import org.bukkit.inventory.Inventory;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.ItemMeta;
@@ -16,7 +20,12 @@ import me.sat7.dynamicshop.constants.Constants;
 import me.sat7.dynamicshop.utilities.ItemsUtil;
 import me.sat7.dynamicshop.utilities.LangUtil;
 
-public class ItemPalette {
+public class ItemPalette extends InGameUI {
+
+    public ItemPalette()
+    {
+        uiType = UI_TYPE.ItemPalette;
+    }
 
     private static ArrayList<Material> sortedMat = new ArrayList<>();
 
@@ -128,5 +137,117 @@ public class ItemPalette {
             catch (Exception ignored){ }
         }
         return inven;
+    }
+
+    @Override
+    public void OnClickUpperInventory(InventoryClickEvent e)
+    {
+        Player player = (Player) e.getWhoClicked();
+        if (player == null)
+            return;
+
+        String[] temp = DynamicShop.ccUser.get().getString(player.getUniqueId() + ".interactItem").split("/");
+        String shopName = temp[0];
+        int curPage = e.getInventory().getItem(49).getAmount();
+
+        // 닫기 버튼
+        if (e.getSlot() == 45)
+        {
+            DynamicShop.ccUser.get().set(player.getUniqueId() + ".interactItem", "");
+            DynaShopAPI.openShopGui(player, shopName, 1);
+        }
+        // 페이지 버튼
+        else if (e.getSlot() == 49)
+        {
+            int targetPage = curPage;
+            if (e.isLeftClick())
+            {
+                targetPage -= 1;
+                if (targetPage < 1) targetPage = 30;
+            } else if (e.isRightClick())
+            {
+                targetPage += 1;
+                if (targetPage > 30) targetPage = 1;
+            }
+            String search = e.getClickedInventory().getItem(53).getItemMeta().getLore().toString().replace("[", "").replace("]", "");
+            DynaShopAPI.openItemPalette(player, targetPage, search);
+        }
+        // 모두 추가 버튼
+        else if (e.getSlot() == 51)
+        {
+            for (int i = 0; i < 45; i++)
+            {
+                if (e.getClickedInventory().getItem(i) != null && e.getClickedInventory().getItem(i).getType() != Material.AIR)
+                {
+                    int existSlot = ShopUtil.findItemFromShop(shopName, new ItemStack(e.getClickedInventory().getItem(i).getType()));
+                    if (-1 == existSlot)
+                    {
+                        int idx = ShopUtil.findEmptyShopSlot(shopName);
+                        if (idx != -1)
+                        {
+                            ItemStack tempIs = new ItemStack(e.getClickedInventory().getItem(i).getType());
+                            ShopUtil.addItemToShop(shopName, idx, tempIs, 1, 1, 0.01, -1, 10000, 10000);
+                        } else
+                        {
+                            player.sendMessage(DynamicShop.dsPrefix + LangUtil.ccLang.get().getString("ERR.NO_EMPTY_SLOT"));
+                            break;
+                        }
+                    } // 이미 상점에 추가되 있는 아이탬이라면 아무일도 안함.
+                }
+            }
+
+            DynaShopAPI.openShopGui(player, shopName, 1);
+        }
+        // 검색 버튼
+        else if (e.getSlot() == 53)
+        {
+            player.closeInventory();
+
+            DynamicShop.ccUser.get().set(player.getUniqueId() + ".tmpString", "waitforPalette");
+            OnChat.WaitForInput(player);
+
+            player.sendMessage(DynamicShop.dsPrefix + LangUtil.ccLang.get().getString("SEARCH_ITEM"));
+        } else if (e.getSlot() > 45)
+        {
+            return;
+        }
+        // 파렛트에서 뭔가 선택
+        else
+        {
+            if (e.getCurrentItem() != null && !e.getCurrentItem().getType().toString().equals(Material.AIR.toString()))
+            {
+                ItemStack iStack = new ItemStack(e.getCurrentItem().getType());
+                if (e.isLeftClick())
+                {
+                    DynaShopAPI.openItemSettingGui(player, iStack, 1, 10, 10, 0.01, -1, 10000, 10000);
+                } else
+                {
+                    ShopUtil.addItemToShop(shopName, Integer.parseInt(temp[1]), iStack, -1, -1, -1, -1, -1, -1);
+                    DynaShopAPI.openShopGui(player, shopName, Integer.parseInt(temp[1]) / 45 + 1);
+                }
+            }
+        }
+    }
+
+    @Override
+    public void OnClickLowerInventory(InventoryClickEvent e)
+    {
+        Player player = (Player) e.getWhoClicked();
+        if (player == null)
+            return;
+
+        if (e.getCurrentItem() != null && !e.getCurrentItem().getType().toString().equals(Material.AIR.toString()))
+        {
+            if (e.isLeftClick())
+            {
+                DynaShopAPI.openItemSettingGui(player, e.getCurrentItem(), 1, 10, 10, 0.01, -1, 1000, 1000);
+            } else
+            {
+                String[] temp = DynamicShop.ccUser.get().getString(player.getUniqueId() + ".interactItem").split("/");
+
+                ShopUtil.addItemToShop(temp[0], Integer.parseInt(temp[1]), e.getCurrentItem(), -1, -1, -1, -1, -1, -1);
+                DynaShopAPI.openShopGui(player, temp[0], Integer.parseInt(temp[1]) / 45 + 1);
+            }
+        }
     }
 }

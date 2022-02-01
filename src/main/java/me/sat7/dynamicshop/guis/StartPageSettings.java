@@ -3,9 +3,13 @@ package me.sat7.dynamicshop.guis;
 import java.util.ArrayList;
 import java.util.Arrays;
 
+import me.sat7.dynamicshop.DynaShopAPI;
+import me.sat7.dynamicshop.events.OnChat;
+import me.sat7.dynamicshop.utilities.ShopUtil;
 import org.bukkit.Bukkit;
 import org.bukkit.Material;
 import org.bukkit.entity.Player;
+import org.bukkit.event.inventory.InventoryClickEvent;
 import org.bukkit.inventory.Inventory;
 import org.bukkit.inventory.ItemStack;
 
@@ -13,7 +17,12 @@ import me.sat7.dynamicshop.DynamicShop;
 import me.sat7.dynamicshop.utilities.ItemsUtil;
 import me.sat7.dynamicshop.utilities.LangUtil;
 
-public class StartPageSettings {
+public class StartPageSettings extends InGameUI {
+
+    public StartPageSettings()
+    {
+        uiType = UI_TYPE.StartPageSettings;
+    }
 
     public Inventory getGui(Player player) {
         // UI 요소 생성
@@ -61,5 +70,88 @@ public class StartPageSettings {
                 LangUtil.ccLang.get().getString("REMOVE"), null,1);
         inven.setItem(8,removeBtn);
         return inven;
+    }
+
+    @Override
+    public void OnClickUpperInventory(InventoryClickEvent e)
+    {
+        Player player = (Player) e.getWhoClicked();
+        if (player == null)
+            return;
+
+        String[] temp = DynamicShop.ccUser.get().getString(player.getUniqueId() + ".interactItem").split("/");
+
+        // 돌아가기
+        if (e.getSlot() == 0)
+        {
+            DynaShopAPI.openStartPage(player);
+        }
+        // 버튼 삭제
+        else if (e.getSlot() == 8)
+        {
+            StartPage.ccStartPage.get().set("Buttons." + temp[1], null);
+            StartPage.ccStartPage.save();
+
+            DynamicShop.ccUser.get().set(player.getUniqueId() + ".interactItem", "");
+
+            DynaShopAPI.openStartPage(player);
+        }
+        //이름
+        else if (e.getSlot() == 2)
+        {
+            player.sendMessage(DynamicShop.dsPrefix + LangUtil.ccLang.get().getString("STARTPAGE.ENTER_NAME"));
+            ShopUtil.closeInventoryWithDelay(player);
+            DynamicShop.ccUser.get().set(player.getUniqueId() + ".tmpString", "waitforInput" + "btnName");
+            OnChat.WaitForInput(player);
+        }
+        //설명
+        else if (e.getSlot() == 3)
+        {
+            player.sendMessage(DynamicShop.dsPrefix + LangUtil.ccLang.get().getString("STARTPAGE.ENTER_LORE"));
+            ShopUtil.closeInventoryWithDelay(player);
+            DynamicShop.ccUser.get().set(player.getUniqueId() + ".tmpString", "waitforInput" + "btnLore");
+            OnChat.WaitForInput(player);
+        }
+        //아이콘
+        else if (e.getSlot() == 4)
+        {
+            player.sendMessage(DynamicShop.dsPrefix + LangUtil.ccLang.get().getString("STARTPAGE.ENTER_ICON"));
+            ShopUtil.closeInventoryWithDelay(player);
+            DynamicShop.ccUser.get().set(player.getUniqueId() + ".tmpString", "waitforInput" + "btnIcon");
+            OnChat.WaitForInput(player);
+        }
+        //액션
+        else if (e.getSlot() == 5)
+        {
+            player.sendMessage(DynamicShop.dsPrefix + LangUtil.ccLang.get().getString("STARTPAGE.ENTER_ACTION"));
+            ShopUtil.closeInventoryWithDelay(player);
+            DynamicShop.ccUser.get().set(player.getUniqueId() + ".tmpString", "waitforInput" + "btnAction");
+            OnChat.WaitForInput(player);
+        }
+        // 상점 숏컷
+        else if (e.getSlot() == 6)
+        {
+            player.sendMessage(DynamicShop.dsPrefix + LangUtil.ccLang.get().getString("STARTPAGE.ENTER_SHOPNAME"));
+            ShopUtil.closeInventoryWithDelay(player);
+            DynamicShop.ccUser.get().set(player.getUniqueId() + ".tmpString", "waitforInput" + "shopname");
+
+            StringBuilder shopList = new StringBuilder(LangUtil.ccLang.get().getString("SHOP_LIST") + ": ");
+            for (String s : ShopUtil.ccShop.get().getKeys(false))
+            {
+                shopList.append(s).append(", ");
+            }
+            shopList = new StringBuilder(shopList.substring(0, shopList.length() - 2));
+            player.sendMessage(DynamicShop.dsPrefix + shopList);
+
+            OnChat.WaitForInput(player);
+        }
+        // 장식
+        else if (e.getSlot() == 7)
+        {
+            player.sendMessage(DynamicShop.dsPrefix + LangUtil.ccLang.get().getString("STARTPAGE.ENTER_COLOR"));
+            ShopUtil.closeInventoryWithDelay(player);
+            DynamicShop.ccUser.get().set(player.getUniqueId() + ".tmpString", "waitforInput" + "deco");
+            OnChat.WaitForInput(player);
+        }
     }
 }
