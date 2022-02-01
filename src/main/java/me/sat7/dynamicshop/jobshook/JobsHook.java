@@ -10,17 +10,19 @@ import me.sat7.dynamicshop.DynaShopAPI;
 import me.sat7.dynamicshop.DynamicShop;
 import me.sat7.dynamicshop.utilities.LangUtil;
 
-public final class JobsHook {
+public final class JobsHook
+{
     public static boolean jobsRebornActive = false;
 
-    private JobsHook() {
+    private JobsHook()
+    {
 
     }
 
     // JobsReborn의 points 수정
     public static boolean addJobsPoint(Player p, double amount)
     {
-        if(!jobsRebornActive)
+        if (!jobsRebornActive)
         {
             p.sendMessage(DynamicShop.dsPrefix + LangUtil.ccLang.get().getString("ERR.JOBSREBORN_NOT_FOUND"));
             return false;
@@ -28,9 +30,9 @@ public final class JobsHook {
 
         PlayerPoints pp = JobsHook.getJobsPlayerPoints(p);
         // 차감
-        if(amount < 0.0)
+        if (amount < 0.0)
         {
-            if(pp.havePoints(amount * -1))
+            if (pp.havePoints(amount * -1))
             {
                 pp.takePoints(amount * -1);
                 return true;
@@ -38,7 +40,7 @@ public final class JobsHook {
             // 포인트 부족
             else
             {
-                p.sendMessage(DynamicShop.dsPrefix+ LangUtil.ccLang.get().getString("NOT_ENOUGH_POINT")
+                p.sendMessage(DynamicShop.dsPrefix + LangUtil.ccLang.get().getString("NOT_ENOUGH_POINT")
                         .replace("{bal}", DynaShopAPI.df.format(getCurJobPoints(p))));
                 return false;
             }

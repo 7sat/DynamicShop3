@@ -9,41 +9,53 @@ import org.bukkit.command.CommandSender;
 import org.bukkit.configuration.ConfigurationSection;
 import org.bukkit.entity.Player;
 
-public class OpenShop {
-    public static boolean openShop(String[] args, CommandSender sender) {
+public class OpenShop
+{
+    public static boolean openShop(String[] args, CommandSender sender)
+    {
         Player target = null;
         String shopName = null;
-        if (args.length == 2) {
+        if (args.length == 2)
+        {
             target = Bukkit.getPlayer(args[1]);
-            if (target != null) {
-                if (DynamicShop.plugin.getConfig().getBoolean("OpenStartPageInsteadOfDefaultShop")) {
+            if (target != null)
+            {
+                if (DynamicShop.plugin.getConfig().getBoolean("OpenStartPageInsteadOfDefaultShop"))
+                {
                     DynamicShop.ccUser.get().set(target.getUniqueId() + ".interactItem", "");
                     DynaShopAPI.openStartPage(target);
                     return false;
                 }
             }
             shopName = DynamicShop.plugin.getConfig().getString("DefaultShopName");
-        } else if (args.length > 2) {
-            if (!sender.hasPermission("dshop.admin.openshop")) {
+        } else if (args.length > 2)
+        {
+            if (!sender.hasPermission("dshop.admin.openshop"))
+            {
                 sender.sendMessage(DynamicShop.dsPrefix + LangUtil.ccLang.get().getString("ERR.NO_PERMISSION"));
                 return true;
             }
 
-            if (ShopUtil.ccShop.get().contains(args[1])) {
+            if (ShopUtil.ccShop.get().contains(args[1]))
+            {
                 shopName = args[1];
-            } else {
+            } else
+            {
                 sender.sendMessage(DynamicShop.dsPrefix + LangUtil.ccLang.get().getString("ERR.SHOP_NOT_FOUND"));
                 return true;
             }
 
             target = Bukkit.getPlayer(args[2]);
-        } else {
+        } else
+        {
             sender.sendMessage(DynamicShop.dsPrefix + LangUtil.ccLang.get().getString("ERR.WRONG_USAGE"));
         }
 
-        if (target != null) {
+        if (target != null)
+        {
             ConfigurationSection shopConf = ShopUtil.ccShop.get().getConfigurationSection(shopName + ".Options");
-            if (shopConf.contains("shophours") && !target.hasPermission("dshop.admin.shopedit")) {
+            if (shopConf.contains("shophours") && !target.hasPermission("dshop.admin.shopedit"))
+            {
                 int curTime = (int) (target.getWorld().getTime()) / 1000 + 6;
                 if (curTime > 24) curTime -= 24;
 
@@ -52,14 +64,18 @@ public class OpenShop {
                 int open = Integer.parseInt(temp[0]);
                 int close = Integer.parseInt(temp[1]);
 
-                if (close > open) {
-                    if (!(open <= curTime && curTime < close)) {
+                if (close > open)
+                {
+                    if (!(open <= curTime && curTime < close))
+                    {
                         target.sendMessage(DynamicShop.dsPrefix + LangUtil.ccLang.get().getString("TIME.SHOP_IS_CLOSED").
                                 replace("{time}", open + "").replace("{curTime}", curTime + ""));
                         return true;
                     }
-                } else {
-                    if (!(open <= curTime || curTime < close)) {
+                } else
+                {
+                    if (!(open <= curTime || curTime < close))
+                    {
                         target.sendMessage(DynamicShop.dsPrefix + LangUtil.ccLang.get().getString("TIME.SHOP_IS_CLOSED").
                                 replace("{time}", open + "").replace("{curTime}", curTime + ""));
                         return true;

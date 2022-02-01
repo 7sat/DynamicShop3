@@ -11,31 +11,33 @@ import org.bukkit.command.CommandExecutor;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
 
-public class Optional implements CommandExecutor {
+public class Optional implements CommandExecutor
+{
 
     @Override
-    public boolean onCommand(CommandSender sender, Command command, String label, String[] args) {
+    public boolean onCommand(CommandSender sender, Command command, String label, String[] args)
+    {
 
-        if(!DynamicShop.plugin.getConfig().getBoolean("UseShopCommand")) return true;
+        if (!DynamicShop.plugin.getConfig().getBoolean("UseShopCommand")) return true;
 
-        if(sender instanceof Player)
+        if (sender instanceof Player)
         {
-            Player player = (Player)sender;
-            if (!player.hasPermission(Constants.USE_SHOP_PERMISSION)) {
-                player.sendMessage(DynamicShop.dsPrefix+ LangUtil.ccLang.get().getString("ERR.PERMISSION"));
+            Player player = (Player) sender;
+            if (!player.hasPermission(Constants.USE_SHOP_PERMISSION))
+            {
+                player.sendMessage(DynamicShop.dsPrefix + LangUtil.ccLang.get().getString("ERR.PERMISSION"));
                 return true;
             }
-            if(player.getGameMode() == GameMode.CREATIVE  && !player.hasPermission(Constants.ADMIN_CREATIVE_PERMISSION))
+            if (player.getGameMode() == GameMode.CREATIVE && !player.hasPermission(Constants.ADMIN_CREATIVE_PERMISSION))
             {
-                player.sendMessage(DynamicShop.dsPrefix+ LangUtil.ccLang.get().getString("ERR.CREATIVE"));
+                player.sendMessage(DynamicShop.dsPrefix + LangUtil.ccLang.get().getString("ERR.CREATIVE"));
                 return true;
             }
 
-            if(args.length == 0)
+            if (args.length == 0)
             {
                 Bukkit.dispatchCommand(sender, "DynamicShop shop");
-            }
-            else
+            } else
             {
                 Bukkit.dispatchCommand(sender, "DynamicShop shop " + args[0]);
             }

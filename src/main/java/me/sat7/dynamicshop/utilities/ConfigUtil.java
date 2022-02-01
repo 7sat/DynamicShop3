@@ -10,32 +10,40 @@ import org.bukkit.entity.Player;
 
 import java.util.Random;
 
-public final class ConfigUtil {
+public final class ConfigUtil
+{
     private static int randomStockCount = 1;
-    @Getter @Setter
+    @Getter
+    @Setter
     private static int currentTax;
 
-    private ConfigUtil() {
+    private ConfigUtil()
+    {
 
     }
 
-    public static void randomChange(Random generator) {
+    public static void randomChange(Random generator)
+    {
         // 인게임 30분마다 실행됨 (500틱)
         randomStockCount += 1;
-        if (randomStockCount > 24) {
+        if (randomStockCount > 24)
+        {
             randomStockCount = 0;
             ShopUtil.ccShop.save();
         }
 
         boolean needToUpdateUI = false;
 
-        for (String shop : ShopUtil.ccShop.get().getKeys(false)) {
+        for (String shop : ShopUtil.ccShop.get().getKeys(false))
+        {
             // fluctuation
             ConfigurationSection confSec = ShopUtil.ccShop.get().getConfigurationSection(shop + ".Options.fluctuation");
-            if (confSec != null) {
+            if (confSec != null)
+            {
                 int interval = confSec.getInt("interval");
 
-                if (interval < 1 || interval > 999) {
+                if (interval < 1 || interval > 999)
+                {
                     DynamicShop.console.sendMessage(Constants.DYNAMIC_SHOP_PREFIX + " Wrong value at " + shop + ".Options.fluctuation.interval");
                     DynamicShop.console.sendMessage(Constants.DYNAMIC_SHOP_PREFIX + " Reset to 8");
                     confSec.set("interval", 8);
@@ -45,8 +53,10 @@ public final class ConfigUtil {
 
                 if (randomStockCount % interval != 0) continue;
 
-                for (String item : ShopUtil.ccShop.get().getConfigurationSection(shop).getKeys(false)) {
-                    try {
+                for (String item : ShopUtil.ccShop.get().getConfigurationSection(shop).getKeys(false))
+                {
+                    try
+                    {
                         int i = Integer.parseInt(item); // options에 대해 적용하지 않기 위해.
                         if (!ShopUtil.ccShop.get().contains(shop + "." + item + ".value")) continue; // 장식용은 스킵
 
@@ -65,17 +75,20 @@ public final class ConfigUtil {
 
                         ShopUtil.ccShop.get().set(shop + "." + item + ".stock", oldStock);
                         needToUpdateUI = true;
-                    } catch (Exception ignored) {
+                    } catch (Exception ignored)
+                    {
                     }
                 }
             }
 
             // stock stabilizing
             ConfigurationSection confSec2 = ShopUtil.ccShop.get().getConfigurationSection(shop + ".Options.stockStabilizing");
-            if (confSec2 != null) {
+            if (confSec2 != null)
+            {
                 int interval = confSec2.getInt("interval");
 
-                if (interval < 1 || interval > 999) {
+                if (interval < 1 || interval > 999)
+                {
                     DynamicShop.console.sendMessage(Constants.DYNAMIC_SHOP_PREFIX + " Wrong value at " + shop + ".Options.stockStabilizing.interval");
                     DynamicShop.console.sendMessage(Constants.DYNAMIC_SHOP_PREFIX + " Reset to 24");
                     confSec2.set("interval", 24);
@@ -85,8 +98,10 @@ public final class ConfigUtil {
 
                 if (randomStockCount % interval != 0) continue;
 
-                for (String item : ShopUtil.ccShop.get().getConfigurationSection(shop).getKeys(false)) {
-                    try {
+                for (String item : ShopUtil.ccShop.get().getConfigurationSection(shop).getKeys(false))
+                {
+                    try
+                    {
                         int i = Integer.parseInt(item); // options에 대해 적용하지 않기 위해.
                         if (!ShopUtil.ccShop.get().contains(shop + "." + item + ".value")) continue; // 장식용은 스킵
 
@@ -96,17 +111,20 @@ public final class ConfigUtil {
                         if (oldMedian < 1) continue; // 고정가 상품에 대해서는 스킵
 
                         double amount = oldMedian * (confSec2.getDouble("strength") / 100.0);
-                        if (oldStock < oldMedian) {
+                        if (oldStock < oldMedian)
+                        {
                             oldStock += (int) (amount);
                             if (oldStock > oldMedian) oldStock = oldMedian;
-                        } else if (oldStock > oldMedian) {
+                        } else if (oldStock > oldMedian)
+                        {
                             oldStock -= (int) (amount);
                             if (oldStock < oldMedian) oldStock = oldMedian;
                         }
 
                         ShopUtil.ccShop.get().set(shop + "." + item + ".stock", oldStock);
                         needToUpdateUI = true;
-                    } catch (Exception e) {
+                    } catch (Exception e)
+                    {
 //                        for (StackTraceElement ste:e.getStackTrace()) {
 //                            console.sendMessage(ste.toString());
 //                        }
@@ -115,9 +133,12 @@ public final class ConfigUtil {
             }
         }
 
-        if (needToUpdateUI) {
-            for (Player p : DynamicShop.plugin.getServer().getOnlinePlayers()) {
-                if (p.getOpenInventory().getTitle().equalsIgnoreCase(LangUtil.ccLang.get().getString("TRADE_TITLE"))) {
+        if (needToUpdateUI)
+        {
+            for (Player p : DynamicShop.plugin.getServer().getOnlinePlayers())
+            {
+                if (p.getOpenInventory().getTitle().equalsIgnoreCase(LangUtil.ccLang.get().getString("TRADE_TITLE")))
+                {
                     String[] temp = DynamicShop.ccUser.get().getString(p.getUniqueId() + ".interactItem").split("/");
                     DynaShopAPI.openItemTradeGui(p, temp[0], temp[1]);
                 }
@@ -125,7 +146,8 @@ public final class ConfigUtil {
         }
     }
 
-    public static void configSetup(DynamicShop dynamicShop) {
+    public static void configSetup(DynamicShop dynamicShop)
+    {
         dynamicShop.getConfig().options().copyHeader(true);
         dynamicShop.getConfig().options().header(
                 "Language: ex) en-US,ko-KR" + "\nPrefix: Prefix of plugin messages" + "\nSalesTax: ~99%"
@@ -137,10 +159,12 @@ public final class ConfigUtil {
         );
 
         double salesTax;
-        if (dynamicShop.getConfig().contains("SaleTax")) {
+        if (dynamicShop.getConfig().contains("SaleTax"))
+        {
             salesTax = dynamicShop.getConfig().getDouble("SaleTax");
             dynamicShop.getConfig().set("SaleTax", null);
-        } else {
+        } else
+        {
             salesTax = dynamicShop.getConfig().getDouble("SalesTax");
         }
         if (salesTax < 0) salesTax = 0;
@@ -177,7 +201,8 @@ public final class ConfigUtil {
         dynamicShop.saveConfig();
     }
 
-    public static void resetTax() {
+    public static void resetTax()
+    {
         currentTax = DynamicShop.plugin.getConfig().getInt("SalesTax");
     }
 }

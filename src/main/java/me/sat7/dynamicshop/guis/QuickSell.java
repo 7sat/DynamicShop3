@@ -17,15 +17,17 @@ import org.bukkit.inventory.ItemStack;
 import java.util.ArrayList;
 import java.util.Arrays;
 
-public class QuickSell extends InGameUI {
+public class QuickSell extends InGameUI
+{
 
     public QuickSell()
     {
         uiType = UI_TYPE.QuickSell;
     }
 
-    public Inventory getGui(Player player) {
-        Inventory inven = Bukkit.createInventory(player,9, LangUtil.ccLang.get().getString("QUICKSELL_TITLE"));
+    public Inventory getGui(Player player)
+    {
+        Inventory inven = Bukkit.createInventory(player, 9, LangUtil.ccLang.get().getString("QUICKSELL_TITLE"));
 
         ItemStack infoBtn = ItemsUtil.createItemStack(Material.RED_STAINED_GLASS_PANE,
                 null,
@@ -34,7 +36,7 @@ public class QuickSell extends InGameUI {
                 1);
 
         for (int i = 0; i < 9; i++)
-            inven.setItem(i,infoBtn);
+            inven.setItem(i, infoBtn);
 
         return inven;
     }

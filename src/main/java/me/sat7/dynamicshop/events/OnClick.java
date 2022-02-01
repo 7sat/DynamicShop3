@@ -18,7 +18,7 @@ public class OnClick implements Listener
     public void OnInventoryDragEvent(InventoryDragEvent e)
     {
         // UI 인벤토리에 드래그로 아이탬 올리는것을 막음
-        if(UIManager.IsPlayerUsingPluginGUI((Player)e.getWhoClicked()))
+        if (UIManager.IsPlayerUsingPluginGUI((Player) e.getWhoClicked()))
             e.setCancelled(true);
     }
 
@@ -46,7 +46,7 @@ public class OnClick implements Listener
                 }
             }
 
-            if(UIManager.IsPlayerUsingPluginGUI(player))
+            if (UIManager.IsPlayerUsingPluginGUI(player))
             {
                 e.setCancelled(true);
                 UIManager.OnClickUpperInventory(e);
@@ -56,7 +56,7 @@ public class OnClick implements Listener
         else
         {
             if (UIManager.GetPlayerCurrentUIType(player) == InGameUI.UI_TYPE.ItemPalette ||
-                UIManager.GetPlayerCurrentUIType(player) == InGameUI.UI_TYPE.QuickSell)
+                    UIManager.GetPlayerCurrentUIType(player) == InGameUI.UI_TYPE.QuickSell)
             {
                 e.setCancelled(true);
                 UIManager.OnClickLowerInventory(e);

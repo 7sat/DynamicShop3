@@ -2,14 +2,17 @@ package me.sat7.dynamicshop.utilities;
 
 import me.sat7.dynamicshop.files.CustomConfig;
 
-public final class WorthUtil {
+public final class WorthUtil
+{
     public static CustomConfig ccWorth;
 
-    private WorthUtil() {
+    private WorthUtil()
+    {
 
     }
 
-    public static void setupWorthFile() {
+    public static void setupWorthFile()
+    {
         ccWorth.setup("Worth_V2", null);
         ccWorth.get().addDefault("acaciaboat", 15.16);
         ccWorth.get().addDefault("acaciabutton", 3.03);

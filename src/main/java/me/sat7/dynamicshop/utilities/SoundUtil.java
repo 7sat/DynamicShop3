@@ -7,10 +7,12 @@ import me.sat7.dynamicshop.DynamicShop;
 import me.sat7.dynamicshop.constants.Constants;
 import me.sat7.dynamicshop.files.CustomConfig;
 
-public final class SoundUtil {
+public final class SoundUtil
+{
     public static CustomConfig ccSound;
 
-    private SoundUtil() {
+    private SoundUtil()
+    {
 
     }
 
@@ -19,18 +21,16 @@ public final class SoundUtil {
     {
         try
         {
-            player.playSound(player.getLocation(), Sound.valueOf(ccSound.get().getString(key)),1,1);
-        }
-        catch (Exception e)
+            player.playSound(player.getLocation(), Sound.valueOf(ccSound.get().getString(key)), 1, 1);
+        } catch (Exception e)
         {
-            if(ccSound.get().contains(key))
+            if (ccSound.get().contains(key))
             {
-                if(ccSound.get().getString(key).length() > 1)
+                if (ccSound.get().getString(key).length() > 1)
                 {
                     DynamicShop.console.sendMessage(Constants.DYNAMIC_SHOP_PREFIX + " Sound play failed: " + key + "/" + ccSound.get().getString(key));
                 }
-            }
-            else
+            } else
             {
                 DynamicShop.console.sendMessage(Constants.DYNAMIC_SHOP_PREFIX + " Sound play failed. Path is missing: " + key);
             }
@@ -39,7 +39,7 @@ public final class SoundUtil {
 
     public static void setupSoundFile()
     {
-        ccSound.setup("Sound",null);
+        ccSound.setup("Sound", null);
         ccSound.get().options().header("Enter 0 to mute.\nhttps://hub.spigotmc.org/javadocs/bukkit/org/bukkit/Sound.html");
         ccSound.get().addDefault("sell", "ENTITY_EXPERIENCE_ORB_PICKUP");
         ccSound.get().addDefault("buy", "ENTITY_EXPERIENCE_ORB_PICKUP");

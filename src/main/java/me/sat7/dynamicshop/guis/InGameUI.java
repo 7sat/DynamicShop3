@@ -18,6 +18,11 @@ public class InGameUI
 
     public UI_TYPE uiType;
 
-    public void OnClickUpperInventory(InventoryClickEvent e) {};
-    public void OnClickLowerInventory(InventoryClickEvent e) {};
+    public void OnClickUpperInventory(InventoryClickEvent e)
+    {
+    }
+
+    public void OnClickLowerInventory(InventoryClickEvent e)
+    {
+    }
 }

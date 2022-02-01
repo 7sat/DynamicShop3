@@ -28,11 +28,13 @@ import java.util.Random;
 
 import static me.sat7.dynamicshop.UpdateChecker.getResourceUrl;
 
-public final class DynamicShop extends JavaPlugin implements Listener {
+public final class DynamicShop extends JavaPlugin implements Listener
+{
 
     private static Economy econ = null; // 볼트에 물려있는 이코노미
 
-    public static Economy getEconomy() {
+    public static Economy getEconomy()
+    {
         return econ;
     }
 
@@ -51,13 +53,15 @@ public final class DynamicShop extends JavaPlugin implements Listener {
     public static UIManager uiManager;
 
     @Override
-    public void onEnable() {
+    public void onEnable()
+    {
         plugin = this;
         console = plugin.getServer().getConsoleSender();
         initCustomConfigs();
 
         // 볼트 이코노미 셋업
-        if (!setupEconomy()) {
+        if (!setupEconomy())
+        {
             console.sendMessage(String.format("[%s] - Disabled due to no Vault dependency found!", getDescription().getName()));
             getServer().getPluginManager().disablePlugin(this);
             return;
@@ -79,10 +83,11 @@ public final class DynamicShop extends JavaPlugin implements Listener {
         {
             try
             {
-                if(DynamicShop.plugin.getDescription().getVersion().contains("SNAPSHOT")) {
+                if (DynamicShop.plugin.getDescription().getVersion().contains("SNAPSHOT"))
+                {
                     DynamicShop.updateAvailable = false;
                     DynamicShop.console.sendMessage("§3-------------------------------------------------------");
-                    DynamicShop.console.sendMessage(Constants.DYNAMIC_SHOP_PREFIX +" Plugin is running a dev build!");
+                    DynamicShop.console.sendMessage(Constants.DYNAMIC_SHOP_PREFIX + " Plugin is running a dev build!");
                     DynamicShop.console.sendMessage("Be careful and monitor what happens!");
                     DynamicShop.console.sendMessage(getResourceUrl());
                     DynamicShop.console.sendMessage("§3-------------------------------------------------------");
@@ -91,23 +96,21 @@ public final class DynamicShop extends JavaPlugin implements Listener {
                 {
                     DynamicShop.updateAvailable = false;
                     DynamicShop.console.sendMessage("§3-------------------------------------------------------");
-                    DynamicShop.console.sendMessage(Constants.DYNAMIC_SHOP_PREFIX +" Plugin is up to date!");
+                    DynamicShop.console.sendMessage(Constants.DYNAMIC_SHOP_PREFIX + " Plugin is up to date!");
                     DynamicShop.console.sendMessage("Please rate my plugin if you like it");
                     DynamicShop.console.sendMessage(getResourceUrl());
                     DynamicShop.console.sendMessage("§3-------------------------------------------------------");
-                }
-                else
+                } else
                 {
                     DynamicShop.updateAvailable = true;
                     DynamicShop.console.sendMessage("§3-------------------------------------------------------");
-                    DynamicShop.console.sendMessage(Constants.DYNAMIC_SHOP_PREFIX +"Plugin outdated!!");
+                    DynamicShop.console.sendMessage(Constants.DYNAMIC_SHOP_PREFIX + "Plugin outdated!!");
                     DynamicShop.console.sendMessage(getResourceUrl());
                     DynamicShop.console.sendMessage("§3-------------------------------------------------------");
                 }
-            }
-            catch (Exception e)
+            } catch (Exception e)
             {
-                DynamicShop.console.sendMessage(Constants.DYNAMIC_SHOP_PREFIX +"Failed to check update. Try again later.");
+                DynamicShop.console.sendMessage(Constants.DYNAMIC_SHOP_PREFIX + "Failed to check update. Try again later.");
             }
         });
 
@@ -118,41 +121,49 @@ public final class DynamicShop extends JavaPlugin implements Listener {
         {
             int pluginId = 4258;
             Metrics metrics = new Metrics(this, pluginId);
-        }
-        catch (Exception e)
+        } catch (Exception e)
         {
-            DynamicShop.console.sendMessage(Constants.DYNAMIC_SHOP_PREFIX +"Failed to Init bstats : " + e);
+            DynamicShop.console.sendMessage(Constants.DYNAMIC_SHOP_PREFIX + "Failed to Init bstats : " + e);
         }
     }
 
-    public void startCullLogsTask() {
-        if (getConfig().getBoolean("CullLogs")) {
-            if (cullLogsTask != null) {
+    public void startCullLogsTask()
+    {
+        if (getConfig().getBoolean("CullLogs"))
+        {
+            if (cullLogsTask != null)
+            {
                 cullLogsTask.cancel();
             }
             cullLogsTask = Bukkit.getScheduler().runTaskTimerAsynchronously(this, LogUtil::cullLogs, 0L, (20L * 60L * (long) getConfig().getInt("LogCullTimeMinutes")));
         }
     }
 
-    public void startRandomChangeTask() {
-        if (randomChangeTask != null) {
+    public void startRandomChangeTask()
+    {
+        if (randomChangeTask != null)
+        {
             randomChangeTask.cancel();
         }
         randomChangeTask = Bukkit.getScheduler().runTaskTimer(DynamicShop.plugin, () -> ConfigUtil.randomChange(new Random()), 500, 500);
     }
 
-    private void hookIntoJobs() {
+    private void hookIntoJobs()
+    {
         // Jobs
-        if (getServer().getPluginManager().getPlugin("Jobs") == null) {
+        if (getServer().getPluginManager().getPlugin("Jobs") == null)
+        {
             console.sendMessage(Constants.DYNAMIC_SHOP_PREFIX + " Jobs Reborn Not Found");
             JobsHook.jobsRebornActive = false;
-        } else {
+        } else
+        {
             console.sendMessage(Constants.DYNAMIC_SHOP_PREFIX + " Jobs Reborn Found");
             JobsHook.jobsRebornActive = true;
         }
     }
 
-    private void makeFolders() {
+    private void makeFolders()
+    {
         // 컨버팅용 폴더 생성
         File folder1 = new File(getDataFolder(), "Convert");
         folder1.mkdir();
@@ -162,7 +173,8 @@ public final class DynamicShop extends JavaPlugin implements Listener {
         folder3.mkdir();
     }
 
-    private void initCommands() {
+    private void initCommands()
+    {
         // 명령어 등록 (개별 클레스로 되어있는것들)
         getCommand("DynamicShop").setExecutor(new Root());
         getCommand("shop").setExecutor(new Optional());
@@ -172,7 +184,8 @@ public final class DynamicShop extends JavaPlugin implements Listener {
         getCommand("shop").setTabCompleter(this);
     }
 
-    private void registerEvents() {
+    private void registerEvents()
+    {
         getServer().getPluginManager().registerEvents(this, this);
         getServer().getPluginManager().registerEvents(new JoinQuit(), this);
         getServer().getPluginManager().registerEvents(new OnClick(), this);
@@ -183,7 +196,8 @@ public final class DynamicShop extends JavaPlugin implements Listener {
         getServer().getPluginManager().registerEvents(uiManager, this);
     }
 
-    private void initCustomConfigs() {
+    private void initCustomConfigs()
+    {
         LangUtil.ccLang = new CustomConfig();
         ShopUtil.ccShop = new CustomConfig();
         ccUser = new CustomConfig();
@@ -194,7 +208,8 @@ public final class DynamicShop extends JavaPlugin implements Listener {
         LogUtil.ccLog = new CustomConfig();
     }
 
-    private void setupConfigs() {
+    private void setupConfigs()
+    {
         // Config 셋업 (기본형)
         getConfig().options().copyDefaults();
         saveDefaultConfig();
@@ -210,13 +225,15 @@ public final class DynamicShop extends JavaPlugin implements Listener {
         LogUtil.setupLogFile();
     }
 
-    private void setupUserFile() {
+    private void setupUserFile()
+    {
         ccUser.setup("User", null);
         ccUser.get().options().copyDefaults(true);
         ccUser.save();
     }
 
-    private void setupSignFile() {
+    private void setupSignFile()
+    {
         ccSign.setup("Sign", null);
         ccSign.get().options().copyDefaults(true);
         ccSign.save();
@@ -224,18 +241,22 @@ public final class DynamicShop extends JavaPlugin implements Listener {
 
     // 명령어 자동완성
     @Override
-    public List<String> onTabComplete(CommandSender sender, Command cmd, String commandLabel, String[] args) {
+    public List<String> onTabComplete(CommandSender sender, Command cmd, String commandLabel, String[] args)
+    {
         return TabCompleteUtil.onTabCompleteBody(this, sender, cmd, commandLabel, args);
     }
 
     // 볼트 이코노미 초기화
-    private boolean setupEconomy() {
-        if (getServer().getPluginManager().getPlugin("Vault") == null) {
+    private boolean setupEconomy()
+    {
+        if (getServer().getPluginManager().getPlugin("Vault") == null)
+        {
             console.sendMessage(Constants.DYNAMIC_SHOP_PREFIX + " Vault Not Found");
             return false;
         }
         RegisteredServiceProvider<Economy> rsp = getServer().getServicesManager().getRegistration(Economy.class);
-        if (rsp == null) {
+        if (rsp == null)
+        {
             console.sendMessage(Constants.DYNAMIC_SHOP_PREFIX + " RSP is null!");
             return false;
         }
@@ -245,7 +266,8 @@ public final class DynamicShop extends JavaPlugin implements Listener {
     }
 
     @Override
-    public void onDisable() {
+    public void onDisable()
+    {
         Bukkit.getScheduler().cancelTasks(this);
         console.sendMessage(Constants.DYNAMIC_SHOP_PREFIX + " Disabled");
     }

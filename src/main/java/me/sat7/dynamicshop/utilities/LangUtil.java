@@ -6,10 +6,12 @@ import me.sat7.dynamicshop.DynamicShop;
 import me.sat7.dynamicshop.constants.Constants;
 import me.sat7.dynamicshop.files.CustomConfig;
 
-public final class LangUtil {
+public final class LangUtil
+{
     public static CustomConfig ccLang;
 
-    private LangUtil() {
+    private LangUtil()
+    {
 
     }
 
@@ -17,7 +19,7 @@ public final class LangUtil {
     {
         // 한국어
         {
-            ccLang.setup("Lang_v2_ko-KR",null);
+            ccLang.setup("Lang_v2_ko-KR", null);
             ccLang.get().addDefault("STARTPAGE.EDITOR_TITLE", "§3시작 화면 편집");
             ccLang.get().addDefault("STARTPAGE.EDIT_NAME", "이름 바꾸기");
             ccLang.get().addDefault("STARTPAGE.EDIT_LORE", "설명 바꾸기");
@@ -110,11 +112,11 @@ public final class LangUtil {
             ccLang.get().addDefault("SHOP_BAL_INF", "§f상점 계좌 무제한");
             ccLang.get().addDefault("SHOP_BAL", "§f상점 계좌 잔액");
             ccLang.get().addDefault("SHOP_BAL_LOW", "§f상점이 돈을 충분히 가지고 있지 않습니다.");
-            ccLang.get().addDefault("ON","켜짐");
-            ccLang.get().addDefault("OFF","꺼짐");
-            ccLang.get().addDefault("SET","설정");
-            ccLang.get().addDefault("UNSET","설정해제");
-            ccLang.get().addDefault("NULL(OPEN)","없음 (모두에게 열려있음)");
+            ccLang.get().addDefault("ON", "켜짐");
+            ccLang.get().addDefault("OFF", "꺼짐");
+            ccLang.get().addDefault("SET", "설정");
+            ccLang.get().addDefault("UNSET", "설정해제");
+            ccLang.get().addDefault("NULL(OPEN)", "없음 (모두에게 열려있음)");
 
             ccLang.get().addDefault("LOG.LOG", "§f로그");
             ccLang.get().addDefault("LOG.CLEAR", "§f로그 삭제됨");
@@ -200,7 +202,7 @@ public final class LangUtil {
             ccLang.get().addDefault("ARROW_UP", "§a⬆");
             ccLang.get().addDefault("ARROW_DOWN", "§c⬇");
 
-            ccLang.get().addDefault("SHOPINFO","§f[SHOP_LORE][PERMISSION][TAX][SHOP_BALANCE][SHOP_HOUR][SHOP_POS]");
+            ccLang.get().addDefault("SHOPINFO", "§f[SHOP_LORE][PERMISSION][TAX][SHOP_BALANCE][SHOP_HOUR][SHOP_POS]");
 
             ccLang.get().addDefault("ERR.NO_USER_ID", "§6플레이어 uuid를 찾을 수 없습니다. 상점 이용 불가능.");
             ccLang.get().addDefault("ERR.ITEM_NOT_EXIST", "상점에 해당 아이탬이 존재하지 않습니다.");
@@ -227,7 +229,7 @@ public final class LangUtil {
             ccLang.get().addDefault("ERR.SHOP_LINK_FAIL", "상점 둘 중 하나는 실제 계좌이어야 합니다.");
             ccLang.get().addDefault("ERR.SHOP_LINK_TARGET_ERR", "목표 상점은 실제 계좌를 가지고 있어야 합니다.");
             ccLang.get().addDefault("ERR.NESTED_STRUCTURE", "계층 구조를 이루는것은 금지되어 있습니다. (ex. aa-bb, bb-cc)");
-            ccLang.get().addDefault("ERR.CREATIVE","§eCreative mode 에서 이 명령어를 사용할 수 없습니다. 권한이 없습니다.");
+            ccLang.get().addDefault("ERR.CREATIVE", "§eCreative mode 에서 이 명령어를 사용할 수 없습니다. 권한이 없습니다.");
 
             ccLang.get().options().copyDefaults(true);
             ccLang.save();
@@ -235,7 +237,7 @@ public final class LangUtil {
 
         // 영어
         {
-            ccLang.setup("Lang_v2_en-US",null);
+            ccLang.setup("Lang_v2_en-US", null);
             ccLang.get().addDefault("STARTPAGE.EDITOR_TITLE", "§3Start page editor");
             ccLang.get().addDefault("STARTPAGE.EDIT_NAME", "Change Name");
             ccLang.get().addDefault("STARTPAGE.EDIT_LORE", "Change Lore");
@@ -312,11 +314,11 @@ public final class LangUtil {
             ccLang.get().addDefault("SHOP_BAL_INF", "§fUnlimited balance");
             ccLang.get().addDefault("SHOP_BAL", "§fShop balance");
             ccLang.get().addDefault("SHOP_BAL_LOW", "§fShop does not have enough money.");
-            ccLang.get().addDefault("ON","On");
-            ccLang.get().addDefault("OFF","Off");
-            ccLang.get().addDefault("SET","Set");
-            ccLang.get().addDefault("UNSET","Unset");
-            ccLang.get().addDefault("NULL(OPEN)","null (Open for everyone)");
+            ccLang.get().addDefault("ON", "On");
+            ccLang.get().addDefault("OFF", "Off");
+            ccLang.get().addDefault("SET", "Set");
+            ccLang.get().addDefault("UNSET", "Unset");
+            ccLang.get().addDefault("NULL(OPEN)", "null (Open for everyone)");
 
             ccLang.get().addDefault("LOG.LOG", "§fLog");
             ccLang.get().addDefault("LOG.CLEAR", "§fLog deleted");
@@ -419,7 +421,7 @@ public final class LangUtil {
             ccLang.get().addDefault("ARROW_UP", "§a⬆");
             ccLang.get().addDefault("ARROW_DOWN", "§c⬇");
 
-            ccLang.get().addDefault("SHOPINFO","§f[SHOP_LORE][PERMISSION][TAX][SHOP_BALANCE][SHOP_HOUR][SHOP_POS]");
+            ccLang.get().addDefault("SHOPINFO", "§f[SHOP_LORE][PERMISSION][TAX][SHOP_BALANCE][SHOP_HOUR][SHOP_POS]");
 
             ccLang.get().addDefault("ERR.NO_USER_ID", "§6Cant find your uuid from server. Shop Unavailable.");
             ccLang.get().addDefault("ERR.ITEM_NOT_EXIST", "Item not exist.");
@@ -446,32 +448,31 @@ public final class LangUtil {
             ccLang.get().addDefault("ERR.SHOP_LINK_FAIL", "At least one of them must be an actual account.");
             ccLang.get().addDefault("ERR.SHOP_LINK_TARGET_ERR", "Target shop must have actual account.");
             ccLang.get().addDefault("ERR.NESTED_STRUCTURE", "Nested structure is forbidden. (ex. aa-bb, bb-cc)");
-            ccLang.get().addDefault("ERR.CREATIVE","§eYou can not use this command in creative mode. No permission.");
+            ccLang.get().addDefault("ERR.CREATIVE", "§eYou can not use this command in creative mode. No permission.");
 
             ccLang.get().options().copyDefaults(true);
             ccLang.save();
         }
 
-        if(lang == null) lang = "en-US";
+        if (lang == null) lang = "en-US";
 
-        if(!lang.equals("en-US") && !lang.equals("ko-KR"))
+        if (!lang.equals("en-US") && !lang.equals("ko-KR"))
         {
             ConfigurationSection conf = ccLang.get().getConfigurationSection("");
 
-            ccLang.setup("Lang_v2_"+lang,null);
+            ccLang.setup("Lang_v2_" + lang, null);
 
-            for (String s:conf.getKeys(true))
+            for (String s : conf.getKeys(true))
             {
-                if(!ccLang.get().contains(s))
+                if (!ccLang.get().contains(s))
                 {
                     DynamicShop.console.sendMessage(Constants.DYNAMIC_SHOP_PREFIX + "String Key " + s + " added");
-                    ccLang.get().addDefault(s,conf.get(s));
+                    ccLang.get().addDefault(s, conf.get(s));
                 }
             }
-        }
-        else
+        } else
         {
-            ccLang.setup("Lang_v2_"+lang,null);
+            ccLang.setup("Lang_v2_" + lang, null);
         }
 
         ccLang.get().options().copyDefaults(true);
