@@ -1,7 +1,7 @@
 package me.sat7.dynamicshop.guis;
 
 import java.util.ArrayList;
-import java.util.Arrays;
+import java.util.Collections;
 import java.util.UUID;
 
 import me.sat7.dynamicshop.DynaShopAPI;
@@ -34,7 +34,7 @@ public class StartPageSettings extends InGameUI
 
         // 닫기 버튼
         ItemStack closeBtn = ItemsUtil.createItemStack(Material.BARRIER, null,
-                LangUtil.ccLang.get().getString("CLOSE"), new ArrayList<>(Arrays.asList(LangUtil.ccLang.get().getString("CLOSE_LORE"))), 1);
+                LangUtil.ccLang.get().getString("CLOSE"), new ArrayList<>(Collections.singletonList(LangUtil.ccLang.get().getString("CLOSE_LORE"))), 1);
         inven.setItem(0, closeBtn);
 
         // 이름 버튼
@@ -79,9 +79,6 @@ public class StartPageSettings extends InGameUI
     public void OnClickUpperInventory(InventoryClickEvent e)
     {
         Player player = (Player) e.getWhoClicked();
-        if (player == null)
-            return;
-
         UUID uuid = player.getUniqueId();
 
         String[] temp = DynamicShop.userInteractItem.get(player.getUniqueId()).split("/");

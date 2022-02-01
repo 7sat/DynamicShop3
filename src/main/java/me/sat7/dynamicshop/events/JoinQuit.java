@@ -19,8 +19,8 @@ public class JoinQuit implements Listener
         Player player = e.getPlayer();
         DynamicShop.userTempData.put(player.getUniqueId(), "");
         DynamicShop.userInteractItem.put(player.getUniqueId(), "");
-        DynamicShop.ccUser.get().set(player.getUniqueId().toString() + ".lastJoin", System.currentTimeMillis());
-        DynamicShop.ccUser.get().addDefault(player.getUniqueId().toString() + ".cmdHelp", true);
+        DynamicShop.ccUser.get().set(player.getUniqueId() + ".lastJoin", System.currentTimeMillis());
+        DynamicShop.ccUser.get().addDefault(player.getUniqueId() + ".cmdHelp", true);
         DynamicShop.ccUser.save();
 
         if (DynamicShop.updateAvailable)

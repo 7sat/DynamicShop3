@@ -8,6 +8,7 @@ import me.sat7.dynamicshop.constants.Constants;
 import org.bukkit.configuration.ConfigurationSection;
 import org.bukkit.entity.Player;
 
+import java.util.Collections;
 import java.util.Random;
 
 public final class ConfigUtil
@@ -150,15 +151,15 @@ public final class ConfigUtil
 
     public static void configSetup(DynamicShop dynamicShop)
     {
-        dynamicShop.getConfig().options().copyHeader(true);
-        dynamicShop.getConfig().options().header(
+        dynamicShop.getConfig().options().parseComments(true);
+        dynamicShop.getConfig().options().setHeader(Collections.singletonList(
                 "Language: ex) en-US,ko-KR" + "\nPrefix: Prefix of plugin messages" + "\nSalesTax: ~99%"
                         + "\nUseShopCommand: Set this to false if you want to disable /shop command"
                         + "\nDefaultShopName: This shop will open when player run /shop or /ds shop command"
                         + "\nDisplayStockAsStack: ex) true: 10Stacks, false: 640"
                         + "\nDeliveryChargeScale: 0.01~"
                         + "\nNumberOfPlayer: This number is used to calculate the recommended median. 3~100"
-        );
+        ));
 
         double salesTax;
         if (dynamicShop.getConfig().contains("SaleTax"))

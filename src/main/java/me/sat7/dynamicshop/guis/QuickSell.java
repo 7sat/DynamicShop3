@@ -32,7 +32,7 @@ public class QuickSell extends InGameUI
         ItemStack infoBtn = ItemsUtil.createItemStack(Material.RED_STAINED_GLASS_PANE,
                 null,
                 LangUtil.ccLang.get().getString("QUICKSELL_GUIDE_TITLE"),
-                new ArrayList<String>(Arrays.asList(LangUtil.ccLang.get().getString("QUICKSELL_GUIDE_LORE").split("\n"))),
+                new ArrayList<>(Arrays.asList(LangUtil.ccLang.get().getString("QUICKSELL_GUIDE_LORE").split("\n"))),
                 1);
 
         for (int i = 0; i < 9; i++)
@@ -45,8 +45,6 @@ public class QuickSell extends InGameUI
     public void OnClickLowerInventory(InventoryClickEvent e)
     {
         Player player = (Player) e.getWhoClicked();
-        if (player == null)
-            return;
 
         if (e.getCurrentItem() == null || e.getCurrentItem().getType() == Material.AIR)
         {

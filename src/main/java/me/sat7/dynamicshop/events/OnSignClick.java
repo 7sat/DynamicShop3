@@ -42,7 +42,10 @@ public class OnSignClick implements Listener
     {
         if (!e.getPlayer().hasPermission("dshop.admin.createsign")) return;
 
-        if (e.getLine(0).equalsIgnoreCase("[dshop]") || e.getLine(0).equalsIgnoreCase("[ds]") || e.getLine(0).equalsIgnoreCase("[dynamicshop]"))
+        //noinspection ConstantConditions
+        if (e.getLine(0).equalsIgnoreCase("[dshop]")
+            || e.getLine(0).equalsIgnoreCase("[ds]")
+            || e.getLine(0).equalsIgnoreCase("[dynamicshop]"))
         {
             int x = e.getBlock().getX();
             int y = e.getBlock().getY();
@@ -67,7 +70,7 @@ public class OnSignClick implements Listener
 
             Block tempBlock = e.getBlock();
             Block blockBehind = null;
-            if (tempBlock != null && tempBlock.getState() instanceof Sign)
+            if (tempBlock.getState() instanceof Sign)
             {
                 BlockData data = tempBlock.getBlockData();
                 if (data instanceof Directional)

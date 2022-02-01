@@ -103,8 +103,8 @@ public final class DynaShopAPI
 
         DynamicShop.userTempData.put(player.getUniqueId(), "");
         DynamicShop.userInteractItem.put(player.getUniqueId(), "");
-        DynamicShop.ccUser.get().set(player.getUniqueId().toString() + ".cmdHelp", true);
-        DynamicShop.ccUser.get().set(player.getUniqueId().toString() + ".lastJoin", System.currentTimeMillis());
+        DynamicShop.ccUser.get().set(player.getUniqueId() + ".cmdHelp", true);
+        DynamicShop.ccUser.get().set(player.getUniqueId() + ".lastJoin", System.currentTimeMillis());
         DynamicShop.ccUser.save();
 
         return DynamicShop.ccUser.get().contains(player.getUniqueId().toString());
@@ -186,9 +186,8 @@ public final class DynaShopAPI
                 {
                     Material mat = Material.getMaterial(itemName);
                     list.add(new ItemStack(mat));
-                } catch (Exception e)
+                } catch (Exception ignored)
                 {
-                    continue;
                 }
             }
             return list;
@@ -355,7 +354,7 @@ public final class DynaShopAPI
     {
         String[] ret = ShopUtil.FindTheBestShopToSell(player, itemStack);
 
-        if (false == validateShopName(ret[0]))
+        if (!validateShopName(ret[0]))
             return 0;
 
         return Sell.quickSellItem(player, itemStack, ret[0], Integer.parseInt(ret[1]), true, -1);

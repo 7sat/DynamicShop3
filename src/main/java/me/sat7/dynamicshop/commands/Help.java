@@ -86,7 +86,7 @@ public final class Help
 
             ItemStack tempItem = player.getInventory().getItemInMainHand();
 
-            if (tempItem != null && tempItem.getType() != Material.AIR)
+            if (tempItem.getType() != Material.AIR)
             {
                 int idx = ShopUtil.findItemFromShop(args[1], tempItem);
                 if (idx != -1)

@@ -2,7 +2,6 @@ package me.sat7.dynamicshop.utilities;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Locale;
 import java.util.UUID;
 import java.util.stream.Collectors;
 
@@ -25,12 +24,11 @@ public final class TabCompleteUtil
 
     }
 
-    public static List<String> onTabCompleteBody(DynamicShop dynamicShop, CommandSender sender, Command cmd, String commandLabel, String[] args)
+    public static List<String> onTabCompleteBody(DynamicShop dynamicShop, CommandSender sender, Command cmd, String[] args)
     {
         if (!(sender instanceof Player)) return null;
 
         UUID uuid = ((Player) sender).getUniqueId();
-        String senderUuid = uuid.toString();
 
         try
         {
@@ -401,32 +399,34 @@ public final class TabCompleteUtil
                                     temp.addAll(ShopUtil.ccShop.get().getKeys(false));
                                 }
 
-                                if (args[3].equals("set"))
+                                switch (args[3])
                                 {
-                                    if (!DynamicShop.userTempData.get(uuid).equals("accountSet"))
-                                    {
-                                        DynamicShop.userTempData.put(uuid,"accountSet");
-                                        Help.showHelp("account_set", (Player) sender, args);
-                                    }
-                                } else if (args[3].equals("transfer"))
-                                {
-                                    if (!DynamicShop.userTempData.get(uuid).equals("accountTransfer"))
-                                    {
-                                        DynamicShop.userTempData.put(uuid,"accountTransfer");
-                                        Help.showHelp("account_transfer", (Player) sender, args);
-                                    }
+                                    case "set":
+                                        if (!DynamicShop.userTempData.get(uuid).equals("accountSet"))
+                                        {
+                                            DynamicShop.userTempData.put(uuid, "accountSet");
+                                            Help.showHelp("account_set", (Player) sender, args);
+                                        }
+                                        break;
+                                    case "transfer":
+                                        if (!DynamicShop.userTempData.get(uuid).equals("accountTransfer"))
+                                        {
+                                            DynamicShop.userTempData.put(uuid, "accountTransfer");
+                                            Help.showHelp("account_transfer", (Player) sender, args);
+                                        }
 
-                                    for (Player p : Bukkit.getServer().getOnlinePlayers())
-                                    {
-                                        temp.add(p.getName());
-                                    }
-                                } else if (args[3].equals("linkto"))
-                                {
-                                    if (!DynamicShop.userTempData.get(uuid).equals("accountLinkto"))
-                                    {
-                                        DynamicShop.userTempData.put(uuid,"accountLinkto");
-                                        Help.showHelp("account_link_to", (Player) sender, args);
-                                    }
+                                        for (Player p : Bukkit.getServer().getOnlinePlayers())
+                                        {
+                                            temp.add(p.getName());
+                                        }
+                                        break;
+                                    case "linkto":
+                                        if (!DynamicShop.userTempData.get(uuid).equals("accountLinkto"))
+                                        {
+                                            DynamicShop.userTempData.put(uuid, "accountLinkto");
+                                            Help.showHelp("account_link_to", (Player) sender, args);
+                                        }
+                                        break;
                                 }
 
                                 for (String s : temp)

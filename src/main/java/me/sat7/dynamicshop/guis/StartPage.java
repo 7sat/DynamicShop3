@@ -2,6 +2,7 @@ package me.sat7.dynamicshop.guis;
 
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Collections;
 
 import me.sat7.dynamicshop.DynaShopAPI;
 import org.bukkit.Bukkit;
@@ -32,7 +33,7 @@ public class StartPage extends InGameUI
     public static void setupStartPageFile()
     {
         ccStartPage.setup("Startpage", null);
-        ccStartPage.get().options().header("LineBreak: \\, |, bracket is NOT working. Recommended character: /, _, ;, ※");
+        ccStartPage.get().options().setHeader(Collections.singletonList("LineBreak: Do not use \\, | and brackets. Recommended : /, _"));
         ccStartPage.get().addDefault("Options.Title", "§3§lStart Page");
         ccStartPage.get().addDefault("Options.UiSlotCount", 27);
         ccStartPage.get().addDefault("Options.LineBreak", "/");
@@ -109,8 +110,6 @@ public class StartPage extends InGameUI
     public void OnClickUpperInventory(InventoryClickEvent e)
     {
         Player player = (Player) e.getWhoClicked();
-        if (player == null)
-            return;
 
         if (e.isLeftClick())
         {

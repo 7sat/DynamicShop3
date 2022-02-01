@@ -88,31 +88,26 @@ public final class DynamicShop extends JavaPlugin implements Listener
         {
             try
             {
+                DynamicShop.console.sendMessage("§3-------------------------------------------------------");
                 if (DynamicShop.plugin.getDescription().getVersion().contains("SNAPSHOT"))
                 {
                     DynamicShop.updateAvailable = false;
-                    DynamicShop.console.sendMessage("§3-------------------------------------------------------");
+
                     DynamicShop.console.sendMessage(Constants.DYNAMIC_SHOP_PREFIX + " Plugin is running a dev build!");
                     DynamicShop.console.sendMessage("Be careful and monitor what happens!");
-                    DynamicShop.console.sendMessage(getResourceUrl());
-                    DynamicShop.console.sendMessage("§3-------------------------------------------------------");
                 }
                 if (this.getDescription().getVersion().equals(version))
                 {
                     DynamicShop.updateAvailable = false;
-                    DynamicShop.console.sendMessage("§3-------------------------------------------------------");
                     DynamicShop.console.sendMessage(Constants.DYNAMIC_SHOP_PREFIX + " Plugin is up to date!");
                     DynamicShop.console.sendMessage("Please rate my plugin if you like it");
-                    DynamicShop.console.sendMessage(getResourceUrl());
-                    DynamicShop.console.sendMessage("§3-------------------------------------------------------");
                 } else
                 {
                     DynamicShop.updateAvailable = true;
-                    DynamicShop.console.sendMessage("§3-------------------------------------------------------");
                     DynamicShop.console.sendMessage(Constants.DYNAMIC_SHOP_PREFIX + "Plugin outdated!!");
-                    DynamicShop.console.sendMessage(getResourceUrl());
-                    DynamicShop.console.sendMessage("§3-------------------------------------------------------");
                 }
+                DynamicShop.console.sendMessage(getResourceUrl());
+                DynamicShop.console.sendMessage("§3-------------------------------------------------------");
             } catch (Exception e)
             {
                 DynamicShop.console.sendMessage(Constants.DYNAMIC_SHOP_PREFIX + "Failed to check update. Try again later.");
@@ -263,7 +258,7 @@ public final class DynamicShop extends JavaPlugin implements Listener
     @Override
     public List<String> onTabComplete(CommandSender sender, Command cmd, String commandLabel, String[] args)
     {
-        return TabCompleteUtil.onTabCompleteBody(this, sender, cmd, commandLabel, args);
+        return TabCompleteUtil.onTabCompleteBody(this, sender, cmd, args);
     }
 
     // 볼트 이코노미 초기화

@@ -64,7 +64,7 @@ public class Shop extends InGameUI
         // 닫기 버튼
         ItemStack closeBtn = ItemsUtil.createItemStack(Material.BARRIER, null,
                 LangUtil.ccLang.get().getString("CLOSE"),
-                new ArrayList<>(Arrays.asList(LangUtil.ccLang.get().getString("CLOSE_LORE"))), 1);
+                new ArrayList<>(Collections.singletonList(LangUtil.ccLang.get().getString("CLOSE_LORE"))), 1);
 
         inventory.setItem(45, closeBtn);
 
@@ -88,7 +88,7 @@ public class Shop extends InGameUI
 
         shopLore = shopLore.replace("[SHOP_NAME]", shopName + "\n");
 
-        String finalLoreText = "";
+        StringBuilder finalLoreText = new StringBuilder();
         if (ShopUtil.ccShop.get().contains(shopName + ".Options.lore"))
         {
             String loreTxt = ShopUtil.ccShop.get().getString(shopName + ".Options.lore");
@@ -97,11 +97,11 @@ public class Shop extends InGameUI
                 String[] loreArray = loreTxt.split(Pattern.quote("\\n"));
                 for (String s : loreArray)
                 {
-                    finalLoreText += "§f" + s + "\n";
+                    finalLoreText.append("§f").append(s).append("\n");
                 }
             }
         }
-        shopLore = shopLore.replace("[SHOP_LORE]", finalLoreText);
+        shopLore = shopLore.replace("[SHOP_LORE]", finalLoreText.toString());
 
         // 권한
         String finalPermText = "";
@@ -160,16 +160,16 @@ public class Shop extends InGameUI
         shopLore = shopLore.replace("[SHOP_POS]", finalShopPosText);
 
         // 플래그
-        String finalFlagText = "";
+        StringBuilder finalFlagText = new StringBuilder();
         if (ShopUtil.ccShop.get().contains(shopName + ".Options.flag") && ShopUtil.ccShop.get().getConfigurationSection(shopName + ".Options.flag").getKeys(false).size() > 0)
         {
-            finalFlagText += LangUtil.ccLang.get().getString("FLAG") + ":" + "\n";
+            finalFlagText.append(LangUtil.ccLang.get().getString("FLAG")).append(":").append("\n");
             for (String s : ShopUtil.ccShop.get().getConfigurationSection(shopName + ".Options.flag").getKeys(false))
             {
-                finalFlagText += "§7 - " + s + "\n";
+                finalFlagText.append("§7 - ").append(s).append("\n");
             }
         }
-        shopLore = shopLore.replace("[FLAG]", finalFlagText);
+        shopLore = shopLore.replace("[FLAG]", finalFlagText.toString());
 
         // 어드민이면----------
         if (player.hasPermission("dshop.admin.shopedit"))
@@ -178,7 +178,7 @@ public class Shop extends InGameUI
         }
 
         String infoBtnIconName = ShopUtil.GetShopInfoIconMat();
-        ItemStack infoBtn = ItemsUtil.createItemStack(Material.getMaterial(infoBtnIconName), null, "§3" + shopName, new ArrayList<String>(Arrays.asList(shopLore.split("\n"))), 1);
+        ItemStack infoBtn = ItemsUtil.createItemStack(Material.getMaterial(infoBtnIconName), null, "§3" + shopName, new ArrayList<>(Arrays.asList(shopLore.split("\n"))), 1);
         inventory.setItem(53, infoBtn);
 
         // 상품목록 등록
@@ -311,8 +311,6 @@ public class Shop extends InGameUI
     public void OnClickUpperInventory(InventoryClickEvent e)
     {
         Player player = (Player) e.getWhoClicked();
-        if (player == null)
-            return;
 
         String shopName = ChatColor.stripColor(e.getClickedInventory().getItem(53).getItemMeta().getDisplayName());
 
@@ -392,14 +390,9 @@ public class Shop extends InGameUI
                 SoundUtil.playerSoundEffect(player, "click");
                 DynamicShop.userInteractItem.put(player.getUniqueId(), shopName + "/" + 0); // 선택한 아이탬의 인덱스 저장
                 DynaShopAPI.openShopSettingGui(player, shopName);
-                return;
-            } else if (e.getSlot() > 45)
+            } else if (e.getSlot() <= 45)
             {
-                return;
-            }
-            // 상점의 아이탬 클릭
-            else
-            {
+                // 상점의 아이탬 클릭
                 int idx = e.getSlot() + (45 * (curPage - 1));
 
                 // 거래화면 열기

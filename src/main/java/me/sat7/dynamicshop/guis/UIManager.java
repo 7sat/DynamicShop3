@@ -14,8 +14,9 @@ import java.util.UUID;
 
 public class UIManager implements Listener
 {
-    private static HashMap<UUID, InGameUI> currentUI = new HashMap<>();
+    private static final HashMap<UUID, InGameUI> currentUI = new HashMap<>();
 
+    @SuppressWarnings("EmptyMethod")
     @EventHandler
     public void OnOpen(InventoryOpenEvent e)
     {
@@ -27,9 +28,6 @@ public class UIManager implements Listener
     {
         // 기존에 인벤토리가 열려있는 상태에서 다른것을 열면 close가 먼저 불림.
         Player player = (Player) e.getPlayer();
-        if (player == null)
-            return;
-
         currentUI.remove(player.getUniqueId());
     }
 
@@ -67,9 +65,6 @@ public class UIManager implements Listener
     public static void OnClickUpperInventory(InventoryClickEvent e)
     {
         Player player = (Player) e.getWhoClicked();
-        if (player == null)
-            return;
-
         InGameUI inGameUI = currentUI.get(player.getUniqueId());
         if (inGameUI == null)
             return;
@@ -81,9 +76,6 @@ public class UIManager implements Listener
     public static void OnClickLowerInventory(InventoryClickEvent e)
     {
         Player player = (Player) e.getWhoClicked();
-        if (player == null)
-            return;
-
         InGameUI inGameUI = currentUI.get(player.getUniqueId());
         if (inGameUI == null)
             return;

@@ -79,8 +79,7 @@ public final class Shop
             }
             if (shopConf.contains("flag.localshop") && !shopConf.contains("flag.deliverycharge") && shopConf.contains("world") && shopConf.contains("pos1") && shopConf.contains("pos2"))
             {
-                boolean outside = false;
-                if (!player.getWorld().getName().equals(shopConf.getString("world"))) outside = true;
+                boolean outside = !player.getWorld().getName().equals(shopConf.getString("world"));
 
                 String[] shopPos1 = shopConf.getString("pos1").split("_");
                 String[] shopPos2 = shopConf.getString("pos2").split("_");
@@ -499,22 +498,31 @@ public final class Shop
                 {
                     try
                     {
-                        int i = Integer.parseInt(s);
+                        @SuppressWarnings("unused") int i = Integer.parseInt(s); // 의도적으로 넣은 코드임. 숫자가 아니면 건너뛰기 위함.
                         if (!ShopUtil.ccShop.get().contains(shopName + "." + s + ".value")) continue; //장식용임
                     } catch (Exception e)
                     {
                         continue;
                     }
 
-                    if (args[5].equals("stock")) value = ShopUtil.ccShop.get().getInt(shopName + "." + s + ".stock");
-                    else if (args[5].equals("median"))
-                        value = ShopUtil.ccShop.get().getInt(shopName + "." + s + ".median");
-                    else if (args[5].equals("value"))
-                        value = ShopUtil.ccShop.get().getInt(shopName + "." + s + ".value");
-                    else if (args[5].equals("valueMin"))
-                        value = ShopUtil.ccShop.get().getInt(shopName + "." + s + ".valueMin");
-                    else if (args[5].equals("valueMax"))
-                        value = ShopUtil.ccShop.get().getInt(shopName + "." + s + ".valueMax");
+                    switch (args[5])
+                    {
+                        case "stock":
+                            value = ShopUtil.ccShop.get().getInt(shopName + "." + s + ".stock");
+                            break;
+                        case "median":
+                            value = ShopUtil.ccShop.get().getInt(shopName + "." + s + ".median");
+                            break;
+                        case "value":
+                            value = ShopUtil.ccShop.get().getInt(shopName + "." + s + ".value");
+                            break;
+                        case "valueMin":
+                            value = ShopUtil.ccShop.get().getInt(shopName + "." + s + ".valueMin");
+                            break;
+                        case "valueMax":
+                            value = ShopUtil.ccShop.get().getInt(shopName + "." + s + ".valueMax");
+                            break;
+                    }
 
                     if (mod.equalsIgnoreCase("="))
                     {
@@ -800,7 +808,7 @@ public final class Shop
                     int interval;
                     try
                     {
-                        Integer temp = Integer.parseInt(args[3]);
+                        int temp = Integer.parseInt(args[3]);
 
                         if (temp < 1)
                             temp = 1;
@@ -859,7 +867,7 @@ public final class Shop
                     int interval;
                     try
                     {
-                        Integer temp = Integer.parseInt(args[3]);
+                        int temp = Integer.parseInt(args[3]);
 
                         if (temp < 1)
                             temp = 1;
@@ -905,131 +913,64 @@ public final class Shop
                     return true;
                 }
 
-                if (args[3].equals("set"))
+                switch (args[3])
                 {
-                    try
-                    {
-                        if (Double.parseDouble(args[4]) < 0)
-                        {
-                            ShopUtil.ccShop.get().set(args[1] + ".Options.Balance", null);
-                            player.sendMessage(DynamicShop.dsPrefix + LangUtil.ccLang.get().get("CHANGES_APPLIED") + LangUtil.ccLang.get().getString("SHOP_BAL_INF"));
-                        } else
-                        {
-                            ShopUtil.ccShop.get().set(args[1] + ".Options.Balance", Double.parseDouble(args[4]));
-                            player.sendMessage(DynamicShop.dsPrefix + LangUtil.ccLang.get().get("CHANGES_APPLIED") + args[4]);
-                        }
-                        ShopUtil.ccShop.save();
-                    } catch (Exception e)
-                    {
-                        player.sendMessage(DynamicShop.dsPrefix + LangUtil.ccLang.get().getString("ERR.WRONG_DATATYPE"));
-                        return true;
-                    }
-                } else if (args[3].equals("linkto"))
-                {
-                    // 그런 상점(타깃) 없음
-                    if (!ShopUtil.ccShop.get().contains(args[4]))
-                    {
-                        player.sendMessage(DynamicShop.dsPrefix + LangUtil.ccLang.get().getString("ERR.SHOP_NOT_FOUND"));
-                        return true;
-                    }
-
-                    // 타깃 상점이 연동계좌임
-                    if (ShopUtil.ccShop.get().contains(args[4] + ".Options.Balance"))
-                    {
+                    case "set":
                         try
                         {
-                            Double temp = Double.parseDouble(ShopUtil.ccShop.get().getString(args[4] + ".Options.Balance"));
+                            if (Double.parseDouble(args[4]) < 0)
+                            {
+                                ShopUtil.ccShop.get().set(args[1] + ".Options.Balance", null);
+                                player.sendMessage(DynamicShop.dsPrefix + LangUtil.ccLang.get().get("CHANGES_APPLIED") + LangUtil.ccLang.get().getString("SHOP_BAL_INF"));
+                            } else
+                            {
+                                ShopUtil.ccShop.get().set(args[1] + ".Options.Balance", Double.parseDouble(args[4]));
+                                player.sendMessage(DynamicShop.dsPrefix + LangUtil.ccLang.get().get("CHANGES_APPLIED") + args[4]);
+                            }
+                            ShopUtil.ccShop.save();
                         } catch (Exception e)
                         {
-                            player.sendMessage(DynamicShop.dsPrefix + LangUtil.ccLang.get().getString("ERR.SHOP_LINK_TARGET_ERR"));
+                            player.sendMessage(DynamicShop.dsPrefix + LangUtil.ccLang.get().getString("ERR.WRONG_DATATYPE"));
                             return true;
                         }
-                    }
-
-                    // 출발상점을 타깃으로 하는 상점이 있음
-                    for (String s : ShopUtil.ccShop.get().getKeys(false))
-                    {
-                        String temp = ShopUtil.ccShop.get().getString(s + ".Options.Balance");
-                        try
+                        break;
+                    case "linkto":
+                        // 그런 상점(타깃) 없음
+                        if (!ShopUtil.ccShop.get().contains(args[4]))
                         {
-                            if (temp != null && temp.equals(args[1]))
+                            player.sendMessage(DynamicShop.dsPrefix + LangUtil.ccLang.get().getString("ERR.SHOP_NOT_FOUND"));
+                            return true;
+                        }
+
+                        // 타깃 상점이 연동계좌임
+                        if (ShopUtil.ccShop.get().contains(args[4] + ".Options.Balance"))
+                        {
+                            try
                             {
-                                player.sendMessage(DynamicShop.dsPrefix + LangUtil.ccLang.get().getString("ERR.NESTED_STRUCTURE"));
+                                // temp 를 직접 사용하지는 않지만 의도적으로 넣은 코드임. 숫자가 아니면 건너뛰기 위함.
+                                Double temp = Double.parseDouble(ShopUtil.ccShop.get().getString(args[4] + ".Options.Balance"));
+                            } catch (Exception e)
+                            {
+                                player.sendMessage(DynamicShop.dsPrefix + LangUtil.ccLang.get().getString("ERR.SHOP_LINK_TARGET_ERR"));
                                 return true;
                             }
-                        } catch (Exception e)
-                        {
-                            DynamicShop.console.sendMessage(DynamicShop.dsPrefix + e);
                         }
-                    }
 
-                    // 출발 상점과 도착 상점이 같음
-                    if (args[1].equals(args[4]))
-                    {
-                        player.sendMessage(DynamicShop.dsPrefix + LangUtil.ccLang.get().getString("ERR.WRONG_USAGE"));
-                        return true;
-                    }
-
-                    // 출발 상점과 도착 상점의 통화 유형이 다름
-                    if (ShopUtil.ccShop.get().contains(args[1] + ".Options.flag.jobpoint") != ShopUtil.ccShop.get().contains(args[4] + ".Options.flag.jobpoint"))
-                    {
-                        player.sendMessage(DynamicShop.dsPrefix + LangUtil.ccLang.get().getString("ERR.SHOP_DIFF_CURRENCY"));
-                        return true;
-                    }
-
-                    ShopUtil.ccShop.get().set(args[1] + ".Options.Balance", args[4]);
-                    ShopUtil.ccShop.save();
-                    player.sendMessage(DynamicShop.dsPrefix + LangUtil.ccLang.get().getString("CHANGES_APPLIED") + args[4]);
-                } else if (args[3].equals("transfer"))
-                {
-                    //[4] 대상 [5] 금액
-                    if (args.length < 6)
-                    {
-                        player.sendMessage(DynamicShop.dsPrefix + LangUtil.ccLang.get().getString("ERR.WRONG_USAGE"));
-                        return true;
-                    }
-
-                    double amount = 0;
-                    // 마지막 인자가 숫자가 아님
-                    try
-                    {
-                        amount = Double.parseDouble(args[5]);
-                    } catch (Exception e)
-                    {
-                        player.sendMessage(DynamicShop.dsPrefix + LangUtil.ccLang.get().getString("ERR.WRONG_DATATYPE"));
-                        return true;
-                    }
-
-                    // 출발 상점이 무한계좌임
-                    if (!ShopUtil.ccShop.get().contains(args[1] + ".Options.Balance"))
-                    {
-                        player.sendMessage(DynamicShop.dsPrefix + LangUtil.ccLang.get().getString("ERR.SHOP_HAS_INF_BAL").replace("{shop}", args[1]));
-                        return true;
-                    }
-
-                    // 출발 상점에 돈이 부족
-                    if (ShopUtil.getShopBalance(args[1]) < amount)
-                    {
-                        if (ShopUtil.ccShop.get().contains(args[1] + ".Options.flag.jobpoint"))
+                        // 출발상점을 타깃으로 하는 상점이 있음
+                        for (String s : ShopUtil.ccShop.get().getKeys(false))
                         {
-                            player.sendMessage(DynamicShop.dsPrefix + LangUtil.ccLang.get().getString("NOT_ENOUGH_POINT").
-                                    replace("{bal}", DynaShopAPI.df.format(ShopUtil.getShopBalance(args[1]))));
-                        } else
-                        {
-                            player.sendMessage(DynamicShop.dsPrefix + LangUtil.ccLang.get().getString("NOT_ENOUGH_MONEY").
-                                    replace("{bal}", DynaShopAPI.df.format(ShopUtil.getShopBalance(args[1]))));
-                        }
-                        return true;
-                    }
-
-                    // 다른 상점으로 송금
-                    if (ShopUtil.ccShop.get().contains(args[4]))
-                    {
-                        // 도착 상점이 무한계좌임
-                        if (!ShopUtil.ccShop.get().contains(args[4] + ".Options.Balance"))
-                        {
-                            player.sendMessage(DynamicShop.dsPrefix + LangUtil.ccLang.get().getString("ERR.SHOP_HAS_INF_BAL").replace("{shop}", args[4]));
-                            return true;
+                            String temp = ShopUtil.ccShop.get().getString(s + ".Options.Balance");
+                            try
+                            {
+                                if (temp != null && temp.equals(args[1]))
+                                {
+                                    player.sendMessage(DynamicShop.dsPrefix + LangUtil.ccLang.get().getString("ERR.NESTED_STRUCTURE"));
+                                    return true;
+                                }
+                            } catch (Exception e)
+                            {
+                                DynamicShop.console.sendMessage(DynamicShop.dsPrefix + e);
+                            }
                         }
 
                         // 출발 상점과 도착 상점이 같음
@@ -1046,53 +987,123 @@ public final class Shop
                             return true;
                         }
 
-                        // 송금.
-                        ShopUtil.addShopBalance(args[1], amount * -1);
-                        ShopUtil.addShopBalance(args[4], amount);
+                        ShopUtil.ccShop.get().set(args[1] + ".Options.Balance", args[4]);
                         ShopUtil.ccShop.save();
-                        player.sendMessage(DynamicShop.dsPrefix + LangUtil.ccLang.get().getString("TRANSFER_SUCCESS"));
-                    }
-                    // 플레이어에게 송금
-                    else
-                    {
+                        player.sendMessage(DynamicShop.dsPrefix + LangUtil.ccLang.get().getString("CHANGES_APPLIED") + args[4]);
+                        break;
+                    case "transfer":
+                        //[4] 대상 [5] 금액
+                        if (args.length < 6)
+                        {
+                            player.sendMessage(DynamicShop.dsPrefix + LangUtil.ccLang.get().getString("ERR.WRONG_USAGE"));
+                            return true;
+                        }
+
+                        double amount = 0;
+                        // 마지막 인자가 숫자가 아님
                         try
                         {
-                            Player target = Bukkit.getPlayer(args[4]);
+                            amount = Double.parseDouble(args[5]);
+                        } catch (Exception e)
+                        {
+                            player.sendMessage(DynamicShop.dsPrefix + LangUtil.ccLang.get().getString("ERR.WRONG_DATATYPE"));
+                            return true;
+                        }
 
-                            if (target == null)
+                        // 출발 상점이 무한계좌임
+                        if (!ShopUtil.ccShop.get().contains(args[1] + ".Options.Balance"))
+                        {
+                            player.sendMessage(DynamicShop.dsPrefix + LangUtil.ccLang.get().getString("ERR.SHOP_HAS_INF_BAL").replace("{shop}", args[1]));
+                            return true;
+                        }
+
+                        // 출발 상점에 돈이 부족
+                        if (ShopUtil.getShopBalance(args[1]) < amount)
+                        {
+                            if (ShopUtil.ccShop.get().contains(args[1] + ".Options.flag.jobpoint"))
                             {
-                                player.sendMessage(DynamicShop.dsPrefix + LangUtil.ccLang.get().getString("ERR.PLAYER_NOT_EXIST"));
+                                player.sendMessage(DynamicShop.dsPrefix + LangUtil.ccLang.get().getString("NOT_ENOUGH_POINT").
+                                        replace("{bal}", DynaShopAPI.df.format(ShopUtil.getShopBalance(args[1]))));
+                            } else
+                            {
+                                player.sendMessage(DynamicShop.dsPrefix + LangUtil.ccLang.get().getString("NOT_ENOUGH_MONEY").
+                                        replace("{bal}", DynaShopAPI.df.format(ShopUtil.getShopBalance(args[1]))));
+                            }
+                            return true;
+                        }
+
+                        // 다른 상점으로 송금
+                        if (ShopUtil.ccShop.get().contains(args[4]))
+                        {
+                            // 도착 상점이 무한계좌임
+                            if (!ShopUtil.ccShop.get().contains(args[4] + ".Options.Balance"))
+                            {
+                                player.sendMessage(DynamicShop.dsPrefix + LangUtil.ccLang.get().getString("ERR.SHOP_HAS_INF_BAL").replace("{shop}", args[4]));
                                 return true;
                             }
 
-                            if (ShopUtil.ccShop.get().contains(args[1] + ".Options.flag.jobpoint"))
+                            // 출발 상점과 도착 상점이 같음
+                            if (args[1].equals(args[4]))
                             {
-                                JobsHook.addJobsPoint(target, amount);
-                                ShopUtil.addShopBalance(args[1], amount * -1);
-                                ShopUtil.ccShop.save();
+                                player.sendMessage(DynamicShop.dsPrefix + LangUtil.ccLang.get().getString("ERR.WRONG_USAGE"));
+                                return true;
+                            }
 
-                                player.sendMessage(DynamicShop.dsPrefix + LangUtil.ccLang.get().getString("TRANSFER_SUCCESS"));
-                            } else
+                            // 출발 상점과 도착 상점의 통화 유형이 다름
+                            if (ShopUtil.ccShop.get().contains(args[1] + ".Options.flag.jobpoint") != ShopUtil.ccShop.get().contains(args[4] + ".Options.flag.jobpoint"))
                             {
-                                Economy econ = DynamicShop.getEconomy();
-                                EconomyResponse er = econ.depositPlayer(target, amount);
+                                player.sendMessage(DynamicShop.dsPrefix + LangUtil.ccLang.get().getString("ERR.SHOP_DIFF_CURRENCY"));
+                                return true;
+                            }
 
-                                if (er.transactionSuccess())
+                            // 송금.
+                            ShopUtil.addShopBalance(args[1], amount * -1);
+                            ShopUtil.addShopBalance(args[4], amount);
+                            ShopUtil.ccShop.save();
+                            player.sendMessage(DynamicShop.dsPrefix + LangUtil.ccLang.get().getString("TRANSFER_SUCCESS"));
+                        }
+                        // 플레이어에게 송금
+                        else
+                        {
+                            try
+                            {
+                                Player target = Bukkit.getPlayer(args[4]);
+
+                                if (target == null)
                                 {
+                                    player.sendMessage(DynamicShop.dsPrefix + LangUtil.ccLang.get().getString("ERR.PLAYER_NOT_EXIST"));
+                                    return true;
+                                }
+
+                                if (ShopUtil.ccShop.get().contains(args[1] + ".Options.flag.jobpoint"))
+                                {
+                                    JobsHook.addJobsPoint(target, amount);
                                     ShopUtil.addShopBalance(args[1], amount * -1);
                                     ShopUtil.ccShop.save();
 
                                     player.sendMessage(DynamicShop.dsPrefix + LangUtil.ccLang.get().getString("TRANSFER_SUCCESS"));
                                 } else
                                 {
-                                    player.sendMessage(DynamicShop.dsPrefix + "Transfer failed");
+                                    Economy econ = DynamicShop.getEconomy();
+                                    EconomyResponse er = econ.depositPlayer(target, amount);
+
+                                    if (er.transactionSuccess())
+                                    {
+                                        ShopUtil.addShopBalance(args[1], amount * -1);
+                                        ShopUtil.ccShop.save();
+
+                                        player.sendMessage(DynamicShop.dsPrefix + LangUtil.ccLang.get().getString("TRANSFER_SUCCESS"));
+                                    } else
+                                    {
+                                        player.sendMessage(DynamicShop.dsPrefix + "Transfer failed");
+                                    }
                                 }
+                            } catch (Exception e)
+                            {
+                                player.sendMessage(DynamicShop.dsPrefix + "Transfer failed. /" + e);
                             }
-                        } catch (Exception e)
-                        {
-                            player.sendMessage(DynamicShop.dsPrefix + "Transfer failed. /" + e);
                         }
-                    }
+                        break;
                 }
             }
 
@@ -1185,6 +1196,7 @@ public final class Shop
                 {
                     try
                     {
+                        // i를 직접 사용하지는 않지만 의도적으로 넣은 코드임.
                         int i = Integer.parseInt(s);
                         if (!ShopUtil.ccShop.get().contains(shopName + "." + s + ".value")) continue; //장식용임
                     } catch (Exception e)

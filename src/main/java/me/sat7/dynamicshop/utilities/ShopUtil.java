@@ -2,6 +2,7 @@ package me.sat7.dynamicshop.utilities;
 
 import java.io.File;
 import java.util.ArrayList;
+import java.util.Collections;
 
 import me.sat7.dynamicshop.transactions.Calc;
 import org.bukkit.Bukkit;
@@ -380,7 +381,7 @@ public final class ShopUtil
         {
             String infoBtnIconName = GetShopInfoIconMat();
 
-            if (false == i.getItem(53).getType().name().equals(infoBtnIconName))
+            if (!i.getItem(53).getType().name().equals(infoBtnIconName))
                 return false;
 
             String temp = ChatColor.stripColor(i.getItem(53).getItemMeta().getDisplayName());
@@ -511,8 +512,8 @@ public final class ShopUtil
     public static void setupShopFile()
     {
         ccShop.setup("Shop", null);
-        ccShop.get().options().header("Shop name can not contain formatting codes, '/' and ' '");
-        ccShop.get().options().copyHeader(true);
+        ccShop.get().options().setHeader(Collections.singletonList("Shop name can not contain formatting codes, '/' and ' '"));
+        ccShop.get().options().parseComments(true);
 
         if (ccShop.get().getKeys(false).size() == 0)
         {
@@ -648,7 +649,6 @@ public final class ShopUtil
             }
         }
 
-        String[] ret = {topShopName, Integer.toString(tradeIdx)};
-        return ret;
+        return new String[]{topShopName, Integer.toString(tradeIdx)};
     }
 }

@@ -2,6 +2,7 @@ package me.sat7.dynamicshop.guis;
 
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Collections;
 
 import me.sat7.dynamicshop.DynaShopAPI;
 import me.sat7.dynamicshop.jobshook.JobsHook;
@@ -34,7 +35,7 @@ public class ShopSettings extends InGameUI
         // 닫기 버튼
         ItemStack closeBtn = ItemsUtil.createItemStack(Material.BARRIER, null,
                 LangUtil.ccLang.get().getString("CLOSE"),
-                new ArrayList<>(Arrays.asList(LangUtil.ccLang.get().getString("CLOSE_LORE"))), 1);
+                new ArrayList<>(Collections.singletonList(LangUtil.ccLang.get().getString("CLOSE_LORE"))), 1);
         inventory.setItem(27, closeBtn);
 
         ConfigurationSection confSec_Options = ShopUtil.ccShop.get().getConfigurationSection(shopName).getConfigurationSection("Options");
@@ -390,8 +391,6 @@ public class ShopSettings extends InGameUI
     public void OnClickUpperInventory(InventoryClickEvent e)
     {
         Player player = (Player) e.getWhoClicked();
-        if (player == null)
-            return;
 
         String[] temp = DynamicShop.userInteractItem.get(player.getUniqueId()).split("/");
         String shopName = temp[0];

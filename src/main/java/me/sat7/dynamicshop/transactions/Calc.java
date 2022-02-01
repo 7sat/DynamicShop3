@@ -1,6 +1,5 @@
 package me.sat7.dynamicshop.transactions;
 
-import me.sat7.dynamicshop.DynamicShop;
 import me.sat7.dynamicshop.utilities.ConfigUtil;
 import me.sat7.dynamicshop.utilities.ShopUtil;
 

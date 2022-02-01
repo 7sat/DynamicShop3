@@ -2,7 +2,7 @@ package me.sat7.dynamicshop.guis;
 
 import java.text.DecimalFormat;
 import java.util.ArrayList;
-import java.util.Arrays;
+import java.util.Collections;
 
 import me.sat7.dynamicshop.DynaShopAPI;
 import me.sat7.dynamicshop.transactions.Buy;
@@ -229,7 +229,7 @@ public class ItemTrade extends InGameUI
 
         // 닫기 버튼
         ItemStack closeBtn = ItemsUtil.createItemStack(Material.BARRIER, null,
-                LangUtil.ccLang.get().getString("CLOSE"), new ArrayList<>(Arrays.asList(LangUtil.ccLang.get().getString("CLOSE_LORE"))), 1);
+                LangUtil.ccLang.get().getString("CLOSE"), new ArrayList<>(Collections.singletonList(LangUtil.ccLang.get().getString("CLOSE_LORE"))), 1);
 
         inven.setItem(9, closeBtn);
         return inven;
@@ -357,9 +357,6 @@ public class ItemTrade extends InGameUI
                                 priceSum += deliverycharge;
                             }
                         }
-                    } else
-                    {
-                        deliverycharge = 0;
                     }
                 }
 
