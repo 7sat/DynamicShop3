@@ -40,7 +40,7 @@ public class QuickSell extends InGameUI {
     }
 
     @Override
-    public void OnClickUpperInventory(InventoryClickEvent e)
+    public void OnClickLowerInventory(InventoryClickEvent e)
     {
         Player player = (Player) e.getWhoClicked();
         if (player == null)

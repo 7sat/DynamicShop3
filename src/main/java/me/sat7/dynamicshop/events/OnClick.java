@@ -2,6 +2,7 @@ package me.sat7.dynamicshop.events;
 
 import me.sat7.dynamicshop.DynaShopAPI;
 import me.sat7.dynamicshop.DynamicShop;
+import me.sat7.dynamicshop.guis.InGameUI;
 import me.sat7.dynamicshop.guis.UIManager;
 import me.sat7.dynamicshop.utilities.*;
 
@@ -29,10 +30,10 @@ public class OnClick implements Listener
 
         Player player = (Player) e.getWhoClicked();
 
-        // 클릭된 인벤토리가 내 인벤토리가 아님 (인벤 2개가 상하로 열려있을때, 위쪽 인벤을 클릭함)
+        // 위쪽 인벤토리를 클릭함 (= 내 인벤이 아님)
         if (e.getClickedInventory() != player.getInventory())
         {
-            // UUID 확인
+            // UUID 확인 // todo 이게 왜 필요하지?
             String pUuid = player.getUniqueId().toString();
 
             if (DynamicShop.ccUser.get().getConfigurationSection(pUuid) == null)
@@ -44,12 +45,27 @@ public class OnClick implements Listener
                     return;
                 }
             }
-        }
 
-        if(UIManager.IsPlayerUsingPluginGUI(player))
+            if(UIManager.IsPlayerUsingPluginGUI(player))
+            {
+                e.setCancelled(true);
+                UIManager.OnClickUpperInventory(e);
+            }
+        }
+        // 아래쪽 인벤토리를 클릭함
+        else
         {
-            e.setCancelled(true);
-            UIManager.OnClickLowerInventory(e);
+            if (UIManager.GetPlayerCurrentUIType(player) == InGameUI.UI_TYPE.ItemPalette ||
+                UIManager.GetPlayerCurrentUIType(player) == InGameUI.UI_TYPE.QuickSell)
+            {
+                e.setCancelled(true);
+                UIManager.OnClickLowerInventory(e);
+            }
+            // Shift클릭으로 상단의 UI인벤토리로 아이템 올리는것을 막음
+            else if (e.isShiftClick() && UIManager.IsPlayerUsingPluginGUI(player))
+            {
+                e.setCancelled(true);
+            }
         }
     }
 }
