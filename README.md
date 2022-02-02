@@ -1,1 +1,9 @@
-이따위 코드를 퍼블릭으로 공개해놓기 민망하니 정리하는 시늉이라도 하기로 한다.
+**DynamicShop**
+
+[Donation]
+PayPal https://www.paypal.me/7sat?locale.x=ko_KR
+
+[Link]
+Spigot https://www.spigotmc.org/resources/65603/
+Discord https://discord.gg/5HQjBqU
+bStats https://bstats.org/plugin/bukkit/DynamicShop
