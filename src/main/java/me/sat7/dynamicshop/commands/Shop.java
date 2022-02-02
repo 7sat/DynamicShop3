@@ -535,10 +535,24 @@ public final class Shop
                         ShopUtil.ccShop.get().set(shopName + "." + s + "." + dataType, (int) (ShopUtil.ccShop.get().getInt(shopName + "." + s + "." + dataType) - value));
                     } else if (mod.equalsIgnoreCase("/"))
                     {
-                        ShopUtil.ccShop.get().set(shopName + "." + s + "." + dataType, (int) (ShopUtil.ccShop.get().getInt(shopName + "." + s + "." + dataType) / value));
+                        if (args[5].equals("stock") || args[5].equals("median"))
+                        {
+                            ShopUtil.ccShop.get().set(shopName + "." + s + "." + dataType, (int) (ShopUtil.ccShop.get().getInt(shopName + "." + s + "." + dataType) / value));
+                        }
+                        else
+                        {
+                            ShopUtil.ccShop.get().set(shopName + "." + s + "." + dataType, ShopUtil.ccShop.get().getDouble(shopName + "." + s + "." + dataType) / value);
+                        }
                     } else if (mod.equalsIgnoreCase("*"))
                     {
-                        ShopUtil.ccShop.get().set(shopName + "." + s + "." + dataType, (int) (ShopUtil.ccShop.get().getInt(shopName + "." + s + "." + dataType) * value));
+                        if (args[5].equals("stock") || args[5].equals("median"))
+                        {
+                            ShopUtil.ccShop.get().set(shopName + "." + s + "." + dataType, (int) (ShopUtil.ccShop.get().getInt(shopName + "." + s + "." + dataType) * value));
+                        }
+                        else
+                        {
+                            ShopUtil.ccShop.get().set(shopName + "." + s + "." + dataType, ShopUtil.ccShop.get().getDouble(shopName + "." + s + "." + dataType) * value);
+                        }
                     }
 
                     if (ShopUtil.ccShop.get().getDouble(shopName + "." + s + ".valueMin") < 0)
