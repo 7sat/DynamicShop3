@@ -29,11 +29,12 @@ public final class ConfigUtil
     {
         // 인게임 30분마다 실행됨 (500틱)
         randomStockCount += 1;
-        if (randomStockCount > 24)
+        if (randomStockCount >= Integer.MAX_VALUE)
         {
             randomStockCount = 0;
             ShopUtil.ccShop.save();
         }
+        //DynamicShop.console.sendMessage("debug... " + randomStockCount);
 
         boolean needToUpdateUI = false;
 
