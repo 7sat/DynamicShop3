@@ -228,11 +228,11 @@ public class Shop extends InGameUI
 
                     if (buyPrice - buyPrice2 > 0)
                     {
-                        valueChanged_Buy = LangUtil.ccLang.get().getString("ARROW_UP") + Math.round(priceSave1 * 100d) / 100d + "%";
+                        valueChanged_Buy = LangUtil.ccLang.get().getString("ARROW_UP_2") + Math.round(priceSave1 * 100d) / 100d + "%";
                         valueChanged_Sell = LangUtil.ccLang.get().getString("ARROW_UP") + Math.round(priceSave1 * 100d) / 100d + "%";
                     } else if (buyPrice - buyPrice2 < 0)
                     {
-                        valueChanged_Buy = LangUtil.ccLang.get().getString("ARROW_DOWN") + Math.round(priceSave2 * 100d) / 100d + "%";
+                        valueChanged_Buy = LangUtil.ccLang.get().getString("ARROW_DOWN_2") + Math.round(priceSave2 * 100d) / 100d + "%";
                         valueChanged_Sell = LangUtil.ccLang.get().getString("ARROW_DOWN") + Math.round(priceSave2 * 100d) / 100d + "%";
                     } else if (buyPrice == buyPrice2)
                     {

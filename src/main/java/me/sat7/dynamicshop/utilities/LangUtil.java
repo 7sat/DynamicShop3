@@ -201,6 +201,8 @@ public final class LangUtil
 
             ccLang.get().addDefault("ARROW_UP", "§a⬆");
             ccLang.get().addDefault("ARROW_DOWN", "§c⬇");
+            ccLang.get().addDefault("ARROW_UP_2", "§c⬆");
+            ccLang.get().addDefault("ARROW_DOWN_2", "§a⬇");
 
             ccLang.get().addDefault("SHOPINFO", "§f[SHOP_LORE][PERMISSION][TAX][SHOP_BALANCE][SHOP_HOUR][SHOP_POS]");
 
@@ -420,6 +422,8 @@ public final class LangUtil
 
             ccLang.get().addDefault("ARROW_UP", "§a⬆");
             ccLang.get().addDefault("ARROW_DOWN", "§c⬇");
+            ccLang.get().addDefault("ARROW_UP_2", "§c⬆");
+            ccLang.get().addDefault("ARROW_DOWN_2", "§a⬇");
 
             ccLang.get().addDefault("SHOPINFO", "§f[SHOP_LORE][PERMISSION][TAX][SHOP_BALANCE][SHOP_HOUR][SHOP_POS]");
 
