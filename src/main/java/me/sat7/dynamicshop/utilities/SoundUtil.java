@@ -42,7 +42,7 @@ public final class SoundUtil
     public static void setupSoundFile()
     {
         ccSound.setup("Sound", null);
-        ccSound.get().options().setHeader(Collections.singletonList("Enter 0 to mute.\nhttps://hub.spigotmc.org/javadocs/bukkit/org/bukkit/Sound.html"));
+        ccSound.get().options().header("Enter 0 to mute.\nhttps://hub.spigotmc.org/javadocs/bukkit/org/bukkit/Sound.html");
         ccSound.get().addDefault("sell", "ENTITY_EXPERIENCE_ORB_PICKUP");
         ccSound.get().addDefault("buy", "ENTITY_EXPERIENCE_ORB_PICKUP");
         ccSound.get().addDefault("editItem", "ENTITY_PAINTING_PLACE");

@@ -33,7 +33,7 @@ public class StartPage extends InGameUI
     public static void setupStartPageFile()
     {
         ccStartPage.setup("Startpage", null);
-        ccStartPage.get().options().setHeader(Collections.singletonList("LineBreak: Do not use \\, | and brackets. Recommended : /, _"));
+        ccStartPage.get().options().header("LineBreak: Do not use \\, | and brackets. Recommended : /, _");
         ccStartPage.get().addDefault("Options.Title", "§3§lStart Page");
         ccStartPage.get().addDefault("Options.UiSlotCount", 27);
         ccStartPage.get().addDefault("Options.LineBreak", "/");

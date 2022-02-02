@@ -512,8 +512,8 @@ public final class ShopUtil
     public static void setupShopFile()
     {
         ccShop.setup("Shop", null);
-        ccShop.get().options().setHeader(Collections.singletonList("Shop name can not contain formatting codes, '/' and ' '"));
-        ccShop.get().options().parseComments(true);
+        ccShop.get().options().header("Shop name can not contain formatting codes, '/' and ' '");
+        ccShop.get().options().copyHeader(true);
 
         if (ccShop.get().getKeys(false).size() == 0)
         {

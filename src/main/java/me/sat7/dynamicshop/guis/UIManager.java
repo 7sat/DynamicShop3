@@ -1,5 +1,6 @@
 package me.sat7.dynamicshop.guis;
 
+import me.sat7.dynamicshop.DynamicShop;
 import me.sat7.dynamicshop.utilities.SoundUtil;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
@@ -8,6 +9,7 @@ import org.bukkit.event.inventory.InventoryClickEvent;
 import org.bukkit.event.inventory.InventoryCloseEvent;
 import org.bukkit.event.inventory.InventoryOpenEvent;
 import org.bukkit.inventory.Inventory;
+import org.bukkit.scheduler.BukkitRunnable;
 
 import java.util.HashMap;
 import java.util.UUID;
@@ -38,9 +40,16 @@ public class UIManager implements Listener
 
     public static void Open(Player player, Inventory inventory, InGameUI inGameUI)
     {
-        player.openInventory(inventory); // 가장 먼저 불려야함. (버킷에서 새 인벤이 열릴때 기존의 것이 닫힘처리됨)
+        new BukkitRunnable()
+        {
+            @Override
+            public void run()
+            {
+                player.openInventory(inventory); // 가장 먼저 불려야함. (버킷에서 새 인벤이 열릴때 기존의 것이 닫힘처리됨)
 
-        currentUI.put(player.getUniqueId(), inGameUI);
+                currentUI.put(player.getUniqueId(), inGameUI);
+            }
+        }.runTask(DynamicShop.plugin);
     }
 
     public static boolean IsPlayerUsingPluginGUI(Player player)
