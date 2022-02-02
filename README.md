@@ -1,18 +1,1 @@
-# DynamicShop
-Spaghetti from hell. Good Luck.
-
-[Link]
-
-Spigot https://www.spigotmc.org/resources/65603/
-
-Discord https://discord.gg/5HQjBqU
-
-Crowdin https://crowdin.com/project/1q2w3e4r
-
-bStats https://bstats.org/plugin/bukkit/DynamicShop
-
-[Donation]
-
-PayPal https://www.paypal.me/7sat?locale.x=ko_KR
-
-Donorbox https://donorbox.org/7sat
+이따위 코드를 퍼블릭으로 공개해놓기 민망하니 정리하는 시늉이라도 하기로 한다.

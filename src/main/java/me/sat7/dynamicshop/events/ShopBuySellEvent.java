@@ -11,7 +11,8 @@ import org.bukkit.inventory.ItemStack;
 /**
  * This event will fire every time a buy or sell is made in the DynamicShop plugin.
  */
-public class ShopBuySellEvent extends PlayerEvent {
+public class ShopBuySellEvent extends PlayerEvent
+{
     private static final HandlerList HANDLERS = new HandlerList();
     @Getter
     private final boolean buy;
@@ -36,7 +37,8 @@ public class ShopBuySellEvent extends PlayerEvent {
     @Getter
     private final boolean jobPoint;
 
-    public ShopBuySellEvent(boolean buy, double oldBuyPrice, double newBuyPrice, double oldSellPrice, double newSellPrice, int oldStock, int newStock, int median, String shopName, ItemStack merchandise, Player p) {
+    public ShopBuySellEvent(boolean buy, double oldBuyPrice, double newBuyPrice, double oldSellPrice, double newSellPrice, int oldStock, int newStock, int median, String shopName, ItemStack merchandise, Player p)
+    {
         super(p);
         this.buy = buy;
         this.oldBuyPrice = oldBuyPrice;
@@ -51,12 +53,14 @@ public class ShopBuySellEvent extends PlayerEvent {
         this.jobPoint = DynaShopAPI.isJobsPointShop(shopName);
     }
 
-    public static HandlerList getHandlerList() {
+    public static HandlerList getHandlerList()
+    {
         return HANDLERS;
     }
 
     @Override
-    public String toString() {
+    public String toString()
+    {
         return "ShopBuySellEvent{" +
                 "buy=" + buy +
                 ", oldBuyPrice=" + oldBuyPrice +
@@ -74,7 +78,8 @@ public class ShopBuySellEvent extends PlayerEvent {
     }
 
     @Override
-    public HandlerList getHandlers() {
+    public HandlerList getHandlers()
+    {
         return HANDLERS;
     }
 }

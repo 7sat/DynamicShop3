@@ -10,13 +10,16 @@ import me.sat7.dynamicshop.utilities.ShopUtil;
 import me.sat7.dynamicshop.utilities.SoundUtil;
 import me.sat7.dynamicshop.utilities.WorthUtil;
 
-public final class Reload {
-    private Reload() {
+public final class Reload
+{
+    private Reload()
+    {
 
     }
 
-    static void reload(Player player) {
-        if(!player.hasPermission("dshop.admin.reload"))
+    static void reload(Player player)
+    {
+        if (!player.hasPermission("dshop.admin.reload"))
         {
             player.sendMessage(DynamicShop.dsPrefix + LangUtil.ccLang.get().getString("ERR.NO_PERMISSION"));
             return;

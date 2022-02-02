@@ -28,57 +28,65 @@ import org.bukkit.inventory.ItemStack;
 import java.util.ArrayList;
 import java.util.List;
 
-public class OnSignClick  implements Listener
+public class OnSignClick implements Listener
 {
+    /*
+    TODO 상점명이 유효하지 않을때 경고가 없음 (첫줄에 DS를 넣고 두번째줄에 아무거나 입력시 발생)
+    아이템명이 유효하지 않을때 경고가 없음
+     */
+
+
     // 생성
     @EventHandler
     public void onSignChange(SignChangeEvent e)
     {
-        if(!e.getPlayer().hasPermission("dshop.admin.createsign")) return;
+        if (!e.getPlayer().hasPermission("dshop.admin.createsign")) return;
 
-        if(e.getLine(0).equalsIgnoreCase("[dshop]")|| e.getLine(0).equalsIgnoreCase("[ds]")||e.getLine(0).equalsIgnoreCase("[dynamicshop]"))
+        //noinspection ConstantConditions
+        if (e.getLine(0).equalsIgnoreCase("[dshop]")
+            || e.getLine(0).equalsIgnoreCase("[ds]")
+            || e.getLine(0).equalsIgnoreCase("[dynamicshop]"))
         {
             int x = e.getBlock().getX();
             int y = e.getBlock().getY();
             int z = e.getBlock().getZ();
             String signId = x + "_" + y + "_" + z;
 
-            if(e.getLine(1).length() == 0)
+            if (e.getLine(1).length() == 0)
             {
-                e.setLine(1,"Error");
-                e.setLine(2,"shop name is null");
+                e.setLine(1, "Error");
+                e.setLine(2, "shop name is null");
                 e.getBlock().getState().update();
                 return;
             }
 
             //e.setLine(0,"§3[DynamicShop]");
-            e.setLine(0,e.getLine(3));
-            e.setLine(1,"§a"+e.getLine(1));
-            e.setLine(3,"");
+            e.setLine(0, e.getLine(3));
+            e.setLine(1, "§a" + e.getLine(1));
+            e.setLine(3, "");
             e.getBlock().getState().update();
 
-            DynamicShop.ccSign.get().set(signId+".shop" , ChatColor.stripColor(e.getLine(1)));
+            DynamicShop.ccSign.get().set(signId + ".shop", ChatColor.stripColor(e.getLine(1)));
 
             Block tempBlock = e.getBlock();
             Block blockBehind = null;
-            if (tempBlock != null && tempBlock.getState() instanceof Sign)
+            if (tempBlock.getState() instanceof Sign)
             {
                 BlockData data = tempBlock.getBlockData();
                 if (data instanceof Directional)
                 {
-                    Directional directional = (Directional)data;
+                    Directional directional = (Directional) data;
                     blockBehind = tempBlock.getRelative(directional.getFacing().getOppositeFace());
                 }
             }
-            if(blockBehind != null)
+            if (blockBehind != null)
             {
-                DynamicShop.ccSign.get().set(signId+".attached" , blockBehind.getX()+"_"+blockBehind.getY()+"_"+blockBehind.getZ());
-            }
-            else
+                DynamicShop.ccSign.get().set(signId + ".attached", blockBehind.getX() + "_" + blockBehind.getY() + "_" + blockBehind.getZ());
+            } else
             {
-                e.setLine(1,"Error");
-                e.setLine(2,"Sign must be ");
-                e.setLine(3,"placed on wall");
+                e.setLine(1, "Error");
+                e.setLine(2, "Sign must be ");
+                e.setLine(3, "placed on wall");
                 e.getBlock().getState().update();
                 DynamicShop.console.sendMessage(Constants.DYNAMIC_SHOP_PREFIX + "Err. Sign must be placed on wall. " + signId);
                 return;
@@ -88,14 +96,14 @@ public class OnSignClick  implements Listener
             {
                 String shop = ChatColor.stripColor(e.getLine(1));
                 String mat = ChatColor.stripColor(e.getLine(2)).toUpperCase();
-                int i = ShopUtil.findItemFromShop(shop,new ItemStack(Material.getMaterial(mat)));
+                int i = ShopUtil.findItemFromShop(shop, new ItemStack(Material.getMaterial(mat)));
 
-                e.setLine(2, ShopUtil.ccShop.get().getConfigurationSection(shop).getString(i+".mat"));
+                e.setLine(2, ShopUtil.ccShop.get().getConfigurationSection(shop).getString(i + ".mat"));
 
-                DynamicShop.ccSign.get().set(signId+".mat" , mat);
-            }catch (Exception exception)
+                DynamicShop.ccSign.get().set(signId + ".mat", mat);
+            } catch (Exception exception)
             {
-                e.setLine(2,"");
+                e.setLine(2, "");
             }
 
             DynamicShop.ccSign.save();
@@ -104,11 +112,14 @@ public class OnSignClick  implements Listener
 
     // 상호작용
     @EventHandler
-    public void onInteract(PlayerInteractEvent e) {
+    public void onInteract(PlayerInteractEvent e)
+    {
         Player p = e.getPlayer();
 
-        if(e.getAction() == Action.RIGHT_CLICK_BLOCK) {
-            if(e.getClickedBlock().getType().toString().contains("WALL_SIGN")) {
+        if (e.getAction() == Action.RIGHT_CLICK_BLOCK)
+        {
+            if (e.getClickedBlock().getType().toString().contains("WALL_SIGN"))
+            {
 
                 Sign s = (Sign) e.getClickedBlock().getState();
 
@@ -118,39 +129,38 @@ public class OnSignClick  implements Listener
                 String signId = x + "_" + y + "_" + z;
 
                 // 정보가 없음
-                if(!DynamicShop.ccSign.get().contains(signId) &&
+                if (!DynamicShop.ccSign.get().contains(signId) &&
                         s.getLine(1).length() > 0 &&
                         ShopUtil.ccShop.get().contains(ChatColor.stripColor(s.getLine(1))))
                 {
                     // 재생성 시도
-                    if(e.getPlayer().hasPermission("dshop.admin.createsign"))
+                    if (e.getPlayer().hasPermission("dshop.admin.createsign"))
                     {
                         String shop = ChatColor.stripColor(s.getLine(1));
-                        DynamicShop.ccSign.get().set(signId+".shop" , shop);
-                        s.setLine(0,"");
-                        s.setLine(1,"§a"+s.getLine(1));
+                        DynamicShop.ccSign.get().set(signId + ".shop", shop);
+                        s.setLine(0, "");
+                        s.setLine(1, "§a" + s.getLine(1));
 
                         try
                         {
                             String mat = ChatColor.stripColor(s.getLine(2)).toUpperCase();
-                            int i = ShopUtil.findItemFromShop(shop,new ItemStack(Material.getMaterial(mat)));
-                            s.setLine(2, ShopUtil.ccShop.get().getConfigurationSection(shop).getString(i+".mat"));
-                            DynamicShop.ccSign.get().set(signId+".mat" , mat);
-                        }catch (Exception exception)
+                            int i = ShopUtil.findItemFromShop(shop, new ItemStack(Material.getMaterial(mat)));
+                            s.setLine(2, ShopUtil.ccShop.get().getConfigurationSection(shop).getString(i + ".mat"));
+                            DynamicShop.ccSign.get().set(signId + ".mat", mat);
+                        } catch (Exception exception)
                         {
-                            s.setLine(2,"");
+                            s.setLine(2, "");
                         }
 
                         s.update();
                         DynamicShop.ccSign.save();
-                    }
-                    else
+                    } else
                     {
                         return;
                     }
                 }
 
-                if(DynamicShop.ccSign.get().contains(signId) && !DynamicShop.ccSign.get().contains(signId+".attached"))
+                if (DynamicShop.ccSign.get().contains(signId) && !DynamicShop.ccSign.get().contains(signId + ".attached"))
                 {
                     Block tempBlock = e.getClickedBlock();
                     Block blockBehind = null;
@@ -159,31 +169,31 @@ public class OnSignClick  implements Listener
                         BlockData data = tempBlock.getBlockData();
                         if (data instanceof Directional)
                         {
-                            Directional directional = (Directional)data;
+                            Directional directional = (Directional) data;
                             blockBehind = tempBlock.getRelative(directional.getFacing().getOppositeFace());
                         }
                     }
-                    DynamicShop.ccSign.get().set(signId+".attached" , blockBehind.getX()+"_"+blockBehind.getY()+"_"+blockBehind.getZ());
+                    DynamicShop.ccSign.get().set(signId + ".attached", blockBehind.getX() + "_" + blockBehind.getY() + "_" + blockBehind.getZ());
                     DynamicShop.ccSign.save();
                 }
 
-                String shopName = DynamicShop.ccSign.get().getString(signId+".shop");
-                if(shopName == null || shopName.length() == 0) return;
+                String shopName = DynamicShop.ccSign.get().getString(signId + ".shop");
+                if (shopName == null || shopName.length() == 0) return;
 
                 // 상점 존재 확인
-                if(ShopUtil.ccShop.get().contains(shopName))
+                if (ShopUtil.ccShop.get().contains(shopName))
                 {
-                    if(p.getGameMode() == GameMode.CREATIVE && !p.hasPermission(Constants.ADMIN_CREATIVE_PERMISSION))
+                    if (p.getGameMode() == GameMode.CREATIVE && !p.hasPermission(Constants.ADMIN_CREATIVE_PERMISSION))
                     {
-                        p.sendMessage(DynamicShop.dsPrefix+ LangUtil.ccLang.get().getString("ERR.CREATIVE"));
+                        p.sendMessage(DynamicShop.dsPrefix + LangUtil.ccLang.get().getString("ERR.CREATIVE"));
                         return;
                     }
 
                     //권한 확인
-                    String permission = ShopUtil.ccShop.get().getString(shopName+".Options.permission");
-                    if(permission != null && permission.length()>0 )
+                    String permission = ShopUtil.ccShop.get().getString(shopName + ".Options.permission");
+                    if (permission != null && permission.length() > 0)
                     {
-                        if(!p.hasPermission(permission) && !p.hasPermission(permission+".buy") && !p.hasPermission(permission+".sell"))
+                        if (!p.hasPermission(permission) && !p.hasPermission(permission + ".buy") && !p.hasPermission(permission + ".sell"))
                         {
                             p.sendMessage(DynamicShop.dsPrefix + LangUtil.ccLang.get().getString("ERR.NO_PERMISSION"));
                             return;
@@ -192,22 +202,20 @@ public class OnSignClick  implements Listener
 
                     try
                     {
-                        int idx = ShopUtil.findItemFromShop(shopName,new ItemStack(Material.getMaterial(DynamicShop.ccSign.get().getString(signId+".mat"))));
+                        int idx = ShopUtil.findItemFromShop(shopName, new ItemStack(Material.getMaterial(DynamicShop.ccSign.get().getString(signId + ".mat"))));
 
-                        if(idx != -1)
+                        if (idx != -1)
                         {
-                            DynamicShop.ccUser.get().set(p.getUniqueId().toString()+".interactItem",shopName+"/"+idx);
-                            DynamicShop.ccUser.get().set(p.getUniqueId().toString()+".tmpString","sign");
+                            DynamicShop.userInteractItem.put(p.getUniqueId(), shopName + "/" + idx);
+                            DynamicShop.userTempData.put(p.getUniqueId(), "sign");
                             DynamicShop.ccUser.save();
 
-                            DynaShopAPI.openItemTradeGui(p,shopName,String.valueOf(idx));
-                        }
-                        else
+                            DynaShopAPI.openItemTradeGui(p, shopName, String.valueOf(idx));
+                        } else
                         {
                             DynaShopAPI.openShopGui(p, shopName, 1);
                         }
-                    }
-                    catch (Exception exception)
+                    } catch (Exception exception)
                     {
                         DynaShopAPI.openShopGui(p, shopName, 1);
                     }
@@ -226,31 +234,29 @@ public class OnSignClick  implements Listener
         int z = b.getZ();
         String eventID = x + "_" + y + "_" + z;
 
-        for (String s:DynamicShop.ccSign.get().getKeys(false))
+        for (String s : DynamicShop.ccSign.get().getKeys(false))
         {
-            if(s.equals(eventID))
+            if (s.equals(eventID))
             {
-                if(!e.getPlayer().hasPermission("dshop.admin.destroysign"))
+                if (!e.getPlayer().hasPermission("dshop.admin.destroysign"))
                 {
                     e.setCancelled(true);
-                }
-                else
+                } else
                 {
-                    DynamicShop.ccSign.get().set(eventID,null);
+                    DynamicShop.ccSign.get().set(eventID, null);
                     DynamicShop.ccSign.save();
                 }
                 break;
             }
 
-            if(eventID.equals(DynamicShop.ccSign.get().getString(s+".attached")))
+            if (eventID.equals(DynamicShop.ccSign.get().getString(s + ".attached")))
             {
-                if(!e.getPlayer().hasPermission("dshop.admin.destroysign"))
+                if (!e.getPlayer().hasPermission("dshop.admin.destroysign"))
                 {
                     e.setCancelled(true);
-                }
-                else
+                } else
                 {
-                    DynamicShop.ccSign.get().set(s,null);
+                    DynamicShop.ccSign.get().set(s, null);
                     DynamicShop.ccSign.save();
                 }
                 break;
@@ -264,15 +270,15 @@ public class OnSignClick  implements Listener
     {
         List<Block> b = event.blockList();
 
-        for (Block bl:b)
+        for (Block bl : b)
         {
-            if(bl.getType().toString().contains("WALL_SIGN"))
+            if (bl.getType().toString().contains("WALL_SIGN"))
             {
                 int x = bl.getX();
                 int y = bl.getY();
                 int z = bl.getZ();
                 String signId = x + "_" + y + "_" + z;
-                if(DynamicShop.ccSign.get().contains(signId))
+                if (DynamicShop.ccSign.get().contains(signId))
                 {
                     event.setCancelled(true);
                     return;
@@ -294,14 +300,14 @@ public class OnSignClick  implements Listener
 
         for (Block b : signList)
         {
-            if(b.getType().toString().contains("WALL_SIGN"))
+            if (b.getType().toString().contains("WALL_SIGN"))
             {
                 int x = b.getX();
                 int y = b.getY();
                 int z = b.getZ();
                 String signId = x + "_" + y + "_" + z;
 
-                if(DynamicShop.ccSign.get().contains(signId))
+                if (DynamicShop.ccSign.get().contains(signId))
                 {
                     e.setCancelled(true);
                 }
