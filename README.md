@@ -1,4 +1,4 @@
-**Donation** https://www.paypal.me/7sat?locale.x=ko_KR
+**Donation** https://www.paypal.com/paypalme/7sat
 
 
 
