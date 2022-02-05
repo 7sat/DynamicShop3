@@ -2,7 +2,6 @@ package me.sat7.dynamicshop.guis;
 
 import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.Collections;
 
 import me.sat7.dynamicshop.DynaShopAPI;
 import org.bukkit.Bukkit;
@@ -18,15 +17,15 @@ import org.bukkit.inventory.meta.ItemMeta;
 import me.sat7.dynamicshop.DynamicShop;
 import me.sat7.dynamicshop.constants.Constants;
 import me.sat7.dynamicshop.files.CustomConfig;
-import me.sat7.dynamicshop.utilities.LangUtil;
 
 public class StartPage extends InGameUI
 {
-
     public StartPage()
     {
         uiType = UI_TYPE.StartPage;
     }
+
+
 
     public static CustomConfig ccStartPage;
 
@@ -51,7 +50,7 @@ public class StartPage extends InGameUI
 
     public Inventory getGui(Player player)
     {
-        Inventory ui = Bukkit.createInventory(player, ccStartPage.get().getInt("Options.UiSlotCount"), ccStartPage.get().getString("Options.Title"));
+        inventory = Bukkit.createInventory(player, ccStartPage.get().getInt("Options.UiSlotCount"), ccStartPage.get().getString("Options.Title"));
 
         DynamicShop.userInteractItem.put(player.getUniqueId(), "");
 
@@ -80,12 +79,12 @@ public class StartPage extends InGameUI
                 {
                     if (cs.getString(s + ".action").length() > 0)
                     {
-                        tempList.add(LangUtil.ccLang.get().getString("ITEM_MOVE_LORE"));
+                        tempList.add(t("ITEM_MOVE_LORE"));
                     } else
                     {
-                        tempList.add(LangUtil.ccLang.get().getString("ITEM_COPY_LORE"));
+                        tempList.add(t("ITEM_COPY_LORE"));
                     }
-                    tempList.add(LangUtil.ccLang.get().getString("ITEM_EDIT_LORE"));
+                    tempList.add(t("ITEM_EDIT_LORE"));
                 }
 
                 ItemStack btn = new ItemStack(Material.getMaterial(cs.getConfigurationSection(s).getString("icon")));
@@ -95,7 +94,7 @@ public class StartPage extends InGameUI
                 meta.addItemFlags(ItemFlag.HIDE_ATTRIBUTES);
                 meta.addItemFlags(ItemFlag.HIDE_POTION_EFFECTS);
                 btn.setItemMeta(meta);
-                ui.setItem(idx, btn);
+                inventory.setItem(idx, btn);
 
             } catch (Exception e)
             {
@@ -103,7 +102,7 @@ public class StartPage extends InGameUI
                 DynamicShop.console.sendMessage(Constants.DYNAMIC_SHOP_PREFIX + e);
             }
         }
-        return ui;
+        return inventory;
     }
 
     @Override
@@ -172,7 +171,7 @@ public class StartPage extends InGameUI
                     if (e.getCurrentItem() == null || e.getCurrentItem().getType() == Material.AIR) return;
 
                     DynamicShop.userInteractItem.put(player.getUniqueId(), "startpage/" + e.getSlot()); // 선택한 아이탬의 인덱스 저장
-                    player.sendMessage(DynamicShop.dsPrefix + LangUtil.ccLang.get().getString("ITEM_MOVE_SELECTED"));
+                    player.sendMessage(DynamicShop.dsPrefix + t("ITEM_MOVE_SELECTED"));
                 } else
                 {
                     if (e.getCurrentItem() != null && e.getCurrentItem().getType() != Material.AIR) return;

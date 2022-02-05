@@ -3,16 +3,12 @@ package me.sat7.dynamicshop.guis;
 import me.sat7.dynamicshop.DynaShopAPI;
 import me.sat7.dynamicshop.DynamicShop;
 import me.sat7.dynamicshop.transactions.Sell;
-import me.sat7.dynamicshop.utilities.ItemsUtil;
 import me.sat7.dynamicshop.utilities.ShopUtil;
 import org.bukkit.Bukkit;
 import org.bukkit.Material;
 import org.bukkit.entity.Player;
 import org.bukkit.event.inventory.InventoryClickEvent;
 import org.bukkit.inventory.Inventory;
-
-import me.sat7.dynamicshop.utilities.LangUtil;
-import org.bukkit.inventory.ItemStack;
 
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -27,18 +23,14 @@ public class QuickSell extends InGameUI
 
     public Inventory getGui(Player player)
     {
-        Inventory inven = Bukkit.createInventory(player, 9, LangUtil.ccLang.get().getString("QUICKSELL_TITLE"));
-
-        ItemStack infoBtn = ItemsUtil.createItemStack(Material.RED_STAINED_GLASS_PANE,
-                null,
-                LangUtil.ccLang.get().getString("QUICKSELL_GUIDE_TITLE"),
-                new ArrayList<>(Arrays.asList(LangUtil.ccLang.get().getString("QUICKSELL_GUIDE_LORE").split("\n"))),
-                1);
+        inventory = Bukkit.createInventory(player, 9, t("QUICKSELL_TITLE"));
 
         for (int i = 0; i < 9; i++)
-            inven.setItem(i, infoBtn);
+        {
+            CreateButton(i, Material.RED_STAINED_GLASS_PANE, t("QUICKSELL_GUIDE_TITLE"), new ArrayList<>(Arrays.asList(t("QUICKSELL_GUIDE_LORE").split("\n"))));
+        }
 
-        return inven;
+        return inventory;
     }
 
     @Override
@@ -61,7 +53,7 @@ public class QuickSell extends InGameUI
             {
                 // 찾은 상점에 판매
                 Sell.quickSellItem(player, e.getCurrentItem(), topShopName, tradeIdx, e.isShiftClick(), e.getSlot());
-                //player.sendMessage(DynamicShop.dsPrefix + LangUtil.ccLang.get().getString("QSELL_RESULT")+topShopName);
+                //player.sendMessage(DynamicShop.dsPrefix + t("QSELL_RESULT")+topShopName);
             } else if (e.isRightClick())
             {
                 player.closeInventory();
@@ -69,7 +61,7 @@ public class QuickSell extends InGameUI
             }
         } else
         {
-            player.sendMessage(DynamicShop.dsPrefix + LangUtil.ccLang.get().getString("QSELL_NA") + topShopName);
+            player.sendMessage(DynamicShop.dsPrefix + t("QSELL_NA") + topShopName);
         }
     }
 }

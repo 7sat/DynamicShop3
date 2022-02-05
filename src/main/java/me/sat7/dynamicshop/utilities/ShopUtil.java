@@ -2,7 +2,6 @@ package me.sat7.dynamicshop.utilities;
 
 import java.io.File;
 import java.util.ArrayList;
-import java.util.Collections;
 
 import me.sat7.dynamicshop.transactions.Calc;
 import org.bukkit.Bukkit;

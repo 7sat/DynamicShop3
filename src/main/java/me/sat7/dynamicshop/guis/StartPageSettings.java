@@ -1,7 +1,5 @@
 package me.sat7.dynamicshop.guis;
 
-import java.util.ArrayList;
-import java.util.Collections;
 import java.util.UUID;
 
 import me.sat7.dynamicshop.DynaShopAPI;
@@ -12,67 +10,44 @@ import org.bukkit.Material;
 import org.bukkit.entity.Player;
 import org.bukkit.event.inventory.InventoryClickEvent;
 import org.bukkit.inventory.Inventory;
-import org.bukkit.inventory.ItemStack;
 
 import me.sat7.dynamicshop.DynamicShop;
-import me.sat7.dynamicshop.utilities.ItemsUtil;
-import me.sat7.dynamicshop.utilities.LangUtil;
 
 public class StartPageSettings extends InGameUI
 {
-
     public StartPageSettings()
     {
         uiType = UI_TYPE.StartPageSettings;
     }
 
+    private final int CLOSE = 0;
+    private final int NAME = 2;
+    private final int LORE = 3;
+    private final int ICON = 4;
+    private final int CMD = 5;
+    private final int SHOP_SHORTCUT = 6;
+    private final int DECO = 7;
+    private final int DELETE = 8;
+
     public Inventory getGui(Player player)
     {
-        // UI 요소 생성
-        String title = LangUtil.ccLang.get().getString("STARTPAGE.EDITOR_TITLE");
-        Inventory inven = Bukkit.createInventory(player, 9, title);
+        inventory = Bukkit.createInventory(player, 9, t("STARTPAGE.EDITOR_TITLE"));
 
-        // 닫기 버튼
-        ItemStack closeBtn = ItemsUtil.createItemStack(Material.BARRIER, null,
-                LangUtil.ccLang.get().getString("CLOSE"), new ArrayList<>(Collections.singletonList(LangUtil.ccLang.get().getString("CLOSE_LORE"))), 1);
-        inven.setItem(0, closeBtn);
+        CreateCloseButton(CLOSE); // 닫기 버튼
 
-        // 이름 버튼
-        ItemStack nameBtn = ItemsUtil.createItemStack(Material.BOOK, null,
-                LangUtil.ccLang.get().getString("STARTPAGE.EDIT_NAME"), null, 1);
-        inven.setItem(2, nameBtn);
-
-        // 설명 버튼
-        ItemStack loreBtn = ItemsUtil.createItemStack(Material.BOOK, null,
-                LangUtil.ccLang.get().getString("STARTPAGE.EDIT_LORE"), null, 1);
-        inven.setItem(3, loreBtn);
+        CreateButton(NAME, Material.BOOK, t("STARTPAGE.EDIT_NAME"), ""); // 이름 버튼
+        CreateButton(LORE, Material.BOOK, t("STARTPAGE.EDIT_LORE"), ""); // 설명 버튼
 
         // 아이콘 버튼
         String[] temp = DynamicShop.userInteractItem.get(player.getUniqueId()).split("/");
-        ItemStack iconBtn = ItemsUtil.createItemStack(Material.getMaterial(StartPage.ccStartPage.get().getString("Buttons." + temp[1] + ".icon")), null,
-                LangUtil.ccLang.get().getString("STARTPAGE.EDIT_ICON"), null, 1);
-        inven.setItem(4, iconBtn);
+        CreateButton(ICON, Material.getMaterial(StartPage.ccStartPage.get().getString("Buttons." + temp[1] + ".icon")), t("STARTPAGE.EDIT_ICON"), "");
 
-        // 액션 버튼
-        ItemStack actionBtn = ItemsUtil.createItemStack(Material.REDSTONE_TORCH, null,
-                LangUtil.ccLang.get().getString("STARTPAGE.EDIT_ACTION"), null, 1);
-        inven.setItem(5, actionBtn);
+        CreateButton(CMD, Material.REDSTONE_TORCH, t("STARTPAGE.EDIT_ACTION"), ""); // 액션 버튼
+        CreateButton(SHOP_SHORTCUT, Material.EMERALD, t("STARTPAGE.SHOP_SHORTCUT"), ""); // 상점 바로가기 생성 버튼
+        CreateButton(DECO, Material.BLUE_STAINED_GLASS_PANE, t("STARTPAGE.CREATE_DECO"), ""); // 장식 버튼
+        CreateButton(DELETE, Material.BONE, t("REMOVE"), ""); // 삭제 버튼
 
-        // 상점 바로가기 생성 버튼
-        ItemStack shopBtn = ItemsUtil.createItemStack(Material.EMERALD, null,
-                LangUtil.ccLang.get().getString("STARTPAGE.SHOP_SHORTCUT"), null, 1);
-        inven.setItem(6, shopBtn);
-
-        // 장식 버튼
-        ItemStack deco = ItemsUtil.createItemStack(Material.BLUE_STAINED_GLASS_PANE, null,
-                LangUtil.ccLang.get().getString("STARTPAGE.CREATE_DECO"), null, 1);
-        inven.setItem(7, deco);
-
-        // 삭제 버튼
-        ItemStack removeBtn = ItemsUtil.createItemStack(Material.BONE, null,
-                LangUtil.ccLang.get().getString("REMOVE"), null, 1);
-        inven.setItem(8, removeBtn);
-        return inven;
+        return inventory;
     }
 
     @Override
@@ -84,12 +59,12 @@ public class StartPageSettings extends InGameUI
         String[] temp = DynamicShop.userInteractItem.get(player.getUniqueId()).split("/");
 
         // 돌아가기
-        if (e.getSlot() == 0)
+        if (e.getSlot() == CLOSE)
         {
             DynaShopAPI.openStartPage(player);
         }
         // 버튼 삭제
-        else if (e.getSlot() == 8)
+        else if (e.getSlot() == DELETE)
         {
             StartPage.ccStartPage.get().set("Buttons." + temp[1], null);
             StartPage.ccStartPage.save();
@@ -99,45 +74,45 @@ public class StartPageSettings extends InGameUI
             DynaShopAPI.openStartPage(player);
         }
         //이름
-        else if (e.getSlot() == 2)
+        else if (e.getSlot() == NAME)
         {
-            player.sendMessage(DynamicShop.dsPrefix + LangUtil.ccLang.get().getString("STARTPAGE.ENTER_NAME"));
+            player.sendMessage(DynamicShop.dsPrefix + t("STARTPAGE.ENTER_NAME"));
             ShopUtil.closeInventoryWithDelay(player);
             DynamicShop.userTempData.put(uuid,"waitforInput" + "btnName");
             OnChat.WaitForInput(player);
         }
         //설명
-        else if (e.getSlot() == 3)
+        else if (e.getSlot() == LORE)
         {
-            player.sendMessage(DynamicShop.dsPrefix + LangUtil.ccLang.get().getString("STARTPAGE.ENTER_LORE"));
+            player.sendMessage(DynamicShop.dsPrefix + t("STARTPAGE.ENTER_LORE"));
             ShopUtil.closeInventoryWithDelay(player);
             DynamicShop.userTempData.put(uuid,"waitforInput" + "btnLore");
             OnChat.WaitForInput(player);
         }
         //아이콘
-        else if (e.getSlot() == 4)
+        else if (e.getSlot() == ICON)
         {
-            player.sendMessage(DynamicShop.dsPrefix + LangUtil.ccLang.get().getString("STARTPAGE.ENTER_ICON"));
+            player.sendMessage(DynamicShop.dsPrefix + t("STARTPAGE.ENTER_ICON"));
             ShopUtil.closeInventoryWithDelay(player);
             DynamicShop.userTempData.put(uuid,"waitforInput" + "btnIcon");
             OnChat.WaitForInput(player);
         }
         //액션
-        else if (e.getSlot() == 5)
+        else if (e.getSlot() == CMD)
         {
-            player.sendMessage(DynamicShop.dsPrefix + LangUtil.ccLang.get().getString("STARTPAGE.ENTER_ACTION"));
+            player.sendMessage(DynamicShop.dsPrefix + t("STARTPAGE.ENTER_ACTION"));
             ShopUtil.closeInventoryWithDelay(player);
             DynamicShop.userTempData.put(uuid,"waitforInput" + "btnAction");
             OnChat.WaitForInput(player);
         }
         // 상점 숏컷
-        else if (e.getSlot() == 6)
+        else if (e.getSlot() == SHOP_SHORTCUT)
         {
-            player.sendMessage(DynamicShop.dsPrefix + LangUtil.ccLang.get().getString("STARTPAGE.ENTER_SHOPNAME"));
+            player.sendMessage(DynamicShop.dsPrefix + t("STARTPAGE.ENTER_SHOPNAME"));
             ShopUtil.closeInventoryWithDelay(player);
             DynamicShop.userTempData.put(uuid,"waitforInput" + "shopname");
 
-            StringBuilder shopList = new StringBuilder(LangUtil.ccLang.get().getString("SHOP_LIST") + ": ");
+            StringBuilder shopList = new StringBuilder(t("SHOP_LIST") + ": ");
             for (String s : ShopUtil.ccShop.get().getKeys(false))
             {
                 shopList.append(s).append(", ");
@@ -148,9 +123,9 @@ public class StartPageSettings extends InGameUI
             OnChat.WaitForInput(player);
         }
         // 장식
-        else if (e.getSlot() == 7)
+        else if (e.getSlot() == DECO)
         {
-            player.sendMessage(DynamicShop.dsPrefix + LangUtil.ccLang.get().getString("STARTPAGE.ENTER_COLOR"));
+            player.sendMessage(DynamicShop.dsPrefix + t("STARTPAGE.ENTER_COLOR"));
             ShopUtil.closeInventoryWithDelay(player);
             DynamicShop.userTempData.put(uuid,"waitforInput" + "deco");
             OnChat.WaitForInput(player);

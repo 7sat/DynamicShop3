@@ -54,8 +54,8 @@ public final class DynamicShop extends JavaPlugin implements Listener
     public static boolean updateAvailable = false;
 
     public static UIManager uiManager;
-    public static HashMap<UUID, String> userTempData = new HashMap<>();
-    public static HashMap<UUID, String> userInteractItem = new HashMap<>();
+    public static final HashMap<UUID, String> userTempData = new HashMap<>();
+    public static final HashMap<UUID, String> userInteractItem = new HashMap<>();
 
     @Override
     public void onEnable()

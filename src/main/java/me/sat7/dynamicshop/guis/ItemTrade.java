@@ -2,7 +2,6 @@ package me.sat7.dynamicshop.guis;
 
 import java.text.DecimalFormat;
 import java.util.ArrayList;
-import java.util.Collections;
 
 import me.sat7.dynamicshop.DynaShopAPI;
 import me.sat7.dynamicshop.transactions.Buy;
@@ -22,23 +21,26 @@ import org.bukkit.inventory.meta.ItemMeta;
 import me.sat7.dynamicshop.DynamicShop;
 import me.sat7.dynamicshop.jobshook.JobsHook;
 import me.sat7.dynamicshop.transactions.Calc;
-import me.sat7.dynamicshop.utilities.ItemsUtil;
 import me.sat7.dynamicshop.utilities.LangUtil;
 import me.sat7.dynamicshop.utilities.ShopUtil;
 
 public class ItemTrade extends InGameUI
 {
-
     public ItemTrade()
     {
         uiType = UI_TYPE.ItemTrade;
     }
 
+    private final int CLOSE = 9;
+    private final int SELL_ONLY_TOGGLE = 1;
+    private final int BUY_ONLY_TOGGLE = 10;
+    private final int CHECK_BALANCE = 0;
+
     public Inventory getGui(Player player, String shopName, String tradeIdx)
     {
         // UI 요소 생성
-        String title = LangUtil.ccLang.get().getString("TRADE_TITLE");
-        Inventory inven = Bukkit.createInventory(player, 18, title);
+        String title = t("TRADE_TITLE");
+        inventory = Bukkit.createInventory(player, 18, title);
 
         // 배달비
         ConfigurationSection optionS = ShopUtil.ccShop.get().getConfigurationSection(shopName).getConfigurationSection("Options");
@@ -76,28 +78,26 @@ public class ItemTrade extends InGameUI
             }
         }
 
-        String buyStr = LangUtil.ccLang.get().getString("BUY");
-        String sellStr = LangUtil.ccLang.get().getString("SELL");
-        String stockStr = LangUtil.ccLang.get().getString("STOCK");
+        String buyStr = t("BUY");
+        String sellStr = t("SELL");
+        String stockStr = t("STOCK");
         String tradeStr = ShopUtil.ccShop.get().getString(shopName + "." + tradeIdx + ".tradeType");
         if (tradeStr == null) tradeStr = "SB";
 
         ArrayList<String> sellLore = new ArrayList();
-        if (tradeStr.equals("SellOnly")) sellLore.add(LangUtil.ccLang.get().getString("SELLONLY_LORE"));
-        if (tradeStr.equals("BuyOnly")) sellLore.add(LangUtil.ccLang.get().getString("BUYONLY_LORE"));
+        if (tradeStr.equals("SellOnly")) sellLore.add(t("SELLONLY_LORE"));
+        if (tradeStr.equals("BuyOnly")) sellLore.add(t("BUYONLY_LORE"));
         if (player.hasPermission("dshop.admin.shopedit"))
-            sellLore.add(LangUtil.ccLang.get().getString("TOGGLE_SELLABLE"));
+            sellLore.add(t("TOGGLE_SELLABLE"));
 
         ArrayList<String> buyLore = new ArrayList();
-        if (tradeStr.equals("SellOnly")) buyLore.add(LangUtil.ccLang.get().getString("SELLONLY_LORE"));
-        if (tradeStr.equals("BuyOnly")) buyLore.add(LangUtil.ccLang.get().getString("BUYONLY_LORE"));
+        if (tradeStr.equals("SellOnly")) buyLore.add(t("SELLONLY_LORE"));
+        if (tradeStr.equals("BuyOnly")) buyLore.add(t("BUYONLY_LORE"));
         if (player.hasPermission("dshop.admin.shopedit"))
-            buyLore.add(LangUtil.ccLang.get().getString("TOGGLE_BUYABLE"));
+            buyLore.add(t("TOGGLE_BUYABLE"));
 
-        ItemStack sellBtn = ItemsUtil.createItemStack(Material.GREEN_STAINED_GLASS, null, sellStr, sellLore, 1);
-        ItemStack buyBtn = ItemsUtil.createItemStack(Material.RED_STAINED_GLASS, null, buyStr, buyLore, 1);
-        inven.setItem(1, sellBtn);
-        inven.setItem(10, buyBtn);
+        CreateButton(SELL_ONLY_TOGGLE, Material.GREEN_STAINED_GLASS, sellStr, sellLore);
+        CreateButton(BUY_ONLY_TOGGLE, Material.RED_STAINED_GLASS, buyStr, buyLore);
 
         String mat = ShopUtil.ccShop.get().getString(shopName + "." + tradeIdx + ".mat");
         // 판매
@@ -107,7 +107,7 @@ public class ItemTrade extends InGameUI
             int idx = 2;
             for (int i = 1; i < 8; i++)
             {
-                String priceStr = LangUtil.ccLang.get().getString("SELLPRICE");
+                String priceStr = t("SELLPRICE");
 
                 ItemStack sell = new ItemStack(Material.getMaterial(mat), amount);
                 sell.setItemMeta((ItemMeta) ShopUtil.ccShop.get().get(shopName + "." + tradeIdx + ".itemStack"));
@@ -132,13 +132,13 @@ public class ItemTrade extends InGameUI
                 }
 
                 if (deliverycharge > 0)
-                    lore.add(LangUtil.ccLang.get().getString("DELIVERYCHARGE") + ": " + deliverycharge);
+                    lore.add(t("DELIVERYCHARGE") + ": " + deliverycharge);
 
                 meta.setLore(lore);
 
                 sell.setItemMeta(meta);
 
-                inven.setItem(idx, sell);
+                inventory.setItem(idx, sell);
 
                 idx++;
                 amount = amount * 2;
@@ -148,7 +148,7 @@ public class ItemTrade extends InGameUI
         // 구매
         if (!tradeStr.equals("SellOnly"))
         {
-            String priceStr = LangUtil.ccLang.get().getString("PRICE");
+            String priceStr = t("PRICE");
 
             int amount = 1;
             int idx = 11;
@@ -186,13 +186,13 @@ public class ItemTrade extends InGameUI
                 }
 
                 if (deliverycharge > 0)
-                    lore.add(LangUtil.ccLang.get().getString("DELIVERYCHARGE") + ": " + deliverycharge);
+                    lore.add(t("DELIVERYCHARGE") + ": " + deliverycharge);
 
                 meta.setLore(lore);
 
                 buy.setItemMeta(meta);
 
-                inven.setItem(idx, buy);
+                inventory.setItem(idx, buy);
 
                 idx++;
                 amount = amount * 2;
@@ -217,30 +217,21 @@ public class ItemTrade extends InGameUI
             if (optionS.contains("flag.jobpoint")) balStr += "Points";
         } else
         {
-            balStr = LangUtil.ccLang.get().getString("SHOP_BAL_INF");
+            balStr = t("SHOP_BAL_INF");
         }
-        moneyLore.add("§3" + ChatColor.stripColor(LangUtil.ccLang.get().getString("SHOP_BAL")));
+        moneyLore.add("§3" + ChatColor.stripColor(t("SHOP_BAL")));
         moneyLore.add("§f" + balStr);
 
-        ItemStack balBtn = ItemsUtil.createItemStack(Material.EMERALD, null,
-                LangUtil.ccLang.get().getString("BALANCE"), moneyLore, 1);
+        CreateButton(CHECK_BALANCE, Material.EMERALD, t("BALANCE"), moneyLore); // 잔액 확인 버튼
+        CreateCloseButton(CLOSE); // 닫기 버튼
 
-        inven.setItem(0, balBtn);
-
-        // 닫기 버튼
-        ItemStack closeBtn = ItemsUtil.createItemStack(Material.BARRIER, null,
-                LangUtil.ccLang.get().getString("CLOSE"), new ArrayList<>(Collections.singletonList(LangUtil.ccLang.get().getString("CLOSE_LORE"))), 1);
-
-        inven.setItem(9, closeBtn);
-        return inven;
+        return inventory;
     }
 
     @Override
     public void OnClickUpperInventory(InventoryClickEvent e)
     {
         Player player = (Player) e.getWhoClicked();
-        if (player == null)
-            return;
 
         String[] temp = DynamicShop.userInteractItem.get(player.getUniqueId()).split("/");
         String shopName = temp[0];
@@ -249,7 +240,7 @@ public class ItemTrade extends InGameUI
         if (e.getCurrentItem() != null && e.getCurrentItem().getItemMeta() != null)
         {
             // 닫기
-            if (e.getSlot() == 9)
+            if (e.getSlot() == CLOSE)
             {
                 SoundUtil.playerSoundEffect(player, "click");
                 DynamicShop.userInteractItem.put(player.getUniqueId(), "");
@@ -268,7 +259,7 @@ public class ItemTrade extends InGameUI
             else
             {
                 // 잔액확인 버튼
-                if (e.getSlot() == 0)
+                if (e.getSlot() == CHECK_BALANCE)
                 {
                     SoundUtil.playerSoundEffect(player, "click");
                     if (ShopUtil.ccShop.get().contains(shopName + ".Options.flag.jobpoint"))
@@ -282,7 +273,7 @@ public class ItemTrade extends InGameUI
                 }
 
                 // 판매 토글
-                if (e.getSlot() == 1)
+                if (e.getSlot() == SELL_ONLY_TOGGLE)
                 {
                     if (player.hasPermission("dshop.admin.shopedit"))
                     {
@@ -303,7 +294,7 @@ public class ItemTrade extends InGameUI
                     return;
                 }
                 // 구매 토글
-                if (e.getSlot() == 10)
+                if (e.getSlot() == BUY_ONLY_TOGGLE)
                 {
                     if (player.hasPermission("dshop.admin.shopedit"))
                     {
@@ -339,13 +330,13 @@ public class ItemTrade extends InGameUI
                 if (optionS.contains("world") && optionS.contains("pos1") && optionS.contains("pos2") && optionS.contains("flag.deliverycharge"))
                 {
                     String lore = e.getCurrentItem().getItemMeta().getLore().toString();
-                    if (lore.contains(LangUtil.ccLang.get().getString("DELIVERYCHARGE")))
+                    if (lore.contains(t("DELIVERYCHARGE")))
                     {
                         String[] tempLoreArr = lore.split(": ");
                         deliverycharge = Integer.parseInt(tempLoreArr[tempLoreArr.length - 1].replace("]", ""));
                         if (deliverycharge == -1)
                         {
-                            player.sendMessage(DynamicShop.dsPrefix + LangUtil.ccLang.get().getString("DELIVERYCHARGE_NA"));
+                            player.sendMessage(DynamicShop.dsPrefix + t("DELIVERYCHARGE_NA"));
                             return;
                         } else
                         {
@@ -367,7 +358,7 @@ public class ItemTrade extends InGameUI
                     // 판매권한 확인
                     if (permission != null && permission.length() > 0 && !player.hasPermission(permission) && !player.hasPermission(permission + ".sell"))
                     {
-                        player.sendMessage(DynamicShop.dsPrefix + LangUtil.ccLang.get().getString("ERR.NO_PERMISSION"));
+                        player.sendMessage(DynamicShop.dsPrefix + t("ERR.NO_PERMISSION"));
                         return;
                     }
 
@@ -385,7 +376,7 @@ public class ItemTrade extends InGameUI
                     // 구매 권한 확인
                     if (permission != null && permission.length() > 0 && !player.hasPermission(permission) && !player.hasPermission(permission + ".buy"))
                     {
-                        player.sendMessage(DynamicShop.dsPrefix + LangUtil.ccLang.get().getString("ERR.NO_PERMISSION"));
+                        player.sendMessage(DynamicShop.dsPrefix + t("ERR.NO_PERMISSION"));
                         return;
                     }
 

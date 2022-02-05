@@ -39,6 +39,7 @@ public final class LangUtil
             ccLang.get().addDefault("PALETTE_TITLE", "§3판매할 아이탬 선택");
             ccLang.get().addDefault("PALETTE_LORE", "§e좌클릭: 이 아이탬을 상점에 등록");
             ccLang.get().addDefault("ITEM_SETTING_TITLE", "§3아이탬 셋팅");
+            ccLang.get().addDefault("PAGE_EDITOR_TITLE", "§3페이지 편집");
             ccLang.get().addDefault("QUICKSELL_TITLE", "§3빠른 판매");
             ccLang.get().addDefault("QUICKSELL_GUIDE_TITLE", "§3§l빠른 판매 도움말");
             ccLang.get().addDefault("QUICKSELL_GUIDE_LORE", "§a판매할 아이탬을 좌클릭 하세요.\n§a씨프트 좌클릭으로 같은 유형의 아이탬을 모두 팝니다.\n§a우클릭으로 해당 아이탬 상점으로 이동합니다.");
@@ -259,6 +260,7 @@ public final class LangUtil
             ccLang.get().addDefault("PALETTE_TITLE", "§3Item Palette");
             ccLang.get().addDefault("PALETTE_LORE", "§eLMB: Register this item on shop");
             ccLang.get().addDefault("ITEM_SETTING_TITLE", "§3Item Settings");
+            ccLang.get().addDefault("PAGE_EDITOR_TITLE", "§3Page Editor");
             ccLang.get().addDefault("QUICKSELL_TITLE", "§3Quick Sell");
             ccLang.get().addDefault("QUICKSELL_GUIDE_TITLE", "§3§lQuick Sell Guide");
             ccLang.get().addDefault("QUICKSELL_GUIDE_LORE", "§aLeft-click the item you want to sell.\n§aShift left click to sell all items of the same type.\n§aRight-click to go to the item shop.");

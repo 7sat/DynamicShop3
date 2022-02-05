@@ -1,7 +1,6 @@
 package me.sat7.dynamicshop.guis;
 
 import java.util.ArrayList;
-import java.util.Collections;
 import java.util.Comparator;
 
 import me.sat7.dynamicshop.DynaShopAPI;
@@ -17,21 +16,23 @@ import org.bukkit.inventory.meta.ItemMeta;
 
 import me.sat7.dynamicshop.DynamicShop;
 import me.sat7.dynamicshop.constants.Constants;
-import me.sat7.dynamicshop.utilities.ItemsUtil;
-import me.sat7.dynamicshop.utilities.LangUtil;
 
 public class ItemPalette extends InGameUI
 {
-
     public ItemPalette()
     {
         uiType = UI_TYPE.ItemPalette;
     }
 
+    private final int CLOSE = 45;
+    private final int PAGE = 49;
+    private final int ADD_ALL = 51;
+    private final int SEARCH = 53;
+
     private static final ArrayList<Material> sortedMat = new ArrayList<>();
 
     // 파렛트 정렬용
-    public static Comparator<Material> sortMat = Comparator.comparing(ItemPalette::getMatName);
+    public static final Comparator<Material> sortMat = Comparator.comparing(ItemPalette::getMatName);
 
     private static String getMatName(Material m2)
     {
@@ -48,8 +49,7 @@ public class ItemPalette extends InGameUI
 
     public Inventory getGui(Player player, int page, String search)
     {
-        @SuppressWarnings("ConstantConditions")
-        Inventory inventory = Bukkit.createInventory(player, 54, LangUtil.ccLang.get().getString("PALETTE_TITLE"));
+        inventory = Bukkit.createInventory(player, 54, t("PALETTE_TITLE"));
         ArrayList<Material> paletteList = new ArrayList<>();
 
         if (search.length() > 0)
@@ -91,32 +91,16 @@ public class ItemPalette extends InGameUI
         }
 
         // 닫기 버튼
-        ItemStack closeBtn = ItemsUtil.createItemStack(Material.BARRIER, null,
-                LangUtil.ccLang.get().getString("CLOSE"),
-                new ArrayList<>(Collections.singletonList(LangUtil.ccLang.get().getString("CLOSE_LORE"))), 1);
-
-        inventory.setItem(45, closeBtn);
+        CreateCloseButton(CLOSE);
 
         // 페이지 버튼
-        ItemStack pageBtn = ItemsUtil.createItemStack(Material.PAPER, null,
-                page + LangUtil.ccLang.get().getString("PAGE"),
-                new ArrayList<>(Collections.singletonList(LangUtil.ccLang.get().getString("PAGE_LORE"))), page);
-
-        inventory.setItem(49, pageBtn);
+        CreateButton(PAGE, Material.PAPER, page + t("PAGE"), t("PAGE_LORE"), page);
 
         // 모두추가 버튼
-        ItemStack addAllBtn = ItemsUtil.createItemStack(Material.YELLOW_STAINED_GLASS_PANE, null,
-                LangUtil.ccLang.get().getString("ADDALL"),
-                new ArrayList<>(Collections.singletonList(search)), 1);
-
-        inventory.setItem(51, addAllBtn);
+        CreateButton(ADD_ALL, Material.YELLOW_STAINED_GLASS_PANE, t("ADDALL"), search);
 
         // 검색 버튼
-        ItemStack searchBtn = ItemsUtil.createItemStack(Material.COMPASS, null,
-                LangUtil.ccLang.get().getString("SEARCH"),
-                new ArrayList<>(Collections.singletonList(search)), 1);
-
-        inventory.setItem(53, searchBtn);
+        CreateButton(SEARCH, Material.COMPASS, t("SEARCH"), search);
 
         //45개씩 끊어서 표시.
         for (int i = 0; i < 45; i++)
@@ -132,8 +116,8 @@ public class ItemPalette extends InGameUI
                 if (btnMeta != null)
                 {
                     ArrayList<String> lore = new ArrayList<>();
-                    lore.add(LangUtil.ccLang.get().getString("PALETTE_LORE"));
-                    lore.add(LangUtil.ccLang.get().getString("DECO_CREATE_LORE"));
+                    lore.add(t("PALETTE_LORE"));
+                    lore.add(t("DECO_CREATE_LORE"));
                     btnMeta.setLore(lore);
                     btn.setItemMeta(btnMeta);
                 }
@@ -157,13 +141,13 @@ public class ItemPalette extends InGameUI
         int curPage = e.getInventory().getItem(49).getAmount();
 
         // 닫기 버튼
-        if (e.getSlot() == 45)
+        if (e.getSlot() == CLOSE)
         {
             DynamicShop.userInteractItem.put(player.getUniqueId(), "");
             DynaShopAPI.openShopGui(player, shopName, 1);
         }
         // 페이지 버튼
-        else if (e.getSlot() == 49)
+        else if (e.getSlot() == PAGE)
         {
             int targetPage = curPage;
             if (e.isLeftClick())
@@ -181,7 +165,7 @@ public class ItemPalette extends InGameUI
             DynaShopAPI.openItemPalette(player, targetPage, search);
         }
         // 모두 추가 버튼
-        else if (e.getSlot() == 51)
+        else if (e.getSlot() == ADD_ALL)
         {
             for (int i = 0; i < 45; i++)
             {
@@ -203,7 +187,7 @@ public class ItemPalette extends InGameUI
                         ShopUtil.addItemToShop(shopName, idx, tempIs, 1, 1, 0.01, -1, 10000, 10000);
                     } else
                     {
-                        player.sendMessage(DynamicShop.dsPrefix + LangUtil.ccLang.get().getString("ERR.NO_EMPTY_SLOT"));
+                        player.sendMessage(DynamicShop.dsPrefix + t("ERR.NO_EMPTY_SLOT"));
                         break;
                     }
                 }
@@ -212,14 +196,14 @@ public class ItemPalette extends InGameUI
             DynaShopAPI.openShopGui(player, shopName, 1);
         }
         // 검색 버튼
-        else if (e.getSlot() == 53)
+        else if (e.getSlot() == SEARCH)
         {
             player.closeInventory();
 
             DynamicShop.userTempData.put(player.getUniqueId(), "waitforPalette");
             OnChat.WaitForInput(player);
 
-            player.sendMessage(DynamicShop.dsPrefix + LangUtil.ccLang.get().getString("SEARCH_ITEM"));
+            player.sendMessage(DynamicShop.dsPrefix + t("SEARCH_ITEM"));
         } else if (e.getSlot() <= 45)
         {
             // 파렛트에서 뭔가 선택

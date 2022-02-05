@@ -17,7 +17,7 @@ import java.util.ArrayList;
 
 public final class DynaShopAPI
 {
-    public static DecimalFormat df = new DecimalFormat("0.00");
+    public static final DecimalFormat df = new DecimalFormat("0.00");
 
     private DynaShopAPI()
     {

@@ -8,7 +8,6 @@ import me.sat7.dynamicshop.constants.Constants;
 import org.bukkit.configuration.ConfigurationSection;
 import org.bukkit.entity.Player;
 
-import java.util.Collections;
 import java.util.Random;
 
 public final class ConfigUtil
