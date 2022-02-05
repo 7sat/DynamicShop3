@@ -40,7 +40,17 @@ public class InGameUI
     @SuppressWarnings({"UnusedReturnValue", "SameParameterValue"})
     protected ItemStack CreateButton(int slotIndex, Material icon, String name, String lore)
     {
-        return CreateButton(slotIndex, icon, name, new ArrayList<>(Collections.singletonList(lore)), 1);
+        if (lore != null && lore.isEmpty())
+            lore = null;
+
+        if (lore == null)
+        {
+            return CreateButton(slotIndex, icon, name, 1);
+        }
+        else
+        {
+            return CreateButton(slotIndex, icon, name, new ArrayList<>(Collections.singletonList(lore)), 1);
+        }
     }
 
     @SuppressWarnings({"UnusedReturnValue", "SameParameterValue"})
@@ -52,7 +62,25 @@ public class InGameUI
     @SuppressWarnings({"UnusedReturnValue", "SameParameterValue"})
     protected ItemStack CreateButton(int slotIndex, Material icon, String name, String lore, int amount)
     {
-        return CreateButton(slotIndex, icon, name, new ArrayList<>(Collections.singletonList(lore)), amount);
+        if (lore != null && lore.isEmpty())
+            lore = null;
+
+        if (lore == null)
+        {
+            return CreateButton(slotIndex, icon, name, amount);
+        }
+        else
+        {
+            return CreateButton(slotIndex, icon, name, new ArrayList<>(Collections.singletonList(lore)), amount);
+        }
+    }
+
+    protected ItemStack CreateButton(int slotIndex, Material icon, String name, int amount)
+    {
+        ItemStack itemStack = ItemsUtil.createItemStack(icon, null, name, null, amount);
+        inventory.setItem(slotIndex, itemStack);
+
+        return itemStack;
     }
 
     @SuppressWarnings({"UnusedReturnValue", "SameParameterValue"})

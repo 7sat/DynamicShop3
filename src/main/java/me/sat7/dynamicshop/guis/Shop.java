@@ -70,7 +70,10 @@ public final class Shop extends InGameUI
             pageLore.add(t("PAGE_INSERT"));
             pageLore.add(t("PAGE_DELETE"));
         }
-        CreateButton(PAGE, Material.PAPER, page + "/" + maxPage + " " + t("PAGE"), pageLore, page);
+        String pageString = t("PAGE_TITLE");
+        pageString = pageString.replace("{curPage}", page + "");
+        pageString = pageString.replace("{maxPage}", maxPage + "");
+        CreateButton(PAGE, Material.PAPER, pageString, pageLore, page);
 
         // 정보,설정 버튼
         String shopLore = CreateShopInfoText(player, shopName);

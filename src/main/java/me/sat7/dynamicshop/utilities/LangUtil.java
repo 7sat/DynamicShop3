@@ -79,10 +79,10 @@ public final class LangUtil
             ccLang.get().addDefault("SETTOVALUE", "§f가격에 맞춤");
             ccLang.get().addDefault("SAVE_CLOSE", "§f저장 후 닫기");
             ccLang.get().addDefault("CLOSE", "§f닫기");
-            ccLang.get().addDefault("CLOSE_LORE", "§f이 창을 닫습니다.");
+            ccLang.get().addDefault("CLOSE_LORE", "");
             ccLang.get().addDefault("REMOVE", "§f제거");
             ccLang.get().addDefault("REMOVE_LORE", "§f이 아이탬을 상점에서 제거합니다.");
-            ccLang.get().addDefault("PAGE", "§f페이지");
+            ccLang.get().addDefault("PAGE_TITLE", "§f{curPage}/{maxPage} 페이지");
             ccLang.get().addDefault("PAGE_LORE", "§f좌클릭: 이전페이지 / 우클릭: 다음페이지");
             ccLang.get().addDefault("PAGE_INSERT", "§eShift+좌: 페이지 삽입");
             ccLang.get().addDefault("PAGE_DELETE", "§eShift+우: 페이지 §c삭제");
@@ -300,10 +300,10 @@ public final class LangUtil
             ccLang.get().addDefault("SETTOVALUE", "§fSet to value");
             ccLang.get().addDefault("SAVE_CLOSE", "§fSave and close");
             ccLang.get().addDefault("CLOSE", "§fClose");
-            ccLang.get().addDefault("CLOSE_LORE", "§fClose this window.");
+            ccLang.get().addDefault("CLOSE_LORE", "");
             ccLang.get().addDefault("REMOVE", "§fRemove");
             ccLang.get().addDefault("REMOVE_LORE", "§fRemove this item from shop.");
-            ccLang.get().addDefault("PAGE", "§fPage");
+            ccLang.get().addDefault("PAGE_TITLE", "§f{curPage}/{maxPage} page");
             ccLang.get().addDefault("PAGE_LORE", "§fLMB: Previous / RMB: Next");
             ccLang.get().addDefault("PAGE_INSERT", "§eShift+L: Insert page");
             ccLang.get().addDefault("PAGE_DELETE", "§eShift+R: §cDelete page");

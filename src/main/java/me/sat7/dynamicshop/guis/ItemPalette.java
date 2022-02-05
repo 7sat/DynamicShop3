@@ -34,6 +34,8 @@ public final class ItemPalette extends InGameUI
     // 파렛트 정렬용
     public static final Comparator<Material> sortMat = Comparator.comparing(ItemPalette::getMatName);
 
+    private final int PALETTE_PAGE_MAX = 30;
+
     private static String getMatName(Material m2)
     {
         String name2 = m2.name();
@@ -92,7 +94,12 @@ public final class ItemPalette extends InGameUI
 
 
         CreateCloseButton(CLOSE); // 닫기 버튼
-        CreateButton(PAGE, Material.PAPER, page + t("PAGE"), t("PAGE_LORE"), page); // 페이지 버튼
+
+        String pageString = t("PAGE_TITLE");
+        pageString = pageString.replace("{curPage}", page + "");
+        pageString = pageString.replace("{maxPage}", PALETTE_PAGE_MAX + "");
+
+        CreateButton(PAGE, Material.PAPER, pageString, t("PAGE_LORE"), page); // 페이지 버튼
         CreateButton(ADD_ALL, Material.YELLOW_STAINED_GLASS_PANE, t("ADDALL"), search); // 모두추가 버튼
         CreateButton(SEARCH, Material.COMPASS, t("SEARCH"), search); // 검색 버튼
 
@@ -147,11 +154,11 @@ public final class ItemPalette extends InGameUI
             if (e.isLeftClick())
             {
                 targetPage -= 1;
-                if (targetPage < 1) targetPage = 30;
+                if (targetPage < 1) targetPage = PALETTE_PAGE_MAX;
             } else if (e.isRightClick())
             {
                 targetPage += 1;
-                if (targetPage > 30) targetPage = 1;
+                if (targetPage > PALETTE_PAGE_MAX) targetPage = 1;
             }
 
             @SuppressWarnings("ConstantConditions")
