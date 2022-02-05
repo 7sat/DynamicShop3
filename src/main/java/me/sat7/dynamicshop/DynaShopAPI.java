@@ -33,7 +33,6 @@ public final class DynaShopAPI
         Inventory inventory = uiClass.getGui(player, shopName, page);
         if (inventory != null)
         {
-            player.openInventory(inventory);
             UIManager.Open(player, inventory, uiClass);
         }
     }
