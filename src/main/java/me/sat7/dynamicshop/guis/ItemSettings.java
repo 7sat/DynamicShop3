@@ -17,6 +17,8 @@ import me.sat7.dynamicshop.DynamicShop;
 import me.sat7.dynamicshop.models.DSItem;
 import me.sat7.dynamicshop.transactions.Calc;
 
+import static me.sat7.dynamicshop.DynaShopAPI.df;
+
 public class ItemSettings extends InGameUI
 {
     public ItemSettings()
@@ -166,7 +168,6 @@ public class ItemSettings extends InGameUI
             }
         }
 
-        DecimalFormat df = new DecimalFormat("0.00");
         editBtnLore.add("§3§l" + ChatColor.stripColor(t("BUY")) + ": " + df.format(buyPrice));
         editBtnLore.add("§3§l" + ChatColor.stripColor(t("SELL")) + ": " + df.format(sellPrice));
 

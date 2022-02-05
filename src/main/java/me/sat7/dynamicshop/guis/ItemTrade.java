@@ -21,8 +21,9 @@ import org.bukkit.inventory.meta.ItemMeta;
 import me.sat7.dynamicshop.DynamicShop;
 import me.sat7.dynamicshop.jobshook.JobsHook;
 import me.sat7.dynamicshop.transactions.Calc;
-import me.sat7.dynamicshop.utilities.LangUtil;
 import me.sat7.dynamicshop.utilities.ShopUtil;
+
+import static me.sat7.dynamicshop.DynaShopAPI.df;
 
 public class ItemTrade extends InGameUI
 {
@@ -203,7 +204,6 @@ public class ItemTrade extends InGameUI
         ArrayList<String> moneyLore = new ArrayList<>();
         if (optionS.contains("flag.jobpoint"))
         {
-            DecimalFormat df = new DecimalFormat("0.00");
             moneyLore.add("§f" + df.format(JobsHook.getCurJobPoints(player)) + "Points");
         } else
         {
@@ -264,10 +264,10 @@ public class ItemTrade extends InGameUI
                     SoundUtil.playerSoundEffect(player, "click");
                     if (ShopUtil.ccShop.get().contains(shopName + ".Options.flag.jobpoint"))
                     {
-                        player.sendMessage(DynamicShop.dsPrefix + LangUtil.ccLang.get().get("BALANCE") + ":§f " + DynaShopAPI.df.format(JobsHook.getCurJobPoints(player)) + "Points");
+                        player.sendMessage(DynamicShop.dsPrefix + t("BALANCE") + ":§f " + df.format(JobsHook.getCurJobPoints(player)) + "Points");
                     } else
                     {
-                        player.sendMessage(DynamicShop.dsPrefix + LangUtil.ccLang.get().get("BALANCE") + ":§f " + DynamicShop.getEconomy().format(DynamicShop.getEconomy().getBalance(player)));
+                        player.sendMessage(DynamicShop.dsPrefix + t("BALANCE") + ":§f " + DynamicShop.getEconomy().format(DynamicShop.getEconomy().getBalance(player)));
                     }
                     return;
                 }

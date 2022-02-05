@@ -24,6 +24,7 @@ import me.sat7.dynamicshop.transactions.Calc;
 import me.sat7.dynamicshop.utilities.ShopUtil;
 
 import static me.sat7.dynamicshop.DynaShopAPI.df;
+import static me.sat7.dynamicshop.utilities.MathUtil.Clamp;
 
 public class Shop extends InGameUI
 {
@@ -46,10 +47,7 @@ public class Shop extends InGameUI
         }
 
         int maxPage = ShopUtil.ccShop.get().getConfigurationSection(shopName).getConfigurationSection("Options").getInt("page");
-        if (page > maxPage)
-            page = maxPage;
-        if (page < 1)
-            page = 1;
+        page = Clamp(page,1,maxPage);
 
         String uiName = "";
         if (ShopUtil.ccShop.get().contains(shopName + ".Options.title"))

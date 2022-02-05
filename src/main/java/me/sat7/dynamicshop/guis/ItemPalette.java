@@ -90,17 +90,11 @@ public class ItemPalette extends InGameUI
             paletteList = sortedMat;
         }
 
-        // 닫기 버튼
-        CreateCloseButton(CLOSE);
 
-        // 페이지 버튼
-        CreateButton(PAGE, Material.PAPER, page + t("PAGE"), t("PAGE_LORE"), page);
-
-        // 모두추가 버튼
-        CreateButton(ADD_ALL, Material.YELLOW_STAINED_GLASS_PANE, t("ADDALL"), search);
-
-        // 검색 버튼
-        CreateButton(SEARCH, Material.COMPASS, t("SEARCH"), search);
+        CreateCloseButton(CLOSE); // 닫기 버튼
+        CreateButton(PAGE, Material.PAPER, page + t("PAGE"), t("PAGE_LORE"), page); // 페이지 버튼
+        CreateButton(ADD_ALL, Material.YELLOW_STAINED_GLASS_PANE, t("ADDALL"), search); // 모두추가 버튼
+        CreateButton(SEARCH, Material.COMPASS, t("SEARCH"), search); // 검색 버튼
 
         //45개씩 끊어서 표시.
         for (int i = 0; i < 45; i++)
@@ -138,7 +132,7 @@ public class ItemPalette extends InGameUI
         String[] temp = DynamicShop.userInteractItem.get(player.getUniqueId()).split("/");
         String shopName = temp[0];
         @SuppressWarnings("ConstantConditions")
-        int curPage = e.getInventory().getItem(49).getAmount();
+        int curPage = e.getInventory().getItem(PAGE).getAmount();
 
         // 닫기 버튼
         if (e.getSlot() == CLOSE)
@@ -161,7 +155,7 @@ public class ItemPalette extends InGameUI
             }
 
             @SuppressWarnings("ConstantConditions")
-            String search = e.getClickedInventory().getItem(53).getItemMeta().getLore().toString().replace("[", "").replace("]", "");
+            String search = e.getClickedInventory().getItem(SEARCH).getItemMeta().getLore().toString().replace("[", "").replace("]", "");
             DynaShopAPI.openItemPalette(player, targetPage, search);
         }
         // 모두 추가 버튼

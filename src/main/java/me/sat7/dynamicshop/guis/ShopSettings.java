@@ -18,6 +18,8 @@ import me.sat7.dynamicshop.DynamicShop;
 import me.sat7.dynamicshop.utilities.ItemsUtil;
 import me.sat7.dynamicshop.utilities.ShopUtil;
 
+import static me.sat7.dynamicshop.utilities.MathUtil.Clamp;
+
 public class ShopSettings extends InGameUI
 {
     public ShopSettings()
@@ -118,23 +120,15 @@ public class ShopSettings extends InGameUI
                     "§e" + t("CLICK") + ": " + t("OFF")));
             CreateButton(FLUC, Material.COMPARATOR, t("FLUC.FLUCTUATION"), fluctuationLore);
 
-            int tempCount = flucConf.getInt("interval") / 2;
-            if (tempCount < 1) tempCount = 1;
-            if (tempCount > 64) tempCount = 64;
-
             ArrayList<String> fluctuation_interval_lore = new ArrayList<>(Arrays.asList(
                     "§9" + t("CUR_STATE") + ": " + flucConf.getInt("interval") / 2.0 + "h",
                     "§e" + t("CLICK") + ": " + t("L_R_SHIFT")));
-            CreateButton(FLUC_INTERVAL, Material.COMPARATOR, t("FLUC.INTERVAL"), fluctuation_interval_lore, tempCount);
-
-            tempCount = (int) (flucConf.getDouble("strength") * 10);
-            if (tempCount < 1) tempCount = 1;
-            if (tempCount > 64) tempCount = 64;
+            CreateButton(FLUC_INTERVAL, Material.COMPARATOR, t("FLUC.INTERVAL"), fluctuation_interval_lore, Clamp(flucConf.getInt("interval") / 2, 1, 64));
 
             ArrayList<String> fluctuation_strength_lore = new ArrayList<>(Arrays.asList(
                     "§9" + t("CUR_STATE") + ": ~" + flucConf.get("strength") + "%",
                     "§e" + t("CLICK") + ": " + t("STOCKSTABILIZING.L_R_SHIFT")));
-            CreateButton(FLUC_STRENGTH, Material.COMPARATOR, t("FLUC.STRENGTH"), fluctuation_strength_lore, tempCount);
+            CreateButton(FLUC_STRENGTH, Material.COMPARATOR, t("FLUC.STRENGTH"), fluctuation_strength_lore, Clamp((int) (flucConf.getDouble("strength") * 10), 1, 64));
         } else
         {
             ItemStack flucToggleBtn = ItemsUtil.createItemStack(Material.COMPARATOR, null,
@@ -155,23 +149,15 @@ public class ShopSettings extends InGameUI
                     "§e" + t("CLICK") + ": " + t("OFF")));
             CreateButton(STABLE, Material.COMPARATOR, t("STOCKSTABILIZING.SS"), stableLore);
 
-            int tempCount = stockStableConf.getInt("interval") / 2;
-            if (tempCount < 1) tempCount = 1;
-            if (tempCount > 64) tempCount = 64;
-
             ArrayList<String> stable_interval_Lore = new ArrayList<>(Arrays.asList(
                     "§9" + t("CUR_STATE") + ": " + stockStableConf.getInt("interval") / 2.0 + "h",
                     "§e" + t("CLICK") + ": " + t("L_R_SHIFT")));
-            CreateButton(STABLE_INTERVAL, Material.COMPARATOR, t("FLUC.INTERVAL"), stable_interval_Lore, tempCount);
-
-            tempCount = (int) (stockStableConf.getDouble("strength") * 10);
-            if (tempCount < 1) tempCount = 1;
-            if (tempCount > 64) tempCount = 64;
+            CreateButton(STABLE_INTERVAL, Material.COMPARATOR, t("FLUC.INTERVAL"), stable_interval_Lore, Clamp(stockStableConf.getInt("interval") / 2, 1, 64));
 
             ArrayList<String> stable_strength_Lore = new ArrayList<>(Arrays.asList(
                     "§9" + t("CUR_STATE") + ": ~" + stockStableConf.get("strength") + "%",
                     "§e" + t("CLICK") + ": " + t("STOCKSTABILIZING.L_R_SHIFT")));
-            CreateButton(STABLE_STRENGTH, Material.COMPARATOR, t("FLUC.STRENGTH"), stable_strength_Lore, tempCount);
+            CreateButton(STABLE_STRENGTH, Material.COMPARATOR, t("FLUC.STRENGTH"), stable_strength_Lore, Clamp((int) (stockStableConf.getDouble("strength") * 10), 1, 64));
         } else
         {
             ArrayList<String> stableLore = new ArrayList<>(Arrays.asList(
@@ -190,13 +176,10 @@ public class ShopSettings extends InGameUI
                             t("TAX.USE_GLOBAL").replace("{tax}", globalTax + "")));
             CreateButton(TAX_TOGGLE, Material.IRON_INGOT, t("TAX.SALESTAX"), taxLore);
 
-            int temp = ShopUtil.ccShop.get().getInt(shopName + ".Options.SalesTax");
-            if (temp == 0) temp = 1;
-
             ArrayList<String> taxLore2 = new ArrayList<>(Arrays.asList(
                     "§9" + t("CUR_STATE") + ": " + ShopUtil.ccShop.get().getInt(shopName + ".Options.SalesTax") + "%",
                     t("L_R_SHIFT")));
-            CreateButton(TAX_AMOUNT, Material.IRON_INGOT, t("TAX.SALESTAX"), taxLore2);
+            CreateButton(TAX_AMOUNT, Material.IRON_INGOT, t("TAX.SALESTAX"), taxLore2, Clamp(ShopUtil.ccShop.get().getInt(shopName + ".Options.SalesTax"), 1, 64));
         } else
         {
             ArrayList<String> taxLore = new ArrayList<>(Arrays.asList(
@@ -405,8 +388,7 @@ public class ShopSettings extends InGameUI
                         }
                     }
 
-                    if (open < 1) open = 1;
-                    if (open > 24) open = 24;
+                    open = Clamp(open, 1, 24);
 
                     Bukkit.dispatchCommand(player, "DynamicShop shop " + shopName + " shophours " + open + " " + close);
                 } else if (e.getSlot() == SHOP_HOUR_CLOSE)
@@ -424,8 +406,7 @@ public class ShopSettings extends InGameUI
                         }
                     }
 
-                    if (close < 1) close = 1;
-                    if (close > 24) close = 24;
+                    close = Clamp(close, 1, 24);
 
                     Bukkit.dispatchCommand(player, "DynamicShop shop " + shopName + " shophours " + open + " " + close);
                 }
@@ -458,9 +439,7 @@ public class ShopSettings extends InGameUI
                     if (e.isShiftClick()) edit *= 5;
 
                     interval += edit;
-
-                    if (interval < 1) interval = 1;
-                    if (interval > 999) interval = 999;
+                    interval = Clamp(interval, 1, 999);
 
                     Bukkit.dispatchCommand(player, "DynamicShop shop " + shopName + " fluctuation " + interval + " " + strength);
                 } else if (e.getSlot() == FLUC_STRENGTH)
@@ -470,10 +449,7 @@ public class ShopSettings extends InGameUI
                     if (e.isShiftClick()) edit *= 5;
 
                     strength += edit;
-
-                    if (strength < 0.1) strength = 0.1;
-                    if (strength > 64) strength = 64;
-
+                    strength = Clamp(strength, 0.1, 64);
                     strength = Math.round(strength * 100) / 100.0;
 
                     Bukkit.dispatchCommand(player, "DynamicShop shop " + shopName + " fluctuation " + interval + " " + strength);
@@ -507,8 +483,7 @@ public class ShopSettings extends InGameUI
                     if (e.isShiftClick()) edit *= 5;
 
                     interval += edit;
-                    if (interval < 1) interval = 1;
-                    if (interval > 999) interval = 999;
+                    interval = Clamp(interval, 1, 999);
 
                     Bukkit.dispatchCommand(player, "DynamicShop shop " + shopName + " stockStabilizing " + interval + " " + strength);
                 } else if (e.getSlot() == STABLE_STRENGTH)
@@ -518,10 +493,7 @@ public class ShopSettings extends InGameUI
                     if (e.isShiftClick()) edit *= 5;
 
                     strength += edit;
-
-                    if (strength < 0.1) strength = 0.1;
-                    if (strength > 25) strength = 25;
-
+                    strength = Clamp(strength, 0.1, 25);
                     strength = (Math.round(strength * 100) / 100.0);
 
                     Bukkit.dispatchCommand(player, "DynamicShop shop " + shopName + " stockStabilizing " + interval + " " + strength);
@@ -560,10 +532,7 @@ public class ShopSettings extends InGameUI
                 if (e.isRightClick()) edit = 1;
                 if (e.isShiftClick()) edit *= 5;
 
-                int result = ShopUtil.ccShop.get().getInt(shopName + ".Options.SalesTax") + edit;
-                if (result < 0) result = 0;
-                if (result > 99) result = 99;
-
+                int result = Clamp(ShopUtil.ccShop.get().getInt(shopName + ".Options.SalesTax") + edit, 0, 99);
                 ShopUtil.ccShop.get().set(shopName + ".Options.SalesTax", result);
 
                 DynaShopAPI.openShopSettingGui(player, shopName);
