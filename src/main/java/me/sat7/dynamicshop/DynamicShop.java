@@ -33,9 +33,7 @@ import static me.sat7.dynamicshop.utilities.ConfigUtil.configVersion;
 
 public final class DynamicShop extends JavaPlugin implements Listener
 {
-
     private static Economy econ = null; // 볼트에 물려있는 이코노미
-
     public static Economy getEconomy()
     {
         return econ;
@@ -64,10 +62,8 @@ public final class DynamicShop extends JavaPlugin implements Listener
         console = plugin.getServer().getConsoleSender();
         initCustomConfigs();
 
-        // 볼트 이코노미 셋업
         if (!setupEconomy())
         {
-            console.sendMessage(String.format("[%s] - Disabled due to no Vault dependency found!", getDescription().getName()));
             getServer().getPluginManager().disablePlugin(this);
             return;
         }
@@ -84,6 +80,47 @@ public final class DynamicShop extends JavaPlugin implements Listener
 
         // 완료
         console.sendMessage(Constants.DYNAMIC_SHOP_PREFIX + " Enabled! :)");
+
+        CheckUpdate();
+        InitBstats();
+    }
+
+    // 볼트 이코노미 초기화
+    private boolean setupEconomy()
+    {
+        boolean ret = true;
+
+        if (getServer().getPluginManager().getPlugin("Vault") == null)
+        {
+            console.sendMessage(Constants.DYNAMIC_SHOP_PREFIX + " Vault Not Found");
+            ret = false;
+        }
+        RegisteredServiceProvider<Economy> rsp = getServer().getServicesManager().getRegistration(Economy.class);
+        if (rsp == null)
+        {
+            console.sendMessage(Constants.DYNAMIC_SHOP_PREFIX + " RSP is null!");
+            ret = false;
+        }
+        else
+        {
+            econ = rsp.getProvider();
+            ret = true;
+        }
+
+        if (ret)
+        {
+            console.sendMessage(Constants.DYNAMIC_SHOP_PREFIX + " Vault Found");
+        }
+        else
+        {
+            console.sendMessage(String.format("[%s] - Disabled due to no Vault dependency found!", getDescription().getName()));
+        }
+
+        return ret;
+    }
+
+    private void CheckUpdate()
+    {
         new UpdateChecker(this, UpdateChecker.PROJECT_ID).getVersion(version ->
         {
             try
@@ -113,7 +150,10 @@ public final class DynamicShop extends JavaPlugin implements Listener
                 DynamicShop.console.sendMessage(Constants.DYNAMIC_SHOP_PREFIX + "Failed to check update. Try again later.");
             }
         });
+    }
 
+    private void InitBstats()
+    {
         // bstats
         //System.setProperty("bstats.relocatecheck", "false"); // 빌드가 외부로 나갈때는 이 라인이 주석처리되야함.
 
@@ -259,25 +299,6 @@ public final class DynamicShop extends JavaPlugin implements Listener
     public List<String> onTabComplete(CommandSender sender, Command cmd, String commandLabel, String[] args)
     {
         return TabCompleteUtil.onTabCompleteBody(this, sender, cmd, args);
-    }
-
-    // 볼트 이코노미 초기화
-    private boolean setupEconomy()
-    {
-        if (getServer().getPluginManager().getPlugin("Vault") == null)
-        {
-            console.sendMessage(Constants.DYNAMIC_SHOP_PREFIX + " Vault Not Found");
-            return false;
-        }
-        RegisteredServiceProvider<Economy> rsp = getServer().getServicesManager().getRegistration(Economy.class);
-        if (rsp == null)
-        {
-            console.sendMessage(Constants.DYNAMIC_SHOP_PREFIX + " RSP is null!");
-            return false;
-        }
-        econ = rsp.getProvider();
-        console.sendMessage(Constants.DYNAMIC_SHOP_PREFIX + " Vault Found");
-        return econ != null;
     }
 
     @Override

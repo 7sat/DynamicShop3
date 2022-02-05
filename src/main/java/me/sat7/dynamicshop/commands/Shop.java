@@ -17,6 +17,8 @@ import me.sat7.dynamicshop.utilities.ShopUtil;
 import net.milkbowl.vault.economy.Economy;
 import net.milkbowl.vault.economy.EconomyResponse;
 
+import static me.sat7.dynamicshop.utilities.MathUtil.Clamp;
+
 public final class Shop
 {
     private Shop()
@@ -761,14 +763,10 @@ public final class Shop
                 {
                     try
                     {
-                        Integer start = Integer.parseInt(args[3]);
-                        int end = Integer.parseInt(args[4]);
-                        if (start > 24) start = 24;
-                        else if (start < 1) start = 1;
-                        if (end > 24) end = 24;
-                        else if (end < 1) end = 1;
+                        int start = Clamp(Integer.parseInt(args[3]),1,24);
+                        int end = Clamp(Integer.parseInt(args[4]), 1, 24);
 
-                        if (start.equals(end))
+                        if (start == end)
                         {
                             ShopUtil.ccShop.get().set(args[1] + ".Options.shophours", null);
                             ShopUtil.ccShop.save();
@@ -822,14 +820,7 @@ public final class Shop
                     int interval;
                     try
                     {
-                        int temp = Integer.parseInt(args[3]);
-
-                        if (temp < 1)
-                            temp = 1;
-                        if (temp > 999)
-                            temp = 999;
-
-                        interval = temp;
+                        interval = Clamp(Integer.parseInt(args[3]), 1, 999);
                     } catch (Exception e)
                     {
                         player.sendMessage(DynamicShop.dsPrefix + LangUtil.ccLang.get().getString("ERR.WRONG_DATATYPE"));
@@ -881,14 +872,7 @@ public final class Shop
                     int interval;
                     try
                     {
-                        int temp = Integer.parseInt(args[3]);
-
-                        if (temp < 1)
-                            temp = 1;
-                        if (temp > 999)
-                            temp = 999;
-
-                        interval = temp;
+                        interval = Clamp(Integer.parseInt(args[3]), 1, 999);
                     } catch (Exception e)
                     {
                         player.sendMessage(DynamicShop.dsPrefix + LangUtil.ccLang.get().getString("ERR.WRONG_DATATYPE"));

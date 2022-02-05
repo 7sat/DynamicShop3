@@ -18,14 +18,12 @@ import me.sat7.dynamicshop.DynamicShop;
 import me.sat7.dynamicshop.constants.Constants;
 import me.sat7.dynamicshop.files.CustomConfig;
 
-public class StartPage extends InGameUI
+public final class StartPage extends InGameUI
 {
     public StartPage()
     {
         uiType = UI_TYPE.StartPage;
     }
-
-
 
     public static CustomConfig ccStartPage;
 

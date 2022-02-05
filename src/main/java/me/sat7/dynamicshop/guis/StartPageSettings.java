@@ -13,7 +13,7 @@ import org.bukkit.inventory.Inventory;
 
 import me.sat7.dynamicshop.DynamicShop;
 
-public class StartPageSettings extends InGameUI
+public final class StartPageSettings extends InGameUI
 {
     public StartPageSettings()
     {

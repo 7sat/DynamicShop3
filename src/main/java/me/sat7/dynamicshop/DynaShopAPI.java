@@ -24,8 +24,6 @@ public final class DynaShopAPI
 
     }
 
-    //[ UI ]=========================================================
-
     // 상점 UI생성 후 열기
     public static void openShopGui(Player player, String shopName, int page)
     {

@@ -7,6 +7,8 @@ import me.sat7.dynamicshop.DynamicShop;
 import me.sat7.dynamicshop.utilities.LangUtil;
 import org.bukkit.scheduler.BukkitRunnable;
 
+import static me.sat7.dynamicshop.utilities.MathUtil.Clamp;
+
 public final class SetTax
 {
     private static BukkitRunnable resetTaxTask = null;
@@ -28,9 +30,7 @@ public final class SetTax
         {
             try
             {
-                int newValue = Integer.parseInt(args[1]);
-                if (newValue <= 2) newValue = 2;
-                if (newValue > 99) newValue = 99;
+                int newValue = Clamp(Integer.parseInt(args[1]), 2, 99);
 
                 DynamicShop.plugin.getConfig().set("SalesTax", newValue);
                 DynamicShop.plugin.saveConfig();
@@ -47,10 +47,9 @@ public final class SetTax
         {
             try
             {
-                int newValue = Integer.parseInt(args[2]);
+                int newValue = Clamp(Integer.parseInt(args[2]), 2, 99);
                 int tempTaxDurationMinutes = Integer.parseInt(args[3]);
-                if (newValue <= 2) newValue = 2;
-                if (newValue > 99) newValue = 99;
+
                 if (tempTaxDurationMinutes <= 1) tempTaxDurationMinutes = 1;
 
                 ConfigUtil.setCurrentTax(newValue);

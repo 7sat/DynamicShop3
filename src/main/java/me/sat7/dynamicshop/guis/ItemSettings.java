@@ -19,7 +19,7 @@ import me.sat7.dynamicshop.transactions.Calc;
 
 import static me.sat7.dynamicshop.DynaShopAPI.df;
 
-public class ItemSettings extends InGameUI
+public final class ItemSettings extends InGameUI
 {
     public ItemSettings()
     {

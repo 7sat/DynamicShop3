@@ -26,7 +26,7 @@ import me.sat7.dynamicshop.utilities.ShopUtil;
 import static me.sat7.dynamicshop.DynaShopAPI.df;
 import static me.sat7.dynamicshop.utilities.MathUtil.Clamp;
 
-public class Shop extends InGameUI
+public final class Shop extends InGameUI
 {
     public Shop()
     {

@@ -20,7 +20,7 @@ import me.sat7.dynamicshop.utilities.ShopUtil;
 
 import static me.sat7.dynamicshop.utilities.MathUtil.Clamp;
 
-public class ShopSettings extends InGameUI
+public final class ShopSettings extends InGameUI
 {
     public ShopSettings()
     {

@@ -17,7 +17,7 @@ import org.bukkit.inventory.meta.ItemMeta;
 import me.sat7.dynamicshop.DynamicShop;
 import me.sat7.dynamicshop.constants.Constants;
 
-public class ItemPalette extends InGameUI
+public final class ItemPalette extends InGameUI
 {
     public ItemPalette()
     {

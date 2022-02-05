@@ -13,9 +13,8 @@ import org.bukkit.inventory.Inventory;
 import java.util.ArrayList;
 import java.util.Arrays;
 
-public class QuickSell extends InGameUI
+public final class QuickSell extends InGameUI
 {
-
     public QuickSell()
     {
         uiType = UI_TYPE.QuickSell;

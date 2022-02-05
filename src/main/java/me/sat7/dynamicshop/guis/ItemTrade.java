@@ -25,7 +25,7 @@ import me.sat7.dynamicshop.utilities.ShopUtil;
 
 import static me.sat7.dynamicshop.DynaShopAPI.df;
 
-public class ItemTrade extends InGameUI
+public final class ItemTrade extends InGameUI
 {
     public ItemTrade()
     {
