@@ -36,9 +36,7 @@ public final class ItemSettings extends InGameUI
         String[] temp = DynamicShop.userInteractItem.get(player.getUniqueId()).split("/");
         String shopName = temp[0];
 
-        // UI 요소 생성
-        String title = t("ITEM_SETTING_TITLE");
-        inventory = Bukkit.createInventory(player, 36, title);
+        inventory = Bukkit.createInventory(player, 36, t("ITEM_SETTING_TITLE"));
 
         String buyValueStr = t("VALUE_BUY") + dsItem.getBuyValue();
         String sellValueStr = t("VALUE_SELL") + dsItem.getSellValue();
@@ -259,7 +257,6 @@ public final class ItemSettings extends InGameUI
         // 닫기 버튼
         if (e.getSlot() == CLOSE)
         {
-            SoundUtil.playerSoundEffect(player, "click");
             DynaShopAPI.openItemPalette(player, 1, "");
             return;
         }
@@ -354,7 +351,6 @@ public final class ItemSettings extends InGameUI
         // 가격,미디언,스톡 탭 이동
         if (e.getSlot() >= 2 && e.getSlot() <= 7)
         {
-            SoundUtil.playerSoundEffect(player, "click");
             DynaShopAPI.openItemSettingGui(player, e.getClickedInventory().getItem(0), e.getSlot() - 1, valueBuyD, valueSellD, valueMinD, valueMaxD, medianI, stockI);
         }
         // + - 버튼들

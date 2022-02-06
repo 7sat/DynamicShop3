@@ -25,6 +25,7 @@ import me.sat7.dynamicshop.utilities.ShopUtil;
 
 import static me.sat7.dynamicshop.DynaShopAPI.df;
 import static me.sat7.dynamicshop.utilities.MathUtil.Clamp;
+import static me.sat7.dynamicshop.utilities.ShopUtil.GetShopMaxPage;
 
 public final class Shop extends InGameUI
 {
@@ -46,7 +47,7 @@ public final class Shop extends InGameUI
             return null;
         }
 
-        int maxPage = ShopUtil.ccShop.get().getConfigurationSection(shopName).getConfigurationSection("Options").getInt("page");
+        int maxPage = GetShopMaxPage(shopName);
         page = Clamp(page,1,maxPage);
 
         String uiName = "";
@@ -228,8 +229,6 @@ public final class Shop extends InGameUI
             // 닫기버튼
             if (e.getSlot() == CLOSE)
             {
-                SoundUtil.playerSoundEffect(player, "click");
-
                 if (DynamicShop.plugin.getConfig().getBoolean("OnClickCloseButton_OpenStartPage"))
                 {
                     DynaShopAPI.openStartPage(player);
@@ -241,8 +240,6 @@ public final class Shop extends InGameUI
             // 페이지 이동 버튼
             else if (e.getSlot() == PAGE)
             {
-                SoundUtil.playerSoundEffect(player, "click");
-
                 int targetPage = curPage;
                 if (e.isLeftClick())
                 {
@@ -250,7 +247,7 @@ public final class Shop extends InGameUI
                     {
                         targetPage -= 1;
                         if (targetPage < 1)
-                            targetPage = ShopUtil.ccShop.get().getConfigurationSection(shopName).getConfigurationSection("Options").getInt("page");
+                            targetPage = GetShopMaxPage(shopName);
                     } else if (player.hasPermission("dshop.admin.shopedit"))
                     {
                         ShopUtil.insetShopPage(shopName, curPage);
@@ -260,7 +257,7 @@ public final class Shop extends InGameUI
                     if (!e.isShiftClick())
                     {
                         targetPage += 1;
-                        if (targetPage > ShopUtil.ccShop.get().getConfigurationSection(shopName).getConfigurationSection("Options").getInt("page"))
+                        if (targetPage > GetShopMaxPage(shopName))
                             targetPage = 1;
                     } else if (player.hasPermission("dshop.admin.shopedit"))
                     {
@@ -286,7 +283,6 @@ public final class Shop extends InGameUI
             // 상점 설정 버튼
             else if (e.getSlot() == SHOP_INFO && e.isRightClick() && player.hasPermission("dshop.admin.shopedit"))
             {
-                SoundUtil.playerSoundEffect(player, "click");
                 DynamicShop.userInteractItem.put(player.getUniqueId(), shopName + "/" + 0); // 선택한 아이탬의 인덱스 저장
                 DynaShopAPI.openShopSettingGui(player, shopName);
             } else if (e.getSlot() <= 45)
@@ -306,8 +302,6 @@ public final class Shop extends InGameUI
                 // 아이탬 이동, 수정, 또는 장식탬 삭제
                 else if (player.hasPermission("dshop.admin.shopedit"))
                 {
-                    SoundUtil.playerSoundEffect(player, "click");
-
                     DynamicShop.userInteractItem.put(player.getUniqueId(), shopName + "/" + idx); // 선택한 아이탬의 인덱스 저장
                     if (e.isShiftClick())
                     {

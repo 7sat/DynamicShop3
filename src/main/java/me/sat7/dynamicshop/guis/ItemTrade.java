@@ -39,9 +39,7 @@ public final class ItemTrade extends InGameUI
 
     public Inventory getGui(Player player, String shopName, String tradeIdx)
     {
-        // UI 요소 생성
-        String title = t("TRADE_TITLE");
-        inventory = Bukkit.createInventory(player, 18, title);
+        inventory = Bukkit.createInventory(player, 18, t("TRADE_TITLE"));
 
         // 배달비
         ConfigurationSection optionS = ShopUtil.ccShop.get().getConfigurationSection(shopName).getConfigurationSection("Options");
@@ -242,7 +240,6 @@ public final class ItemTrade extends InGameUI
             // 닫기
             if (e.getSlot() == CLOSE)
             {
-                SoundUtil.playerSoundEffect(player, "click");
                 DynamicShop.userInteractItem.put(player.getUniqueId(), "");
 
                 // 표지판을 클릭해서 거래화면에 진입한 경우에는 상점UI로 돌아가는 대신 인벤토리를 닫음
@@ -261,7 +258,6 @@ public final class ItemTrade extends InGameUI
                 // 잔액확인 버튼
                 if (e.getSlot() == CHECK_BALANCE)
                 {
-                    SoundUtil.playerSoundEffect(player, "click");
                     if (ShopUtil.ccShop.get().contains(shopName + ".Options.flag.jobpoint"))
                     {
                         player.sendMessage(DynamicShop.dsPrefix + t("BALANCE") + ":§f " + df.format(JobsHook.getCurJobPoints(player)) + "Points");
@@ -277,7 +273,6 @@ public final class ItemTrade extends InGameUI
                 {
                     if (player.hasPermission("dshop.admin.shopedit"))
                     {
-                        SoundUtil.playerSoundEffect(player, "click");
                         String path = shopName + "." + tradeIdx + ".tradeType";
                         String tradeType = ShopUtil.ccShop.get().getString(path);
                         if (tradeType == null || !tradeType.equals("SellOnly"))
@@ -298,7 +293,6 @@ public final class ItemTrade extends InGameUI
                 {
                     if (player.hasPermission("dshop.admin.shopedit"))
                     {
-                        SoundUtil.playerSoundEffect(player, "click");
                         String path = shopName + "." + tradeIdx + ".tradeType";
                         String tradeType = ShopUtil.ccShop.get().getString(path);
                         if (tradeType == null || !tradeType.equals("BuyOnly"))

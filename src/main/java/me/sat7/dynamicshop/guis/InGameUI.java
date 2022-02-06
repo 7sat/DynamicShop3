@@ -21,8 +21,7 @@ public class InGameUI
         Shop,
         ShopSettings,
         StartPage,
-        StartPageSettings,
-        PageEditor
+        StartPageSettings
     }
 
     public UI_TYPE uiType;

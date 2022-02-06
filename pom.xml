@@ -6,7 +6,7 @@
 
     <groupId>me.sat7</groupId>
     <artifactId>DynamicShop</artifactId>
-    <version>2.12.4</version>
+    <version>2.12.5</version>
     <packaging>jar</packaging>
 
     <name>DynamicShop</name>
@@ -73,12 +73,12 @@
 
     <repositories>
         <repository>
-            <id>jitpack.io</id>
-            <url>https://jitpack.io</url>
-        </repository>
-        <repository>
             <id>spigot-repo</id>
             <url>https://hub.spigotmc.org/nexus/content/repositories/snapshots/</url>
+        </repository>
+        <repository>
+            <id>jitpack.io</id>
+            <url>https://jitpack.io</url>
         </repository>
         <repository>
             <id>sonatype</id>
@@ -99,6 +99,12 @@
     </repositories>
 
     <dependencies>
+        <dependency>
+            <groupId>org.spigotmc</groupId>
+            <artifactId>spigot-api</artifactId>
+            <version>1.18.1-R0.1-SNAPSHOT</version>
+            <scope>provided</scope>
+        </dependency>
         <dependency>
             <groupId>com.github.MilkBowl</groupId>
             <artifactId>VaultAPI</artifactId>
@@ -134,12 +140,6 @@
             <artifactId>junit</artifactId>
             <version>4.13.2</version>
             <scope>test</scope>
-        </dependency>
-        <dependency>
-            <groupId>org.spigotmc</groupId>
-            <artifactId>spigot-api</artifactId>
-            <version>1.18.1-R0.1-SNAPSHOT</version>
-            <scope>provided</scope>
         </dependency>
     </dependencies>
 </project>

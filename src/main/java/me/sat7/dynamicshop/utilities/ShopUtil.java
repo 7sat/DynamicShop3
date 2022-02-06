@@ -650,4 +650,12 @@ public final class ShopUtil
 
         return new String[]{topShopName, Integer.toString(tradeIdx)};
     }
+
+    public static int GetShopMaxPage(String shopName)
+    {
+        if (!ShopUtil.ccShop.get().getKeys(false).contains(shopName))
+            return 0;
+
+        return ShopUtil.ccShop.get().getConfigurationSection(shopName).getConfigurationSection("Options").getInt("page");
+    }
 }
