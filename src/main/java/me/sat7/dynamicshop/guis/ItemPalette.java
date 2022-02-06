@@ -2,6 +2,7 @@ package me.sat7.dynamicshop.guis;
 
 import java.util.ArrayList;
 import java.util.Comparator;
+import java.util.List;
 
 import me.sat7.dynamicshop.DynaShopAPI;
 import me.sat7.dynamicshop.events.OnChat;
@@ -162,7 +163,11 @@ public final class ItemPalette extends InGameUI
             }
 
             @SuppressWarnings("ConstantConditions")
-            String search = e.getClickedInventory().getItem(SEARCH).getItemMeta().getLore().toString().replace("[", "").replace("]", "");
+            String search = "";
+            List<String>  lore = e.getClickedInventory().getItem(SEARCH).getItemMeta().getLore();
+            if (lore != null)
+                search = lore.toString().replace("[", "").replace("]", "");
+
             DynaShopAPI.openItemPalette(player, targetPage, search);
         }
         // 모두 추가 버튼
