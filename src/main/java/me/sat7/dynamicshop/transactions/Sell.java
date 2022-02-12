@@ -105,6 +105,34 @@ public final class Sell
         return priceSum;
     }
 
+    public static double quickSellItem(ItemStack tempIS, String shopName, int tradeIdx)
+    {
+        double priceSum;
+
+        // 실제 판매 가능량 확인
+        int actualAmount = tempIS.getAmount();
+
+
+        priceSum = Calc.calcTotalCost(shopName, String.valueOf(tradeIdx), -actualAmount);
+
+        // 재고 증가
+        if (ShopUtil.ccShop.get().getInt(shopName + "." + tradeIdx + ".stock") > 0)
+        {
+            ShopUtil.ccShop.get().set(shopName + "." + tradeIdx + ".stock",
+                    ShopUtil.ccShop.get().getInt(shopName + "." + tradeIdx + ".stock") + actualAmount);
+        }
+
+        // 실제 거래부----------
+        ShopUtil.ccShop.save();
+        LogUtil.addLog(shopName, tempIS.getType().toString(), -actualAmount, priceSum, "vault", "chest");
+        if (ShopUtil.ccShop.get().contains(shopName + ".Options.Balance"))
+        {
+            ShopUtil.addShopBalance(shopName, priceSum * -1);
+        }
+
+        return priceSum;
+    }
+
     // 판매
     public static void sellItemCash(Player player, String shopName, String tradeIdx, ItemStack tempIS, double priceSum, double deliverycharge, boolean infiniteStock)
     {

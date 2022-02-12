@@ -651,6 +651,54 @@ public final class ShopUtil
         return new String[]{topShopName, Integer.toString(tradeIdx)};
     }
 
+    public static String[] FindTheBestShopToSell(ItemStack itemStack)
+    {
+        String topShopName = "";
+        double topPrice = -1;
+        int tradeIdx = -1;
+
+        // 접근가능한 상점중 최고가 찾기
+        for (String shop : ShopUtil.ccShop.get().getKeys(false))
+        {
+            ConfigurationSection shopConf = ShopUtil.ccShop.get().getConfigurationSection(shop);
+
+            // 표지판 전용 상점, 지역상점, 잡포인트 상점
+            if (shopConf.contains("Options.flag.localshop") || shopConf.contains("Options.flag.signshop") || shopConf.contains("Options.flag.jobpoint"))
+                continue;
+
+            int sameItemIdx = ShopUtil.findItemFromShop(shop, itemStack);
+
+            if (sameItemIdx != -1)
+            {
+                String tradeType = shopConf.getString(sameItemIdx + ".tradeType");
+                if (tradeType != null && tradeType.equals("BuyOnly")) continue; // 구매만 가능함
+
+                // 상점에 돈이 없음
+                if (ShopUtil.getShopBalance(shop) != -1 && ShopUtil.getShopBalance(shop) < Calc.calcTotalCost(shop, String.valueOf(sameItemIdx), itemStack.getAmount()))
+                {
+                    continue;
+                }
+
+                double value = shopConf.getDouble(sameItemIdx + ".value");
+
+                int tax = ConfigUtil.getCurrentTax();
+                if (shopConf.contains("Options.SalesTax"))
+                {
+                    tax = shopConf.getInt("Options.SalesTax");
+                }
+
+                if (topPrice < value - ((value / 100) * tax))
+                {
+                    topShopName = shop;
+                    topPrice = shopConf.getDouble(sameItemIdx + ".value");
+                    tradeIdx = sameItemIdx;
+                }
+            }
+        }
+
+        return new String[]{topShopName, Integer.toString(tradeIdx)};
+    }
+
     public static int GetShopMaxPage(String shopName)
     {
         if (!ShopUtil.ccShop.get().getKeys(false).contains(shopName))

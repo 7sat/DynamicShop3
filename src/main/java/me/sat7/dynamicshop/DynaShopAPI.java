@@ -356,4 +356,14 @@ public final class DynaShopAPI
 
         return Sell.quickSellItem(player, itemStack, ret[0], Integer.parseInt(ret[1]), true, -1);
     }
+
+    public static double QuickSell(ItemStack itemStack)
+    {
+        String[] ret = ShopUtil.FindTheBestShopToSell(itemStack);
+
+        if (!validateShopName(ret[0]))
+            return 0;
+
+        return Sell.quickSellItem(itemStack, ret[0], Integer.parseInt(ret[1]));
+    }
 }
