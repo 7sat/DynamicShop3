@@ -1,15 +1,20 @@
 Language: en-US
 Prefix: §3§l[dShop] §f
-SalesTax: 25
-UseShopCommand: true
-DefaultShopName: Main
-DisplayStockAsStack: false
-DeliveryChargeScale: 1
-NumberOfPlayer: 10
-SaveLogs: true
-CullLogs: true
-LogCullAgeMinutes: 7200
-LogCullTimeMinutes: 120
-OnClickCloseButton_OpenStartPage: true
-OpenStartPageInsteadOfDefaultShop: true
-ShopInfoButtonIcon : OAK_SIGN
+
+Command.UseShopCommand: true
+Command.OpenStartPageInsteadOfDefaultShop: true
+Command.DefaultShopName: SampleShop
+
+Shop.SalesTax: 25
+Shop.DeliveryChargeScale: 1
+Shop.NumberOfPlayer: 10
+
+UI.DisplayStockAsStack: false
+UI.OpenStartPageWhenClickCloseButton: true
+UI.ShopInfoButtonIcon : OAK_SIGN
+
+Log.SaveLogs: true
+Log.LogFileNameFormat: MM_dd_yyyy
+Log.CullLogs: true
+Log.LogCullAgeMinutes: 7200
+Log.LogCullTimeMinutes: 120

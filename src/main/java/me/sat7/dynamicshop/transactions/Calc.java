@@ -1,5 +1,6 @@
 package me.sat7.dynamicshop.transactions;
 
+import me.sat7.dynamicshop.files.CustomConfig;
 import me.sat7.dynamicshop.utilities.ConfigUtil;
 import me.sat7.dynamicshop.utilities.ShopUtil;
 
@@ -13,20 +14,22 @@ public final class Calc
     // 특정 아이탬의 현재 가치를 계산 (다이나믹 or 고정가)
     public static double getCurrentPrice(String shopName, String idx, boolean buy)
     {
+        CustomConfig data = ShopUtil.shopConfigFiles.get(shopName);
+
         double price;
 
         double value;
-        if (!buy && ShopUtil.ccShop.get().contains(shopName + "." + idx + ".value2"))
+        if (!buy && data.get().contains(idx + ".value2"))
         {
-            value = ShopUtil.ccShop.get().getDouble(shopName + "." + idx + ".value2");
+            value = data.get().getDouble(idx + ".value2");
         } else
         {
-            value = ShopUtil.ccShop.get().getDouble(shopName + "." + idx + ".value");
+            value = data.get().getDouble(idx + ".value");
         }
-        double min = ShopUtil.ccShop.get().getDouble(shopName + "." + idx + ".valueMin");
-        double max = ShopUtil.ccShop.get().getDouble(shopName + "." + idx + ".valueMax");
-        int median = ShopUtil.ccShop.get().getInt(shopName + "." + idx + ".median");
-        int stock = ShopUtil.ccShop.get().getInt(shopName + "." + idx + ".stock");
+        double min = data.get().getDouble(idx + ".valueMin");
+        double max = data.get().getDouble(idx + ".valueMax");
+        int median = data.get().getInt(idx + ".median");
+        int stock = data.get().getInt(idx + ".stock");
 
         if (median <= 0 || stock <= 0)
         {
@@ -51,17 +54,19 @@ public final class Calc
     // 특정 아이탬의 앞으로 n개의 가치합을 계산 (다이나믹 or 고정가) (세금 반영)
     public static double calcTotalCost(String shopName, String idx, int amount)
     {
+        CustomConfig data = ShopUtil.shopConfigFiles.get(shopName);
+
         double total = 0;
-        int median = ShopUtil.ccShop.get().getInt(shopName + "." + idx + ".median");
-        int tempStock = ShopUtil.ccShop.get().getInt(shopName + "." + idx + ".stock");
+        int median = data.get().getInt(idx + ".median");
+        int tempStock = data.get().getInt(idx + ".stock");
 
         double value;
-        if (amount < 0 && ShopUtil.ccShop.get().contains(shopName + "." + idx + ".value2"))
+        if (amount < 0 && data.get().contains(idx + ".value2"))
         {
-            value = ShopUtil.ccShop.get().getDouble(shopName + "." + idx + ".value2");
+            value = data.get().getDouble(idx + ".value2");
         } else
         {
-            value = ShopUtil.ccShop.get().getDouble(shopName + "." + idx + ".value");
+            value = data.get().getDouble(idx + ".value");
         }
 
         if (median <= 0 || tempStock <= 0)
@@ -76,8 +81,8 @@ public final class Calc
                     tempStock++;
                 }
                 double temp = median * value / tempStock;
-                double min = ShopUtil.ccShop.get().getDouble(shopName + "." + idx + ".valueMin");
-                double max = ShopUtil.ccShop.get().getDouble(shopName + "." + idx + ".valueMax");
+                double min = data.get().getDouble(idx + ".valueMin");
+                double max = data.get().getDouble(idx + ".valueMax");
 
                 if (min != 0 && temp < min)
                 {
@@ -102,7 +107,7 @@ public final class Calc
         }
 
         // 세금 적용 (판매가 별도지정시 세금계산 안함)
-        if (amount < 0 && !ShopUtil.ccShop.get().contains(shopName + "." + idx + ".value2"))
+        if (amount < 0 && !data.get().contains(idx + ".value2"))
         {
             total = total - ((total / 100) * getTaxRate(shopName));
         }
@@ -113,9 +118,11 @@ public final class Calc
     // 상점의 세율 반환
     public static int getTaxRate(String shopName)
     {
-        if (ShopUtil.ccShop.get().contains(shopName + ".Options.SalesTax"))
+        CustomConfig data = ShopUtil.shopConfigFiles.get(shopName);
+
+        if (data.get().contains("Options.SalesTax"))
         {
-            return ShopUtil.ccShop.get().getInt(shopName + ".Options.SalesTax");
+            return data.get().getInt("Options.SalesTax");
         } else
         {
             return ConfigUtil.getCurrentTax();

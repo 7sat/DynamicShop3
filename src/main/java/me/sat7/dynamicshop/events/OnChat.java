@@ -103,7 +103,7 @@ public class OnChat implements Listener
                     StartPage.ccStartPage.get().set("Buttons." + temp[1] + ".action", ChatColor.stripColor(e.getMessage()));
                     break;
                 case "shopname":
-                    if (!ShopUtil.ccShop.get().contains(e.getMessage()))
+                    if (!ShopUtil.shopConfigFiles.containsKey(e.getMessage()))
                     {
                         p.sendMessage(DynamicShop.dsPrefix + LangUtil.ccLang.get().getString("ERR.SHOP_NOT_FOUND"));
                         return;

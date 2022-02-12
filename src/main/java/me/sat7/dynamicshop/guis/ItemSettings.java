@@ -1,6 +1,5 @@
 package me.sat7.dynamicshop.guis;
 
-import java.text.DecimalFormat;
 import java.util.ArrayList;
 
 import me.sat7.dynamicshop.DynaShopAPI;
@@ -151,10 +150,10 @@ public final class ItemSettings extends InGameUI
             } else
             {
                 String taxStr = "§7" + ChatColor.stripColor(t("TAX.SALESTAX")) + ": ";
-                if (ShopUtil.ccShop.get().contains(shopName + ".Options.SalesTax"))
+                if (ShopUtil.shopConfigFiles.get(shopName).get().contains("Options.SalesTax"))
                 {
-                    taxStr += ShopUtil.ccShop.get().getInt(shopName + ".Options.SalesTax") + "%";
-                    sellPrice = buyPrice - ((buyPrice / 100) * ShopUtil.ccShop.get().getInt(shopName + ".Options.SalesTax"));
+                    taxStr += ShopUtil.shopConfigFiles.get(shopName).get().getInt("Options.SalesTax") + "%";
+                    sellPrice = buyPrice - ((buyPrice / 100) * ShopUtil.shopConfigFiles.get(shopName).get().getInt("Options.SalesTax"));
                 } else
                 {
                     taxStr += ConfigUtil.getCurrentTax() + "%";
@@ -335,7 +334,7 @@ public final class ItemSettings extends InGameUI
                 player.sendMessage(DynamicShop.dsPrefix + t("ERR.NO_RECOMMAND_DATA"));
             } else
             {
-                int numberOfPlayer = DynamicShop.plugin.getConfig().getInt("NumberOfPlayer");
+                int numberOfPlayer = DynamicShop.plugin.getConfig().getInt("Shop.NumberOfPlayer");
                 int sugMid = ShopUtil.CalcRecommendedMedian(worth, numberOfPlayer);
 
                 player.sendMessage(DynamicShop.dsPrefix + t("RECOMMAND_APPLIED").replace("{playerNum}", numberOfPlayer + ""));

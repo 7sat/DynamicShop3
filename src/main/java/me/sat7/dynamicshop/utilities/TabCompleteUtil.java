@@ -2,9 +2,11 @@ package me.sat7.dynamicshop.utilities;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
 import java.util.UUID;
 import java.util.stream.Collectors;
 
+import me.sat7.dynamicshop.files.CustomConfig;
 import org.bukkit.Bukkit;
 import org.bukkit.Material;
 import org.bukkit.command.Command;
@@ -37,16 +39,16 @@ public final class TabCompleteUtil
 
             if (cmd.getName().equalsIgnoreCase("shop") && args.length == 1)
             {
-                if (!dynamicShop.getConfig().getBoolean("UseShopCommand")) return alist;
+                if (!dynamicShop.getConfig().getBoolean("Command.UseShopCommand")) return alist;
 
-                for (String s : ShopUtil.ccShop.get().getKeys(false))
+                for (Map.Entry<String, CustomConfig> entry : ShopUtil.shopConfigFiles.entrySet())
                 {
-                    ConfigurationSection options = ShopUtil.ccShop.get().getConfigurationSection(s).getConfigurationSection("Options");
+                    ConfigurationSection options = entry.getValue().get().getConfigurationSection("Options");
 
                     if (options.contains("flag.signshop") && !sender.hasPermission(Constants.REMOTE_ACCESS_PERMISSION))
                         continue;
 
-                    temp.add(s);
+                    temp.add(entry.getKey());
                 }
 
                 for (String s : temp)
@@ -75,7 +77,6 @@ public final class TabCompleteUtil
                     if (sender.hasPermission("dshop.admin.settax")) temp.add("settax temp");
                     if (sender.hasPermission("dshop.admin.setdefaultshop")) temp.add("setdefaultshop");
                     if (sender.hasPermission(Constants.DELETE_USER_PERMISSION)) temp.add("deleteOldUser");
-                    if (sender.hasPermission("dshop.admin.convert")) temp.add("convert");
                     if (sender.hasPermission("dshop.admin.reload")) temp.add("reload");
                     temp.add("cmdHelp");
 
@@ -85,6 +86,8 @@ public final class TabCompleteUtil
                     }
                 } else if (args.length >= 2 && args[0].equals("shop"))
                 {
+                    CustomConfig data = ShopUtil.shopConfigFiles.get(args[1]);
+
                     if (args.length == 2)
                     {
                         if (!DynamicShop.userTempData.get(uuid).equals("shop"))
@@ -93,21 +96,24 @@ public final class TabCompleteUtil
                             Help.showHelp("shop", (Player) sender, args);
                         }
 
-                        for (String s : ShopUtil.ccShop.get().getKeys(false))
+                        for (Map.Entry<String, CustomConfig> entry : ShopUtil.shopConfigFiles.entrySet())
                         {
-                            ConfigurationSection options = ShopUtil.ccShop.get().getConfigurationSection(s).getConfigurationSection("Options");
+                            ConfigurationSection options = entry.getValue().get().getConfigurationSection("Options");
+
+                            if (options == null)
+                                continue;
 
                             if (options.contains("flag") && options.getConfigurationSection("flag").contains("signshop") && !sender.hasPermission(Constants.REMOTE_ACCESS_PERMISSION))
                                 continue;
 
-                            temp.add(s);
+                            temp.add(entry.getKey());
                         }
 
                         for (String s : temp)
                         {
                             if (s.startsWith(args[1]) || s.toLowerCase().startsWith(args[1])) alist.add(s);
                         }
-                    } else if (args.length >= 3 && (!ShopUtil.ccShop.get().contains(args[1]) || args[1].length() == 0))
+                    } else if (args.length >= 3 && (!ShopUtil.shopConfigFiles.containsKey(args[1]) || args[1].length() == 0))
                     {
                         return null;
                     } else if (args.length == 3)
@@ -128,8 +134,6 @@ public final class TabCompleteUtil
                             temp.add("fluctuation");
                             temp.add("stockStabilizing");
                             temp.add("account");
-                            temp.add("hideStock");
-                            temp.add("hidePricingType");
                             temp.add("sellbuy");
                             temp.add("log");
                         }
@@ -192,14 +196,14 @@ public final class TabCompleteUtil
 
                                 String shopName = args[1];
 
-                                for (String s : ShopUtil.ccShop.get().getConfigurationSection(shopName).getKeys(false))
+                                for (String s : data.get().getKeys(false))
                                 {
                                     try
                                     {
                                         int i = Integer.parseInt(s);
-                                        if (!ShopUtil.ccShop.get().contains(shopName + "." + s + ".value"))
+                                        if (!data.get().contains(s + ".value"))
                                             continue; // 장식용임
-                                        temp.add(ShopUtil.ccShop.get().getConfigurationSection(shopName + "." + s).getName() + "/" + ShopUtil.ccShop.get().getString(shopName + "." + s + ".mat"));
+                                        temp.add(data.get().getName() + "/" + data.get().getString(s + ".mat"));
                                     } catch (Exception ignored)
                                     {
                                     }
@@ -313,6 +317,9 @@ public final class TabCompleteUtil
                                 temp.add("deliverycharge");
                                 temp.add("jobpoint");
                                 temp.add("showvaluechange");
+                                temp.add("hidestock");
+                                temp.add("hidepricingtype");
+                                temp.add("hideshopbalance");
 
                                 for (String s : temp)
                                 {
@@ -396,7 +403,7 @@ public final class TabCompleteUtil
                             {
                                 if (args[3].equals("linkto") || args[3].equals("transfer"))
                                 {
-                                    temp.addAll(ShopUtil.ccShop.get().getKeys(false));
+                                    temp.addAll(ShopUtil.shopConfigFiles.keySet());
                                 }
 
                                 switch (args[3])
@@ -432,42 +439,6 @@ public final class TabCompleteUtil
                                 for (String s : temp)
                                 {
                                     if (s.startsWith(args[4])) alist.add(s);
-                                }
-                            }
-                        } else if (args[2].equalsIgnoreCase("hideStock") && sender.hasPermission("dshop.admin.shopedit"))
-                        {
-                            if (args.length == 4)
-                            {
-                                temp.add("true");
-                                temp.add("false");
-
-                                for (String s : temp)
-                                {
-                                    if (s.startsWith(args[3])) alist.add(s);
-                                }
-
-                                if (!DynamicShop.userTempData.get(uuid).equals("hideStock"))
-                                {
-                                    DynamicShop.userTempData.put(uuid,"hideStock");
-                                    Help.showHelp("hide_stock", (Player) sender, args);
-                                }
-                            }
-                        } else if (args[2].equalsIgnoreCase("hidePricingType") && sender.hasPermission("dshop.admin.shopedit"))
-                        {
-                            if (args.length == 4)
-                            {
-                                temp.add("true");
-                                temp.add("false");
-
-                                for (String s : temp)
-                                {
-                                    if (s.startsWith(args[3])) alist.add(s);
-                                }
-
-                                if (!DynamicShop.userTempData.get(uuid).equals("hidePricingType"))
-                                {
-                                    DynamicShop.userTempData.put(uuid,"hidePricingType");
-                                    Help.showHelp("hide_pricing_type", (Player) sender, args);
                                 }
                             }
                         } else if (args[2].equalsIgnoreCase("sellbuy") && sender.hasPermission("dshop.admin.shopedit"))
@@ -530,7 +501,7 @@ public final class TabCompleteUtil
                     }
                 } else if (args[0].equalsIgnoreCase("deleteshop") && sender.hasPermission("dshop.admin.deleteshop"))
                 {
-                    temp.addAll(ShopUtil.ccShop.get().getKeys(false));
+                    temp.addAll(ShopUtil.shopConfigFiles.keySet());
 
                     for (String s : temp)
                     {
@@ -546,7 +517,7 @@ public final class TabCompleteUtil
                 {
                     if (args.length <= 3)
                     {
-                        temp.addAll(ShopUtil.ccShop.get().getKeys(false));
+                        temp.addAll(ShopUtil.shopConfigFiles.keySet());
 
                         for (String s : temp)
                         {
@@ -563,7 +534,7 @@ public final class TabCompleteUtil
                 {
                     if (args.length == 2)
                     {
-                        temp.addAll(ShopUtil.ccShop.get().getKeys(false));
+                        temp.addAll(ShopUtil.shopConfigFiles.keySet());
 
                         for (String s : temp)
                         {
@@ -588,7 +559,7 @@ public final class TabCompleteUtil
                 {
                     if (args.length == 2)
                     {
-                        temp.addAll(ShopUtil.ccShop.get().getKeys(false));
+                        temp.addAll(ShopUtil.shopConfigFiles.keySet());
 
                         for (String s : temp)
                         {
@@ -623,7 +594,7 @@ public final class TabCompleteUtil
                     }
                 } else if (args[0].equalsIgnoreCase("setdefaultshop"))
                 {
-                    temp.addAll(ShopUtil.ccShop.get().getKeys(false));
+                    temp.addAll(ShopUtil.shopConfigFiles.keySet());
 
                     for (String s : temp)
                     {
@@ -641,25 +612,6 @@ public final class TabCompleteUtil
                     {
                         DynamicShop.userTempData.put(uuid,"deleteOldUser");
                         Help.showHelp("delete_old_user", (Player) sender, args);
-                    }
-                } else if (args[0].equalsIgnoreCase("convert"))
-                {
-                    if (!sender.hasPermission("dshop.admin.convert")) return null;
-
-                    if (args.length == 2)
-                    {
-                        temp.add("Shop");
-                    }
-
-                    for (String s : temp)
-                    {
-                        if (s.startsWith(args[1])) alist.add(s);
-                    }
-
-                    if (!DynamicShop.userTempData.get(uuid).equals("convert"))
-                    {
-                        DynamicShop.userTempData.put(uuid,"convert");
-                        Help.showHelp("convert", (Player) sender, args);
                     }
                 }
 

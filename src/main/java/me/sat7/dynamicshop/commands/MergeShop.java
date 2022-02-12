@@ -31,11 +31,13 @@ public final class MergeShop
 
             try
             {
-                if (ShopUtil.ccShop.get().contains(args[1]) && ShopUtil.ccShop.get().contains(args[2]))
+                if (ShopUtil.shopConfigFiles.containsKey(args[1]) &&
+                    ShopUtil.shopConfigFiles.containsKey(args[2]))
                 {
                     ShopUtil.mergeShop(args[1], args[2]);
                     player.sendMessage(DynamicShop.dsPrefix + LangUtil.ccLang.get().getString("CHANGES_APPLIED") + args[1]);
-                } else
+                }
+                else
                 {
                     player.sendMessage(DynamicShop.dsPrefix + LangUtil.ccLang.get().getString("ERR.SHOP_NOT_FOUND"));
                 }

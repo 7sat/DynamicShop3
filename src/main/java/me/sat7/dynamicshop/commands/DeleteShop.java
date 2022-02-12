@@ -1,5 +1,6 @@
 package me.sat7.dynamicshop.commands;
 
+import me.sat7.dynamicshop.files.CustomConfig;
 import org.bukkit.entity.Player;
 
 import me.sat7.dynamicshop.DynamicShop;
@@ -25,10 +26,13 @@ public final class DeleteShop
 
             try
             {
-                if (ShopUtil.ccShop.get().contains(args[1]))
+                if (ShopUtil.shopConfigFiles.containsKey(args[1]))
                 {
-                    ShopUtil.ccShop.get().set(args[1], null);
-                    ShopUtil.ccShop.save();
+                    CustomConfig data = ShopUtil.shopConfigFiles.get(args[1]);
+                    data.delete();
+
+                    ShopUtil.shopConfigFiles.remove(args[1]);
+
                     player.sendMessage(DynamicShop.dsPrefix + LangUtil.ccLang.get().getString("SHOP_DELETED"));
                 } else
                 {

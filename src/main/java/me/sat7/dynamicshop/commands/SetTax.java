@@ -32,7 +32,7 @@ public final class SetTax
             {
                 int newValue = Clamp(Integer.parseInt(args[1]), 2, 99);
 
-                DynamicShop.plugin.getConfig().set("SalesTax", newValue);
+                DynamicShop.plugin.getConfig().set("Shop.SalesTax", newValue);
                 DynamicShop.plugin.saveConfig();
 
                 ConfigUtil.setCurrentTax(newValue);

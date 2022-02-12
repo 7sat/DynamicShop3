@@ -2,6 +2,7 @@ package me.sat7.dynamicshop.utilities;
 
 import java.util.ArrayList;
 
+import me.sat7.dynamicshop.files.CustomConfig;
 import org.bukkit.Material;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
@@ -47,18 +48,20 @@ public final class ItemsUtil
     // 아이탬 정보 출력
     public static void sendItemInfo(Player player, String shopName, int idx, String msgType)
     {
-        String info = " value:" + ShopUtil.ccShop.get().getDouble(shopName + "." + idx + ".value");
+        CustomConfig data = ShopUtil.shopConfigFiles.get(shopName);
 
-        double valueMin = ShopUtil.ccShop.get().getDouble(shopName + "." + idx + ".valueMin");
+        String info = " value:" + data.get().getDouble(idx + ".value");
+
+        double valueMin = data.get().getDouble(idx + ".valueMin");
         if (valueMin > 0.01) info += " min:" + valueMin;
-        double valueMax = ShopUtil.ccShop.get().getDouble(shopName + "." + idx + ".valueMax");
+        double valueMax = data.get().getDouble(idx + ".valueMax");
         if (valueMax > 0) info += " max:" + valueMax;
 
-        info += " median:" + ShopUtil.ccShop.get().getInt(shopName + "." + idx + ".median");
-        info += " stock:" + ShopUtil.ccShop.get().getInt(shopName + "." + idx + ".stock");
+        info += " median:" + data.get().getInt(idx + ".median");
+        info += " stock:" + data.get().getInt(idx + ".stock");
 
         player.sendMessage(" - " + LangUtil.ccLang.get().getString(msgType).
-                replace("{item}", ShopUtil.ccShop.get().getString(shopName + "." + idx + ".mat")).
+                replace("{item}", data.get().getString(idx + ".mat")).
                 replace("{info}", info)
         );
     }

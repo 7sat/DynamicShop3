@@ -35,10 +35,27 @@ public final class LangUtil
             ccLang.get().addDefault("STARTPAGE.ENTER_COLOR", "장식 버튼의 색상을 입력하세요. (영문)");
             ccLang.get().addDefault("STARTPAGE.DEFAULT_SHOP_LORE", "§f상점으로 가기");
 
+            ccLang.get().addDefault("PAGE_EDITOR.PREV", "§f<<");
+            ccLang.get().addDefault("PAGE_EDITOR.NEXT", "§f>>");
+            ccLang.get().addDefault("PAGE_EDITOR.PAGE_SWAP_SUCCESS", "§f페이지가 교체 되었습니다.");
+            ccLang.get().addDefault("PAGE_EDITOR.PAGE_SWAP_FAIL", "§f페이지 교체 실패.");
+            ccLang.get().addDefault("PAGE_EDITOR.PAGE_SWAP_SELECTED", "§f페이지 선택되었습니다. 서로 교체 할 다른 페이지를 우클릭 하세요.");
+            ccLang.get().addDefault("PAGE_EDITOR.PAGE_LORE", "§e좌클릭: 페이지 이동\n§e우클릭: 페이지 교체(스왑)\n§eShift+좌: 페이지 삽입\n§eShift+우: 페이지 삭제");
+
+            ccLang.get().addDefault("LOG_VIEWER.USER", "§f유저: ");
+            ccLang.get().addDefault("LOG_VIEWER.ITEM", "§f아이템: ");
+            ccLang.get().addDefault("LOG_VIEWER.AMOUNT", "§f수량: ");
+            ccLang.get().addDefault("LOG_VIEWER.DATE", "§f날짜: ");
+            ccLang.get().addDefault("LOG_VIEWER.TIME", "§f시간: ");
+            ccLang.get().addDefault("LOG_VIEWER.CURRENCY", "§f화폐유형: ");
+            ccLang.get().addDefault("LOG_VIEWER.PRICE", "§f가격: ");
+
             ccLang.get().addDefault("TRADE_TITLE", "§3아이탬 거래");
             ccLang.get().addDefault("PALETTE_TITLE", "§3판매할 아이탬 선택");
             ccLang.get().addDefault("PALETTE_LORE", "§e좌클릭: 이 아이탬을 상점에 등록");
             ccLang.get().addDefault("ITEM_SETTING_TITLE", "§3아이탬 셋팅");
+            ccLang.get().addDefault("PAGE_EDITOR_TITLE", "§3페이지 편집");
+            ccLang.get().addDefault("LOG_VIEWER_TITLE", "§3로그 뷰어");
             ccLang.get().addDefault("QUICKSELL_TITLE", "§3빠른 판매");
             ccLang.get().addDefault("QUICKSELL_GUIDE_TITLE", "§3§l빠른 판매 도움말");
             ccLang.get().addDefault("QUICKSELL_GUIDE_LORE", "§a판매할 아이탬을 좌클릭 하세요.\n§a씨프트 좌클릭으로 같은 유형의 아이탬을 모두 팝니다.\n§a우클릭으로 해당 아이탬 상점으로 이동합니다.");
@@ -56,6 +73,7 @@ public final class LangUtil
             ccLang.get().addDefault("MEDIAN", "§f중앙값: ");
             ccLang.get().addDefault("MEDIAN_HELP", "§f중앙값이 작을수록 가격이 급격이 변화합니다.");
             ccLang.get().addDefault("STOCK", "§f재고: ");
+            ccLang.get().addDefault("STACKS", "§f 스택");
             ccLang.get().addDefault("INFSTOCK", "무한 재고");
             ccLang.get().addDefault("STATICPRICE", "고정 가격");
             ccLang.get().addDefault("UNLIMITED", "무제한");
@@ -91,10 +109,13 @@ public final class LangUtil
             ccLang.get().addDefault("PERMISSION", "§f퍼미션");
             ccLang.get().addDefault("CUR_STATE", "현재상태");
             ccLang.get().addDefault("CLICK", "클릭");
+            ccLang.get().addDefault("LMB", "좌클릭");
+            ccLang.get().addDefault("LOG_TOGGLE_LORE", "§e우클릭: 로그 뷰어");
             ccLang.get().addDefault("MAXPAGE", "§f최대 페이지");
             ccLang.get().addDefault("MAXPAGE_LORE", "§f상점의 최대 페이지를 설정합니다");
             ccLang.get().addDefault("L_R_SHIFT", "§e좌: -1 우: +1 Shift: x5");
-            ccLang.get().addDefault("FLAG", "§f플래그");
+            ccLang.get().addDefault("FLAG", "플래그");
+            ccLang.get().addDefault("FLAGS", "§e플래그");
             ccLang.get().addDefault("RMB_EDIT", "§e우클릭: 편집");
             ccLang.get().addDefault("SIGNSHOP_LORE", "§f표지판을 통해서만 접근할 수 있습니다.");
             ccLang.get().addDefault("LOCALSHOP_LORE", "§f실제 상점 위치를 방문해야 합니다.");
@@ -102,6 +123,10 @@ public final class LangUtil
             ccLang.get().addDefault("DELIVERYCHARG_LORE", "§f배달비를 지불하고 localshop에서 원격으로 거래합니다.");
             ccLang.get().addDefault("JOBPOINT_LORE", "§fJobs 플러그인의 job point로 거래합니다.");
             ccLang.get().addDefault("SHOW_VALUE_CHANGE_LORE", "§f가격 변화량을 표시합니다.");
+            ccLang.get().addDefault("HIDE_STOCK", "§f재고 수량 표시를 숨깁니다.");
+            ccLang.get().addDefault("HIDE_PRICING_TYPE", "§f가격 유형 표기를 숨깁니다.");
+            ccLang.get().addDefault("HIDE_SHOP_BALANCE", "§f상점 계좌 잔액을 숨깁니다.");
+
             ccLang.get().addDefault("SEARCH", "§f찾기");
             ccLang.get().addDefault("SEARCH_ITEM", "§f찾으려는 아이템의 이름을 입력하세요.");
             ccLang.get().addDefault("SEARCH_CANCELED", "§f검색 취소됨.");
@@ -121,11 +146,12 @@ public final class LangUtil
             ccLang.get().addDefault("LOG.LOG", "§f로그");
             ccLang.get().addDefault("LOG.CLEAR", "§f로그 삭제됨");
             ccLang.get().addDefault("LOG.SAVE", "§f로그 저장됨");
-            ccLang.get().addDefault("LOG.DELETE", "§f로그 삭제");
+            ccLang.get().addDefault("LOG.DELETE", "§4로그 삭제");
 
             ccLang.get().addDefault("SHOP_CREATED", "§f상점 생성됨!");
             ccLang.get().addDefault("SHOP_DELETED", "§f상점 제거됨!");
             ccLang.get().addDefault("POSITION", "§f위치: ");
+            ccLang.get().addDefault("SHOP_LOCATION", "§f상점 위치: ");
             ccLang.get().addDefault("SHOP_LIST", "§f상점 목록");
 
             ccLang.get().addDefault("TIME.OPEN", "Open");
@@ -156,7 +182,7 @@ public final class LangUtil
             ccLang.get().addDefault("SELL_SUCCESS_JP", "§f{item} {amount}개를 {price}포인트에 판매함. 남은포인트: {bal}");
             ccLang.get().addDefault("QSELL_RESULT", "§f거래한 상점: ");
             ccLang.get().addDefault("QSELL_NA", "§f해당 아이탬을 취급하는 상점이 없습니다.");
-            ccLang.get().addDefault("DELIVERYCHARGE", "§f배달비: {fee}");
+            ccLang.get().addDefault("DELIVERYCHARGE", "§f배달비: ");
             ccLang.get().addDefault("DELIVERYCHARGE_EXEMPTION", "§f배달비: {fee} ({fee2} 면제됨)");
             ccLang.get().addDefault("DELIVERYCHARGE_NA", "§f다른 월드로 배달할 수 없습니다.");
             ccLang.get().addDefault("NOT_ENOUGH_MONEY", "§f돈이 부족합니다. 잔액: {bal}");
@@ -188,7 +214,6 @@ public final class LangUtil
             ccLang.get().addDefault("HELP.REMOVE_ITEM", "§f§o인자를 0으로 입력하면 이 아이탬을 상점에서 §4제거§f합니다.");
             ccLang.get().addDefault("HELP.QSELL", "§f빠르게 아이탬을 판매합니다.");
             ccLang.get().addDefault("HELP.DELETE_OLD_USER", "장기간 접속하지 않은 유저의 데이터를 삭제합니다.");
-            ccLang.get().addDefault("HELP.CONVERT", "다른 상점 플러그인의 정보를 변환합니다.");
             ccLang.get().addDefault("HELP.ACCOUNT", "상점의 계좌 잔액을 설정합니다. -1 = 무제한");
             ccLang.get().addDefault("HELP.SET_TO_REC_ALL", "§c상점의 모든 아이템 설정값을 권장값으로 초기화합니다.");
 
@@ -203,8 +228,6 @@ public final class LangUtil
             ccLang.get().addDefault("ARROW_DOWN", "§c⬇");
             ccLang.get().addDefault("ARROW_UP_2", "§c⬆");
             ccLang.get().addDefault("ARROW_DOWN_2", "§a⬇");
-
-            ccLang.get().addDefault("SHOPINFO", "§f[SHOP_LORE][PERMISSION][TAX][SHOP_BALANCE][SHOP_HOUR][SHOP_POS]");
 
             ccLang.get().addDefault("ERR.NO_USER_ID", "§6플레이어 uuid를 찾을 수 없습니다. 상점 이용 불가능.");
             ccLang.get().addDefault("ERR.ITEM_NOT_EXIST", "상점에 해당 아이탬이 존재하지 않습니다.");
@@ -232,6 +255,7 @@ public final class LangUtil
             ccLang.get().addDefault("ERR.SHOP_LINK_TARGET_ERR", "목표 상점은 실제 계좌를 가지고 있어야 합니다.");
             ccLang.get().addDefault("ERR.NESTED_STRUCTURE", "계층 구조를 이루는것은 금지되어 있습니다. (ex. aa-bb, bb-cc)");
             ccLang.get().addDefault("ERR.CREATIVE", "§eCreative mode 에서 이 명령어를 사용할 수 없습니다. 권한이 없습니다.");
+            ccLang.get().addDefault("ERR.FILE_CREATE_FAIL", "§e파일 생성에 실패했습니다.");
 
             ccLang.get().options().copyDefaults(true);
             ccLang.save();
@@ -255,10 +279,27 @@ public final class LangUtil
             ccLang.get().addDefault("STARTPAGE.ENTER_COLOR", "Enter color. (ex.LIGHT_BLUE)");
             ccLang.get().addDefault("STARTPAGE.DEFAULT_SHOP_LORE", "§fGo to shop");
 
+            ccLang.get().addDefault("PAGE_EDITOR.PREV", "§f<<");
+            ccLang.get().addDefault("PAGE_EDITOR.NEXT", "§f>>");
+            ccLang.get().addDefault("PAGE_EDITOR.PAGE_SWAP_SUCCESS", "§fThe page has been replaced.");
+            ccLang.get().addDefault("PAGE_EDITOR.PAGE_SWAP_FAIL", "§fPage swap failed.");
+            ccLang.get().addDefault("PAGE_EDITOR.PAGE_SWAP_SELECTED", "§fThe page is selected. Right-click on another page.");
+            ccLang.get().addDefault("PAGE_EDITOR.PAGE_LORE", "§eLMB: Go to page\n§eRMB: Swap Page\n§eShift+LMB: Insert page\n§eShift+RMB: Delete page");
+
+            ccLang.get().addDefault("LOG_VIEWER.USER", "§fUser: ");
+            ccLang.get().addDefault("LOG_VIEWER.ITEM", "§fItem: ");
+            ccLang.get().addDefault("LOG_VIEWER.AMOUNT", "§fAmount: ");
+            ccLang.get().addDefault("LOG_VIEWER.DATE", "§fDate: ");
+            ccLang.get().addDefault("LOG_VIEWER.TIME", "§fTime: ");
+            ccLang.get().addDefault("LOG_VIEWER.CURRENCY", "§fCurrency: ");
+            ccLang.get().addDefault("LOG_VIEWER.PRICE", "§fPrice: ");
+
             ccLang.get().addDefault("TRADE_TITLE", "§3Tradeview");
             ccLang.get().addDefault("PALETTE_TITLE", "§3Item Palette");
             ccLang.get().addDefault("PALETTE_LORE", "§eLMB: Register this item on shop");
             ccLang.get().addDefault("ITEM_SETTING_TITLE", "§3Item Settings");
+            ccLang.get().addDefault("PAGE_EDITOR_TITLE", "§3Page Editor");
+            ccLang.get().addDefault("LOG_VIEWER_TITLE", "§3Log Viewer");
             ccLang.get().addDefault("QUICKSELL_TITLE", "§3Quick Sell");
             ccLang.get().addDefault("QUICKSELL_GUIDE_TITLE", "§3§lQuick Sell Guide");
             ccLang.get().addDefault("QUICKSELL_GUIDE_LORE", "§aLeft-click the item you want to sell.\n§aShift left click to sell all items of the same type.\n§aRight-click to go to the item shop.");
@@ -276,6 +317,7 @@ public final class LangUtil
             ccLang.get().addDefault("MEDIAN", "§fMedian: ");
             ccLang.get().addDefault("MEDIAN_HELP", "§fThe larger the median value, the more rapidly the price changes.");
             ccLang.get().addDefault("STOCK", "§fStock: ");
+            ccLang.get().addDefault("STACKS", "§f Stacks");
             ccLang.get().addDefault("INFSTOCK", "Infinite stock");
             ccLang.get().addDefault("STATICPRICE", "Static price");
             ccLang.get().addDefault("UNLIMITED", "Unlimited");
@@ -325,17 +367,20 @@ public final class LangUtil
             ccLang.get().addDefault("LOG.LOG", "§fLog");
             ccLang.get().addDefault("LOG.CLEAR", "§fLog deleted");
             ccLang.get().addDefault("LOG.SAVE", "§fLog saved");
-            ccLang.get().addDefault("LOG.DELETE", "§fDelete Log");
+            ccLang.get().addDefault("LOG.DELETE", "§4Delete Log");
 
             ccLang.get().addDefault("SHOP_SETTING_TITLE", "§3Shop Settings");
             ccLang.get().addDefault("SHOP_INFO", "§3Shop Info");
             ccLang.get().addDefault("PERMISSION", "§fPermission");
             ccLang.get().addDefault("CUR_STATE", "Current");
             ccLang.get().addDefault("CLICK", "Click");
+            ccLang.get().addDefault("LMB", "LMB");
+            ccLang.get().addDefault("LOG_TOGGLE_LORE", "§eRMB: Log Viewer");
             ccLang.get().addDefault("MAXPAGE", "§fMax Page");
             ccLang.get().addDefault("MAXPAGE_LORE", "§fSet maximum number of pages");
             ccLang.get().addDefault("L_R_SHIFT", "§eLMB: -1 RMB: +1 Shift: x5");
-            ccLang.get().addDefault("FLAG", "§fFlag");
+            ccLang.get().addDefault("FLAG", "Flag");
+            ccLang.get().addDefault("FLAGS", "§eFlags");
             ccLang.get().addDefault("RMB_EDIT", "§eRMB: Edit");
             ccLang.get().addDefault("SIGNSHOP_LORE", "§fThis shop is only accessible from the sign.");
             ccLang.get().addDefault("LOCALSHOP_LORE", "§fPlayer must visit the actual location of the store.");
@@ -343,10 +388,14 @@ public final class LangUtil
             ccLang.get().addDefault("DELIVERYCHARG_LORE", "§fPay delivery charge, Buy items from a distance.");
             ccLang.get().addDefault("JOBPOINT_LORE", "§fJobs Reborn point shop.");
             ccLang.get().addDefault("SHOW_VALUE_CHANGE_LORE", "§fShow Value Change.");
+            ccLang.get().addDefault("HIDE_STOCK", "§fHide stock.");
+            ccLang.get().addDefault("HIDE_PRICING_TYPE", "§fHide pricing type.");
+            ccLang.get().addDefault("HIDE_SHOP_BALANCE", "§fHide shop balance.");
 
             ccLang.get().addDefault("SHOP_CREATED", "§fShop Created!");
             ccLang.get().addDefault("SHOP_DELETED", "§fShop Deleted!");
             ccLang.get().addDefault("POSITION", "§fPosition: ");
+            ccLang.get().addDefault("SHOP_LOCATION", "§fShop location: ");
             ccLang.get().addDefault("SHOP_LIST", "§fShop list");
 
             ccLang.get().addDefault("TIME.OPEN", "Open");
@@ -359,9 +408,9 @@ public final class LangUtil
             ccLang.get().addDefault("TIME.SET_SHOPHOURS", "Set shop hours");
             ccLang.get().addDefault("TIME.CUR", "§fCurrent Time: {time}h");
 
-            ccLang.get().addDefault("FLUC.FLUCTUATION", "Random Stock Fluctuation");
-            ccLang.get().addDefault("FLUC.INTERVAL", "Interval");
-            ccLang.get().addDefault("FLUC.STRENGTH", "Strength");
+            ccLang.get().addDefault("FLUC.FLUCTUATION", "§fRandom Stock Fluctuation");
+            ccLang.get().addDefault("FLUC.INTERVAL", "§fInterval");
+            ccLang.get().addDefault("FLUC.STRENGTH", "§fStrength");
 
             ccLang.get().addDefault("STOCKSTABILIZING.SS", "§fStock Stabilizing");
             ccLang.get().addDefault("STOCKSTABILIZING.L_R_SHIFT", "§eLMB: -0.1 RMB: +0.1 Shift: x5");
@@ -377,7 +426,7 @@ public final class LangUtil
             ccLang.get().addDefault("SELL_SUCCESS_JP", "§fSold {item} x{amount} for {price}points. Balance: {bal}");
             ccLang.get().addDefault("QSELL_RESULT", "§fTo: ");
             ccLang.get().addDefault("QSELL_NA", "§fThere are no shops to trade that item.");
-            ccLang.get().addDefault("DELIVERYCHARGE", "§fDelivery charge");
+            ccLang.get().addDefault("DELIVERYCHARGE", "§fDelivery charge: ");
             ccLang.get().addDefault("DELIVERYCHARGE_EXEMPTION", "§fDelivery charge: {fee} ({fee2} exempt)");
             ccLang.get().addDefault("DELIVERYCHARGE_NA", "§fCan't deliver to different world.");
             ccLang.get().addDefault("NOT_ENOUGH_MONEY", "§fNot enough money. Balance: {bal}");
@@ -409,9 +458,8 @@ public final class LangUtil
             ccLang.get().addDefault("HELP.REMOVE_ITEM", "§f§oEnter 0 for value to §4Remove§f this item.");
             ccLang.get().addDefault("HELP.QSELL", "§fQuick Sell");
             ccLang.get().addDefault("HELP.DELETE_OLD_USER", "Delete Old Inactive User data from User.yml.");
-            ccLang.get().addDefault("HELP.CONVERT", "Convert data from other shop plugin");
             ccLang.get().addDefault("HELP.ACCOUNT", "Set shop account balance. -1 = Infinite");
-            ccLang.get().addDefault("HELP.SET_TO_REC_ALL", "§cResets all item settings§r in the store to the recommended values.");
+            ccLang.get().addDefault("HELP.SET_TO_REC_ALL", "§cResets all item settings in the store to the recommended values.");
 
             ccLang.get().addDefault("ITEM_ADDED", "Item Added!");
             ccLang.get().addDefault("ITEM_UPDATED", "Item Updated!");
@@ -424,8 +472,6 @@ public final class LangUtil
             ccLang.get().addDefault("ARROW_DOWN", "§c⬇");
             ccLang.get().addDefault("ARROW_UP_2", "§c⬆");
             ccLang.get().addDefault("ARROW_DOWN_2", "§a⬇");
-
-            ccLang.get().addDefault("SHOPINFO", "§f[SHOP_LORE][PERMISSION][TAX][SHOP_BALANCE][SHOP_HOUR][SHOP_POS]");
 
             ccLang.get().addDefault("ERR.NO_USER_ID", "§6Cant find your uuid from server. Shop Unavailable.");
             ccLang.get().addDefault("ERR.ITEM_NOT_EXIST", "Item not exist.");
@@ -453,6 +499,7 @@ public final class LangUtil
             ccLang.get().addDefault("ERR.SHOP_LINK_TARGET_ERR", "Target shop must have actual account.");
             ccLang.get().addDefault("ERR.NESTED_STRUCTURE", "Nested structure is forbidden. (ex. aa-bb, bb-cc)");
             ccLang.get().addDefault("ERR.CREATIVE", "§eYou can not use this command in creative mode. No permission.");
+            ccLang.get().addDefault("ERR.FILE_CREATE_FAIL", "§eFailed to create file.");
 
             ccLang.get().options().copyDefaults(true);
             ccLang.save();

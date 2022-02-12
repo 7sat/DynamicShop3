@@ -3,6 +3,7 @@ package me.sat7.dynamicshop.transactions;
 import java.util.HashMap;
 
 import me.sat7.dynamicshop.events.ShopBuySellEvent;
+import me.sat7.dynamicshop.files.CustomConfig;
 import org.bukkit.Bukkit;
 import org.bukkit.Sound;
 import org.bukkit.entity.Player;
@@ -29,9 +30,11 @@ public final class Sell
     // 퀵판매
     public static double quickSellItem(Player player, ItemStack tempIS, String shopName, int tradeIdx, boolean isShiftClick, int slot)
     {
+        CustomConfig data = ShopUtil.shopConfigFiles.get(shopName);
+
         double priceSellOld = DynaShopAPI.getSellPrice(shopName, tempIS);
         double priceBuyOld = Calc.getCurrentPrice(shopName, String.valueOf(tradeIdx), true);
-        int stockOld = ShopUtil.ccShop.get().getInt(shopName + "." + tradeIdx + ".stock");
+        int stockOld = data.get().getInt(tradeIdx + ".stock");
         double priceSum;
 
         // 실제 판매 가능량 확인
@@ -66,10 +69,10 @@ public final class Sell
         priceSum = Calc.calcTotalCost(shopName, String.valueOf(tradeIdx), -actualAmount);
 
         // 재고 증가
-        if (ShopUtil.ccShop.get().getInt(shopName + "." + tradeIdx + ".stock") > 0)
+        if (data.get().getInt(tradeIdx + ".stock") > 0)
         {
-            ShopUtil.ccShop.get().set(shopName + "." + tradeIdx + ".stock",
-                    ShopUtil.ccShop.get().getInt(shopName + "." + tradeIdx + ".stock") + actualAmount);
+            data.get().set(tradeIdx + ".stock",
+                    data.get().getInt(tradeIdx + ".stock") + actualAmount);
         }
 
         // 실제 거래부----------
@@ -78,7 +81,7 @@ public final class Sell
 
         if (r.transactionSuccess())
         {
-            ShopUtil.ccShop.save();
+            data.save();
 
             //로그 기록
             LogUtil.addLog(shopName, tempIS.getType().toString(), -actualAmount, priceSum, "vault", player.getName());
@@ -90,7 +93,7 @@ public final class Sell
                     .replace("{bal}", econ.format(econ.getBalance((player)))));
             player.playSound(player.getLocation(), Sound.valueOf("ENTITY_EXPERIENCE_ORB_PICKUP"), 1, 1);
 
-            if (ShopUtil.ccShop.get().contains(shopName + ".Options.Balance"))
+            if (data.get().contains("Options.Balance"))
             {
                 ShopUtil.addShopBalance(shopName, priceSum * -1);
             }
@@ -108,9 +111,11 @@ public final class Sell
     // 판매
     public static void sellItemCash(Player player, String shopName, String tradeIdx, ItemStack tempIS, double priceSum, double deliverycharge, boolean infiniteStock)
     {
+        CustomConfig data = ShopUtil.shopConfigFiles.get(shopName);
+
         double priceSellOld = DynaShopAPI.getSellPrice(shopName, tempIS);
         double priceBuyOld = Calc.getCurrentPrice(shopName, String.valueOf(tradeIdx), true);
-        int stockOld = ShopUtil.ccShop.get().getInt(shopName + "." + tradeIdx + ".stock");
+        int stockOld = data.get().getInt(tradeIdx + ".stock");
         // 상점에 돈이 없음
         if (ShopUtil.getShopBalance(shopName) != -1 && ShopUtil.getShopBalance(shopName) < Calc.calcTotalCost(shopName, tradeIdx, tempIS.getAmount()))
         {
@@ -139,8 +144,8 @@ public final class Sell
         // 재고 증가
         if (!infiniteStock)
         {
-            ShopUtil.ccShop.get().set(shopName + "." + tradeIdx + ".stock",
-                    ShopUtil.ccShop.get().getInt(shopName + "." + tradeIdx + ".stock") + actualAmount);
+            data.get().set(tradeIdx + ".stock",
+                    data.get().getInt(tradeIdx + ".stock") + actualAmount);
         }
 
         // 면제된 배달비 계산용
@@ -173,18 +178,15 @@ public final class Sell
                 {
                     player.sendMessage(DynamicShop.dsPrefix + LangUtil.ccLang.get().getString("DELIVERYCHARGE_EXEMPTION").
                             replace("{fee}", "" + deliverycharge).replace("{fee2}", (oldPriceSum - priceSum) * -1 + ""));
-                } else
-                {
-                    player.sendMessage(DynamicShop.dsPrefix + LangUtil.ccLang.get().getString("DELIVERYCHARGE") + ": " + deliverycharge);
                 }
             }
 
-            if (ShopUtil.ccShop.get().contains(shopName + ".Options.Balance"))
+            if (data.get().contains("Options.Balance"))
             {
                 ShopUtil.addShopBalance(shopName, priceSum * -1);
             }
 
-            ShopUtil.ccShop.save();
+            data.save();
             DynaShopAPI.openItemTradeGui(player, shopName, tradeIdx);
 
             ShopBuySellEvent event = new ShopBuySellEvent(false, priceBuyOld, Calc.getCurrentPrice(shopName, String.valueOf(tradeIdx), true), priceSellOld, DynaShopAPI.getSellPrice(shopName, tempIS), stockOld, DynaShopAPI.getStock(shopName, tempIS), DynaShopAPI.getMedian(shopName, tempIS), shopName, tempIS, player);
@@ -198,9 +200,11 @@ public final class Sell
     // 판매 jp
     public static void sellItemJobPoint(Player player, String shopName, String tradeIdx, ItemStack tempIS, double priceSum, double deliverycharge, boolean infiniteStock)
     {
+        CustomConfig data = ShopUtil.shopConfigFiles.get(shopName);
+
         double priceSellOld = DynaShopAPI.getSellPrice(shopName, tempIS);
         double priceBuyOld = Calc.getCurrentPrice(shopName, String.valueOf(tradeIdx), true);
-        int stockOld = ShopUtil.ccShop.get().getInt(shopName + "." + tradeIdx + ".stock");
+        int stockOld = data.get().getInt(tradeIdx + ".stock");
         // 상점에 돈이 없음
         if (ShopUtil.getShopBalance(shopName) != -1 && ShopUtil.getShopBalance(shopName) < Calc.calcTotalCost(shopName, tradeIdx, tempIS.getAmount()))
         {
@@ -229,8 +233,8 @@ public final class Sell
         // 재고 증가
         if (!infiniteStock)
         {
-            ShopUtil.ccShop.get().set(shopName + "." + tradeIdx + ".stock",
-                    ShopUtil.ccShop.get().getInt(shopName + "." + tradeIdx + ".stock") + actualAmount);
+            data.get().set(tradeIdx + ".stock",
+                    data.get().getInt(tradeIdx + ".stock") + actualAmount);
         }
 
         // 면제된 배달비 계산용
@@ -260,18 +264,15 @@ public final class Sell
                 {
                     player.sendMessage(DynamicShop.dsPrefix + LangUtil.ccLang.get().getString("DELIVERYCHARGE_EXEMPTION").
                             replace("{fee}", "" + deliverycharge).replace("{fee2}", (oldPriceSum - priceSum) * -1 + ""));
-                } else
-                {
-                    player.sendMessage(DynamicShop.dsPrefix + LangUtil.ccLang.get().getString("DELIVERYCHARGE") + ": " + deliverycharge);
                 }
             }
 
-            if (ShopUtil.ccShop.get().contains(shopName + ".Options.Balance"))
+            if (data.get().contains("Options.Balance"))
             {
                 ShopUtil.addShopBalance(shopName, priceSum * -1);
             }
 
-            ShopUtil.ccShop.save();
+            data.save();
             DynaShopAPI.openItemTradeGui(player, shopName, tradeIdx);
 
             ShopBuySellEvent event = new ShopBuySellEvent(false, priceBuyOld, Calc.getCurrentPrice(shopName, String.valueOf(tradeIdx), true), priceSellOld, DynaShopAPI.getSellPrice(shopName, tempIS), stockOld, DynaShopAPI.getStock(shopName, tempIS), DynaShopAPI.getMedian(shopName, tempIS), shopName, tempIS, player);

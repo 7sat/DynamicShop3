@@ -3,6 +3,7 @@ package me.sat7.dynamicshop.transactions;
 import java.util.HashMap;
 
 import me.sat7.dynamicshop.events.ShopBuySellEvent;
+import me.sat7.dynamicshop.files.CustomConfig;
 import org.bukkit.Bukkit;
 import org.bukkit.Location;
 import org.bukkit.entity.Player;
@@ -30,10 +31,12 @@ public final class Buy
     // 구매
     public static void buyItemCash(Player player, String shopName, String tradeIdx, ItemStack tempIS, double priceSum, double deliverycharge, boolean infiniteStock)
     {
+        CustomConfig data = ShopUtil.shopConfigFiles.get(shopName);
+
         Economy econ = DynamicShop.getEconomy();
         double priceBuyOld = Calc.getCurrentPrice(shopName, tradeIdx, true);
         double priceSellOld = DynaShopAPI.getSellPrice(shopName, tempIS);
-        int stockOld = ShopUtil.ccShop.get().getInt(shopName + "." + tradeIdx + ".stock");
+        int stockOld = data.get().getInt(tradeIdx + ".stock");
 
         int actualAmount = 0;
 
@@ -52,8 +55,8 @@ public final class Buy
 
             if (!infiniteStock)
             {
-                ShopUtil.ccShop.get().set(shopName + "." + tradeIdx + ".stock",
-                        ShopUtil.ccShop.get().getInt(shopName + "." + tradeIdx + ".stock") - 1);
+                data.get().set(tradeIdx + ".stock",
+                        data.get().getInt(tradeIdx + ".stock") - 1);
             }
 
             actualAmount++;
@@ -63,7 +66,7 @@ public final class Buy
         if (actualAmount <= 0)
         {
             player.sendMessage(DynamicShop.dsPrefix + LangUtil.ccLang.get().getString("NOT_ENOUGH_MONEY").replace("{bal}", econ.format(econ.getBalance(player))));
-            ShopUtil.ccShop.get().set(shopName + "." + tradeIdx + ".stock", stockOld);
+            data.get().set(tradeIdx + ".stock", stockOld);
             return;
         }
 
@@ -71,7 +74,7 @@ public final class Buy
         if (!infiniteStock && stockOld <= actualAmount)
         {
             player.sendMessage(DynamicShop.dsPrefix + LangUtil.ccLang.get().getString("OUT_OF_STOCK"));
-            ShopUtil.ccShop.get().set(shopName + "." + tradeIdx + ".stock", stockOld);
+            data.get().set(tradeIdx + ".stock", stockOld);
             return;
         }
 
@@ -89,7 +92,7 @@ public final class Buy
                     if (giveAmount > leftAmount) giveAmount = leftAmount;
 
                     ItemStack iStack = new ItemStack(tempIS.getType(), giveAmount);
-                    iStack.setItemMeta((ItemMeta) ShopUtil.ccShop.get().get(shopName + "." + tradeIdx + ".itemStack"));
+                    iStack.setItemMeta((ItemMeta) data.get().get(tradeIdx + ".itemStack"));
 
                     HashMap<Integer, ItemStack> leftOver = player.getInventory().addItem(iStack);
                     if (leftOver.size() != 0)
@@ -98,7 +101,7 @@ public final class Buy
                         Location loc = player.getLocation();
 
                         ItemStack leftStack = new ItemStack(tempIS.getType(), leftOver.get(0).getAmount());
-                        leftStack.setItemMeta((ItemMeta) ShopUtil.ccShop.get().get(shopName + "." + tradeIdx + ".itemStack"));
+                        leftStack.setItemMeta((ItemMeta) data.get().get(tradeIdx + ".itemStack"));
 
                         player.getWorld().dropItem(loc, leftStack);
                     }
@@ -116,18 +119,13 @@ public final class Buy
                         .replace("{bal}", econ.format(econ.getBalance((player)))));
                 SoundUtil.playerSoundEffect(player, "buy");
 
-                if (deliverycharge > 0)
-                {
-                    player.sendMessage(DynamicShop.dsPrefix + LangUtil.ccLang.get().getString("DELIVERYCHARGE") + ": " + deliverycharge);
-                }
-
-                if (ShopUtil.ccShop.get().contains(shopName + ".Options.Balance"))
+                if (data.get().contains("Options.Balance"))
                 {
                     ShopUtil.addShopBalance(shopName, priceSum);
                 }
 
                 DynaShopAPI.openItemTradeGui(player, shopName, tradeIdx);
-                ShopUtil.ccShop.save();
+                data.save();
 
                 ShopBuySellEvent event = new ShopBuySellEvent(true, priceBuyOld, Calc.getCurrentPrice(shopName, tradeIdx, true), priceSellOld, DynaShopAPI.getSellPrice(shopName, tempIS), stockOld, DynaShopAPI.getStock(shopName, tempIS), DynaShopAPI.getMedian(shopName, tempIS), shopName, tempIS, player);
                 Bukkit.getPluginManager().callEvent(event);
@@ -144,8 +142,10 @@ public final class Buy
     // 구매 jp
     public static void buyItemJobPoint(Player player, String shopName, String tradeIdx, ItemStack tempIS, double priceSum, double deliverycharge, boolean infiniteStock)
     {
+        CustomConfig data = ShopUtil.shopConfigFiles.get(shopName);
+
         int actualAmount = 0;
-        int stockOld = ShopUtil.ccShop.get().getInt(shopName + "." + tradeIdx + ".stock");
+        int stockOld = data.get().getInt(tradeIdx + ".stock");
         double priceBuyOld = Calc.getCurrentPrice(shopName, tradeIdx, true);
         double priceSellOld = DynaShopAPI.getSellPrice(shopName, tempIS);
 
@@ -164,8 +164,8 @@ public final class Buy
 
             if (!infiniteStock)
             {
-                ShopUtil.ccShop.get().set(shopName + "." + tradeIdx + ".stock",
-                        ShopUtil.ccShop.get().getInt(shopName + "." + tradeIdx + ".stock") - 1);
+                data.get().set(tradeIdx + ".stock",
+                        data.get().getInt(tradeIdx + ".stock") - 1);
             }
 
             actualAmount++;
@@ -175,7 +175,7 @@ public final class Buy
         if (actualAmount <= 0)
         {
             player.sendMessage(DynamicShop.dsPrefix + LangUtil.ccLang.get().getString("NOT_ENOUGH_POINT").replace("{bal}", DynaShopAPI.df.format(JobsHook.getCurJobPoints(player))));
-            ShopUtil.ccShop.get().set(shopName + "." + tradeIdx + ".stock", stockOld);
+            data.get().set(tradeIdx + ".stock", stockOld);
             return;
         }
 
@@ -183,7 +183,7 @@ public final class Buy
         if (!infiniteStock && stockOld <= actualAmount)
         {
             player.sendMessage(DynamicShop.dsPrefix + LangUtil.ccLang.get().getString("OUT_OF_STOCK"));
-            ShopUtil.ccShop.get().set(shopName + "." + tradeIdx + ".stock", stockOld);
+            data.get().set(tradeIdx + ".stock", stockOld);
             return;
         }
 
@@ -199,7 +199,7 @@ public final class Buy
                     if (giveAmount > leftAmount) giveAmount = leftAmount;
 
                     ItemStack iStack = new ItemStack(tempIS.getType(), giveAmount);
-                    iStack.setItemMeta((ItemMeta) ShopUtil.ccShop.get().get(shopName + "." + tradeIdx + ".itemStack"));
+                    iStack.setItemMeta((ItemMeta) data.get().get(tradeIdx + ".itemStack"));
 
                     HashMap<Integer, ItemStack> leftOver = player.getInventory().addItem(iStack);
                     if (leftOver.size() != 0)
@@ -208,7 +208,7 @@ public final class Buy
                         Location loc = player.getLocation();
 
                         ItemStack leftStack = new ItemStack(tempIS.getType(), leftOver.get(0).getAmount());
-                        leftStack.setItemMeta((ItemMeta) ShopUtil.ccShop.get().get(shopName + "." + tradeIdx + ".itemStack"));
+                        leftStack.setItemMeta((ItemMeta) data.get().get(tradeIdx + ".itemStack"));
 
                         player.getWorld().dropItem(loc, leftStack);
                     }
@@ -226,18 +226,13 @@ public final class Buy
                         .replace("{bal}", DynaShopAPI.df.format(JobsHook.getCurJobPoints((player)))));
                 SoundUtil.playerSoundEffect(player, "buy");
 
-                if (deliverycharge > 0)
-                {
-                    player.sendMessage(DynamicShop.dsPrefix + LangUtil.ccLang.get().getString("DELIVERYCHARGE") + ": " + deliverycharge);
-                }
-
-                if (ShopUtil.ccShop.get().contains(shopName + ".Options.Balance"))
+                if (data.get().contains("Options.Balance"))
                 {
                     ShopUtil.addShopBalance(shopName, priceSum);
                 }
 
                 DynaShopAPI.openItemTradeGui(player, shopName, tradeIdx);
-                ShopUtil.ccShop.save();
+                data.save();
 
                 ShopBuySellEvent event = new ShopBuySellEvent(true, priceBuyOld, Calc.getCurrentPrice(shopName, tradeIdx, true), priceSellOld, DynaShopAPI.getSellPrice(shopName, tempIS), stockOld, DynaShopAPI.getStock(shopName, tempIS), DynaShopAPI.getMedian(shopName, tempIS), shopName, tempIS, player);
                 Bukkit.getPluginManager().callEvent(event);

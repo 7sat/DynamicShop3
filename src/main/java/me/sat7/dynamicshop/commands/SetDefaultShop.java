@@ -25,9 +25,9 @@ public final class SetDefaultShop
 
             try
             {
-                if (ShopUtil.ccShop.get().contains(args[1]))
+                if (ShopUtil.shopConfigFiles.containsKey(args[1]))
                 {
-                    DynamicShop.plugin.getConfig().set("DefaultShopName", args[1]);
+                    DynamicShop.plugin.getConfig().set("Command.DefaultShopName", args[1]);
                     DynamicShop.plugin.saveConfig();
                     player.sendMessage(DynamicShop.dsPrefix + LangUtil.ccLang.get().getString("CHANGES_APPLIED") + args[1]);
                 } else

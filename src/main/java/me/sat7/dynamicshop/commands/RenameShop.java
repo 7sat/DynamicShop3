@@ -25,7 +25,7 @@ public final class RenameShop
 
             try
             {
-                if (ShopUtil.ccShop.get().contains(args[1]))
+                if (ShopUtil.shopConfigFiles.containsKey(args[1]))
                 {
                     String newName = args[2].replace("/", "");
                     ShopUtil.renameShop(args[1], newName);

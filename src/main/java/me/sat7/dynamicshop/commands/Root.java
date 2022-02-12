@@ -32,7 +32,7 @@ public class Root implements CommandExecutor
 
         if (!player.hasPermission(Constants.USE_SHOP_PERMISSION))
         {
-            player.sendMessage(DynamicShop.dsPrefix + LangUtil.ccLang.get().getString("ERR.PERMISSION"));
+            player.sendMessage(DynamicShop.dsPrefix + LangUtil.ccLang.get().getString("ERR.NO_PERMISSION"));
             return true;
         }
         if (player.getGameMode() == GameMode.CREATIVE && !player.hasPermission(Constants.ADMIN_CREATIVE_PERMISSION))
@@ -140,12 +140,6 @@ public class Root implements CommandExecutor
         {
             DeleteUser.deleteUser(args, player);
             return true;
-        }
-
-        // convert Shop
-        else if (args[0].equalsIgnoreCase("convert"))
-        {
-            return Convert.convert(args, player);
         }
 
         return true;

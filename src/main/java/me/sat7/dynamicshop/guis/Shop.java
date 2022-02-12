@@ -6,6 +6,7 @@ import java.util.regex.Pattern;
 
 import me.sat7.dynamicshop.DynaShopAPI;
 import me.sat7.dynamicshop.events.OnChat;
+import me.sat7.dynamicshop.files.CustomConfig;
 import me.sat7.dynamicshop.utilities.SoundUtil;
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
@@ -24,6 +25,7 @@ import me.sat7.dynamicshop.transactions.Calc;
 import me.sat7.dynamicshop.utilities.ShopUtil;
 
 import static me.sat7.dynamicshop.DynaShopAPI.df;
+import static me.sat7.dynamicshop.utilities.LayoutUtil.l;
 import static me.sat7.dynamicshop.utilities.MathUtil.Clamp;
 import static me.sat7.dynamicshop.utilities.ShopUtil.GetShopMaxPage;
 
@@ -40,8 +42,10 @@ public final class Shop extends InGameUI
 
     public Inventory getGui(Player player, String shopName, int page)
     {
+        CustomConfig data = ShopUtil.shopConfigFiles.get(shopName);
+
         // jobreborn 플러그인 있는지 확인.
-        if (!JobsHook.jobsRebornActive && ShopUtil.ccShop.get().contains(shopName + ".Options.flag.jobpoint"))
+        if (!JobsHook.jobsRebornActive && data.get().contains("Options.flag.jobpoint"))
         {
             player.sendMessage(DynamicShop.dsPrefix + t("ERR.JOBSREBORN_NOT_FOUND"));
             return null;
@@ -51,9 +55,9 @@ public final class Shop extends InGameUI
         page = Clamp(page,1,maxPage);
 
         String uiName = "";
-        if (ShopUtil.ccShop.get().contains(shopName + ".Options.title"))
+        if (data.get().contains("Options.title"))
         {
-            uiName = ShopUtil.ccShop.get().getString(shopName + ".Options.title");
+            uiName = data.get().getString("Options.title");
         } else
         {
             uiName = shopName;
@@ -82,7 +86,7 @@ public final class Shop extends InGameUI
         CreateButton(SHOP_INFO, Material.getMaterial(infoBtnIconName), "§3" + shopName, new ArrayList<>(Arrays.asList(shopLore.split("\n"))));
 
         // 상품목록 등록
-        for (String s : ShopUtil.ccShop.get().getConfigurationSection(shopName).getKeys(false))
+        for (String s : data.get().getKeys(false))
         {
             try
             {
@@ -92,34 +96,35 @@ public final class Shop extends InGameUI
                 if (!(idx < 45 && idx >= 0)) continue;
 
                 // 아이탬 생성
-                String itemName = ShopUtil.ccShop.get().getString(shopName + "." + s + ".mat"); // 메테리얼
+                String itemName = data.get().getString(s + ".mat"); // 메테리얼
                 ItemStack itemStack = new ItemStack(Material.getMaterial(itemName), 1); // 아이탬 생성
-                itemStack.setItemMeta((ItemMeta) ShopUtil.ccShop.get().get(shopName + "." + s + ".itemStack")); // 저장된 메타 적용
+                itemStack.setItemMeta((ItemMeta) data.get().get(s + ".itemStack")); // 저장된 메타 적용
 
                 // 커스텀 메타 설정
                 ItemMeta meta = itemStack.getItemMeta();
-                ArrayList<String> lore = new ArrayList<>();
+                String lore = "";
 
                 // 상품
-                if (ShopUtil.ccShop.get().contains(shopName + "." + s + ".value"))
+                if (data.get().contains(s + ".value"))
                 {
+                    lore = l("SHOP.ITEM_INFO");
                     String stockStr;
 
-                    if (ShopUtil.ccShop.get().getInt(shopName + "." + s + ".stock") <= 0)
+                    if (data.get().getInt(s + ".stock") <= 0)
                     {
-                        stockStr = "INF";
-                    } else if (DynamicShop.plugin.getConfig().getBoolean("DisplayStockAsStack"))
+                        stockStr = t("INFSTOCK");
+                    } else if (DynamicShop.plugin.getConfig().getBoolean("UI.DisplayStockAsStack"))
                     {
-                        stockStr = (ShopUtil.ccShop.get().getInt(shopName + "." + s + ".stock") / 64) + " Stacks";
+                        stockStr = (data.get().getInt(s + ".stock") / 64) + t("STACKS");
                     } else
                     {
-                        stockStr = String.valueOf(ShopUtil.ccShop.get().getInt(shopName + "." + s + ".stock"));
+                        stockStr = String.valueOf(data.get().getInt(s + ".stock"));
                     }
 
                     double buyPrice = Calc.getCurrentPrice(shopName, s, true);
                     double sellPrice = Calc.getCurrentPrice(shopName, s, false);
 
-                    double buyPrice2 = ShopUtil.ccShop.get().getDouble(shopName + "." + s + ".value");
+                    double buyPrice2 = data.get().getDouble(s + ".value");
                     double priceSave1 = ((buyPrice / buyPrice2) * 100) - 100;
                     double priceSave2 = 100 - ((buyPrice / buyPrice2) * 100);
 
@@ -143,35 +148,59 @@ public final class Shop extends InGameUI
                     if (buyPrice == sellPrice) sellPrice = buyPrice - ((buyPrice / 100) * Calc.getTaxRate(shopName));
 
                     String tradeType = "default";
-                    if (ShopUtil.ccShop.get().contains(shopName + "." + s + ".tradeType"))
-                        tradeType = ShopUtil.ccShop.get().getString(shopName + "." + s + ".tradeType");
+                    if (data.get().contains(s + ".tradeType"))
+                        tradeType = data.get().getString(s + ".tradeType");
 
-                    boolean showValueChange = ShopUtil.ccShop.get().contains(shopName + ".Options.flag.showvaluechange");
+                    boolean showValueChange = data.get().contains("Options.flag.showvaluechange");
 
+                    String buyText = "";
+                    String buyArrowText = "";
+                    String sellText = "";
+                    String sellArrowText = "";
                     if (!tradeType.equalsIgnoreCase("SellOnly"))
-                        lore.add(t("PRICE") +  df.format(buyPrice) + (showValueChange ? " " + valueChanged_Buy : ""));
+                    {
+                        buyText = t("PRICE") + df.format(buyPrice);
+                        buyArrowText = showValueChange ? valueChanged_Buy : "";
+                    }
 
                     if (!tradeType.equalsIgnoreCase("BuyOnly"))
-                        lore.add(t("SELLPRICE") + df.format(sellPrice) + (showValueChange ? " " + valueChanged_Sell : ""));
-
-                    if (ShopUtil.ccShop.get().getInt(shopName + "." + s + ".stock") <= 0 || ShopUtil.ccShop.get().getInt(shopName + "." + s + ".median") <= 0)
                     {
-                        if (!ShopUtil.ccShop.get().getBoolean(shopName + ".Options.hidePricingType"))
+                        sellText = t("SELLPRICE") + df.format(sellPrice);
+                        sellArrowText = showValueChange ? valueChanged_Sell : "";
+                    }
+
+                    String pricingTypeText = "";
+                    if (data.get().getInt(s + ".stock") <= 0 || data.get().getInt(s + ".median") <= 0)
+                    {
+                        if (!data.get().contains("Options.flag.hidepricingtype"))
                         {
-                            lore.add("§7[" + ChatColor.stripColor(t("STATICPRICE")) + "]");
+                            pricingTypeText = "\n§7[" + ChatColor.stripColor(t("STATICPRICE")) + "]";
                         }
                     }
-                    if (!ShopUtil.ccShop.get().getBoolean(shopName + ".Options.hideStock"))
+
+                    String stockText = "";
+                    if (!data.get().contains("Options.flag.hidestock"))
                     {
-                        lore.add(t("STOCK") + stockStr);
+                        stockText = t("STOCK") + stockStr;
                     }
+
+                    String tradeLoreText = "";
                     if (t("TRADE_LORE").length() > 0)
-                        lore.add(t("TRADE_LORE"));
+                        tradeLoreText = "\n" + t("TRADE_LORE");
+
+                    lore = lore.replace("{Buy}", buyText);
+                    lore = lore.replace("{BuyArrow}", buyArrowText);
+                    lore = lore.replace("{Sell}", sellText);
+                    lore = lore.replace("{SellArrow}", sellArrowText);
+                    lore = lore.replace("{Stock}", stockText);
+                    lore = lore.replace("[PricingType]", pricingTypeText);
+                    lore = lore.replace("[TradeLore]", tradeLoreText);
+                    lore = lore.replace("[ItemMetaLore]", (meta != null && meta.hasLore()) ? "\n" + meta.getLore().toString() : "");
 
                     if (player.hasPermission("dshop.admin.shopedit"))
                     {
-                        lore.add(t("ITEM_MOVE_LORE"));
-                        lore.add(t("ITEM_EDIT_LORE"));
+                        lore += "\n" + t("ITEM_MOVE_LORE");
+                        lore += "\n" + t("ITEM_EDIT_LORE");
                     }
                 }
                 // 장식용
@@ -179,8 +208,8 @@ public final class Shop extends InGameUI
                 {
                     if (player.hasPermission("dshop.admin.shopedit"))
                     {
-                        lore.add(t("ITEM_COPY_LORE"));
-                        lore.add(t("DECO_DELETE_LORE"));
+                        lore += t("ITEM_COPY_LORE");
+                        lore += "\n" + t("DECO_DELETE_LORE");
                     }
 
                     meta.setDisplayName(" ");
@@ -189,7 +218,7 @@ public final class Shop extends InGameUI
                     meta.addItemFlags(ItemFlag.HIDE_POTION_EFFECTS);
                 }
 
-                meta.setLore(lore);
+                meta.setLore(new ArrayList<>(Arrays.asList(lore.split("\n"))));
                 itemStack.setItemMeta(meta);
                 inventory.setItem(idx, itemStack);
             } catch (Exception e)
@@ -213,6 +242,7 @@ public final class Shop extends InGameUI
         Player player = (Player) e.getWhoClicked();
 
         String shopName = ChatColor.stripColor(e.getClickedInventory().getItem(SHOP_INFO).getItemMeta().getDisplayName());
+        CustomConfig data = ShopUtil.shopConfigFiles.get(shopName);
 
         int curPage = e.getClickedInventory().getItem(PAGE).getAmount();
 
@@ -229,12 +259,21 @@ public final class Shop extends InGameUI
             // 닫기버튼
             if (e.getSlot() == CLOSE)
             {
-                if (DynamicShop.plugin.getConfig().getBoolean("OnClickCloseButton_OpenStartPage"))
+                // 표지판으로 접근한 경우에는 그냥 창을 닫음
+                if (DynamicShop.userTempData.get(player.getUniqueId()).equalsIgnoreCase("sign"))
                 {
-                    DynaShopAPI.openStartPage(player);
-                } else
+                    DynamicShop.userTempData.put(player.getUniqueId(), "");
+                    player.closeInventory();
+                }
+                else
                 {
-                    ShopUtil.closeInventoryWithDelay(player);
+                    if (DynamicShop.plugin.getConfig().getBoolean("UI.OpenStartPageWhenClickCloseButton"))
+                    {
+                        DynaShopAPI.openStartPage(player);
+                    } else
+                    {
+                        ShopUtil.closeInventoryWithDelay(player);
+                    }
                 }
             }
             // 페이지 이동 버튼
@@ -261,7 +300,7 @@ public final class Shop extends InGameUI
                             targetPage = 1;
                     } else if (player.hasPermission("dshop.admin.shopedit"))
                     {
-                        if (ShopUtil.ccShop.get().getInt(shopName + ".Options.page") > 1)
+                        if (data.get().getInt("Options.page") > 1)
                         {
                             ShopUtil.closeInventoryWithDelay(player);
 
@@ -274,7 +313,6 @@ public final class Shop extends InGameUI
                         {
                             player.sendMessage(DynamicShop.dsPrefix + t("CANT_DELETE_LAST_PAGE"));
                         }
-
                         return;
                     }
                 }
@@ -293,7 +331,7 @@ public final class Shop extends InGameUI
                 // 거래화면 열기
                 if (e.isLeftClick())
                 {
-                    if (!ShopUtil.ccShop.get().contains(shopName + "." + idx + ".value")) return; // 장식용 버튼임
+                    if (!data.get().contains(idx + ".value")) return; // 장식용 버튼임
 
                     SoundUtil.playerSoundEffect(player, "tradeview");
                     DynaShopAPI.openItemTradeGui(player, shopName, String.valueOf(idx));
@@ -305,23 +343,23 @@ public final class Shop extends InGameUI
                     DynamicShop.userInteractItem.put(player.getUniqueId(), shopName + "/" + idx); // 선택한 아이탬의 인덱스 저장
                     if (e.isShiftClick())
                     {
-                        if (ShopUtil.ccShop.get().contains(shopName + "." + idx + ".value"))
+                        if (data.get().contains(idx + ".value"))
                         {
-                            double buyValue = ShopUtil.ccShop.get().getDouble(shopName + "." + idx + ".value");
+                            double buyValue = data.get().getDouble(idx + ".value");
                             double sellValue = buyValue;
-                            if (ShopUtil.ccShop.get().contains(shopName + "." + idx + ".value2"))
+                            if (data.get().contains(idx + ".value2"))
                             {
-                                sellValue = ShopUtil.ccShop.get().getDouble(shopName + "." + idx + ".value2");
+                                sellValue = data.get().getDouble(idx + ".value2");
                             }
-                            double valueMin = ShopUtil.ccShop.get().getDouble(shopName + "." + idx + ".valueMin");
+                            double valueMin = data.get().getDouble(idx + ".valueMin");
                             if (valueMin <= 0.01) valueMin = 0.01;
-                            double valueMax = ShopUtil.ccShop.get().getDouble(shopName + "." + idx + ".valueMax");
+                            double valueMax = data.get().getDouble(idx + ".valueMax");
                             if (valueMax <= 0) valueMax = -1;
-                            int median = ShopUtil.ccShop.get().getInt(shopName + "." + idx + ".median");
-                            int stock = ShopUtil.ccShop.get().getInt(shopName + "." + idx + ".stock");
+                            int median = data.get().getInt(idx + ".median");
+                            int stock = data.get().getInt(idx + ".stock");
 
                             ItemStack iStack = new ItemStack(e.getCurrentItem().getType());
-                            iStack.setItemMeta((ItemMeta) ShopUtil.ccShop.get().get(shopName + "." + idx + ".itemStack"));
+                            iStack.setItemMeta((ItemMeta) data.get().get(idx + ".itemStack"));
 
                             DynaShopAPI.openItemSettingGui(player, iStack, 1, buyValue, sellValue, valueMin, valueMax, median, stock);
                         } else
@@ -349,22 +387,22 @@ public final class Shop extends InGameUI
             // 아이탬 이동. 또는 장식 복사
             if (e.isRightClick() && player.hasPermission("dshop.admin.shopedit") && !itemtoMove.equals(""))
             {
-                ShopUtil.ccShop.get().set(shopName + "." + clickedIdx + ".mat", ShopUtil.ccShop.get().get(shopName + "." + itemtoMove + ".mat"));
-                ShopUtil.ccShop.get().set(shopName + "." + clickedIdx + ".itemStack", ShopUtil.ccShop.get().get(shopName + "." + itemtoMove + ".itemStack"));
-                ShopUtil.ccShop.get().set(shopName + "." + clickedIdx + ".value", ShopUtil.ccShop.get().get(shopName + "." + itemtoMove + ".value"));
-                ShopUtil.ccShop.get().set(shopName + "." + clickedIdx + ".value2", ShopUtil.ccShop.get().get(shopName + "." + itemtoMove + ".value2"));
-                ShopUtil.ccShop.get().set(shopName + "." + clickedIdx + ".valueMin", ShopUtil.ccShop.get().get(shopName + "." + itemtoMove + ".valueMin"));
-                ShopUtil.ccShop.get().set(shopName + "." + clickedIdx + ".valueMax", ShopUtil.ccShop.get().get(shopName + "." + itemtoMove + ".valueMax"));
-                ShopUtil.ccShop.get().set(shopName + "." + clickedIdx + ".median", ShopUtil.ccShop.get().get(shopName + "." + itemtoMove + ".median"));
-                ShopUtil.ccShop.get().set(shopName + "." + clickedIdx + ".stock", ShopUtil.ccShop.get().get(shopName + "." + itemtoMove + ".stock"));
-                ShopUtil.ccShop.get().set(shopName + "." + clickedIdx + ".tradeType", ShopUtil.ccShop.get().get(shopName + "." + itemtoMove + ".tradeType"));
+                data.get().set(clickedIdx + ".mat", data.get().get(itemtoMove + ".mat"));
+                data.get().set(clickedIdx + ".itemStack", data.get().get(itemtoMove + ".itemStack"));
+                data.get().set(clickedIdx + ".value", data.get().get(itemtoMove + ".value"));
+                data.get().set(clickedIdx + ".value2", data.get().get(itemtoMove + ".value2"));
+                data.get().set(clickedIdx + ".valueMin", data.get().get(itemtoMove + ".valueMin"));
+                data.get().set(clickedIdx + ".valueMax", data.get().get(itemtoMove + ".valueMax"));
+                data.get().set(clickedIdx + ".median", data.get().get(itemtoMove + ".median"));
+                data.get().set(clickedIdx + ".stock", data.get().get(itemtoMove + ".stock"));
+                data.get().set(clickedIdx + ".tradeType", data.get().get(itemtoMove + ".tradeType"));
 
-                if (ShopUtil.ccShop.get().contains(shopName + "." + itemtoMove + ".value"))
+                if (data.get().contains(itemtoMove + ".value"))
                 {
-                    ShopUtil.ccShop.get().set(shopName + "." + itemtoMove, null);
+                    data.get().set(itemtoMove, null);
                 }
 
-                ShopUtil.ccShop.save();
+                data.save();
 
                 DynaShopAPI.openShopGui(player, shopName, curPage);
                 DynamicShop.userInteractItem.put(player.getUniqueId(), "");
@@ -380,14 +418,14 @@ public final class Shop extends InGameUI
 
     private String CreateShopInfoText(Player player, String shopName)
     {
-        String shopLore = t("SHOPINFO");
+        CustomConfig data = ShopUtil.shopConfigFiles.get(shopName);
 
-        shopLore = shopLore.replace("[SHOP_NAME]", shopName + "\n");
+        String shopLore = l("SHOP.INFO");
 
         StringBuilder finalLoreText = new StringBuilder();
-        if (ShopUtil.ccShop.get().contains(shopName + ".Options.lore"))
+        if (data.get().contains("Options.lore"))
         {
-            String loreTxt = ShopUtil.ccShop.get().getString(shopName + ".Options.lore");
+            String loreTxt = data.get().getString("Options.lore");
             if (loreTxt.length() > 0)
             {
                 String[] loreArray = loreTxt.split(Pattern.quote("\\n"));
@@ -397,44 +435,49 @@ public final class Shop extends InGameUI
                 }
             }
         }
-        shopLore = shopLore.replace("[SHOP_LORE]", finalLoreText.toString());
+        shopLore = shopLore.replace("[ShopLore]", finalLoreText.toString());
 
         // 권한
         String finalPermText = "";
-        String perm = ShopUtil.ccShop.get().getString(shopName + ".Options.permission");
+        String perm = data.get().getString("Options.permission");
         if (!(perm.length() == 0))
         {
             finalPermText += t("PERMISSION") + ":" + "\n";
             finalPermText += "§7 - " + perm + "\n";
         }
-        shopLore = shopLore.replace("[PERMISSION]", finalPermText);
+        shopLore = shopLore.replace("[Permission]", finalPermText);
 
         // 세금
         String finalTaxText = "";
         finalTaxText += t("TAX.SALESTAX") + ":" + "\n";
         finalTaxText += "§7 - " + Calc.getTaxRate(shopName) + "%" + "\n";
-        shopLore = shopLore.replace("[TAX]", finalTaxText);
+        shopLore = shopLore.replace("[Tax]", finalTaxText);
 
         // 상점 잔액
         String finalShopBalanceText = "";
-        finalShopBalanceText += t("SHOP_BAL") + "\n";
-        if (ShopUtil.getShopBalance(shopName) >= 0)
-        {
-            String temp = df.format(ShopUtil.getShopBalance(shopName));
-            if (ShopUtil.ccShop.get().contains(shopName + ".Options.flag.jobpoint")) temp += "Points";
 
-            finalShopBalanceText += "§7 - " + temp + "\n";
-        } else
+        if(!data.get().contains("Options.flag.hideshopbalance"))
         {
-            finalShopBalanceText += "§7 - " + ChatColor.stripColor(t("SHOP_BAL_INF")) + "\n";
+            finalShopBalanceText += t("SHOP_BAL") + "\n";
+            if (ShopUtil.getShopBalance(shopName) >= 0)
+            {
+                String temp = df.format(ShopUtil.getShopBalance(shopName));
+                if (data.get().contains("Options.flag.jobpoint")) temp += "Points";
+
+                finalShopBalanceText += "§7 - " + temp + "\n";
+            } else
+            {
+                finalShopBalanceText += "§7 - " + ChatColor.stripColor(t("SHOP_BAL_INF")) + "\n";
+            }
         }
-        shopLore = shopLore.replace("[SHOP_BALANCE]", finalShopBalanceText);
+
+        shopLore = shopLore.replace("[ShopBalance]", finalShopBalanceText);
 
         // 영업시간
         String finalShopHourText = "";
-        if (ShopUtil.ccShop.get().contains(shopName + ".Options.shophours"))
+        if (data.get().contains("Options.shophours"))
         {
-            String[] temp = ShopUtil.ccShop.get().getString(shopName + ".Options.shophours").split("~");
+            String[] temp = data.get().getString("Options.shophours").split("~");
             int open = Integer.parseInt(temp[0]);
             int close = Integer.parseInt(temp[1]);
 
@@ -442,32 +485,38 @@ public final class Shop extends InGameUI
             finalShopHourText += "§7 - " + t("TIME.OPEN") + ": " + open + "\n";
             finalShopHourText += "§7 - " + t("TIME.CLOSE") + ": " + close + "\n";
         }
-        shopLore = shopLore.replace("[SHOP_HOUR]", finalShopHourText);
+        shopLore = shopLore.replace("[ShopHour]", finalShopHourText);
 
         // 상점 좌표
         String finalShopPosText = "";
-        if (ShopUtil.ccShop.get().contains(shopName + ".Options.pos1") && ShopUtil.ccShop.get().contains(shopName + ".Options.pos2"))
+        if (data.get().contains("Options.pos1") && data.get().contains("Options.pos2"))
         {
             finalShopPosText += t("POSITION") + "\n";
-            finalShopPosText += "§7 - " + ShopUtil.ccShop.get().getString(shopName + ".Options.world") + "\n";
-            finalShopPosText += "§7 - " + ShopUtil.ccShop.get().getString(shopName + ".Options.pos1") + "\n";
-            finalShopPosText += "§7 - " + ShopUtil.ccShop.get().getString(shopName + ".Options.pos2") + "\n";
+            finalShopPosText += "§7 - " + data.get().getString("Options.world") + "\n";
+            finalShopPosText += "§7 - " + data.get().getString("Options.pos1") + "\n";
+            finalShopPosText += "§7 - " + data.get().getString("Options.pos2") + "\n";
         }
-        shopLore = shopLore.replace("[SHOP_POS]", finalShopPosText);
+        shopLore = shopLore.replace("[ShopPosition]", finalShopPosText);
+
+        // 어드민이면----------
+        if (player.hasPermission("dshop.admin.shopedit"))
+            shopLore += "§e____________________\n";
 
         // 플래그
         StringBuilder finalFlagText = new StringBuilder();
-        if (ShopUtil.ccShop.get().contains(shopName + ".Options.flag") && ShopUtil.ccShop.get().getConfigurationSection(shopName + ".Options.flag").getKeys(false).size() > 0)
+        if (player.hasPermission("dshop.admin.shopedit"))
         {
-            finalFlagText.append(t("FLAG")).append(":").append("\n");
-            for (String s : ShopUtil.ccShop.get().getConfigurationSection(shopName + ".Options.flag").getKeys(false))
+            if (data.get().contains("Options.flag") && data.get().getConfigurationSection("Options.flag").getKeys(false).size() > 0)
             {
-                finalFlagText.append("§7 - ").append(s).append("\n");
+                finalFlagText.append("§e" + t("FLAGS")).append(":").append("\n");
+                for (String s : data.get().getConfigurationSection("Options.flag").getKeys(false))
+                {
+                    finalFlagText.append("§e - ").append(s).append("\n");
+                }
             }
         }
-        shopLore = shopLore.replace("[FLAG]", finalFlagText.toString());
+        shopLore += finalFlagText;
 
-        // 어드민이면----------
         if (player.hasPermission("dshop.admin.shopedit"))
         {
             shopLore += t("RMB_EDIT");

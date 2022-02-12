@@ -1,5 +1,6 @@
 package me.sat7.dynamicshop.commands;
 
+import me.sat7.dynamicshop.files.CustomConfig;
 import org.bukkit.entity.Player;
 
 import me.sat7.dynamicshop.DynaShopAPI;
@@ -26,39 +27,46 @@ public final class CreateShop
 
             String shopname = args[1].replace("/", "");
 
-            if (ShopUtil.ccShop.get().contains(shopname))
+            CustomConfig data = new CustomConfig();
+            data.setup(shopname, "Shop");
+            if (false == ShopUtil.shopConfigFiles.containsKey(shopname))
             {
-                player.sendMessage(DynamicShop.dsPrefix + LangUtil.ccLang.get().getString("ERR.SHOP_EXIST"));
-                return true;
-            }
-
-            ShopUtil.ccShop.get().set(shopname + ".Options.title", shopname);
-            ShopUtil.ccShop.get().set(shopname + ".Options.lore", "");
-            ShopUtil.ccShop.get().set(shopname + ".Options.page", 2);
-            if (args.length >= 3)
-            {
-                if (args[2].equalsIgnoreCase("true"))
+                data.get().set("Options.title", shopname);
+                data.get().set("Options.lore", "");
+                data.get().set("Options.page", 2);
+                if (args.length >= 3)
                 {
-                    ShopUtil.ccShop.get().set(shopname + ".Options.permission", "dshop.user.shop." + shopname);
-                } else if (args[2].equalsIgnoreCase("false"))
-                {
-                    ShopUtil.ccShop.get().set(shopname + ".Options.permission", "");
+                    if (args[2].equalsIgnoreCase("true"))
+                    {
+                        data.get().set("Options.permission", "dshop.user.shop." + shopname);
+                    } else if (args[2].equalsIgnoreCase("false"))
+                    {
+                        data.get().set("Options.permission", "");
+                    } else
+                    {
+                        data.get().set("Options.permission", args[2]);
+                    }
                 } else
                 {
-                    ShopUtil.ccShop.get().set(shopname + ".Options.permission", args[2]);
+                    data.get().set("Options.permission", "");
                 }
-            } else
+
+                data.get().set("0.mat", "DIRT");
+                data.get().set("0.value", 1);
+                data.get().set("0.median", 10000);
+                data.get().set("0.stock", 10000);
+                data.save();
+
+                ShopUtil.shopConfigFiles.put(shopname, data);
+
+                player.sendMessage(DynamicShop.dsPrefix + LangUtil.ccLang.get().getString("SHOP_CREATED"));
+                DynaShopAPI.openShopGui(player, shopname, 1);
+            }
+            else
             {
-                ShopUtil.ccShop.get().set(shopname + ".Options.permission", "");
+                player.sendMessage(DynamicShop.dsPrefix + LangUtil.ccLang.get().getString("ERR.SHOP_EXIST"));
             }
 
-            ShopUtil.ccShop.get().set(shopname + ".0.mat", "DIRT");
-            ShopUtil.ccShop.get().set(shopname + ".0.value", 1);
-            ShopUtil.ccShop.get().set(shopname + ".0.median", 10000);
-            ShopUtil.ccShop.get().set(shopname + ".0.stock", 10000);
-            ShopUtil.ccShop.save();
-            player.sendMessage(DynamicShop.dsPrefix + LangUtil.ccLang.get().getString("SHOP_CREATED"));
-            DynaShopAPI.openShopGui(player, shopname, 1);
             return true;
         } else
         {

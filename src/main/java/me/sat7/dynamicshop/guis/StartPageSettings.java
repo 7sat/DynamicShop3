@@ -113,7 +113,7 @@ public final class StartPageSettings extends InGameUI
             DynamicShop.userTempData.put(uuid,"waitforInput" + "shopname");
 
             StringBuilder shopList = new StringBuilder(t("SHOP_LIST") + ": ");
-            for (String s : ShopUtil.ccShop.get().getKeys(false))
+            for (String s : ShopUtil.shopConfigFiles.keySet())
             {
                 shopList.append(s).append(", ");
             }

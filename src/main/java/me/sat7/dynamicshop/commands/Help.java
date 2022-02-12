@@ -43,8 +43,6 @@ public final class Help
             }
             if (player.hasPermission(Constants.DELETE_USER_PERMISSION))
                 player.sendMessage("§e - deleteOldUser: " + LangUtil.ccLang.get().getString("HELP.DELETE_OLD_USER"));
-            if (player.hasPermission("dshop.admin.convert"))
-                player.sendMessage("§e - convert: " + LangUtil.ccLang.get().getString("HELP.CONVERT"));
             if (player.hasPermission("dshop.admin.reload"))
                 player.sendMessage("§e - reload: " + LangUtil.ccLang.get().getString("HELP.RELOAD"));
             player.sendMessage("");
@@ -56,7 +54,7 @@ public final class Help
             if (player.hasPermission("dshop.admin.shopedit") || player.hasPermission("dshop.admin.shopedit") || player.hasPermission("dshop.admin.editall"))
             {
                 player.sendMessage(" - " + LangUtil.ccLang.get().getString("HELP.USAGE")
-                        + ": /ds shop <shopname> <addhand | add | edit | editall | setToRecAll | sellbuy | permission | maxpage | flag | position | shophours | fluctuation | stockStabilizing | hideStock | account | log>");
+                        + ": /ds shop <shopname> <addhand | add | edit | editall | setToRecAll | sellbuy | permission | maxpage | flag | position | shophours | fluctuation | stockStabilizing | account | log>");
             }
 
             if (player.hasPermission("dshop.admin.shopedit"))
@@ -248,19 +246,7 @@ public final class Help
             player.sendMessage(" - " + LangUtil.ccLang.get().getString("HELP.USAGE") + ": /ds shop <shopname> stockStabilizing off");
 
             player.sendMessage("");
-        } else if (helpcode.equals("hide_stock") && player.hasPermission("dshop.admin.shopedit"))
-        {
-            player.sendMessage(DynamicShop.dsPrefix + LangUtil.ccLang.get().getString("HELP.TITLE").replace("{command}", "hideStock"));
-            player.sendMessage(" - " + LangUtil.ccLang.get().getString("HELP.USAGE") + ": /ds shop <shopname> hideStock <true | false>");
-
-            player.sendMessage("");
-        } else if (helpcode.equals("hide_pricing_type") && player.hasPermission("dshop.admin.shopedit"))
-        {
-            player.sendMessage(DynamicShop.dsPrefix + LangUtil.ccLang.get().getString("HELP.TITLE").replace("{command}", "hidePricingType"));
-            player.sendMessage(" - " + LangUtil.ccLang.get().getString("HELP.USAGE") + ": /ds shop <shopname> hidePricingType <true | false>");
-
-            player.sendMessage("");
-        } else if (helpcode.equals("account") && player.hasPermission("dshop.admin.shopedit"))
+        }else if (helpcode.equals("account") && player.hasPermission("dshop.admin.shopedit"))
         {
             player.sendMessage(DynamicShop.dsPrefix + LangUtil.ccLang.get().getString("HELP.TITLE").replace("{command}", "account"));
             player.sendMessage(" - " + LangUtil.ccLang.get().getString("HELP.USAGE") + ": /ds shop <shopname> account <set | linkto | transfer>");
@@ -308,15 +294,6 @@ public final class Help
             player.sendMessage(" - " + LangUtil.ccLang.get().getString("HELP.USAGE") + ": /ds deleteOldUser <days>");
             player.sendMessage(" - " + LangUtil.ccLang.get().getString("HELP.DELETE_OLD_USER"));
             player.sendMessage(" - " + LangUtil.ccLang.get().getString("IRREVERSIBLE"));
-
-            player.sendMessage("");
-        } else if (helpcode.equals("convert") && player.hasPermission("dshop.admin.convert"))
-        {
-            player.sendMessage(DynamicShop.dsPrefix + LangUtil.ccLang.get().getString("HELP.TITLE").replace("{command}", "convert"));
-            player.sendMessage(" - " + LangUtil.ccLang.get().getString("HELP.USAGE") + ": /ds convert <plugin name>");
-            player.sendMessage(" - " + "This is beta feature. Currently only support 'Shop'");
-            player.sendMessage(" - " + "You need to Copy pages yml file to DynamicShop/Convert/Shop");
-            player.sendMessage(" - " + "Item meta will be lost");
 
             player.sendMessage("");
         } else if (helpcode.equals("sellbuy") && player.hasPermission("dshop.admin.shopedit"))

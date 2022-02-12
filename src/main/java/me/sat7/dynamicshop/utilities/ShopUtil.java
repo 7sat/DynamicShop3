@@ -1,15 +1,16 @@
 package me.sat7.dynamicshop.utilities;
 
 import java.io.File;
-import java.util.ArrayList;
+import java.util.*;
 
+import me.sat7.dynamicshop.DynaShopAPI;
+import me.sat7.dynamicshop.guis.InGameUI;
+import me.sat7.dynamicshop.guis.UIManager;
 import me.sat7.dynamicshop.transactions.Calc;
 import org.bukkit.Bukkit;
-import org.bukkit.ChatColor;
 import org.bukkit.Material;
 import org.bukkit.configuration.ConfigurationSection;
 import org.bukkit.entity.Player;
-import org.bukkit.inventory.Inventory;
 import org.bukkit.inventory.ItemStack;
 
 import me.sat7.dynamicshop.DynamicShop;
@@ -18,11 +19,35 @@ import me.sat7.dynamicshop.files.CustomConfig;
 
 public final class ShopUtil
 {
-    public static CustomConfig ccShop;
+    public static HashMap<String, CustomConfig> shopConfigFiles = new HashMap<>();
 
     private ShopUtil()
     {
 
+    }
+
+    public static void Reload()
+    {
+        ReloadAllShop();
+        ConvertOldShopData();
+        SetupSampleShopFile();
+        SortShopDataAll();
+    }
+
+    public static void ReloadAllShop()
+    {
+        shopConfigFiles.clear();
+
+        File[] listOfFiles = new File(DynamicShop.plugin.getDataFolder() + "/Shop").listFiles();
+        for (File f : listOfFiles)
+        {
+            CustomConfig shopCC = new CustomConfig();
+
+            int idx = f.getName().lastIndexOf( "." );
+            String shopName = f.getName().substring(0, idx );
+            shopCC.setup(shopName, "Shop");
+            shopConfigFiles.put(shopName, shopCC);
+        }
     }
 
     // 상점에서 빈 슬롯 찾기
@@ -30,7 +55,11 @@ public final class ShopUtil
     {
         ArrayList<Integer> banList = new ArrayList<>();
 
-        for (String s : ccShop.get().getConfigurationSection(shopName).getKeys(false))
+        CustomConfig data = shopConfigFiles.get(shopName);
+        if(data == null)
+            return -1;
+
+        for (String s : data.get().getKeys(false))
         {
             try
             {
@@ -40,7 +69,7 @@ public final class ShopUtil
             }
         }
 
-        for (int i = 0; i < 45 * ccShop.get().getInt(shopName + ".Options.page"); i++)
+        for (int i = 0; i < 45 * data.get().getInt("Options.page"); i++)
         {
             if (!banList.contains(i))
             {
@@ -54,7 +83,11 @@ public final class ShopUtil
     // 상점에서 아이탬타입 찾기
     public static int findItemFromShop(String shopName, ItemStack item)
     {
-        for (String s : ccShop.get().getConfigurationSection(shopName).getKeys(false))
+        CustomConfig data = shopConfigFiles.get(shopName);
+        if (data == null)
+            return -1;
+
+        for (String s : data.get().getKeys(false))
         {
             try
             {
@@ -64,11 +97,11 @@ public final class ShopUtil
                 continue;
             }
 
-            if (!ccShop.get().contains(shopName + "." + s + ".value")) continue; // 장식용임
+            if (!data.get().contains(s + ".value")) continue; // 장식용임
 
-            if (ccShop.get().getString(shopName + "." + s + ".mat").equals(item.getType().toString()))
+            if (data.get().getString(s + ".mat").equals(item.getType().toString()))
             {
-                String metaStr = ccShop.get().getString(shopName + "." + s + ".itemStack");
+                String metaStr = data.get().getString(s + ".itemStack");
 
                 if (metaStr == null && !item.hasItemMeta())
                 {
@@ -87,59 +120,63 @@ public final class ShopUtil
     // 상점에 아이탬 추가
     public static boolean addItemToShop(String shopName, int idx, ItemStack item, double buyValue, double sellValue, double minValue, double maxValue, int median, int stock)
     {
+        CustomConfig data = shopConfigFiles.get(shopName);
+        if (data == null)
+            return false;
+
         try
         {
-            ccShop.get().set(shopName + "." + idx + ".mat", item.getType().toString());
+            data.get().set(idx + ".mat", item.getType().toString());
 
             if (item.hasItemMeta())
             {
-                ccShop.get().set(shopName + "." + idx + ".itemStack", item.getItemMeta());
+                data.get().set(idx + ".itemStack", item.getItemMeta());
             } else
             {
-                ccShop.get().set(shopName + "." + idx + ".itemStack", null);
+                data.get().set(idx + ".itemStack", null);
             }
 
             if (buyValue > 0)
             {
-                ccShop.get().set(shopName + "." + idx + ".value", buyValue);
+                data.get().set(idx + ".value", buyValue);
                 if (buyValue == sellValue)
                 {
-                    ccShop.get().set(shopName + "." + idx + ".value2", null);
+                    data.get().set(idx + ".value2", null);
                 } else
                 {
-                    ccShop.get().set(shopName + "." + idx + ".value2", sellValue);
+                    data.get().set(idx + ".value2", sellValue);
                 }
 
                 if (minValue > 0.01)
                 {
-                    ccShop.get().set(shopName + "." + idx + ".valueMin", minValue);
+                    data.get().set(idx + ".valueMin", minValue);
                 } else
                 {
-                    ccShop.get().set(shopName + "." + idx + ".valueMin", null);
+                    data.get().set(idx + ".valueMin", null);
                 }
 
                 if (maxValue > 0.01)
                 {
-                    ccShop.get().set(shopName + "." + idx + ".valueMax", maxValue);
+                    data.get().set(idx + ".valueMax", maxValue);
                 } else
                 {
-                    ccShop.get().set(shopName + "." + idx + ".valueMax", null);
+                    data.get().set(idx + ".valueMax", null);
                 }
 
-                ccShop.get().set(shopName + "." + idx + ".median", median);
-                ccShop.get().set(shopName + "." + idx + ".stock", stock);
+                data.get().set(idx + ".median", median);
+                data.get().set(idx + ".stock", stock);
             } else
             {
                 // idx,null하면 안됨. 존재는 하되 하위 데이터만 없어야함.
-                ccShop.get().set(shopName + "." + idx + ".value", null);
-                ccShop.get().set(shopName + "." + idx + ".value2", null);
-                ccShop.get().set(shopName + "." + idx + ".valueMin", null);
-                ccShop.get().set(shopName + "." + idx + ".valueMax", null);
-                ccShop.get().set(shopName + "." + idx + ".median", null);
-                ccShop.get().set(shopName + "." + idx + ".stock", null);
+                data.get().set(idx + ".value", null);
+                data.get().set(idx + ".value2", null);
+                data.get().set(idx + ".valueMin", null);
+                data.get().set(idx + ".valueMax", null);
+                data.get().set(idx + ".median", null);
+                data.get().set(idx + ".stock", null);
             }
 
-            ccShop.save();
+            data.save();
 
             return true;
         } catch (Exception e)
@@ -156,64 +193,78 @@ public final class ShopUtil
     // 상점 아이탬의 value, median, stock을 수정
     public static void editShopItem(String shopName, int idx, double buyValue, double sellValue, double minValue, double maxValue, int median, int stock)
     {
-        ccShop.get().set(shopName + "." + idx + ".value", buyValue);
+        CustomConfig data = shopConfigFiles.get(shopName);
+        if (data == null)
+            return;
+
+        data.get().set(idx + ".value", buyValue);
         if (buyValue == sellValue)
         {
-            ccShop.get().set(shopName + "." + idx + ".value2", null);
+            data.get().set(idx + ".value2", null);
         } else
         {
-            ccShop.get().set(shopName + "." + idx + ".value2", sellValue);
+            data.get().set(idx + ".value2", sellValue);
         }
         if (minValue > 0.01)
         {
-            ccShop.get().set(shopName + "." + idx + ".valueMin", minValue);
+            data.get().set(idx + ".valueMin", minValue);
         } else
         {
-            ccShop.get().set(shopName + "." + idx + ".valueMin", null);
+            data.get().set(idx + ".valueMin", null);
         }
         if (maxValue > 0.01)
         {
-            ccShop.get().set(shopName + "." + idx + ".valueMax", maxValue);
+            data.get().set(idx + ".valueMax", maxValue);
         } else
         {
-            ccShop.get().set(shopName + "." + idx + ".valueMax", null);
+            data.get().set(idx + ".valueMax", null);
         }
-        ccShop.get().set(shopName + "." + idx + ".median", median);
-        ccShop.get().set(shopName + "." + idx + ".stock", stock);
-        ccShop.save();
+        data.get().set(idx + ".median", median);
+        data.get().set(idx + ".stock", stock);
+        data.save();
     }
 
     // 상점에서 아이탬 제거
     public static void removeItemFromShop(String shopName, int idx)
     {
-        ccShop.get().set(shopName + "." + idx, null);
-        ccShop.save();
+        CustomConfig data = shopConfigFiles.get(shopName);
+        if (data == null)
+            return;
+
+        data.get().set(String.valueOf(idx), null); // todo 이게 안전한가?
+        data.save();
     }
 
     // 상점 페이지 삽입
     public static void insetShopPage(String shopName, int page)
     {
-        ConfigurationSection confSec = ccShop.get().getConfigurationSection(shopName);
-        confSec.set("Options.page", confSec.getInt("Options.page") + 1);
+        CustomConfig data = shopConfigFiles.get(shopName);
+        if (data == null)
+            return;
 
-        for (int i = confSec.getInt("Options.page") * 45; i >= (page - 1) * 45; i--)
+        data.get().set("Options.page", data.get().getInt("Options.page") + 1);
+
+        for (int i = data.get().getInt("Options.page") * 45; i >= (page - 1) * 45; i--)
         {
-            ConfigurationSection temp = confSec.getConfigurationSection(String.valueOf(i));
-            confSec.set(String.valueOf(i + 45), temp);
-            confSec.set(String.valueOf(i), null);
+            ConfigurationSection temp = data.get().getConfigurationSection(String.valueOf(i));
+            data.get().set(String.valueOf(i + 45), temp);
+            data.get().set(String.valueOf(i), null);
         }
 
-        ccShop.save();
-        ccShop.reload();
+        data.save();
+        data.reload();
     }
 
     // 상점 페이지 삭제
     public static void deleteShopPage(String shopName, int page)
     {
-        ConfigurationSection confSec = ccShop.get().getConfigurationSection(shopName);
-        confSec.set("Options.page", confSec.getInt("Options.page") - 1);
+        CustomConfig data = shopConfigFiles.get(shopName);
+        if (data == null)
+            return;
 
-        for (String s : confSec.getKeys(false))
+        data.get().set("Options.page", data.get().getInt("Options.page") - 1);
+
+        for (String s : data.get().getKeys(false))
         {
             try
             {
@@ -221,12 +272,12 @@ public final class ShopUtil
 
                 if (i >= (page - 1) * 45 && i < page * 45)
                 {
-                    confSec.set(s, null);
+                    data.get().set(s, null);
                 } else if (i >= page * 45)
                 {
-                    ConfigurationSection temp = confSec.getConfigurationSection(s);
-                    confSec.set(String.valueOf(i - 45), temp);
-                    confSec.set(s, null);
+                    ConfigurationSection temp = data.get().getConfigurationSection(s);
+                    data.get().set(String.valueOf(i - 45), temp);
+                    data.get().set(s, null);
                 }
 
             } catch (Exception ignored)
@@ -234,36 +285,42 @@ public final class ShopUtil
             }
         }
 
-        ccShop.save();
-        ccShop.reload();
+        data.save();
+        data.reload();
     }
 
     // 상점 이름 바꾸기
     public static void renameShop(String shopName, String newName)
     {
-        ConfigurationSection old = ccShop.get().getConfigurationSection(shopName);
-        ccShop.get().set(shopName, null);
-        ccShop.get().set(newName, old);
-        ccShop.save();
+        CustomConfig data = shopConfigFiles.get(shopName);
+        if (data == null)
+            return;
+
+        data.rename(newName);
+        data.get().set("Options.title", newName);
+        shopConfigFiles.put(newName, data);
+        shopConfigFiles.remove(shopName);
     }
 
     // 상점 병합
     public static void mergeShop(String shopA, String shopB)
     {
-        ConfigurationSection confA = ccShop.get().getConfigurationSection(shopA);
-        ConfigurationSection confB = ccShop.get().getConfigurationSection(shopB);
+        // A에 B의 아이템을 다 밀어넣는 방식임.
+        // 상점잔액 합쳐주는것 말고는 별도의 처리 없음
+        CustomConfig dataA = shopConfigFiles.get(shopA);
+        CustomConfig dataB = shopConfigFiles.get(shopB);
 
-        int pg1 = confA.getInt("Options.page");
-        int pg2 = confB.getInt("Options.page");
+        int pg1 = dataA.get().getInt("Options.page");
+        int pg2 = dataB.get().getInt("Options.page");
 
-        confA.set("Options.page", pg1 + pg2);
-        if (confA.contains("Options.Balance") || confB.contains("Options.Balance"))
+        dataA.get().set("Options.page", pg1 + pg2);
+        if (dataA.get().contains("Options.Balance") || dataB.get().contains("Options.Balance"))
         {
             double a = getShopBalance(shopA);
             if (a == -1) a = 0;
 
             double b = 0;
-            if (!(confA.getString("Options.Balance").equals(shopB) || confB.getString("Options.Balance").equals(shopA)))
+            if (!(dataA.get().getString("Options.Balance").equals(shopB) || dataB.get().getString("Options.Balance").equals(shopA)))
             {
                 b = getShopBalance(shopB);
             }
@@ -272,52 +329,58 @@ public final class ShopUtil
 
             if (a + b > 0)
             {
-                confA.set("Options.Balance", a + b);
+                dataA.get().set("Options.Balance", a + b);
             } else
             {
-                confA.set("Options.Balance", null);
+                dataA.get().set("Options.Balance", null);
             }
         }
 
-        for (String item : confB.getKeys(false))
+        for (String item : dataB.get().getKeys(false))
         {
             try
             {
-                confA.set(String.valueOf(Integer.parseInt(item) + (pg1 * 45)), confB.get(item));
+                dataA.get().set(String.valueOf(Integer.parseInt(item) + (pg1 * 45)), dataB.get().get(item));
             } catch (Exception ignored)
             {
             }
         }
 
-        ccShop.get().set(shopB, null);
-        ccShop.save();
-        ccShop.reload();
+        dataB.delete();
+        shopConfigFiles.remove(shopB);
+
+        dataA.save();
+        dataA.reload();
     }
 
     // 상점의 잔액 확인
     public static double getShopBalance(String shopName)
     {
+        CustomConfig data = shopConfigFiles.get(shopName);
+        if (data == null)
+            return -1;
+
         // 무한
-        if (!ccShop.get().contains(shopName + ".Options.Balance")) return -1;
+        if (!data.get().contains("Options.Balance")) return -1;
 
         double shopBal = 0;
 
         try
         {
-            shopBal = Double.parseDouble(ccShop.get().getString(shopName + ".Options.Balance")); // 파싱에 실패하면 캐치로 가는 방식.
+            shopBal = Double.parseDouble(data.get().getString("Options.Balance")); // 파싱에 실패하면 캐치로 가는 방식.
         }
         // 연동형
         catch (Exception ee)
         {
-            String linkedShop = ccShop.get().getString(shopName + ".Options.Balance");
+            String linkedShop = data.get().getString("Options.Balance");
 
             // 그런 상점이 없음.
-            if (!ccShop.get().contains(linkedShop))
+            CustomConfig linkedShopData = shopConfigFiles.get(linkedShop);
+            if (linkedShopData == null)
             {
-                ccShop.get().set(shopName + ".Options.Balance", null);
-                ccShop.save();
-                DynamicShop.console.sendMessage(Constants.DYNAMIC_SHOP_PREFIX +
-                        shopName + ", " + linkedShop + "/ target shop not found");
+                data.get().set("Options.Balance", null);
+                data.save();
+                DynamicShop.console.sendMessage(Constants.DYNAMIC_SHOP_PREFIX + shopName + ", " + linkedShop + "/ target shop not found");
                 DynamicShop.console.sendMessage(Constants.DYNAMIC_SHOP_PREFIX + shopName + "/ balance has been reset");
                 return -1;
             }
@@ -325,9 +388,9 @@ public final class ShopUtil
             // 연결 대상이 실제 계좌가 아님.
             try
             {
-                if (ccShop.get().contains(linkedShop + ".Options.Balance"))
+                if (linkedShopData.get().contains("Options.Balance"))
                 {
-                    double temp = Double.parseDouble(ccShop.get().getString(linkedShop + ".Options.Balance"));
+                    double temp = Double.parseDouble(linkedShopData.get().getString( "Options.Balance"));
                 } else
                 {
                     return -1;
@@ -338,14 +401,14 @@ public final class ShopUtil
                         shopName + ", " + linkedShop + "/ " +
                         LangUtil.ccLang.get().getString("ERR.SHOP_LINK_TARGET_ERR"));
 
-                ccShop.get().set(shopName + ".Options.Balance", null);
-                ccShop.save();
+                data.get().set("Options.Balance", null);
+                data.save();
 
                 DynamicShop.console.sendMessage(Constants.DYNAMIC_SHOP_PREFIX + shopName + "/ balance has been reset");
                 return -1;
             }
 
-            shopBal = ccShop.get().getDouble(linkedShop + ".Options.Balance");
+            shopBal = linkedShopData.get().getDouble("Options.Balance");
         }
 
         return shopBal;
@@ -354,6 +417,10 @@ public final class ShopUtil
     // 상점의 잔액 수정
     public static void addShopBalance(String shopName, double amount)
     {
+        CustomConfig data = shopConfigFiles.get(shopName);
+        if (data == null)
+            return;
+
         double old = getShopBalance(shopName);
         if (old < 0) return;
 
@@ -362,143 +429,30 @@ public final class ShopUtil
 
         try
         {
-            Double temp = Double.parseDouble(ccShop.get().getString(shopName + ".Options.Balance"));
-            ccShop.get().set(shopName + ".Options.Balance", newValue);
+            Double temp = Double.parseDouble(data.get().getString("Options.Balance"));
+            data.get().set("Options.Balance", newValue);
         }
         // 연동형
         catch (Exception ee)
         {
-            String linkedShop = ccShop.get().getString(shopName + ".Options.Balance");
-            ccShop.get().set(linkedShop + ".Options.Balance", newValue);
-        }
-    }
-
-    // 인벤토리가 ui인지 확인
-    public static Boolean checkInvenIsShopUI(Inventory i)
-    {
-        if (i.getSize() == 54 && i.getItem(53) != null)
-        {
-            String infoBtnIconName = GetShopInfoIconMat();
-
-            if (!i.getItem(53).getType().name().equals(infoBtnIconName))
-                return false;
-
-            String temp = ChatColor.stripColor(i.getItem(53).getItemMeta().getDisplayName());
-            return temp.length() > 0 && ccShop.get().contains(temp);
-        } else
-        {
-            return false;
+            String linkedShop = data.get().getString("Options.Balance");
+            CustomConfig linkedShopData = shopConfigFiles.get(linkedShop);
+            if (linkedShopData != null)
+                linkedShopData.get().set("Options.Balance", newValue);
         }
     }
 
     public static String GetShopInfoIconMat()
     {
-        String infoBtnIconName = DynamicShop.plugin.getConfig().getString("ShopInfoButtonIcon");
+        String infoBtnIconName = DynamicShop.plugin.getConfig().getString("UI.ShopInfoButtonIcon");
         Material mat = Material.getMaterial(infoBtnIconName);
         if (mat == null)
         {
-            DynamicShop.plugin.getConfig().set("ShopInfoButtonIcon", "GOLD_BLOCK");
+            DynamicShop.plugin.getConfig().set("UI.ShopInfoButtonIcon", "GOLD_BLOCK");
             DynamicShop.plugin.saveConfig();
             infoBtnIconName = "GOLD_BLOCK";
         }
         return infoBtnIconName;
-    }
-
-    // Shop 플러그인에서 데이터 가져오기
-    public static void convertDataFromShop(Player player)
-    {
-        File[] allFile = new File(Bukkit.getServer().getPluginManager().getPlugin("DynamicShop").getDataFolder() + "/Convert/Shop").listFiles();
-
-        if (allFile.length == 0)
-        {
-            player.sendMessage(DynamicShop.dsPrefix + "There is no file to convert.");
-            return;
-        }
-
-        for (File f : allFile)
-        {
-            try
-            {
-                CustomConfig cc = new CustomConfig();
-                String filename = f.getName().replace(".yml", "");
-                if (cc.open(filename, "Convert/Shop"))
-                {
-                    ConfigurationSection confSec = cc.get().getConfigurationSection("data.inventory");
-
-                    String shopname = filename.replace("/", "");
-                    ccShop.get().set(shopname + ".Options.page", 2);
-                    ccShop.get().set(shopname + ".Options.permission", "");
-
-                    String[] itemList = confSec.getString("items").split("},");
-
-                    int idx = 0;
-                    for (String s : itemList)
-                    {
-                        //UNSPECIFIC_META:{meta-type=UNSPECIFIC, enchants={DURABILITY=3, KNOCKBACK=2}}
-                        //{{v=1631, type=CHEST}=null
-                        //{{v=1631, type=DIAMOND_SWORD}={meta-type=UNSPECIFIC, enchants={DURABILITY=3, KNOCKBACK=2}}}]
-//                        String metaStr = null;
-//                        if(s.contains("meta-type"))
-//                        {
-//                            metaStr = s.substring(s.indexOf("{meta-type"),s.length()-2); // {meta-type=UNSPECIFIC, enchants={DURABILITY=3, KNOCKBACK=2}}
-//                        }
-
-                        int start = s.indexOf("type=") + 5;
-                        int end = s.indexOf("}");
-                        String temp = s.substring(start, end);
-
-                        try
-                        {
-                            Material m = Material.getMaterial(temp);
-
-//                            if(metaStr != null)
-//                            {
-//                                Map<String, Object> tempMap = Map.class.cast(metaStr);
-//                                ItemMeta im = (ItemMeta) ConfigurationSerialization.deserializeObject(tempMap);
-//                                DynamicShop.ccShop.get().set(shopname+"."+ idx +".itemStack",im);
-//                            }
-
-                            ccShop.get().set(shopname + "." + idx + ".mat", m.name());
-                            idx += 1;
-                        } catch (Exception e)
-                        {
-                            player.sendMessage(DynamicShop.dsPrefix + "fail to parse itemtype " + temp + ". skip to next");
-                            for (StackTraceElement ste : e.getStackTrace())
-                            {
-                                DynamicShop.console.sendMessage(ste.toString());
-                            }
-                        }
-                    }
-
-                    idx = 0;
-                    for (String s : confSec.getConfigurationSection("slotdata").getKeys(false))
-                    {
-                        if (ccShop.get().contains(shopname + "." + idx + ".mat"))
-                        {
-                            ccShop.get().set(shopname + "." + idx + ".value", confSec.getInt("slotdata." + s + ".cost"));
-                            ccShop.get().set(shopname + "." + idx + ".median", 10000);
-                            ccShop.get().set(shopname + "." + idx + ".stock", 10000);
-
-                        } else
-                        {
-                            continue;
-                        }
-
-                        idx += 1;
-                    }
-
-                    player.sendMessage(DynamicShop.dsPrefix + "Converted: " + f.getName());
-                } else
-                {
-                    player.sendMessage(DynamicShop.dsPrefix + "Convert failed: " + f.getName());
-                }
-            } catch (Exception e1)
-            {
-                player.sendMessage(DynamicShop.dsPrefix + "Convert failed: " + f.getName());
-            }
-        }
-
-        ccShop.save();
     }
 
     // 2틱 후 인벤토리 닫기
@@ -508,85 +462,45 @@ public final class ShopUtil
         Bukkit.getScheduler().runTaskLater(DynamicShop.plugin, player::closeInventory, 2);
     }
 
-    public static void setupShopFile()
-    {
-        ccShop.setup("Shop", null);
-        ccShop.get().options().header("Shop name can not contain formatting codes, '/' and ' '");
-        ccShop.get().options().copyHeader(true);
-
-        if (ccShop.get().getKeys(false).size() == 0)
-        {
-            ccShop.get().set("Main.Options.page", 2);
-            ccShop.get().set("Main.Options.title", "Main");
-            ccShop.get().set("Main.Options.lore", "");
-            ccShop.get().set("Main.Options.permission", "");
-            ccShop.get().set("Main.0.mat", "DIRT");
-            ccShop.get().set("Main.0.value", 1);
-            ccShop.get().set("Main.0.median", 10000);
-            ccShop.get().set("Main.0.stock", 10000);
-            ccShop.get().set("Main.1.mat", "COBBLESTONE");
-            ccShop.get().set("Main.1.value", 1.5);
-            ccShop.get().set("Main.1.median", 10000);
-            ccShop.get().set("Main.1.stock", 10000);
-            ccShop.get().set("OreShop.Options.page", 2);
-            ccShop.get().set("OreShop.Options.title", "OreShop");
-            ccShop.get().set("OreShop.Options.lore", "");
-            ccShop.get().set("OreShop.Options.permission", "");
-            ccShop.get().set("OreShop.1.mat", "DIAMOND");
-            ccShop.get().set("OreShop.1.value", 3000);
-            ccShop.get().set("OreShop.1.median", 1000);
-            ccShop.get().set("OreShop.1.stock", 1000);
-        }
-
-        for (String s : ccShop.get().getKeys(false))
-        {
-            if (!ccShop.get().getConfigurationSection(s).contains("Options"))
-            {
-                ccShop.get().set(s + ".Options.page", 2);
-                ccShop.get().set(s + ".Options.permission", "");
-            }
-        }
-
-        ccShop.get().options().copyDefaults(true);
-        ccShop.save();
-    }
-
     public static void SetToRecommendedValueAll(String shop, Player player)
     {
-        for (String itemIndex : ShopUtil.ccShop.get().getConfigurationSection(shop).getKeys(false))
+        for(CustomConfig data : shopConfigFiles.values())
         {
-            try
+            for (String itemIndex : data.get().getKeys(false))
             {
-                int i = Integer.parseInt(itemIndex); // options에 대해 적용하지 않기 위해.
-
-                if (!ShopUtil.ccShop.get().contains(shop + "." + itemIndex + ".value"))
-                    continue; // 장식용은 스킵
-
-                String itemName = ShopUtil.ccShop.get().getString(shop + "." + itemIndex + ".mat");
-
-                double worth = WorthUtil.ccWorth.get().getDouble(itemName);
-                if (worth == 0)
+                try
                 {
-                    itemName = itemName.replace("-", "");
-                    itemName = itemName.replace("_", "");
-                    itemName = itemName.toLowerCase();
+                    int i = Integer.parseInt(itemIndex); // options에 대해 적용하지 않기 위해.
 
-                    worth = WorthUtil.ccWorth.get().getDouble(itemName);
+                    if (!data.get().contains(itemIndex + ".value"))
+                        continue; // 장식용은 스킵
+
+                    String itemName = data.get().getString(itemIndex + ".mat");
+
+                    double worth = WorthUtil.ccWorth.get().getDouble(itemName);
+                    if (worth == 0)
+                    {
+                        itemName = itemName.replace("-", "");
+                        itemName = itemName.replace("_", "");
+                        itemName = itemName.toLowerCase();
+
+                        worth = WorthUtil.ccWorth.get().getDouble(itemName);
+                    }
+
+                    if (worth != 0)
+                    {
+                        int numberOfPlayer = DynamicShop.plugin.getConfig().getInt("Shop.NumberOfPlayer");
+                        int sugMid = CalcRecommendedMedian(worth, numberOfPlayer);
+
+                        ShopUtil.editShopItem(shop, i, worth, worth, 0.01f, -1, sugMid, sugMid);
+                    } else
+                    {
+                        if (player != null)
+                            player.sendMessage(DynamicShop.dsPrefix + LangUtil.ccLang.get().getString("ERR.NO_RECOMMAND_DATA") + " : " + itemName);
+                    }
+                } catch (Exception ignored)
+                {
                 }
-
-                if (worth != 0)
-                {
-                    int numberOfPlayer = DynamicShop.plugin.getConfig().getInt("NumberOfPlayer");
-                    int sugMid = CalcRecommendedMedian(worth, numberOfPlayer);
-
-                    ShopUtil.editShopItem(shop, i, worth, worth, 0.01f, -1, sugMid, sugMid);
-                } else
-                {
-                    if (player != null)
-                        player.sendMessage(DynamicShop.dsPrefix + LangUtil.ccLang.get().getString("ERR.NO_RECOMMAND_DATA") + " : " + itemName);
-                }
-            } catch (Exception ignored)
-            {
             }
         }
     }
@@ -603,46 +517,46 @@ public final class ShopUtil
         int tradeIdx = -1;
 
         // 접근가능한 상점중 최고가 찾기
-        for (String shop : ShopUtil.ccShop.get().getKeys(false))
+        for(Map.Entry<String, CustomConfig> entry : shopConfigFiles.entrySet())
         {
-            ConfigurationSection shopConf = ShopUtil.ccShop.get().getConfigurationSection(shop);
+            CustomConfig data = entry.getValue();
 
             // 권한 없는 상점
-            String permission = shopConf.getString("Options.permission");
+            String permission = data.get().getString("Options.permission");
             if (permission != null && permission.length() > 0 && !player.hasPermission(permission) && !player.hasPermission(permission + ".sell"))
             {
                 continue;
             }
 
             // 표지판 전용 상점, 지역상점, 잡포인트 상점
-            if (shopConf.contains("Options.flag.localshop") || shopConf.contains("Options.flag.signshop") || shopConf.contains("Options.flag.jobpoint"))
+            if (data.get().contains("Options.flag.localshop") || data.get().contains("Options.flag.signshop") || data.get().contains("Options.flag.jobpoint"))
                 continue;
 
-            int sameItemIdx = ShopUtil.findItemFromShop(shop, itemStack);
+            int sameItemIdx = ShopUtil.findItemFromShop(entry.getKey(), itemStack);
 
             if (sameItemIdx != -1)
             {
-                String tradeType = shopConf.getString(sameItemIdx + ".tradeType");
+                String tradeType = data.get().getString(sameItemIdx + ".tradeType");
                 if (tradeType != null && tradeType.equals("BuyOnly")) continue; // 구매만 가능함
 
                 // 상점에 돈이 없음
-                if (ShopUtil.getShopBalance(shop) != -1 && ShopUtil.getShopBalance(shop) < Calc.calcTotalCost(shop, String.valueOf(sameItemIdx), itemStack.getAmount()))
+                if (ShopUtil.getShopBalance(entry.getKey()) != -1 && ShopUtil.getShopBalance(entry.getKey()) < Calc.calcTotalCost(entry.getKey(), String.valueOf(sameItemIdx), itemStack.getAmount()))
                 {
                     continue;
                 }
 
-                double value = shopConf.getDouble(sameItemIdx + ".value");
+                double value = data.get().getDouble(sameItemIdx + ".value");
 
                 int tax = ConfigUtil.getCurrentTax();
-                if (shopConf.contains("Options.SalesTax"))
+                if (data.get().contains("Options.SalesTax"))
                 {
-                    tax = shopConf.getInt("Options.SalesTax");
+                    tax = data.get().getInt("Options.SalesTax");
                 }
 
                 if (topPrice < value - ((value / 100) * tax))
                 {
-                    topShopName = shop;
-                    topPrice = shopConf.getDouble(sameItemIdx + ".value");
+                    topShopName = entry.getKey();
+                    topPrice = data.get().getDouble(sameItemIdx + ".value");
                     tradeIdx = sameItemIdx;
                 }
             }
@@ -653,9 +567,243 @@ public final class ShopUtil
 
     public static int GetShopMaxPage(String shopName)
     {
-        if (!ShopUtil.ccShop.get().getKeys(false).contains(shopName))
+        CustomConfig data = shopConfigFiles.get(shopName);
+        if (data == null)
             return 0;
 
-        return ShopUtil.ccShop.get().getConfigurationSection(shopName).getConfigurationSection("Options").getInt("page");
+        return data.get().getConfigurationSection("Options").getInt("page");
+    }
+
+    private static int randomStockTimer = 1;
+    public static void randomChange(Random generator)
+    {
+        boolean needToUpdateUI = false;
+
+        for(Map.Entry<String, CustomConfig> entry : shopConfigFiles.entrySet())
+        {
+            CustomConfig data = entry.getValue();
+
+            // 인게임 30분마다 실행됨 (500틱)
+            randomStockTimer += 1;
+            if (randomStockTimer >= Integer.MAX_VALUE)
+            {
+                randomStockTimer = 0;
+            }
+            //DynamicShop.console.sendMessage("debug... " + randomStockCount);
+
+            // fluctuation
+            ConfigurationSection confSec = data.get().getConfigurationSection("Options.fluctuation");
+            if (confSec != null)
+            {
+                int interval = confSec.getInt("interval");
+
+                if (interval < 1 || interval > 999)
+                {
+                    DynamicShop.console.sendMessage(Constants.DYNAMIC_SHOP_PREFIX + " Wrong value at " + entry.getKey() + ".Options.fluctuation.interval");
+                    DynamicShop.console.sendMessage(Constants.DYNAMIC_SHOP_PREFIX + " Reset to 30");
+                    confSec.set("interval", 30);
+                    interval = 30;
+                    data.save();
+                }
+
+                if (randomStockTimer % interval != 0) continue;
+
+                for (String item : data.get().getKeys(false))
+                {
+                    try
+                    {
+                        int i = Integer.parseInt(item); // options에 대해 적용하지 않기 위해.
+                        if (!data.get().contains(item + ".value")) continue; // 장식용은 스킵
+
+                        int oldStock = data.get().getInt(item + ".stock");
+                        if (oldStock <= 1) continue; // 무한재고에 대해서는 스킵
+                        int oldMedian = data.get().getInt(item + ".median");
+                        if (oldMedian <= 1) continue; // 고정가 상품에 대해서는 스킵
+
+                        boolean dir = generator.nextBoolean();
+                        float amount = generator.nextFloat() * (float) confSec.getDouble("strength");
+                        if (dir) amount *= -1;
+
+                        oldStock += oldMedian * (amount / 100.0);
+
+                        if (oldStock < 2) oldStock = 2;
+
+                        data.get().set(item + ".stock", oldStock);
+                        needToUpdateUI = true;
+                    } catch (Exception ignored)
+                    {
+                    }
+                }
+            }
+
+            // stock stabilizing
+            ConfigurationSection confSec2 = data.get().getConfigurationSection("Options.stockStabilizing");
+            if (confSec2 != null)
+            {
+                int interval = confSec2.getInt("interval");
+
+                if (interval < 1 || interval > 999)
+                {
+                    DynamicShop.console.sendMessage(Constants.DYNAMIC_SHOP_PREFIX + " Wrong value at " + entry.getKey() + ".Options.stockStabilizing.interval");
+                    DynamicShop.console.sendMessage(Constants.DYNAMIC_SHOP_PREFIX + " Reset to 24");
+                    confSec2.set("interval", 24);
+                    interval = 24;
+                    data.save();
+                }
+
+                if (randomStockTimer % interval != 0) continue;
+
+                for (String item : data.get().getKeys(false))
+                {
+                    try
+                    {
+                        int i = Integer.parseInt(item); // options에 대해 적용하지 않기 위해.
+                        if (!data.get().contains(item + ".value")) continue; // 장식용은 스킵
+
+                        int oldStock = data.get().getInt(item + ".stock");
+                        if (oldStock < 1) continue; // 무한재고에 대해서는 스킵
+                        int oldMedian = data.get().getInt(item + ".median");
+                        if (oldMedian < 1) continue; // 고정가 상품에 대해서는 스킵
+
+                        double amount = oldMedian * (confSec2.getDouble("strength") / 100.0);
+                        if (oldStock < oldMedian)
+                        {
+                            oldStock += (int) (amount);
+                            if (oldStock > oldMedian) oldStock = oldMedian;
+                        } else if (oldStock > oldMedian)
+                        {
+                            oldStock -= (int) (amount);
+                            if (oldStock < oldMedian) oldStock = oldMedian;
+                        }
+
+                        data.get().set(item + ".stock", oldStock);
+                        needToUpdateUI = true;
+                    } catch (Exception ignored)
+                    {
+                    }
+                }
+            }
+        }
+
+        if (needToUpdateUI)
+        {
+            for (Player p : DynamicShop.plugin.getServer().getOnlinePlayers())
+            {
+                if (UIManager.GetPlayerCurrentUIType(p) == InGameUI.UI_TYPE.ItemTrade)
+                {
+                    String[] temp = DynamicShop.userInteractItem.get(p.getUniqueId()).split("/");
+                    DynaShopAPI.openItemTradeGui(p, temp[0], temp[1]);
+                }
+            }
+        }
+    }
+
+    public static void SetupSampleShopFile()
+    {
+        if(ShopUtil.shopConfigFiles.isEmpty())
+        {
+            CustomConfig data = new CustomConfig();
+            data.setup("SampleShop", "Shop");
+
+            data.get().options().header("Shop name can not contain formatting codes, '/' and ' '");
+            data.get().options().copyHeader(true);
+
+            data.get().set("Options.page", 2);
+            data.get().set("Options.title", "Main");
+            data.get().set("Options.lore", "This is sample shop");
+            data.get().set("Options.permission", "");
+            data.get().set("0.mat", "DIRT");
+            data.get().set("0.value", 1);
+            data.get().set("0.median", 10000);
+            data.get().set("0.stock", 10000);
+            data.get().set("1.mat", "COBBLESTONE");
+            data.get().set("1.value", 1.5);
+            data.get().set("1.median", 10000);
+            data.get().set("1.stock", 10000);
+
+            shopConfigFiles.put("SampleShop", data);
+
+            data.get().options().copyDefaults(true);
+            data.save();
+        }
+    }
+    
+    // Shop.yml 한덩어리로 되있는 데이터를 새 버전 방식으로 변환함
+    public static void ConvertOldShopData()
+    {
+        File file = new File(DynamicShop.plugin.getDataFolder(), "Shop.yml");
+        if (file.exists())
+        {
+            CustomConfig oldShopData = new CustomConfig();
+            oldShopData.setup("Shop", null);
+
+            for(String oldShopName : oldShopData.get().getKeys(false))
+            {
+                ConfigurationSection oldData = oldShopData.get().getConfigurationSection(oldShopName);
+
+                CustomConfig data = new CustomConfig();
+                data.setup(oldShopName, "Shop");
+
+                for(String s : oldData.getKeys(false))
+                {
+                    data.get().set(s, oldData.get(s));
+                }
+
+                if(data.get().contains("Options.hideStock"))
+                {
+                    data.get().set("Options.flag.hidestock", "");
+                    data.get().set("Options.hideStock", null);
+                }
+                if(data.get().contains("Options.hidePricingType"))
+                {
+                    data.get().set("Options.flag.hidepricingtype", "");
+                    data.get().set("Options.hidePricingType", null);
+                }
+
+                data.save();
+
+                ShopUtil.shopConfigFiles.put(oldShopName, data);
+            }
+
+            file.delete();
+        }
+    }
+
+    public static void SortShopDataAll()
+    {
+        for(String s : shopConfigFiles.keySet())
+        {
+            SortShopData(s);
+        }
+    }
+
+    // yml 파일 안의 거래 인덱스들을 정렬해서 다시 작성함
+    public static void SortShopData(String shopName)
+    {
+        CustomConfig data = shopConfigFiles.get(shopName);
+
+        HashMap<Integer, Object> sortData = new HashMap<>();
+
+        for(String s : data.get().getKeys(false))
+        {
+            try
+            {
+                int dummy = Integer.parseInt(s); // 아이템 데이터가 아닌걸 건너뛰기 위함
+
+                sortData.put(dummy, data.get().get(s));
+                data.get().set(s, null);
+            }
+            catch(Exception ignore){}
+        }
+
+        Object[] keys = sortData.keySet().toArray();
+        Arrays.sort(keys);
+
+        for(Object o : keys)
+        {
+            data.get().set(o.toString(), sortData.get(o));
+        }
+
+        data.save();
     }
 }

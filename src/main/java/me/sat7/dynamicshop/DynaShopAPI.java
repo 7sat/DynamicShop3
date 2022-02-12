@@ -1,6 +1,7 @@
 package me.sat7.dynamicshop;
 
 import lombok.NonNull;
+import me.sat7.dynamicshop.files.CustomConfig;
 import me.sat7.dynamicshop.guis.*;
 import me.sat7.dynamicshop.models.DSItem;
 import me.sat7.dynamicshop.transactions.Calc;
@@ -147,7 +148,7 @@ public final class DynaShopAPI
      */
     public static ArrayList<String> getShops()
     {
-        return new ArrayList<>(ShopUtil.ccShop.get().getKeys(false));
+        return new ArrayList<>(ShopUtil.shopConfigFiles.keySet());
     }
 
     /**
@@ -161,8 +162,10 @@ public final class DynaShopAPI
     {
         if (validateShopName(shopName))
         {
+            CustomConfig data = ShopUtil.shopConfigFiles.get(shopName);
+            
             ArrayList<ItemStack> list = new ArrayList<>();
-            for (String s : ShopUtil.ccShop.get().getConfigurationSection(shopName).getKeys(false))
+            for (String s : data.get().getKeys(false))
             {
                 try
                 {
@@ -172,13 +175,13 @@ public final class DynaShopAPI
                     continue;
                 }
 
-                if (!ShopUtil.ccShop.get().contains(shopName + "." + s + ".value"))
+                if (!data.get().contains(s + ".value"))
                 {
                     continue; // 장식용임
                 }
 
                 Material m;
-                String itemName = ShopUtil.ccShop.get().getString(shopName + "." + s + ".mat"); // 메테리얼
+                String itemName = data.get().getString(s + ".mat"); // 메테리얼
                 try
                 {
                     Material mat = Material.getMaterial(itemName);
@@ -259,10 +262,12 @@ public final class DynaShopAPI
     {
         if (validateShopName(shopName))
         {
+            CustomConfig data = ShopUtil.shopConfigFiles.get(shopName);
+
             int idx = ShopUtil.findItemFromShop(shopName, itemStack);
             if (idx != -1)
             {
-                return ShopUtil.ccShop.get().getInt(shopName + "." + idx + ".stock");
+                return data.get().getInt(idx + ".stock");
             } else
             {
                 return idx;
@@ -285,10 +290,12 @@ public final class DynaShopAPI
     {
         if (validateShopName(shopName))
         {
+            CustomConfig data = ShopUtil.shopConfigFiles.get(shopName);
+
             int idx = ShopUtil.findItemFromShop(shopName, itemStack);
             if (idx != -1)
             {
-                return ShopUtil.ccShop.get().getInt(shopName + "." + idx + ".median");
+                return data.get().getInt(idx + ".median");
             } else
             {
                 return idx;
@@ -310,7 +317,8 @@ public final class DynaShopAPI
     {
         if (validateShopName(shopName))
         {
-            return ShopUtil.ccShop.get().contains(shopName + ".Options.flag.jobpoint");
+            CustomConfig data = ShopUtil.shopConfigFiles.get(shopName);
+            return data.get().contains("Options.flag.jobpoint");
         } else
         {
             throw new IllegalArgumentException("Shop: " + shopName + " does not exist");

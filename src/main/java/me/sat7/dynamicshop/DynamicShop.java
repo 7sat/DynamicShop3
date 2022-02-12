@@ -41,7 +41,7 @@ public final class DynamicShop extends JavaPlugin implements Listener
 
     public static DynamicShop plugin;
     public static ConsoleCommandSender console;
-    public static String dsPrefix = "§3§l[dShop] §f";
+    public static String dsPrefix = "§3[DShop] §f";
 
     public static CustomConfig ccUser;
     public static CustomConfig ccSign;
@@ -60,7 +60,6 @@ public final class DynamicShop extends JavaPlugin implements Listener
     {
         plugin = this;
         console = plugin.getServer().getConsoleSender();
-        initCustomConfigs();
 
         if (!setupEconomy())
         {
@@ -70,17 +69,17 @@ public final class DynamicShop extends JavaPlugin implements Listener
 
         registerEvents();
         initCommands();
-        setupConfigs();
-        startRandomChangeTask();
 
         makeFolders();
-        hookIntoJobs();
+        InitConfig();
 
+        startRandomChangeTask();
         startCullLogsTask();
 
         // 완료
         console.sendMessage(Constants.DYNAMIC_SHOP_PREFIX + " Enabled! :)");
 
+        hookIntoJobs();
         CheckUpdate();
         InitBstats();
     }
@@ -169,13 +168,13 @@ public final class DynamicShop extends JavaPlugin implements Listener
 
     public void startCullLogsTask()
     {
-        if (getConfig().getBoolean("CullLogs"))
+        if (getConfig().getBoolean("Log.CullLogs"))
         {
             if (cullLogsTask != null)
             {
                 cullLogsTask.cancel();
             }
-            cullLogsTask = Bukkit.getScheduler().runTaskTimerAsynchronously(this, LogUtil::cullLogs, 0L, (20L * 60L * (long) getConfig().getInt("LogCullTimeMinutes")));
+            cullLogsTask = Bukkit.getScheduler().runTaskTimerAsynchronously(this, LogUtil::cullLogs, 0L, (20L * 60L * (long) getConfig().getInt("Log.LogCullTimeMinutes")));
         }
     }
 
@@ -185,7 +184,7 @@ public final class DynamicShop extends JavaPlugin implements Listener
         {
             randomChangeTask.cancel();
         }
-        randomChangeTask = Bukkit.getScheduler().runTaskTimer(DynamicShop.plugin, () -> ConfigUtil.randomChange(new Random()), 500, 500);
+        randomChangeTask = Bukkit.getScheduler().runTaskTimer(DynamicShop.plugin, () -> ShopUtil.randomChange(new Random()), 500, 500);
     }
 
     private void hookIntoJobs()
@@ -200,17 +199,6 @@ public final class DynamicShop extends JavaPlugin implements Listener
             console.sendMessage(Constants.DYNAMIC_SHOP_PREFIX + " Jobs Reborn Found");
             JobsHook.jobsRebornActive = true;
         }
-    }
-
-    private void makeFolders()
-    {
-        // 컨버팅용 폴더 생성
-        File folder1 = new File(getDataFolder(), "Convert");
-        folder1.mkdir();
-        File folder2 = new File(getDataFolder(), "Convert/Shop");
-        folder2.mkdir();
-        File folder3 = new File(getDataFolder(), "Log");
-        folder3.mkdir();
     }
 
     private void initCommands()
@@ -236,27 +224,35 @@ public final class DynamicShop extends JavaPlugin implements Listener
         getServer().getPluginManager().registerEvents(uiManager, this);
     }
 
-    private void initCustomConfigs()
+    private void makeFolders()
+    {
+        File shopFolder = new File(getDataFolder(), "Shop");
+        shopFolder.mkdir(); // new 하고 같은줄에서 바로 하면 폴더 안만들어짐.
+
+        File LogFolder = new File(getDataFolder(), "Log");
+        LogFolder.mkdir();
+    }
+
+    private void InitConfig()
     {
         LangUtil.ccLang = new CustomConfig();
-        ShopUtil.ccShop = new CustomConfig();
+        LayoutUtil.ccLayout = new CustomConfig();
         ccUser = new CustomConfig();
         StartPage.ccStartPage = new CustomConfig();
         ccSign = new CustomConfig();
         WorthUtil.ccWorth = new CustomConfig();
         SoundUtil.ccSound = new CustomConfig();
         LogUtil.ccLog = new CustomConfig();
-    }
 
-    private void setupConfigs()
-    {
-        // Config 셋업 (기본형)
+        ShopUtil.Reload();
+
         getConfig().options().copyDefaults();
         saveDefaultConfig();
         ConfigUtil.configSetup(this);
 
         LangUtil.setupLangFile(getConfig().getString("Language"));
-        ShopUtil.setupShopFile();
+        LayoutUtil.Setup();
+
         setupUserFile();
         StartPage.setupStartPageFile();
         setupSignFile();
@@ -264,7 +260,6 @@ public final class DynamicShop extends JavaPlugin implements Listener
         SoundUtil.setupSoundFile();
         LogUtil.setupLogFile();
 
-        //셋업이 다 끝난 후
         getConfig().set("Version", configVersion);
         saveConfig();
     }

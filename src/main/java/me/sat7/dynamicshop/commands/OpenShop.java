@@ -2,6 +2,7 @@ package me.sat7.dynamicshop.commands;
 
 import me.sat7.dynamicshop.DynaShopAPI;
 import me.sat7.dynamicshop.DynamicShop;
+import me.sat7.dynamicshop.files.CustomConfig;
 import me.sat7.dynamicshop.utilities.LangUtil;
 import me.sat7.dynamicshop.utilities.ShopUtil;
 import org.bukkit.Bukkit;
@@ -20,14 +21,14 @@ public class OpenShop
             target = Bukkit.getPlayer(args[1]);
             if (target != null)
             {
-                if (DynamicShop.plugin.getConfig().getBoolean("OpenStartPageInsteadOfDefaultShop"))
+                if (DynamicShop.plugin.getConfig().getBoolean("Command.OpenStartPageInsteadOfDefaultShop"))
                 {
                     DynamicShop.userInteractItem.put(target.getUniqueId(), "");
                     DynaShopAPI.openStartPage(target);
                     return false;
                 }
             }
-            shopName = DynamicShop.plugin.getConfig().getString("DefaultShopName");
+            shopName = DynamicShop.plugin.getConfig().getString("Command.DefaultShopName");
         } else if (args.length > 2)
         {
             if (!sender.hasPermission("dshop.admin.openshop"))
@@ -36,7 +37,7 @@ public class OpenShop
                 return true;
             }
 
-            if (ShopUtil.ccShop.get().contains(args[1]))
+            if (ShopUtil.shopConfigFiles.containsKey(args[1]))
             {
                 shopName = args[1];
             } else
@@ -53,7 +54,9 @@ public class OpenShop
 
         if (target != null)
         {
-            ConfigurationSection shopConf = ShopUtil.ccShop.get().getConfigurationSection(shopName + ".Options");
+            CustomConfig data = ShopUtil.shopConfigFiles.get(shopName);
+            ConfigurationSection shopConf = data.get().getConfigurationSection("Options");
+
             if (shopConf.contains("shophours") && !target.hasPermission("dshop.admin.shopedit"))
             {
                 int curTime = (int) (target.getWorld().getTime()) / 1000 + 6;
@@ -82,7 +85,6 @@ public class OpenShop
                     }
                 }
             }
-
 
             DynamicShop.userTempData.put(target.getUniqueId(), "");
             DynamicShop.userInteractItem.put(target.getUniqueId(), "");

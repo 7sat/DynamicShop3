@@ -1,5 +1,6 @@
 package me.sat7.dynamicshop.commands;
 
+import me.sat7.dynamicshop.files.CustomConfig;
 import org.bukkit.Bukkit;
 import org.bukkit.Material;
 import org.bukkit.configuration.ConfigurationSection;
@@ -33,14 +34,14 @@ public final class Shop
         // ds shop (defaultShop)
         if (args.length == 1)
         {
-            if (DynamicShop.plugin.getConfig().getBoolean("OpenStartPageInsteadOfDefaultShop"))
+            if (DynamicShop.plugin.getConfig().getBoolean("Command.OpenStartPageInsteadOfDefaultShop"))
             {
                 DynamicShop.userInteractItem.put(player.getUniqueId(), "");
                 DynaShopAPI.openStartPage(player);
                 return true;
             }
 
-            shopName = DynamicShop.plugin.getConfig().getString("DefaultShopName");
+            shopName = DynamicShop.plugin.getConfig().getString("Command.DefaultShopName");
         }
         // ds shop shopName
         else if (args.length >= 2)
@@ -49,17 +50,19 @@ public final class Shop
         }
 
         // 그런 이름을 가진 상점이 있는지 확인
-        if (!ShopUtil.ccShop.get().contains(shopName))
+        if (!ShopUtil.shopConfigFiles.containsKey(shopName))
         {
             player.sendMessage(DynamicShop.dsPrefix + LangUtil.ccLang.get().getString("ERR.SHOP_NOT_FOUND"));
             return true;
         }
 
+        CustomConfig shopData = ShopUtil.shopConfigFiles.get(shopName);
+
         // 상점 UI 열기
         if (args.length <= 2)
         {
             //권한 확인
-            String s = ShopUtil.ccShop.get().getString(shopName + ".Options.permission");
+            String s = shopData.get().getString("Options.permission");
             if (s != null && s.length() > 0)
             {
                 if (!player.hasPermission(s) && !player.hasPermission(s + ".buy") && !player.hasPermission(s + ".sell"))
@@ -70,7 +73,7 @@ public final class Shop
             }
 
             // 플래그 확인
-            ConfigurationSection shopConf = ShopUtil.ccShop.get().getConfigurationSection(shopName + ".Options");
+            ConfigurationSection shopConf = shopData.get().getConfigurationSection("Options");
             if (shopConf.contains("flag.signshop"))
             {
                 if (!player.hasPermission(Constants.REMOTE_ACCESS_PERMISSION))
@@ -105,7 +108,7 @@ public final class Shop
                 if (outside && !player.hasPermission(Constants.REMOTE_ACCESS_PERMISSION))
                 {
                     player.sendMessage(DynamicShop.dsPrefix + LangUtil.ccLang.get().getString("ERR.LOCALSHOP_REMOTE_ACCESS"));
-                    player.sendMessage(DynamicShop.dsPrefix + LangUtil.ccLang.get().getString("POSITION") + "X" + x1 + " Y" + y1 + " Z" + z1);
+                    player.sendMessage(DynamicShop.dsPrefix + LangUtil.ccLang.get().getString("SHOP_LOCATION") + "X " + x1 + ", Y " + y1 + ", Z " + z1);
                     return true;
                 }
             }
@@ -388,7 +391,7 @@ public final class Shop
                 {
                     String[] temp = args[3].split("/");
                     idx = Integer.parseInt(temp[0]);
-                    if (!ShopUtil.ccShop.get().getConfigurationSection(shopName).contains(temp[0]))
+                    if (!shopData.get().contains(temp[0]))
                     {
                         player.sendMessage(DynamicShop.dsPrefix + LangUtil.ccLang.get().getString("ERR.WRONG_ITEMNAME"));
                         return true;
@@ -496,12 +499,12 @@ public final class Shop
                 }
 
                 // 수정
-                for (String s : ShopUtil.ccShop.get().getConfigurationSection(shopName).getKeys(false))
+                for (String s : shopData.get().getKeys(false))
                 {
                     try
                     {
                         @SuppressWarnings("unused") int i = Integer.parseInt(s); // 의도적으로 넣은 코드임. 숫자가 아니면 건너뛰기 위함.
-                        if (!ShopUtil.ccShop.get().contains(shopName + "." + s + ".value")) continue; //장식용임
+                        if (!shopData.get().contains(s + ".value")) continue; //장식용임
                     } catch (Exception e)
                     {
                         continue;
@@ -510,63 +513,63 @@ public final class Shop
                     switch (args[5])
                     {
                         case "stock":
-                            value = ShopUtil.ccShop.get().getInt(shopName + "." + s + ".stock");
+                            value = shopData.get().getInt(s + ".stock");
                             break;
                         case "median":
-                            value = ShopUtil.ccShop.get().getInt(shopName + "." + s + ".median");
+                            value = shopData.get().getInt(s + ".median");
                             break;
                         case "value":
-                            value = ShopUtil.ccShop.get().getInt(shopName + "." + s + ".value");
+                            value = shopData.get().getInt(s + ".value");
                             break;
                         case "valueMin":
-                            value = ShopUtil.ccShop.get().getInt(shopName + "." + s + ".valueMin");
+                            value = shopData.get().getInt(s + ".valueMin");
                             break;
                         case "valueMax":
-                            value = ShopUtil.ccShop.get().getInt(shopName + "." + s + ".valueMax");
+                            value = shopData.get().getInt(s + ".valueMax");
                             break;
                     }
 
                     if (mod.equalsIgnoreCase("="))
                     {
-                        ShopUtil.ccShop.get().set(shopName + "." + s + "." + dataType, (int) value);
+                        shopData.get().set(s + "." + dataType, (int) value);
                     } else if (mod.equalsIgnoreCase("+"))
                     {
-                        ShopUtil.ccShop.get().set(shopName + "." + s + "." + dataType, (int) (ShopUtil.ccShop.get().getInt(shopName + "." + s + "." + dataType) + value));
+                        shopData.get().set(s + "." + dataType, (int) (shopData.get().getInt(s + "." + dataType) + value));
                     } else if (mod.equalsIgnoreCase("-"))
                     {
-                        ShopUtil.ccShop.get().set(shopName + "." + s + "." + dataType, (int) (ShopUtil.ccShop.get().getInt(shopName + "." + s + "." + dataType) - value));
+                        shopData.get().set(s + "." + dataType, (int) (shopData.get().getInt(s + "." + dataType) - value));
                     } else if (mod.equalsIgnoreCase("/"))
                     {
                         if (args[5].equals("stock") || args[5].equals("median"))
                         {
-                            ShopUtil.ccShop.get().set(shopName + "." + s + "." + dataType, (int) (ShopUtil.ccShop.get().getInt(shopName + "." + s + "." + dataType) / value));
+                            shopData.get().set(s + "." + dataType, (int) (shopData.get().getInt(s + "." + dataType) / value));
                         }
                         else
                         {
-                            ShopUtil.ccShop.get().set(shopName + "." + s + "." + dataType, ShopUtil.ccShop.get().getDouble(shopName + "." + s + "." + dataType) / value);
+                            shopData.get().set(s + "." + dataType, shopData.get().getDouble(s + "." + dataType) / value);
                         }
                     } else if (mod.equalsIgnoreCase("*"))
                     {
                         if (args[5].equals("stock") || args[5].equals("median"))
                         {
-                            ShopUtil.ccShop.get().set(shopName + "." + s + "." + dataType, (int) (ShopUtil.ccShop.get().getInt(shopName + "." + s + "." + dataType) * value));
+                            shopData.get().set(s + "." + dataType, (int) (shopData.get().getInt(s + "." + dataType) * value));
                         }
                         else
                         {
-                            ShopUtil.ccShop.get().set(shopName + "." + s + "." + dataType, ShopUtil.ccShop.get().getDouble(shopName + "." + s + "." + dataType) * value);
+                            shopData.get().set(s + "." + dataType, shopData.get().getDouble(s + "." + dataType) * value);
                         }
                     }
 
-                    if (ShopUtil.ccShop.get().getDouble(shopName + "." + s + ".valueMin") < 0)
+                    if (shopData.get().getDouble(s + ".valueMin") < 0)
                     {
-                        ShopUtil.ccShop.get().set(shopName + "." + s + ".valueMin", null);
+                        shopData.get().set(s + ".valueMin", null);
                     }
-                    if (ShopUtil.ccShop.get().getDouble(shopName + "." + s + ".valueMax") < 0)
+                    if (shopData.get().getDouble(s + ".valueMax") < 0)
                     {
-                        ShopUtil.ccShop.get().set(shopName + "." + s + ".valueMax", null);
+                        shopData.get().set(s + ".valueMax", null);
                     }
                 }
-                ShopUtil.ccShop.save();
+                shopData.save();
                 player.sendMessage(DynamicShop.dsPrefix + LangUtil.ccLang.get().getString("ITEM_UPDATED"));
             }
 
@@ -582,25 +585,25 @@ public final class Shop
 
                 if (args.length == 3)
                 {
-                    String s = ShopUtil.ccShop.get().getConfigurationSection(shopName).getConfigurationSection("Options").getString("permission");
+                    String s = shopData.get().getConfigurationSection("Options").getString("permission");
                     if (s == null || s.length() == 0) s = LangUtil.ccLang.get().getString("NULL(OPEN)");
                     player.sendMessage(DynamicShop.dsPrefix + s);
                 } else if (args.length > 3)
                 {
                     if (args[3].equalsIgnoreCase("true"))
                     {
-                        ShopUtil.ccShop.get().set(args[1] + ".Options.permission", "dshop.user.shop." + args[1]);
+                        shopData.get().set("Options.permission", "dshop.user.shop." + args[1]);
                         player.sendMessage(DynamicShop.dsPrefix + LangUtil.ccLang.get().get("CHANGES_APPLIED") + "dshop.user.shop." + args[1]);
                     } else if (args[3].equalsIgnoreCase("false"))
                     {
-                        ShopUtil.ccShop.get().set(args[1] + ".Options.permission", "");
+                        shopData.get().set("Options.permission", "");
                         player.sendMessage(DynamicShop.dsPrefix + LangUtil.ccLang.get().get("CHANGES_APPLIED") + LangUtil.ccLang.get().getString("NULL(OPEN)"));
                     } else
                     {
-                        ShopUtil.ccShop.get().set(args[1] + ".Options.permission", args[3]);
+                        shopData.get().set("Options.permission", args[3]);
                         player.sendMessage(DynamicShop.dsPrefix + LangUtil.ccLang.get().get("CHANGES_APPLIED") + args[3]);
                     }
-                    ShopUtil.ccShop.save();
+                    shopData.save();
                 }
             }
 
@@ -630,9 +633,9 @@ public final class Shop
                         return true;
                     } else
                     {
-                        ShopUtil.ccShop.get().set(args[1] + ".Options.page", newValue);
+                        shopData.get().set("Options.page", newValue);
                         player.sendMessage(DynamicShop.dsPrefix + LangUtil.ccLang.get().get("CHANGES_APPLIED") + args[3]);
-                        ShopUtil.ccShop.save();
+                        shopData.save();
                     }
                 } else
                 {
@@ -668,35 +671,44 @@ public final class Shop
                             args[3].equalsIgnoreCase("localshop") ||
                             args[3].equalsIgnoreCase("deliverycharge") ||
                             args[3].equalsIgnoreCase("jobpoint") ||
-                            args[3].equalsIgnoreCase("showValueChange"))
+                            args[3].equalsIgnoreCase("showValueChange") ||
+                            args[3].equalsIgnoreCase("hidestock") ||
+                            args[3].equalsIgnoreCase("hidepricingtype") ||
+                            args[3].equalsIgnoreCase("hideshopbalance"))
                     {
                         if (set)
                         {
                             if (args[3].equalsIgnoreCase("signshop"))
                             {
-                                ShopUtil.ccShop.get().set(args[1] + ".Options.flag.localshop", null);
-                                ShopUtil.ccShop.get().set(args[1] + ".Options.flag.deliverycharge", null);
+                                shopData.get().set("Options.flag.localshop", null);
+                                shopData.get().set("Options.flag.deliverycharge", null);
                             }
                             if (args[3].equalsIgnoreCase("localshop"))
                             {
-                                ShopUtil.ccShop.get().set(args[1] + ".Options.flag.signshop", null);
+                                shopData.get().set("Options.flag.signshop", null);
+                                shopData.get().set("Options.pos1", (player.getLocation().getBlockX() - 2) + "_" + (player.getLocation().getBlockY() - 1) + "_" + (player.getLocation().getBlockZ() - 2));
+                                shopData.get().set("Options.pos2", (player.getLocation().getBlockX() + 2) + "_" + (player.getLocation().getBlockY() + 1) + "_" + (player.getLocation().getBlockZ() + 2));
+                                shopData.get().set("Options.world", player.getWorld().getName());
                             }
                             if (args[3].equalsIgnoreCase("deliverycharge"))
                             {
-                                ShopUtil.ccShop.get().set(args[1] + ".Options.flag.localshop", "");
-                                ShopUtil.ccShop.get().set(args[1] + ".Options.flag.signshop", null);
+                                shopData.get().set("Options.flag.localshop", "");
+                                shopData.get().set("Options.flag.signshop", null);
                             }
 
-                            ShopUtil.ccShop.get().set(args[1] + ".Options.flag." + args[3].toLowerCase(), "");
+                            shopData.get().set("Options.flag." + args[3].toLowerCase(), "");
                         } else
                         {
                             if (args[3].equalsIgnoreCase("localshop"))
                             {
-                                ShopUtil.ccShop.get().set(args[1] + ".Options.flag.deliverycharge", null);
+                                shopData.get().set("Options.flag.deliverycharge", null);
+                                shopData.get().set("Options.pos1", null);
+                                shopData.get().set("Options.pos2", null);
+                                shopData.get().set("Options.world", null);
                             }
-                            ShopUtil.ccShop.get().set(args[1] + ".Options.flag." + args[3].toLowerCase(), null);
+                            shopData.get().set("Options.flag." + args[3].toLowerCase(), null);
                         }
-                        ShopUtil.ccShop.save();
+                        shopData.save();
                         player.sendMessage(DynamicShop.dsPrefix + LangUtil.ccLang.get().get("CHANGES_APPLIED") + args[3] + ":" + args[4]);
                     } else
                     {
@@ -722,22 +734,22 @@ public final class Shop
                 {
                     if (args[3].equalsIgnoreCase("pos1"))
                     {
-                        ShopUtil.ccShop.get().set(args[1] + ".Options.world", player.getWorld().getName());
-                        ShopUtil.ccShop.get().set(args[1] + ".Options.pos1", player.getLocation().getBlockX() + "_" + player.getLocation().getBlockY() + "_" + player.getLocation().getBlockZ());
-                        ShopUtil.ccShop.save();
+                        shopData.get().set("Options.world", player.getWorld().getName());
+                        shopData.get().set("Options.pos1", player.getLocation().getBlockX() + "_" + player.getLocation().getBlockY() + "_" + player.getLocation().getBlockZ());
+                        shopData.save();
                         player.sendMessage(DynamicShop.dsPrefix + "p1");
                     } else if (args[3].equalsIgnoreCase("pos2"))
                     {
-                        ShopUtil.ccShop.get().set(args[1] + ".Options.world", player.getWorld().getName());
-                        ShopUtil.ccShop.get().set(args[1] + ".Options.pos2", player.getLocation().getBlockX() + "_" + player.getLocation().getBlockY() + "_" + player.getLocation().getBlockZ());
-                        ShopUtil.ccShop.save();
+                        shopData.get().set("Options.world", player.getWorld().getName());
+                        shopData.get().set("Options.pos2", player.getLocation().getBlockX() + "_" + player.getLocation().getBlockY() + "_" + player.getLocation().getBlockZ());
+                        shopData.save();
                         player.sendMessage(DynamicShop.dsPrefix + "p2");
                     } else if (args[3].equalsIgnoreCase("clear"))
                     {
-                        ShopUtil.ccShop.get().set(args[1] + ".Options.world", null);
-                        ShopUtil.ccShop.get().set(args[1] + ".Options.pos1", null);
-                        ShopUtil.ccShop.get().set(args[1] + ".Options.pos2", null);
-                        ShopUtil.ccShop.save();
+                        shopData.get().set("Options.world", null);
+                        shopData.get().set("Options.pos1", null);
+                        shopData.get().set("Options.pos2", null);
+                        shopData.save();
                         player.sendMessage(DynamicShop.dsPrefix + "clear");
                     } else
                     {
@@ -768,14 +780,14 @@ public final class Shop
 
                         if (start == end)
                         {
-                            ShopUtil.ccShop.get().set(args[1] + ".Options.shophours", null);
-                            ShopUtil.ccShop.save();
+                            shopData.get().set("Options.shophours", null);
+                            shopData.save();
 
                             player.sendMessage(DynamicShop.dsPrefix + LangUtil.ccLang.get().get("CHANGES_APPLIED") + "Open 24 hours");
                         } else
                         {
-                            ShopUtil.ccShop.get().set(args[1] + ".Options.shophours", start + "~" + end);
-                            ShopUtil.ccShop.save();
+                            shopData.get().set("Options.shophours", start + "~" + end);
+                            shopData.save();
 
                             player.sendMessage(DynamicShop.dsPrefix + LangUtil.ccLang.get().get("CHANGES_APPLIED") + start + "~" + end);
                         }
@@ -807,8 +819,8 @@ public final class Shop
                 {
                     if (args[3].equals("off"))
                     {
-                        ShopUtil.ccShop.get().set(args[1] + ".Options.fluctuation", null);
-                        ShopUtil.ccShop.save();
+                        shopData.get().set("Options.fluctuation", null);
+                        shopData.save();
                         player.sendMessage(DynamicShop.dsPrefix + LangUtil.ccLang.get().get("CHANGES_APPLIED") + "Fluctuation Off");
                     } else
                     {
@@ -830,9 +842,9 @@ public final class Shop
                     try
                     {
                         double strength = Double.parseDouble(args[4]);
-                        ShopUtil.ccShop.get().set(args[1] + ".Options.fluctuation.interval", interval);
-                        ShopUtil.ccShop.get().set(args[1] + ".Options.fluctuation.strength", strength);
-                        ShopUtil.ccShop.save();
+                        shopData.get().set("Options.fluctuation.interval", interval);
+                        shopData.get().set("Options.fluctuation.strength", strength);
+                        shopData.save();
 
                         player.sendMessage(DynamicShop.dsPrefix + LangUtil.ccLang.get().get("CHANGES_APPLIED") + "Interval " + interval + ", strength " + strength);
                     } catch (Exception e)
@@ -859,8 +871,8 @@ public final class Shop
                 {
                     if (args[3].equals("off"))
                     {
-                        ShopUtil.ccShop.get().set(args[1] + ".Options.stockStabilizing", null);
-                        ShopUtil.ccShop.save();
+                        shopData.get().set("Options.stockStabilizing", null);
+                        shopData.save();
                         player.sendMessage(DynamicShop.dsPrefix + LangUtil.ccLang.get().get("CHANGES_APPLIED") + "stockStabilizing Off");
                     } else
                     {
@@ -882,9 +894,9 @@ public final class Shop
                     try
                     {
                         double strength = Double.parseDouble(args[4]);
-                        ShopUtil.ccShop.get().set(args[1] + ".Options.stockStabilizing.interval", interval);
-                        ShopUtil.ccShop.get().set(args[1] + ".Options.stockStabilizing.strength", strength);
-                        ShopUtil.ccShop.save();
+                        shopData.get().set("Options.stockStabilizing.interval", interval);
+                        shopData.get().set("Options.stockStabilizing.strength", strength);
+                        shopData.save();
 
                         player.sendMessage(DynamicShop.dsPrefix + LangUtil.ccLang.get().get("CHANGES_APPLIED") + "Interval " + interval + ", strength " + strength);
                     } catch (Exception e)
@@ -911,6 +923,7 @@ public final class Shop
                     return true;
                 }
 
+                CustomConfig targetShopData = ShopUtil.shopConfigFiles.get(args[4]);
                 switch (args[3])
                 {
                     case "set":
@@ -918,14 +931,14 @@ public final class Shop
                         {
                             if (Double.parseDouble(args[4]) < 0)
                             {
-                                ShopUtil.ccShop.get().set(args[1] + ".Options.Balance", null);
+                                shopData.get().set("Options.Balance", null);
                                 player.sendMessage(DynamicShop.dsPrefix + LangUtil.ccLang.get().get("CHANGES_APPLIED") + LangUtil.ccLang.get().getString("SHOP_BAL_INF"));
                             } else
                             {
-                                ShopUtil.ccShop.get().set(args[1] + ".Options.Balance", Double.parseDouble(args[4]));
+                                shopData.get().set("Options.Balance", Double.parseDouble(args[4]));
                                 player.sendMessage(DynamicShop.dsPrefix + LangUtil.ccLang.get().get("CHANGES_APPLIED") + args[4]);
                             }
-                            ShopUtil.ccShop.save();
+                            shopData.save();
                         } catch (Exception e)
                         {
                             player.sendMessage(DynamicShop.dsPrefix + LangUtil.ccLang.get().getString("ERR.WRONG_DATATYPE"));
@@ -934,19 +947,19 @@ public final class Shop
                         break;
                     case "linkto":
                         // 그런 상점(타깃) 없음
-                        if (!ShopUtil.ccShop.get().contains(args[4]))
+                        if (!ShopUtil.shopConfigFiles.containsKey(args[4]))
                         {
                             player.sendMessage(DynamicShop.dsPrefix + LangUtil.ccLang.get().getString("ERR.SHOP_NOT_FOUND"));
                             return true;
                         }
 
                         // 타깃 상점이 연동계좌임
-                        if (ShopUtil.ccShop.get().contains(args[4] + ".Options.Balance"))
+                        if (targetShopData.get().contains("Options.Balance"))
                         {
                             try
                             {
                                 // temp 를 직접 사용하지는 않지만 의도적으로 넣은 코드임. 숫자가 아니면 건너뛰기 위함.
-                                Double temp = Double.parseDouble(ShopUtil.ccShop.get().getString(args[4] + ".Options.Balance"));
+                                Double temp = Double.parseDouble(targetShopData.get().getString("Options.Balance"));
                             } catch (Exception e)
                             {
                                 player.sendMessage(DynamicShop.dsPrefix + LangUtil.ccLang.get().getString("ERR.SHOP_LINK_TARGET_ERR"));
@@ -955,9 +968,9 @@ public final class Shop
                         }
 
                         // 출발상점을 타깃으로 하는 상점이 있음
-                        for (String s : ShopUtil.ccShop.get().getKeys(false))
+                        for (CustomConfig tempShopData : ShopUtil.shopConfigFiles.values())
                         {
-                            String temp = ShopUtil.ccShop.get().getString(s + ".Options.Balance");
+                            String temp = tempShopData.get().getString("Options.Balance");
                             try
                             {
                                 if (temp != null && temp.equals(args[1]))
@@ -979,14 +992,14 @@ public final class Shop
                         }
 
                         // 출발 상점과 도착 상점의 통화 유형이 다름
-                        if (ShopUtil.ccShop.get().contains(args[1] + ".Options.flag.jobpoint") != ShopUtil.ccShop.get().contains(args[4] + ".Options.flag.jobpoint"))
+                        if (shopData.get().contains("Options.flag.jobpoint") != targetShopData.get().contains("Options.flag.jobpoint"))
                         {
                             player.sendMessage(DynamicShop.dsPrefix + LangUtil.ccLang.get().getString("ERR.SHOP_DIFF_CURRENCY"));
                             return true;
                         }
 
-                        ShopUtil.ccShop.get().set(args[1] + ".Options.Balance", args[4]);
-                        ShopUtil.ccShop.save();
+                        shopData.get().set("Options.Balance", args[4]);
+                        shopData.save();
                         player.sendMessage(DynamicShop.dsPrefix + LangUtil.ccLang.get().getString("CHANGES_APPLIED") + args[4]);
                         break;
                     case "transfer":
@@ -1009,7 +1022,7 @@ public final class Shop
                         }
 
                         // 출발 상점이 무한계좌임
-                        if (!ShopUtil.ccShop.get().contains(args[1] + ".Options.Balance"))
+                        if (!shopData.get().contains("Options.Balance"))
                         {
                             player.sendMessage(DynamicShop.dsPrefix + LangUtil.ccLang.get().getString("ERR.SHOP_HAS_INF_BAL").replace("{shop}", args[1]));
                             return true;
@@ -1018,7 +1031,7 @@ public final class Shop
                         // 출발 상점에 돈이 부족
                         if (ShopUtil.getShopBalance(args[1]) < amount)
                         {
-                            if (ShopUtil.ccShop.get().contains(args[1] + ".Options.flag.jobpoint"))
+                            if (shopData.get().contains("Options.flag.jobpoint"))
                             {
                                 player.sendMessage(DynamicShop.dsPrefix + LangUtil.ccLang.get().getString("NOT_ENOUGH_POINT").
                                         replace("{bal}", DynaShopAPI.df.format(ShopUtil.getShopBalance(args[1]))));
@@ -1031,10 +1044,10 @@ public final class Shop
                         }
 
                         // 다른 상점으로 송금
-                        if (ShopUtil.ccShop.get().contains(args[4]))
+                        if (ShopUtil.shopConfigFiles.containsKey(args[4]))
                         {
                             // 도착 상점이 무한계좌임
-                            if (!ShopUtil.ccShop.get().contains(args[4] + ".Options.Balance"))
+                            if (!targetShopData.get().contains("Options.Balance"))
                             {
                                 player.sendMessage(DynamicShop.dsPrefix + LangUtil.ccLang.get().getString("ERR.SHOP_HAS_INF_BAL").replace("{shop}", args[4]));
                                 return true;
@@ -1048,7 +1061,7 @@ public final class Shop
                             }
 
                             // 출발 상점과 도착 상점의 통화 유형이 다름
-                            if (ShopUtil.ccShop.get().contains(args[1] + ".Options.flag.jobpoint") != ShopUtil.ccShop.get().contains(args[4] + ".Options.flag.jobpoint"))
+                            if (shopData.get().contains("Options.flag.jobpoint") != targetShopData.get().contains("Options.flag.jobpoint"))
                             {
                                 player.sendMessage(DynamicShop.dsPrefix + LangUtil.ccLang.get().getString("ERR.SHOP_DIFF_CURRENCY"));
                                 return true;
@@ -1057,7 +1070,10 @@ public final class Shop
                             // 송금.
                             ShopUtil.addShopBalance(args[1], amount * -1);
                             ShopUtil.addShopBalance(args[4], amount);
-                            ShopUtil.ccShop.save();
+
+                            shopData.save();
+                            targetShopData.save();
+
                             player.sendMessage(DynamicShop.dsPrefix + LangUtil.ccLang.get().getString("TRANSFER_SUCCESS"));
                         }
                         // 플레이어에게 송금
@@ -1073,11 +1089,11 @@ public final class Shop
                                     return true;
                                 }
 
-                                if (ShopUtil.ccShop.get().contains(args[1] + ".Options.flag.jobpoint"))
+                                if (shopData.get().contains("Options.flag.jobpoint"))
                                 {
                                     JobsHook.addJobsPoint(target, amount);
                                     ShopUtil.addShopBalance(args[1], amount * -1);
-                                    ShopUtil.ccShop.save();
+                                    shopData.save();
 
                                     player.sendMessage(DynamicShop.dsPrefix + LangUtil.ccLang.get().getString("TRANSFER_SUCCESS"));
                                 } else
@@ -1088,7 +1104,7 @@ public final class Shop
                                     if (er.transactionSuccess())
                                     {
                                         ShopUtil.addShopBalance(args[1], amount * -1);
-                                        ShopUtil.ccShop.save();
+                                        shopData.save();
 
                                         player.sendMessage(DynamicShop.dsPrefix + LangUtil.ccLang.get().getString("TRANSFER_SUCCESS"));
                                     } else
@@ -1103,62 +1119,6 @@ public final class Shop
                         }
                         break;
                 }
-            }
-
-            // ds shop shopname hideStock <true | false>
-            else if (args[2].equalsIgnoreCase("hideStock"))
-            {
-                // 권한 확인
-                if (!player.hasPermission("dshop.admin.shopedit"))
-                {
-                    player.sendMessage(DynamicShop.dsPrefix + LangUtil.ccLang.get().getString("ERR.NO_PERMISSION"));
-                    return true;
-                }
-
-                if (args.length != 4)
-                {
-                    player.sendMessage(DynamicShop.dsPrefix + LangUtil.ccLang.get().getString("ERR.WRONG_USAGE"));
-                    return true;
-                }
-
-                if (args[3].equals("true"))
-                {
-                    ShopUtil.ccShop.get().set(args[1] + ".Options.hideStock", true);
-                    player.sendMessage(DynamicShop.dsPrefix + LangUtil.ccLang.get().get("CHANGES_APPLIED") + "hideStock true");
-                } else
-                {
-                    ShopUtil.ccShop.get().set(args[1] + ".Options.hideStock", null);
-                    player.sendMessage(DynamicShop.dsPrefix + LangUtil.ccLang.get().get("CHANGES_APPLIED") + "hideStock false");
-                }
-                ShopUtil.ccShop.save();
-            }
-
-            // ds shop shopname hidePricingType <true | false>
-            else if (args[2].equalsIgnoreCase("hidePricingType"))
-            {
-                // 권한 확인
-                if (!player.hasPermission("dshop.admin.shopedit"))
-                {
-                    player.sendMessage(DynamicShop.dsPrefix + LangUtil.ccLang.get().getString("ERR.NO_PERMISSION"));
-                    return true;
-                }
-
-                if (args.length != 4)
-                {
-                    player.sendMessage(DynamicShop.dsPrefix + LangUtil.ccLang.get().getString("ERR.WRONG_USAGE"));
-                    return true;
-                }
-
-                if (args[3].equals("true"))
-                {
-                    ShopUtil.ccShop.get().set(args[1] + ".Options.hidePricingType", true);
-                    player.sendMessage(DynamicShop.dsPrefix + LangUtil.ccLang.get().get("CHANGES_APPLIED") + "hidePricingType true");
-                } else
-                {
-                    ShopUtil.ccShop.get().set(args[1] + ".Options.hidePricingType", null);
-                    player.sendMessage(DynamicShop.dsPrefix + LangUtil.ccLang.get().get("CHANGES_APPLIED") + "hidePricingType false");
-                }
-                ShopUtil.ccShop.save();
             }
 
             // ds shop shopname sellbuy <SellOnly | BuyOnly | Clear>
@@ -1190,13 +1150,13 @@ public final class Shop
                     temp = "SellBuy";
                 }
 
-                for (String s : ShopUtil.ccShop.get().getConfigurationSection(shopName).getKeys(false))
+                for (String s : shopData.get().getKeys(false))
                 {
                     try
                     {
                         // i를 직접 사용하지는 않지만 의도적으로 넣은 코드임.
                         int i = Integer.parseInt(s);
-                        if (!ShopUtil.ccShop.get().contains(shopName + "." + s + ".value")) continue; //장식용임
+                        if (!shopData.get().contains(s + ".value")) continue; //장식용임
                     } catch (Exception e)
                     {
                         continue;
@@ -1204,14 +1164,14 @@ public final class Shop
 
                     if (temp.equalsIgnoreCase("SellBuy"))
                     {
-                        ShopUtil.ccShop.get().set(shopName + "." + s + ".tradeType", null);
+                        shopData.get().set(s + ".tradeType", null);
                     } else
                     {
-                        ShopUtil.ccShop.get().set(shopName + "." + s + ".tradeType", temp);
+                        shopData.get().set(s + ".tradeType", temp);
                     }
                 }
 
-                ShopUtil.ccShop.save();
+                shopData.save();
                 player.sendMessage(DynamicShop.dsPrefix + LangUtil.ccLang.get().getString("CHANGES_APPLIED") + temp);
             }
 
@@ -1233,11 +1193,11 @@ public final class Shop
 
                 if (args[3].equalsIgnoreCase("enable"))
                 {
-                    ShopUtil.ccShop.get().set(shopName + ".Options.log", true);
+                    shopData.get().set("Options.log", true);
                     player.sendMessage(DynamicShop.dsPrefix + shopName + "/" + LangUtil.ccLang.get().getString("LOG.LOG") + ": " + args[3]);
                 } else if (args[3].equalsIgnoreCase("disable"))
                 {
-                    ShopUtil.ccShop.get().set(shopName + ".Options.log", null);
+                    shopData.get().set("Options.log", null);
                     player.sendMessage(DynamicShop.dsPrefix + shopName + "/" + LangUtil.ccLang.get().getString("LOG.LOG") + ": " + args[3]);
                 } else if (args[3].equalsIgnoreCase("clear"))
                 {
@@ -1250,7 +1210,7 @@ public final class Shop
                     return true;
                 }
 
-                ShopUtil.ccShop.save();
+                shopData.save();
             }
             // ds shop shopname setToRecommendedValueAll
             else if (args[2].equalsIgnoreCase("setToRecAll"))

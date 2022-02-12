@@ -1,14 +1,12 @@
 package me.sat7.dynamicshop.commands;
 
+import me.sat7.dynamicshop.utilities.*;
 import org.bukkit.entity.Player;
 
 import me.sat7.dynamicshop.DynamicShop;
 import me.sat7.dynamicshop.guis.StartPage;
-import me.sat7.dynamicshop.utilities.ConfigUtil;
-import me.sat7.dynamicshop.utilities.LangUtil;
-import me.sat7.dynamicshop.utilities.ShopUtil;
-import me.sat7.dynamicshop.utilities.SoundUtil;
-import me.sat7.dynamicshop.utilities.WorthUtil;
+
+import static me.sat7.dynamicshop.utilities.ConfigUtil.configVersion;
 
 public final class Reload
 {
@@ -26,7 +24,8 @@ public final class Reload
         }
 
         LangUtil.ccLang.reload();
-        ShopUtil.ccShop.reload();
+        LayoutUtil.ccLayout.reload();
+        ShopUtil.Reload();
         StartPage.ccStartPage.reload();
         DynamicShop.ccSign.reload();
         WorthUtil.ccWorth.reload();
@@ -35,9 +34,12 @@ public final class Reload
         DynamicShop.plugin.reloadConfig();
         ConfigUtil.configSetup(DynamicShop.plugin);
         DynamicShop.plugin.startRandomChangeTask();
+
         DynamicShop.plugin.startCullLogsTask();
 
         LangUtil.setupLangFile(DynamicShop.plugin.getConfig().getString("Language"));
+
+        DynamicShop.plugin.getConfig().set("Version", configVersion);
 
         player.sendMessage(DynamicShop.dsPrefix + LangUtil.ccLang.get().getString("HELP.RELOADED"));
     }

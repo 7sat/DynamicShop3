@@ -21,7 +21,5 @@ public final class SetToRecAll
 
         ShopUtil.SetToRecommendedValueAll(args[1], player);
         player.sendMessage(DynamicShop.dsPrefix + LangUtil.ccLang.get().getString("ITEM_UPDATED"));
-
-        ShopUtil.ccShop.save();
     }
 }

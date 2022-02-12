@@ -9,6 +9,7 @@ import org.bukkit.configuration.file.YamlConfiguration;
 
 import java.io.File;
 import java.io.IOException;
+import java.nio.file.Files;
 
 public class CustomConfig
 {
@@ -20,7 +21,7 @@ public class CustomConfig
     {
         String path = name + ".yml";
         if (folder != null) path = folder + "/" + path;
-        file = new File(Bukkit.getServer().getPluginManager().getPlugin("DynamicShop").getDataFolder(), path);
+        file = new File(DynamicShop.plugin.getDataFolder(), path);
 
         if (!file.exists())
         {
@@ -29,15 +30,16 @@ public class CustomConfig
                 file.createNewFile();
             } catch (IOException e)
             {
-                //System.out.println("CreateFileFail");
+                System.out.println("Config Setup Fail: " + e);
             }
         }
+
         customFile = YamlConfiguration.loadConfiguration(file);
     }
 
     public boolean open(String name, String folder)
     {
-        file = new File(Bukkit.getServer().getPluginManager().getPlugin("DynamicShop").getDataFolder(), folder + "/" + name + ".yml");
+        file = new File(DynamicShop.plugin.getDataFolder(), folder + "/" + name + ".yml");
 
         if (!file.exists())
         {
@@ -62,6 +64,36 @@ public class CustomConfig
         } catch (IOException e)
         {
             System.out.println("Couldn't save file :" + e);
+        }
+    }
+
+    public void rename(String newName)
+    {
+        if (!file.exists())
+            return;
+
+        try
+        {
+            File newFile = new File(file.toPath().resolveSibling(newName) + ".yml");
+            Files.copy(file.toPath(), newFile.toPath());
+            file.delete();
+            file = newFile;
+        }
+        catch (Exception e)
+        {
+            System.out.println("rename fail :" + e);
+        }
+    }
+
+    public void delete()
+    {
+        if (file.exists())
+        {
+            if (!file.delete())
+                System.out.println("file delete fail: " + file.getName());
+        } else
+        {
+            System.out.println("file delete fail: not exist");
         }
     }
 

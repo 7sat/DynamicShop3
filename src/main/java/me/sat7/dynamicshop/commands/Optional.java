@@ -18,14 +18,14 @@ public class Optional implements CommandExecutor
     public boolean onCommand(CommandSender sender, Command command, String label, String[] args)
     {
 
-        if (!DynamicShop.plugin.getConfig().getBoolean("UseShopCommand")) return true;
+        if (!DynamicShop.plugin.getConfig().getBoolean("Command.UseShopCommand")) return true;
 
         if (sender instanceof Player)
         {
             Player player = (Player) sender;
             if (!player.hasPermission(Constants.USE_SHOP_PERMISSION))
             {
-                player.sendMessage(DynamicShop.dsPrefix + LangUtil.ccLang.get().getString("ERR.PERMISSION"));
+                player.sendMessage(DynamicShop.dsPrefix + LangUtil.ccLang.get().getString("ERR.NO_PERMISSION"));
                 return true;
             }
             if (player.getGameMode() == GameMode.CREATIVE && !player.hasPermission(Constants.ADMIN_CREATIVE_PERMISSION))

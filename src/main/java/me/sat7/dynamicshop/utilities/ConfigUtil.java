@@ -2,210 +2,172 @@ package me.sat7.dynamicshop.utilities;
 
 import lombok.Getter;
 import lombok.Setter;
-import me.sat7.dynamicshop.DynaShopAPI;
 import me.sat7.dynamicshop.DynamicShop;
-import me.sat7.dynamicshop.constants.Constants;
-import org.bukkit.configuration.ConfigurationSection;
-import org.bukkit.entity.Player;
+import org.bukkit.configuration.file.FileConfiguration;
 
-import java.util.Random;
+import static me.sat7.dynamicshop.utilities.MathUtil.Clamp;
 
 public final class ConfigUtil
 {
-    private static int randomStockCount = 1;
     @Getter
     @Setter
     private static int currentTax;
 
-    public final static int configVersion = 2;
+    public final static int configVersion = 3;
+
+    private final static String[] dataKeys = new String[]
+            {
+                    "Language",
+                    "Prefix",
+                    "Command.UseShopCommand",
+                    "Command.OpenStartPageInsteadOfDefaultShop",
+                    "Command.DefaultShopName",
+                    "Shop.SalesTax",
+                    "Shop.DeliveryChargeScale",
+                    "Shop.NumberOfPlayer",
+                    "UI.DisplayStockAsStack",
+                    "UI.OpenStartPageWhenClickCloseButton",
+                    "UI.ShopInfoButtonIcon",
+                    "Log.SaveLogs",
+                    "Log.LogFileNameFormat",
+                    "Log.CullLogs",
+                    "Log.LogCullAgeMinutes",
+                    "Log.LogCullTimeMinutes"
+            };
 
     private ConfigUtil()
     {
 
     }
 
-    public static void randomChange(Random generator)
-    {
-        // 인게임 30분마다 실행됨 (500틱)
-        randomStockCount += 1;
-        if (randomStockCount >= Integer.MAX_VALUE)
-        {
-            randomStockCount = 0;
-            ShopUtil.ccShop.save();
-        }
-        //DynamicShop.console.sendMessage("debug... " + randomStockCount);
-
-        boolean needToUpdateUI = false;
-
-        for (String shop : ShopUtil.ccShop.get().getKeys(false))
-        {
-            // fluctuation
-            ConfigurationSection confSec = ShopUtil.ccShop.get().getConfigurationSection(shop + ".Options.fluctuation");
-            if (confSec != null)
-            {
-                int interval = confSec.getInt("interval");
-
-                if (interval < 1 || interval > 999)
-                {
-                    DynamicShop.console.sendMessage(Constants.DYNAMIC_SHOP_PREFIX + " Wrong value at " + shop + ".Options.fluctuation.interval");
-                    DynamicShop.console.sendMessage(Constants.DYNAMIC_SHOP_PREFIX + " Reset to 8");
-                    confSec.set("interval", 8);
-                    interval = 2;
-                    ShopUtil.ccShop.save();
-                }
-
-                if (randomStockCount % interval != 0) continue;
-
-                for (String item : ShopUtil.ccShop.get().getConfigurationSection(shop).getKeys(false))
-                {
-                    try
-                    {
-                        int i = Integer.parseInt(item); // options에 대해 적용하지 않기 위해.
-                        if (!ShopUtil.ccShop.get().contains(shop + "." + item + ".value")) continue; // 장식용은 스킵
-
-                        int oldStock = ShopUtil.ccShop.get().getInt(shop + "." + item + ".stock");
-                        if (oldStock <= 1) continue; // 무한재고에 대해서는 스킵
-                        int oldMedian = ShopUtil.ccShop.get().getInt(shop + "." + item + ".median");
-                        if (oldMedian <= 1) continue; // 고정가 상품에 대해서는 스킵
-
-                        boolean dir = generator.nextBoolean();
-                        float amount = generator.nextFloat() * (float) confSec.getDouble("strength");
-                        if (dir) amount *= -1;
-
-                        oldStock += oldMedian * (amount / 100.0);
-
-                        if (oldStock < 2) oldStock = 2;
-
-                        ShopUtil.ccShop.get().set(shop + "." + item + ".stock", oldStock);
-                        needToUpdateUI = true;
-                    } catch (Exception ignored)
-                    {
-                    }
-                }
-            }
-
-            // stock stabilizing
-            ConfigurationSection confSec2 = ShopUtil.ccShop.get().getConfigurationSection(shop + ".Options.stockStabilizing");
-            if (confSec2 != null)
-            {
-                int interval = confSec2.getInt("interval");
-
-                if (interval < 1 || interval > 999)
-                {
-                    DynamicShop.console.sendMessage(Constants.DYNAMIC_SHOP_PREFIX + " Wrong value at " + shop + ".Options.stockStabilizing.interval");
-                    DynamicShop.console.sendMessage(Constants.DYNAMIC_SHOP_PREFIX + " Reset to 24");
-                    confSec2.set("interval", 24);
-                    interval = 24;
-                    ShopUtil.ccShop.save();
-                }
-
-                if (randomStockCount % interval != 0) continue;
-
-                for (String item : ShopUtil.ccShop.get().getConfigurationSection(shop).getKeys(false))
-                {
-                    try
-                    {
-                        int i = Integer.parseInt(item); // options에 대해 적용하지 않기 위해.
-                        if (!ShopUtil.ccShop.get().contains(shop + "." + item + ".value")) continue; // 장식용은 스킵
-
-                        int oldStock = ShopUtil.ccShop.get().getInt(shop + "." + item + ".stock");
-                        if (oldStock < 1) continue; // 무한재고에 대해서는 스킵
-                        int oldMedian = ShopUtil.ccShop.get().getInt(shop + "." + item + ".median");
-                        if (oldMedian < 1) continue; // 고정가 상품에 대해서는 스킵
-
-                        double amount = oldMedian * (confSec2.getDouble("strength") / 100.0);
-                        if (oldStock < oldMedian)
-                        {
-                            oldStock += (int) (amount);
-                            if (oldStock > oldMedian) oldStock = oldMedian;
-                        } else if (oldStock > oldMedian)
-                        {
-                            oldStock -= (int) (amount);
-                            if (oldStock < oldMedian) oldStock = oldMedian;
-                        }
-
-                        ShopUtil.ccShop.get().set(shop + "." + item + ".stock", oldStock);
-                        needToUpdateUI = true;
-                    } catch (Exception e)
-                    {
-//                        for (StackTraceElement ste:e.getStackTrace()) {
-//                            console.sendMessage(ste.toString());
-//                        }
-                    }
-                }
-            }
-        }
-
-        if (needToUpdateUI)
-        {
-            for (Player p : DynamicShop.plugin.getServer().getOnlinePlayers())
-            {
-                if (p.getOpenInventory().getTitle().equalsIgnoreCase(LangUtil.ccLang.get().getString("TRADE_TITLE")))
-                {
-                    String[] temp = DynamicShop.userInteractItem.get(p.getUniqueId()).split("/");
-                    DynaShopAPI.openItemTradeGui(p, temp[0], temp[1]);
-                }
-            }
-        }
-    }
-
     public static void configSetup(DynamicShop dynamicShop)
     {
-        dynamicShop.getConfig().options().copyHeader(true);
-        dynamicShop.getConfig().options().header(
-                "Language: ex) en-US,ko-KR" + "\nPrefix: Prefix of plugin messages" + "\nSalesTax: ~99%"
-                        + "\nUseShopCommand: Set this to false if you want to disable /shop command"
-                        + "\nDefaultShopName: This shop will open when player run /shop or /ds shop command"
-                        + "\nDisplayStockAsStack: ex) true: 10Stacks, false: 640"
-                        + "\nDeliveryChargeScale: 0.01~"
-                        + "\nNumberOfPlayer: This number is used to calculate the recommended median. 3~100"
-        );
+        FileConfiguration config = dynamicShop.getConfig();
 
-        double salesTax;
-        if (dynamicShop.getConfig().contains("SaleTax"))
+        config.options().header(
+                "Language: ex) en-US,ko-KR"
+                        + "\nUseShopCommand: Set this to false if you want to disable '/shop'"
+                        + "\nDeliveryChargeScale: This is only used for shop with the 'delivery charge' flag. 0.01 ~"
+                        + "\nNumberOfPlayer: This is used to calculate the recommended median. 3~100"
+                        + "\nDisplayStockAsStack: ex) true: 10Stacks, false: 640"
+                        + "\nVersion: Do NOT edit this"
+        );
+        config.options().copyHeader(true);
+
+        //기본값이 저장되어야 하는데 saveDefaultConfig() 가 작동 안해서 이렇게 처리함.
+        for(String s : dataKeys)
         {
-            salesTax = dynamicShop.getConfig().getDouble("SaleTax");
-            dynamicShop.getConfig().set("SaleTax", null);
-        } else
-        {
-            salesTax = dynamicShop.getConfig().getDouble("SalesTax");
+            config.set(s, config.get(s));
         }
-        if (salesTax < 0) salesTax = 0;
-        if (salesTax > 99) salesTax = 99;
-        dynamicShop.getConfig().set("SalesTax", salesTax);
+
+        DynamicShop.dsPrefix = config.getString("Prefix");
+
+        double salesTax = Clamp(config.getDouble("Shop.SalesTax"), 0, 99);
+        config.set("Shop.SalesTax", salesTax);
         setCurrentTax((int) salesTax);
 
-        dynamicShop.getConfig().set("Language", dynamicShop.getConfig().get("Language"));
-        dynamicShop.getConfig().set("Prefix", dynamicShop.getConfig().get("Prefix"));
-        DynamicShop.dsPrefix = dynamicShop.getConfig().getString("Prefix");
-        dynamicShop.getConfig().set("UseShopCommand", dynamicShop.getConfig().getBoolean("UseShopCommand"));
-        dynamicShop.getConfig().set("DefaultShopName", dynamicShop.getConfig().getString("DefaultShopName"));
-
-        double DeliveryChargeScale = dynamicShop.getConfig().getDouble("DeliveryChargeScale");
+        double DeliveryChargeScale = config.getDouble("Shop.DeliveryChargeScale");
         if (DeliveryChargeScale <= 0.01) DeliveryChargeScale = 0.01;
-        dynamicShop.getConfig().set("DeliveryChargeScale", DeliveryChargeScale);
+        config.set("Shop.DeliveryChargeScale", DeliveryChargeScale);
 
-        dynamicShop.getConfig().set("DisplayStockAsStack", dynamicShop.getConfig().getBoolean("DisplayStockAsStack"));
+        int numPlayer = Clamp(config.getInt("Shop.NumberOfPlayer"), 3, 100);
+        config.set("Shop.NumberOfPlayer", numPlayer);
 
-        int numPlayer = dynamicShop.getConfig().getInt("NumberOfPlayer");
-        if (numPlayer <= 3) numPlayer = 3;
-        if (numPlayer > 100) numPlayer = 100;
-        dynamicShop.getConfig().set("NumberOfPlayer", numPlayer);
-
-        dynamicShop.getConfig().set("SaveLogs", dynamicShop.getConfig().getBoolean("SaveLogs"));
-        dynamicShop.getConfig().set("CullLogs", dynamicShop.getConfig().getBoolean("CullLogs"));
-        dynamicShop.getConfig().set("LogCullAgeMinutes", dynamicShop.getConfig().getInt("LogCullAgeMinutes"));
-        dynamicShop.getConfig().set("LogCullTimeMinutes", dynamicShop.getConfig().getInt("LogCullTimeMinutes"));
-
-        dynamicShop.getConfig().set("OnClickCloseButton_OpenStartPage", dynamicShop.getConfig().getBoolean("OnClickCloseButton_OpenStartPage"));
-        dynamicShop.getConfig().set("OpenStartPageInsteadOfDefaultShop", dynamicShop.getConfig().getBoolean("OpenStartPageInsteadOfDefaultShop"));
-        dynamicShop.getConfig().set("ShopInfoButtonIcon", dynamicShop.getConfig().getString("ShopInfoButtonIcon"));
+        ConvertV2toV3();
 
         dynamicShop.saveConfig();
     }
 
     public static void resetTax()
     {
-        currentTax = DynamicShop.plugin.getConfig().getInt("SalesTax");
+        currentTax = DynamicShop.plugin.getConfig().getInt("Shop.SalesTax");
+    }
+
+    private static void ConvertV2toV3()
+    {
+        FileConfiguration config = DynamicShop.plugin.getConfig();
+
+        if(config.get("ShowTax") != null)
+        {
+            config.set("ShowTax", null);
+        }
+
+        if(config.get("UseShopCommand") != null)
+        {
+            config.set("Command.UseShopCommand", config.get("UseShopCommand"));
+            config.set("UseShopCommand", null);
+        }
+
+        if(config.get("OpenStartPageInsteadOfDefaultShop") != null)
+        {
+            config.set("Command.OpenStartPageInsteadOfDefaultShop", config.get("OpenStartPageInsteadOfDefaultShop"));
+            config.set("OpenStartPageInsteadOfDefaultShop", null);
+        }
+
+        if(config.get("DefaultShopName") != null)
+        {
+            config.set("Command.DefaultShopName", config.get("DefaultShopName"));
+            config.set("DefaultShopName", null);
+        }
+
+        if(config.get("SalesTax") != null)
+        {
+            config.set("Shop.SalesTax", config.get("SalesTax"));
+            config.set("SalesTax", null);
+        }
+
+        if(config.get("DeliveryChargeScale") != null)
+        {
+            config.set("Shop.DeliveryChargeScale", config.get("DeliveryChargeScale"));
+            config.set("DeliveryChargeScale", null);
+        }
+
+        if(config.get("NumberOfPlayer") != null)
+        {
+            config.set("Shop.NumberOfPlayer", config.get("NumberOfPlayer"));
+            config.set("NumberOfPlayer", null);
+        }
+
+        if(config.get("DisplayStockAsStack") != null)
+        {
+            config.set("UI.DisplayStockAsStack", config.get("DisplayStockAsStack"));
+            config.set("DisplayStockAsStack", null);
+        }
+
+        if(config.get("OnClickCloseButton_OpenStartPage") != null)
+        {
+            config.set("UI.OpenStartPageWhenClickCloseButton", config.get("OnClickCloseButton_OpenStartPage"));
+            config.set("OnClickCloseButton_OpenStartPage", null);
+        }
+
+        if(config.get("ShopInfoButtonIcon") != null)
+        {
+            config.set("UI.ShopInfoButtonIcon", config.get("ShopInfoButtonIcon"));
+            config.set("ShopInfoButtonIcon", null);
+        }
+
+        if(config.get("SaveLogs") != null)
+        {
+            config.set("Log.SaveLogs", config.get("SaveLogs"));
+            config.set("SaveLogs", null);
+        }
+
+        if(config.get("CullLogs") != null)
+        {
+            config.set("Log.CullLogs", config.get("CullLogs"));
+            config.set("CullLogs", null);
+        }
+
+        if(config.get("LogCullAgeMinutes") != null)
+        {
+            config.set("Log.LogCullAgeMinutes", config.get("LogCullAgeMinutes"));
+            config.set("LogCullAgeMinutes", null);
+        }
+
+        if(config.get("LogCullTimeMinutes") != null)
+        {
+            config.set("Log.LogCullTimeMinutes", config.get("LogCullTimeMinutes"));
+            config.set("LogCullTimeMinutes", null);
+        }
     }
 }
