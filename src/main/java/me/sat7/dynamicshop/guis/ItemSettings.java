@@ -35,7 +35,7 @@ public final class ItemSettings extends InGameUI
         String[] temp = DynamicShop.userInteractItem.get(player.getUniqueId()).split("/");
         String shopName = temp[0];
 
-        inventory = Bukkit.createInventory(player, 36, t("ITEM_SETTING_TITLE"));
+        inventory = Bukkit.createInventory(player, 36, t("ITEM_SETTING_TITLE") + "§7 | §8" + shopName);
 
         String buyValueStr = t("VALUE_BUY") + dsItem.getBuyValue();
         String sellValueStr = t("VALUE_SELL") + dsItem.getSellValue();

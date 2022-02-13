@@ -32,17 +32,6 @@ public final class Help
                 player.sendMessage("§e - createshop: " + LangUtil.ccLang.get().getString("HELP.CREATESHOP"));
             if (player.hasPermission("dshop.admin.deleteshop"))
                 player.sendMessage("§e - deleteshop: " + LangUtil.ccLang.get().getString("HELP.DELETESHOP"));
-            if (player.hasPermission("dshop.admin.mergeshop")) player.sendMessage("§e - mergeshop");
-            if (player.hasPermission("dshop.admin.openshop")) player.sendMessage("§e - openshop");
-            if (player.hasPermission("dshop.admin.renameshop")) player.sendMessage("§e - renameshop");
-            if (player.hasPermission("dshop.admin.setdefaultshop")) player.sendMessage("§e - setdefaultshop ");
-            if (player.hasPermission("dshop.admin.settax"))
-            {
-                player.sendMessage("§e - settax: " + LangUtil.ccLang.get().getString("HELP.SETTAX"));
-                player.sendMessage("§e - settax temp: " + LangUtil.ccLang.get().getString("HELP.SETTAX_TEMP"));
-            }
-            if (player.hasPermission(Constants.DELETE_USER_PERMISSION))
-                player.sendMessage("§e - deleteOldUser: " + LangUtil.ccLang.get().getString("HELP.DELETE_OLD_USER"));
             if (player.hasPermission("dshop.admin.reload"))
                 player.sendMessage("§e - reload: " + LangUtil.ccLang.get().getString("HELP.RELOAD"));
             player.sendMessage("");

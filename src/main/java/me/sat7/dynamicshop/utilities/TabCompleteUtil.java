@@ -530,7 +530,7 @@ public final class TabCompleteUtil
                         DynamicShop.userTempData.put(uuid,"mergeshop");
                         Help.showHelp("merge_shop", (Player) sender, args);
                     }
-                } else if (args[0].equalsIgnoreCase("open_shop") && sender.hasPermission("dshop.admin.openshop"))
+                } else if (args[0].equalsIgnoreCase("openshop") && sender.hasPermission("dshop.admin.openshop"))
                 {
                     if (args.length == 2)
                     {

@@ -9,6 +9,11 @@ import me.sat7.dynamicshop.guis.StartPage;
 import me.sat7.dynamicshop.guis.UIManager;
 import me.sat7.dynamicshop.jobshook.JobsHook;
 import me.sat7.dynamicshop.utilities.*;
+import net.md_5.bungee.api.ChatColor;
+import net.md_5.bungee.api.chat.ClickEvent;
+import net.md_5.bungee.api.chat.ComponentBuilder;
+import net.md_5.bungee.api.chat.HoverEvent;
+import net.md_5.bungee.api.chat.TextComponent;
 import net.milkbowl.vault.economy.Economy;
 
 import org.bstats.bukkit.Metrics;
@@ -50,6 +55,8 @@ public final class DynamicShop extends JavaPlugin implements Listener
     private BukkitTask cullLogsTask;
 
     public static boolean updateAvailable = false;
+    public static String lastVersion = "";
+    public static String yourVersion = "";
 
     public static UIManager uiManager;
     public static final HashMap<UUID, String> userTempData = new HashMap<>();
@@ -124,23 +131,18 @@ public final class DynamicShop extends JavaPlugin implements Listener
         {
             try
             {
-                DynamicShop.console.sendMessage("§3-------------------------------------------------------");
-                if (DynamicShop.plugin.getDescription().getVersion().contains("SNAPSHOT"))
-                {
-                    DynamicShop.updateAvailable = false;
+                lastVersion = version;
+                yourVersion = getDescription().getVersion();
 
-                    DynamicShop.console.sendMessage(Constants.DYNAMIC_SHOP_PREFIX + " Plugin is running a dev build!");
-                    DynamicShop.console.sendMessage("Be careful and monitor what happens!");
-                }
-                if (this.getDescription().getVersion().equals(version))
+                DynamicShop.console.sendMessage("§3-------------------------------------------------------");
+                if (yourVersion.equals(lastVersion))
                 {
                     DynamicShop.updateAvailable = false;
                     DynamicShop.console.sendMessage(Constants.DYNAMIC_SHOP_PREFIX + " Plugin is up to date!");
-                    DynamicShop.console.sendMessage("Please rate my plugin if you like it");
                 } else
                 {
                     DynamicShop.updateAvailable = true;
-                    DynamicShop.console.sendMessage(Constants.DYNAMIC_SHOP_PREFIX + "Plugin outdated!!");
+                    DynamicShop.console.sendMessage(Constants.DYNAMIC_SHOP_PREFIX + "Plugin outdated!");
                 }
                 DynamicShop.console.sendMessage(getResourceUrl());
                 DynamicShop.console.sendMessage("§3-------------------------------------------------------");
@@ -149,6 +151,16 @@ public final class DynamicShop extends JavaPlugin implements Listener
                 DynamicShop.console.sendMessage(Constants.DYNAMIC_SHOP_PREFIX + "Failed to check update. Try again later.");
             }
         });
+    }
+
+    public static TextComponent CreateLink(final String text, boolean bold, ChatColor color, final String link) {
+        final TextComponent component = new TextComponent(text);
+        component.setBold(bold);
+        component.setUnderlined(true);
+        component.setColor(color);
+        component.setClickEvent(new ClickEvent(ClickEvent.Action.OPEN_URL, link));
+        component.setHoverEvent(new HoverEvent(HoverEvent.Action.SHOW_TEXT, new ComponentBuilder(link).create()));
+        return component;
     }
 
     private void InitBstats()

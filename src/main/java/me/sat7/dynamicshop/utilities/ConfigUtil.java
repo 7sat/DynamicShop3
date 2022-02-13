@@ -25,6 +25,7 @@ public final class ConfigUtil
                     "Shop.SalesTax",
                     "Shop.DeliveryChargeScale",
                     "Shop.NumberOfPlayer",
+                    "Shop.UseLegacyStockStabilization",
                     "UI.DisplayStockAsStack",
                     "UI.OpenStartPageWhenClickCloseButton",
                     "UI.ShopInfoButtonIcon",
@@ -49,6 +50,7 @@ public final class ConfigUtil
                         + "\nUseShopCommand: Set this to false if you want to disable '/shop'"
                         + "\nDeliveryChargeScale: This is only used for shop with the 'delivery charge' flag. 0.01 ~"
                         + "\nNumberOfPlayer: This is used to calculate the recommended median. 3~100"
+                        + "\nUseLegacyStockStabilization: false = Changed by n% of the gap with median. true = Changed by n% of median."
                         + "\nDisplayStockAsStack: ex) true: 10Stacks, false: 640"
                         + "\nVersion: Do NOT edit this"
         );

@@ -464,43 +464,44 @@ public final class ShopUtil
 
     public static void SetToRecommendedValueAll(String shop, Player player)
     {
-        for(CustomConfig data : shopConfigFiles.values())
+        CustomConfig data = ShopUtil.shopConfigFiles.get(shop);
+        if (data == null)
+            return;
+
+        for (String itemIndex : data.get().getKeys(false))
         {
-            for (String itemIndex : data.get().getKeys(false))
+            try
             {
-                try
+                int i = Integer.parseInt(itemIndex); // options에 대해 적용하지 않기 위해.
+
+                if (!data.get().contains(itemIndex + ".value"))
+                    continue; // 장식용은 스킵
+
+                String itemName = data.get().getString(itemIndex + ".mat");
+
+                double worth = WorthUtil.ccWorth.get().getDouble(itemName);
+                if (worth == 0)
                 {
-                    int i = Integer.parseInt(itemIndex); // options에 대해 적용하지 않기 위해.
+                    itemName = itemName.replace("-", "");
+                    itemName = itemName.replace("_", "");
+                    itemName = itemName.toLowerCase();
 
-                    if (!data.get().contains(itemIndex + ".value"))
-                        continue; // 장식용은 스킵
-
-                    String itemName = data.get().getString(itemIndex + ".mat");
-
-                    double worth = WorthUtil.ccWorth.get().getDouble(itemName);
-                    if (worth == 0)
-                    {
-                        itemName = itemName.replace("-", "");
-                        itemName = itemName.replace("_", "");
-                        itemName = itemName.toLowerCase();
-
-                        worth = WorthUtil.ccWorth.get().getDouble(itemName);
-                    }
-
-                    if (worth != 0)
-                    {
-                        int numberOfPlayer = DynamicShop.plugin.getConfig().getInt("Shop.NumberOfPlayer");
-                        int sugMid = CalcRecommendedMedian(worth, numberOfPlayer);
-
-                        ShopUtil.editShopItem(shop, i, worth, worth, 0.01f, -1, sugMid, sugMid);
-                    } else
-                    {
-                        if (player != null)
-                            player.sendMessage(DynamicShop.dsPrefix + LangUtil.ccLang.get().getString("ERR.NO_RECOMMAND_DATA") + " : " + itemName);
-                    }
-                } catch (Exception ignored)
-                {
+                    worth = WorthUtil.ccWorth.get().getDouble(itemName);
                 }
+
+                if (worth != 0)
+                {
+                    int numberOfPlayer = DynamicShop.plugin.getConfig().getInt("Shop.NumberOfPlayer");
+                    int sugMid = CalcRecommendedMedian(worth, numberOfPlayer);
+
+                    ShopUtil.editShopItem(shop, i, worth, worth, 0.01f, -1, sugMid, sugMid);
+                } else
+                {
+                    if (player != null)
+                        player.sendMessage(DynamicShop.dsPrefix + LangUtil.ccLang.get().getString("ERR.NO_RECOMMAND_DATA") + " : " + itemName);
+                }
+            } catch (Exception ignored)
+            {
             }
         }
     }
@@ -577,10 +578,10 @@ public final class ShopUtil
     private static int randomStockTimer = 1;
     public static void randomChange(Random generator)
     {
-        boolean needToUpdateUI = false;
-
         for(Map.Entry<String, CustomConfig> entry : shopConfigFiles.entrySet())
         {
+            boolean somethingIsChanged = false;
+
             CustomConfig data = entry.getValue();
 
             // 인게임 30분마다 실행됨 (500틱)
@@ -589,7 +590,7 @@ public final class ShopUtil
             {
                 randomStockTimer = 0;
             }
-            //DynamicShop.console.sendMessage("debug... " + randomStockCount);
+            //DynamicShop.console.sendMessage("debug... " + randomStockTimer);
 
             // fluctuation
             ConfigurationSection confSec = data.get().getConfigurationSection("Options.fluctuation");
@@ -600,10 +601,9 @@ public final class ShopUtil
                 if (interval < 1 || interval > 999)
                 {
                     DynamicShop.console.sendMessage(Constants.DYNAMIC_SHOP_PREFIX + " Wrong value at " + entry.getKey() + ".Options.fluctuation.interval");
-                    DynamicShop.console.sendMessage(Constants.DYNAMIC_SHOP_PREFIX + " Reset to 30");
-                    confSec.set("interval", 30);
-                    interval = 30;
-                    data.save();
+                    DynamicShop.console.sendMessage(Constants.DYNAMIC_SHOP_PREFIX + " Reset to 48");
+                    confSec.set("interval", 48);
+                    interval = 48;
                 }
 
                 if (randomStockTimer % interval != 0) continue;
@@ -615,21 +615,21 @@ public final class ShopUtil
                         int i = Integer.parseInt(item); // options에 대해 적용하지 않기 위해.
                         if (!data.get().contains(item + ".value")) continue; // 장식용은 스킵
 
-                        int oldStock = data.get().getInt(item + ".stock");
-                        if (oldStock <= 1) continue; // 무한재고에 대해서는 스킵
-                        int oldMedian = data.get().getInt(item + ".median");
-                        if (oldMedian <= 1) continue; // 고정가 상품에 대해서는 스킵
+                        int stock = data.get().getInt(item + ".stock");
+                        if (stock <= 1) continue; // 무한재고에 대해서는 스킵
+                        int median = data.get().getInt(item + ".median");
+                        if (median <= 1) continue; // 고정가 상품에 대해서는 스킵
 
                         boolean dir = generator.nextBoolean();
-                        float amount = generator.nextFloat() * (float) confSec.getDouble("strength");
-                        if (dir) amount *= -1;
+                        int amount = (int)(median * (confSec.getDouble("strength") / 100.0) * generator.nextFloat());
+                        if(dir)
+                            amount *= -1;
 
-                        oldStock += oldMedian * (amount / 100.0);
+                        stock += amount;
+                        if (stock < 2) stock = 2;
 
-                        if (oldStock < 2) oldStock = 2;
-
-                        data.get().set(item + ".stock", oldStock);
-                        needToUpdateUI = true;
+                        data.get().set(item + ".stock", stock);
+                        somethingIsChanged = true;
                     } catch (Exception ignored)
                     {
                     }
@@ -645,10 +645,9 @@ public final class ShopUtil
                 if (interval < 1 || interval > 999)
                 {
                     DynamicShop.console.sendMessage(Constants.DYNAMIC_SHOP_PREFIX + " Wrong value at " + entry.getKey() + ".Options.stockStabilizing.interval");
-                    DynamicShop.console.sendMessage(Constants.DYNAMIC_SHOP_PREFIX + " Reset to 24");
-                    confSec2.set("interval", 24);
-                    interval = 24;
-                    data.save();
+                    DynamicShop.console.sendMessage(Constants.DYNAMIC_SHOP_PREFIX + " Reset to 48");
+                    confSec2.set("interval", 48);
+                    interval = 48;
                 }
 
                 if (randomStockTimer % interval != 0) continue;
@@ -660,40 +659,65 @@ public final class ShopUtil
                         int i = Integer.parseInt(item); // options에 대해 적용하지 않기 위해.
                         if (!data.get().contains(item + ".value")) continue; // 장식용은 스킵
 
-                        int oldStock = data.get().getInt(item + ".stock");
-                        if (oldStock < 1) continue; // 무한재고에 대해서는 스킵
-                        int oldMedian = data.get().getInt(item + ".median");
-                        if (oldMedian < 1) continue; // 고정가 상품에 대해서는 스킵
+                        int stock = data.get().getInt(item + ".stock");
+                        if (stock < 1) continue; // 무한재고에 대해서는 스킵
+                        int median = data.get().getInt(item + ".median");
+                        if (median < 1) continue; // 고정가 상품에 대해서는 스킵
 
-                        double amount = oldMedian * (confSec2.getDouble("strength") / 100.0);
-                        if (oldStock < oldMedian)
+                        //DynamicShop.console.sendMessage("DEBUG: " + data.get().get(item + ".mat") + " / " + oldMedian + "/" + stock);
+
+                        if (stock == median)
+                            continue; // 이미 같으면 스킵
+
+                        if (DynamicShop.plugin.getConfig().getBoolean("Shop.UseLegacyStockStabilization"))
                         {
-                            oldStock += (int) (amount);
-                            if (oldStock > oldMedian) oldStock = oldMedian;
-                        } else if (oldStock > oldMedian)
+                            int amount = (int)(median * (confSec2.getDouble("strength") / 100.0));
+                            if (stock < median)
+                            {
+                                stock += amount;
+                                if (stock > median) stock = median;
+                            } else
+                            {
+                                stock -= amount;
+                                if (stock < median) stock = median;
+                            }
+                        }
+                        else
                         {
-                            oldStock -= (int) (amount);
-                            if (oldStock < oldMedian) oldStock = oldMedian;
+                            int amount = (int)((median - stock) * (confSec2.getDouble("strength") / 100.0));
+                            if (amount == 0)
+                            {
+                                if (generator.nextInt() % 2 == 0)
+                                {
+                                    amount = (stock > median) ? -1 : 1;
+                                }
+                            }
+
+                            if (amount == 0)
+                                continue;
+
+                            stock += amount;
                         }
 
-                        data.get().set(item + ".stock", oldStock);
-                        needToUpdateUI = true;
+                        data.get().set(item + ".stock", stock);
+                        somethingIsChanged = true;
                     } catch (Exception ignored)
                     {
                     }
                 }
             }
+
+            if(somethingIsChanged)
+                data.save();
         }
 
-        if (needToUpdateUI)
+        // 무작위,안정화에 의한 변화가 없더라도 갱신. 다른 유저의 거래에 의해 변동되었을 수 있음.
+        for (Player p : DynamicShop.plugin.getServer().getOnlinePlayers())
         {
-            for (Player p : DynamicShop.plugin.getServer().getOnlinePlayers())
+            if (UIManager.GetPlayerCurrentUIType(p) == InGameUI.UI_TYPE.ItemTrade)
             {
-                if (UIManager.GetPlayerCurrentUIType(p) == InGameUI.UI_TYPE.ItemTrade)
-                {
-                    String[] temp = DynamicShop.userInteractItem.get(p.getUniqueId()).split("/");
-                    DynaShopAPI.openItemTradeGui(p, temp[0], temp[1]);
-                }
+                String[] temp = DynamicShop.userInteractItem.get(p.getUniqueId()).split("/");
+                DynaShopAPI.openItemTradeGui(p, temp[0], temp[1]);
             }
         }
     }

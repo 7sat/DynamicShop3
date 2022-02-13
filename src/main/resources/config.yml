@@ -1,5 +1,5 @@
 Language: en-US
-Prefix: §3§l[dShop] §f
+Prefix: §3DShop3  §f
 
 Command.UseShopCommand: true
 Command.OpenStartPageInsteadOfDefaultShop: true
@@ -8,6 +8,7 @@ Command.DefaultShopName: SampleShop
 Shop.SalesTax: 25
 Shop.DeliveryChargeScale: 1
 Shop.NumberOfPlayer: 10
+Shop.UseLegacyStockStabilization: false
 
 UI.DisplayStockAsStack: false
 UI.OpenStartPageWhenClickCloseButton: true

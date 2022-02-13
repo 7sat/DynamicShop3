@@ -83,7 +83,7 @@ public final class Shop extends InGameUI
         // 정보,설정 버튼
         String shopLore = CreateShopInfoText(player, shopName);
         String infoBtnIconName = ShopUtil.GetShopInfoIconMat();
-        CreateButton(SHOP_INFO, Material.getMaterial(infoBtnIconName), "§3" + shopName, new ArrayList<>(Arrays.asList(shopLore.split("\n"))));
+        CreateButton(SHOP_INFO, Material.getMaterial(infoBtnIconName), "§3" + shopName, shopLore);
 
         // 상품목록 등록
         for (String s : data.get().getKeys(false))
@@ -131,15 +131,15 @@ public final class Shop extends InGameUI
                     String valueChanged_Buy = null;
                     String valueChanged_Sell = null;
 
-                    if (buyPrice - buyPrice2 > 0)
+                    if (buyPrice - buyPrice2 >= 0.01)
                     {
                         valueChanged_Buy = t("ARROW_UP_2") + Math.round(priceSave1 * 100d) / 100d + "%";
                         valueChanged_Sell = t("ARROW_UP") + Math.round(priceSave1 * 100d) / 100d + "%";
-                    } else if (buyPrice - buyPrice2 < 0)
+                    } else if (buyPrice - buyPrice2 <= -0.01)
                     {
                         valueChanged_Buy = t("ARROW_DOWN_2") + Math.round(priceSave2 * 100d) / 100d + "%";
                         valueChanged_Sell = t("ARROW_DOWN") + Math.round(priceSave2 * 100d) / 100d + "%";
-                    } else if (buyPrice == buyPrice2)
+                    } else
                     {
                         valueChanged_Buy = "";
                         valueChanged_Sell = "";

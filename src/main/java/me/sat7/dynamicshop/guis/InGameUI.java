@@ -8,6 +8,7 @@ import org.bukkit.inventory.Inventory;
 import org.bukkit.inventory.ItemStack;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Collections;
 
 public class InGameUI
@@ -21,9 +22,7 @@ public class InGameUI
         Shop,
         ShopSettings,
         StartPage,
-        StartPageSettings,
-        PageEditor,
-        LogViewer
+        StartPageSettings
     }
 
     public UI_TYPE uiType;
@@ -48,6 +47,10 @@ public class InGameUI
         {
             return CreateButton(slotIndex, icon, name, 1);
         }
+        else if (lore.contains("\n"))
+        {
+            return CreateButton(slotIndex, icon, name, new ArrayList<>(Arrays.asList(lore.split("\n"))), 1);
+        }
         else
         {
             return CreateButton(slotIndex, icon, name, new ArrayList<>(Collections.singletonList(lore)), 1);
@@ -69,6 +72,10 @@ public class InGameUI
         if (lore == null)
         {
             return CreateButton(slotIndex, icon, name, amount);
+        }
+        else if (lore.contains("\n"))
+        {
+            return CreateButton(slotIndex, icon, name, new ArrayList<>(Arrays.asList(lore.split("\n"))), amount);
         }
         else
         {

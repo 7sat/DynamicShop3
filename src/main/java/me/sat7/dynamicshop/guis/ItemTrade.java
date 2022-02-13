@@ -215,7 +215,7 @@ public final class ItemTrade extends InGameUI
         moneyLore = moneyLore.replace("[PlayerBalance]", myBalanceString);
         moneyLore = moneyLore.replace("[ShopBalance]", "\n" + shopBalanceString);
 
-        CreateButton(CHECK_BALANCE, Material.EMERALD, t("BALANCE"), new ArrayList<>(Arrays.asList(moneyLore.split("\n")))); // 잔액 확인 버튼
+        CreateButton(CHECK_BALANCE, Material.EMERALD, t("BALANCE"), moneyLore); // 잔액 확인 버튼
 
         CreateCloseButton(CLOSE); // 닫기 버튼
 

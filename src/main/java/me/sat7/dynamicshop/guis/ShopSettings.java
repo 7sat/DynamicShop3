@@ -2,6 +2,7 @@ package me.sat7.dynamicshop.guis;
 
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Collections;
 
 import me.sat7.dynamicshop.DynaShopAPI;
 import me.sat7.dynamicshop.files.CustomConfig;
@@ -55,7 +56,7 @@ public final class ShopSettings extends InGameUI
 
     public Inventory getGui(Player player, String shopName)
     {
-        inventory = Bukkit.createInventory(player, 36, t("SHOP_SETTING_TITLE"));
+        inventory = Bukkit.createInventory(player, 36, t("SHOP_SETTING_TITLE") + "§7 | §8" + shopName);
 
         CustomConfig data = ShopUtil.shopConfigFiles.get(shopName);
 
@@ -127,11 +128,13 @@ public final class ShopSettings extends InGameUI
             CreateButton(FLUC, Material.COMPARATOR, t("FLUC.FLUCTUATION"), fluctuationLore);
 
             ArrayList<String> fluctuation_interval_lore = new ArrayList<>(Arrays.asList(
+                    t("FLUC.INTERVAL_LORE"),
                     "§9" + t("CUR_STATE") + ": " + flucConf.getInt("interval") / 2.0 + "h",
                     "§e" + t("CLICK") + ": " + t("L_R_SHIFT")));
             CreateButton(FLUC_INTERVAL, Material.COMPARATOR, t("FLUC.INTERVAL"), fluctuation_interval_lore, Clamp(flucConf.getInt("interval") / 2, 1, 64));
 
             ArrayList<String> fluctuation_strength_lore = new ArrayList<>(Arrays.asList(
+                    t("FLUC.STRENGTH_LORE"),
                     "§9" + t("CUR_STATE") + ": ~" + flucConf.get("strength") + "%",
                     "§e" + t("CLICK") + ": " + t("STOCKSTABILIZING.L_R_SHIFT")));
             CreateButton(FLUC_STRENGTH, Material.COMPARATOR, t("FLUC.STRENGTH"), fluctuation_strength_lore, Clamp((int) (flucConf.getDouble("strength") * 10), 1, 64));
@@ -156,11 +159,13 @@ public final class ShopSettings extends InGameUI
             CreateButton(STABLE, Material.COMPARATOR, t("STOCKSTABILIZING.SS"), stableLore);
 
             ArrayList<String> stable_interval_Lore = new ArrayList<>(Arrays.asList(
+                    t("FLUC.INTERVAL_LORE"),
                     "§9" + t("CUR_STATE") + ": " + stockStableConf.getInt("interval") / 2.0 + "h",
                     "§e" + t("CLICK") + ": " + t("L_R_SHIFT")));
             CreateButton(STABLE_INTERVAL, Material.COMPARATOR, t("FLUC.INTERVAL"), stable_interval_Lore, Clamp(stockStableConf.getInt("interval") / 2, 1, 64));
 
             ArrayList<String> stable_strength_Lore = new ArrayList<>(Arrays.asList(
+                    DynamicShop.plugin.getConfig().getBoolean("Shop.UseLegacyStockStabilization") ? t("STOCKSTABILIZING.STRENGTH_LORE_A") : t("STOCKSTABILIZING.STRENGTH_LORE_B"),
                     "§9" + t("CUR_STATE") + ": ~" + stockStableConf.get("strength") + "%",
                     "§e" + t("CLICK") + ": " + t("STOCKSTABILIZING.L_R_SHIFT")));
             CreateButton(STABLE_STRENGTH, Material.COMPARATOR, t("FLUC.STRENGTH"), stable_strength_Lore, Clamp((int) (stockStableConf.getDouble("strength") * 10), 1, 64));
@@ -376,7 +381,7 @@ public final class ShopSettings extends InGameUI
             {
                 if (e.getSlot() == FLUC)
                 {
-                    Bukkit.dispatchCommand(player, "DynamicShop shop " + shopName + " fluctuation 24 0.1");
+                    Bukkit.dispatchCommand(player, "DynamicShop shop " + shopName + " fluctuation 48 0.1");
                     DynaShopAPI.openShopSettingGui(player, shopName);
                 }
             }
@@ -420,7 +425,7 @@ public final class ShopSettings extends InGameUI
             {
                 if (e.getSlot() == STABLE)
                 {
-                    Bukkit.dispatchCommand(player, "DynamicShop shop " + shopName + " stockStabilizing 30 0.1");
+                    Bukkit.dispatchCommand(player, "DynamicShop shop " + shopName + " stockStabilizing 48 0.5");
                     DynaShopAPI.openShopSettingGui(player, shopName);
                 }
             }
@@ -593,8 +598,17 @@ public final class ShopSettings extends InGameUI
             current = t("UNSET");
             set = t("SET");
         }
+
         ArrayList<String> loreArray = new ArrayList<>();
-        loreArray.add(lore);
+        if(lore.contains("\n"))
+        {
+            String[] temp = lore.split("\n");
+            Collections.addAll(loreArray, temp);
+        }
+        else
+        {
+            loreArray.add(lore);
+        }
         loreArray.add("§9" + t("CUR_STATE") + ": " + current);
         loreArray.add("§e" + t("CLICK") + ": " + set);
         CreateButton(buttonPosition, icon, t("FLAG") + ": " + title, loreArray);

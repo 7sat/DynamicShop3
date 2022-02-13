@@ -50,12 +50,24 @@ public final class LangUtil
             ccLang.get().addDefault("LOG_VIEWER.CURRENCY", "§f화폐유형: ");
             ccLang.get().addDefault("LOG_VIEWER.PRICE", "§f가격: ");
 
+            ccLang.get().addDefault("STOCK_SIMULATOR.SIMULATOR_BUTTON_LORE", "§e우클릭: 시뮬레이터");
+            ccLang.get().addDefault("STOCK_SIMULATOR.RUN_TITLE", "§f실행");
+            ccLang.get().addDefault("STOCK_SIMULATOR.RUN_LORE", "§e좌클릭: 시뮬레이션 실행\n§e우클릭: 설정값을 상점에 적용합니다\n§f아이템은 영향받지 않습니다.");
+            ccLang.get().addDefault("STOCK_SIMULATOR.50S", "§a50초 후 (실제 시간)");
+            ccLang.get().addDefault("STOCK_SIMULATOR.20M", "§a20분 후 (=마인크래프트 1일)");
+            ccLang.get().addDefault("STOCK_SIMULATOR.60M", "§a60분 후");
+            ccLang.get().addDefault("STOCK_SIMULATOR.1D", "§a1일 후");
+            ccLang.get().addDefault("STOCK_SIMULATOR.2D", "§a2일 후");
+            ccLang.get().addDefault("STOCK_SIMULATOR.3D", "§a3일 후");
+            ccLang.get().addDefault("STOCK_SIMULATOR.7D", "§a7일 후");
+
             ccLang.get().addDefault("TRADE_TITLE", "§3아이탬 거래");
             ccLang.get().addDefault("PALETTE_TITLE", "§3판매할 아이탬 선택");
             ccLang.get().addDefault("PALETTE_LORE", "§e좌클릭: 이 아이탬을 상점에 등록");
             ccLang.get().addDefault("ITEM_SETTING_TITLE", "§3아이탬 셋팅");
             ccLang.get().addDefault("PAGE_EDITOR_TITLE", "§3페이지 편집");
             ccLang.get().addDefault("LOG_VIEWER_TITLE", "§3로그 뷰어");
+            ccLang.get().addDefault("STOCK_SIMULATOR_TITLE", "§3재고 시뮬레이터");
             ccLang.get().addDefault("QUICKSELL_TITLE", "§3빠른 판매");
             ccLang.get().addDefault("QUICKSELL_GUIDE_TITLE", "§3§l빠른 판매 도움말");
             ccLang.get().addDefault("QUICKSELL_GUIDE_LORE", "§a판매할 아이탬을 좌클릭 하세요.\n§a씨프트 좌클릭으로 같은 유형의 아이탬을 모두 팝니다.\n§a우클릭으로 해당 아이탬 상점으로 이동합니다.");
@@ -166,10 +178,14 @@ public final class LangUtil
 
             ccLang.get().addDefault("STOCKSTABILIZING.SS", "§f재고 안정화");
             ccLang.get().addDefault("STOCKSTABILIZING.L_R_SHIFT", "§e좌클릭: -0.1 우클릭: +0.1 Shift: x5");
+            ccLang.get().addDefault("STOCKSTABILIZING.STRENGTH_LORE_A", "§f중앙값(median)의 n%");
+            ccLang.get().addDefault("STOCKSTABILIZING.STRENGTH_LORE_B", "§f중앙값(median)과의 격차의 n%");
 
             ccLang.get().addDefault("FLUC.FLUCTUATION", "§f무작위 재고 변동");
             ccLang.get().addDefault("FLUC.INTERVAL", "§f변화 간격");
+            ccLang.get().addDefault("FLUC.INTERVAL_LORE", "§f1h = 1000틱 = 현실시간 50초");
             ccLang.get().addDefault("FLUC.STRENGTH", "§f변화 강도");
+            ccLang.get().addDefault("FLUC.STRENGTH_LORE", "§f중앙값(median)의 n%");
 
             ccLang.get().addDefault("TAX.SALESTAX", "§f판매세");
             ccLang.get().addDefault("TAX.USE_GLOBAL", "전역설정 사용 ({tax}%)");
@@ -221,6 +237,7 @@ public final class LangUtil
             ccLang.get().addDefault("ITEM_UPDATED", "아이탬 수정됨!");
             ccLang.get().addDefault("ITEM_DELETED", "아이탬 제거됨!");
             ccLang.get().addDefault("CHANGES_APPLIED", "변경사항 적용됨. 새로운 값: ");
+            ccLang.get().addDefault("CHANGES_APPLIED_2", "변경사항 적용됨");
             ccLang.get().addDefault("RECOMMAND_APPLIED", "추천 값 적용됨. {playerNum}명 기준입니다. config파일에서 이 값을 바꿀 수 있습니다.");
             ccLang.get().addDefault("TRANSFER_SUCCESS", "송금 완료");
 
@@ -294,12 +311,24 @@ public final class LangUtil
             ccLang.get().addDefault("LOG_VIEWER.CURRENCY", "§fCurrency: ");
             ccLang.get().addDefault("LOG_VIEWER.PRICE", "§fPrice: ");
 
+            ccLang.get().addDefault("STOCK_SIMULATOR.SIMULATOR_BUTTON_LORE", "§eRMB: Simulator");
+            ccLang.get().addDefault("STOCK_SIMULATOR.RUN_TITLE", "§fRun");
+            ccLang.get().addDefault("STOCK_SIMULATOR.RUN_LORE", "§eLMB: Run simulation\n§eRMB: Apply the settings to the store\n§fItems are not affected.");
+            ccLang.get().addDefault("STOCK_SIMULATOR.50S", "§aAfter 50 seconds (Real time)");
+            ccLang.get().addDefault("STOCK_SIMULATOR.20M", "§aAfter 20 minutes (=1 Minecraft day)");
+            ccLang.get().addDefault("STOCK_SIMULATOR.60M", "§aAfter 60 minutes");
+            ccLang.get().addDefault("STOCK_SIMULATOR.1D", "§a1 day later");
+            ccLang.get().addDefault("STOCK_SIMULATOR.2D", "§a2 days later");
+            ccLang.get().addDefault("STOCK_SIMULATOR.3D", "§a3 days later");
+            ccLang.get().addDefault("STOCK_SIMULATOR.7D", "§a7 days later");
+
             ccLang.get().addDefault("TRADE_TITLE", "§3Tradeview");
             ccLang.get().addDefault("PALETTE_TITLE", "§3Item Palette");
             ccLang.get().addDefault("PALETTE_LORE", "§eLMB: Register this item on shop");
             ccLang.get().addDefault("ITEM_SETTING_TITLE", "§3Item Settings");
             ccLang.get().addDefault("PAGE_EDITOR_TITLE", "§3Page Editor");
             ccLang.get().addDefault("LOG_VIEWER_TITLE", "§3Log Viewer");
+            ccLang.get().addDefault("STOCK_SIMULATOR_TITLE", "§3Stock Simulator");
             ccLang.get().addDefault("QUICKSELL_TITLE", "§3Quick Sell");
             ccLang.get().addDefault("QUICKSELL_GUIDE_TITLE", "§3§lQuick Sell Guide");
             ccLang.get().addDefault("QUICKSELL_GUIDE_LORE", "§aLeft-click the item you want to sell.\n§aShift left click to sell all items of the same type.\n§aRight-click to go to the item shop.");
@@ -410,10 +439,14 @@ public final class LangUtil
 
             ccLang.get().addDefault("FLUC.FLUCTUATION", "§fRandom Stock Fluctuation");
             ccLang.get().addDefault("FLUC.INTERVAL", "§fInterval");
+            ccLang.get().addDefault("FLUC.INTERVAL_LORE", "§f1h = 1000 ticks = 50 seconds (Real time)");
             ccLang.get().addDefault("FLUC.STRENGTH", "§fStrength");
+            ccLang.get().addDefault("FLUC.STRENGTH_LORE", "§fn% of median");
 
             ccLang.get().addDefault("STOCKSTABILIZING.SS", "§fStock Stabilizing");
             ccLang.get().addDefault("STOCKSTABILIZING.L_R_SHIFT", "§eLMB: -0.1 RMB: +0.1 Shift: x5");
+            ccLang.get().addDefault("STOCKSTABILIZING.STRENGTH_LORE_A", "§fn% of median");
+            ccLang.get().addDefault("STOCKSTABILIZING.STRENGTH_LORE_B", "§fn% of the gap with median");
 
             ccLang.get().addDefault("TAX.SALESTAX", "§fSales tax");
             ccLang.get().addDefault("TAX.USE_GLOBAL", "Use global setting ({tax}%)");
@@ -465,6 +498,7 @@ public final class LangUtil
             ccLang.get().addDefault("ITEM_UPDATED", "Item Updated!");
             ccLang.get().addDefault("ITEM_DELETED", "Item Removed!");
             ccLang.get().addDefault("CHANGES_APPLIED", "Changes applied. New value: ");
+            ccLang.get().addDefault("CHANGES_APPLIED_2", "Changes applied.");
             ccLang.get().addDefault("RECOMMAND_APPLIED", "Suggestion applied. Based on {playerNum}players. This value can be edited in config");
             ccLang.get().addDefault("TRANSFER_SUCCESS", "Transfer success.");
 
