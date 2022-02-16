@@ -13,7 +13,7 @@ import java.nio.file.Files;
 
 public class CustomConfig
 {
-    private File file; // java의 데이터타입
+    private File file;
     protected FileConfiguration customFile; // 버킷의 데이터 타입
 
     //Finds or generates the custom config file

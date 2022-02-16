@@ -13,12 +13,13 @@ import me.sat7.dynamicshop.DynaShopAPI;
 import me.sat7.dynamicshop.DynamicShop;
 import me.sat7.dynamicshop.jobshook.JobsHook;
 import me.sat7.dynamicshop.utilities.ItemsUtil;
-import me.sat7.dynamicshop.utilities.LangUtil;
 import me.sat7.dynamicshop.utilities.LogUtil;
 import me.sat7.dynamicshop.utilities.ShopUtil;
 import me.sat7.dynamicshop.utilities.SoundUtil;
 import net.milkbowl.vault.economy.Economy;
 import net.milkbowl.vault.economy.EconomyResponse;
+
+import static me.sat7.dynamicshop.utilities.LangUtil.t;
 
 public final class Sell
 {
@@ -38,7 +39,7 @@ public final class Sell
         double priceSum;
 
         // 실제 판매 가능량 확인
-        int actualAmount = 0;
+        int actualAmount;
         if (isShiftClick)
         {
             int amount = 0;
@@ -62,7 +63,7 @@ public final class Sell
         // 판매할 아이탬이 없음
         if (actualAmount == 0)
         {
-            player.sendMessage(DynamicShop.dsPrefix + LangUtil.ccLang.get().getString("NO_ITEM_TO_SELL"));
+            player.sendMessage(DynamicShop.dsPrefix + t("MESSAGE.NO_ITEM_TO_SELL"));
             return 0;
         }
 
@@ -86,7 +87,7 @@ public final class Sell
             //로그 기록
             LogUtil.addLog(shopName, tempIS.getType().toString(), -actualAmount, priceSum, "vault", player.getName());
 
-            player.sendMessage(DynamicShop.dsPrefix + LangUtil.ccLang.get().getString("SELL_SUCCESS")
+            player.sendMessage(DynamicShop.dsPrefix + t("MESSAGE.SELL_SUCCESS")
                     .replace("{item}", tempIS.getType().name())
                     .replace("{amount}", Integer.toString(actualAmount))
                     .replace("{price}", econ.format(r.amount))
@@ -109,7 +110,7 @@ public final class Sell
     }
 
     // 판매
-    public static void sellItemCash(Player player, String shopName, String tradeIdx, ItemStack tempIS, double priceSum, double deliverycharge, boolean infiniteStock)
+    public static void sellItemCash(Player player, String shopName, String tradeIdx, ItemStack tempIS, double priceSum, boolean infiniteStock)
     {
         CustomConfig data = ShopUtil.shopConfigFiles.get(shopName);
 
@@ -119,7 +120,7 @@ public final class Sell
         // 상점에 돈이 없음
         if (ShopUtil.getShopBalance(shopName) != -1 && ShopUtil.getShopBalance(shopName) < Calc.calcTotalCost(shopName, tradeIdx, tempIS.getAmount()))
         {
-            player.sendMessage(DynamicShop.dsPrefix + LangUtil.ccLang.get().getString("SHOP_BAL_LOW"));
+            player.sendMessage(DynamicShop.dsPrefix + t("MESSAGE.SHOP_BAL_LOW"));
             return;
         }
 
@@ -135,7 +136,7 @@ public final class Sell
         // 판매할 아이탬이 없음
         if (actualAmount == 0)
         {
-            player.sendMessage(DynamicShop.dsPrefix + LangUtil.ccLang.get().getString("NO_ITEM_TO_SELL"));
+            player.sendMessage(DynamicShop.dsPrefix + t("MESSAGE.NO_ITEM_TO_SELL"));
             return;
         }
 
@@ -148,14 +149,6 @@ public final class Sell
                     data.get().getInt(tradeIdx + ".stock") + actualAmount);
         }
 
-        // 면제된 배달비 계산용
-        double oldPriceSum = 0;
-        if (priceSum <= 0)
-        {
-            oldPriceSum = priceSum;
-            priceSum = 0;
-        }
-
         // 실제 거래부----------
         Economy econ = DynamicShop.getEconomy();
         EconomyResponse r = DynamicShop.getEconomy().depositPlayer(player, priceSum);
@@ -165,21 +158,12 @@ public final class Sell
             //로그 기록
             LogUtil.addLog(shopName, tempIS.getType().toString(), -actualAmount, priceSum, "vault", player.getName());
 
-            player.sendMessage(DynamicShop.dsPrefix + LangUtil.ccLang.get().getString("SELL_SUCCESS")
+            player.sendMessage(DynamicShop.dsPrefix + t("MESSAGE.SELL_SUCCESS")
                     .replace("{item}", ItemsUtil.getBeautifiedName(tempIS.getType()))
                     .replace("{amount}", Integer.toString(actualAmount))
                     .replace("{price}", econ.format(r.amount))
                     .replace("{bal}", econ.format(econ.getBalance((player)))));
             SoundUtil.playerSoundEffect(player, "sell");
-
-            if (deliverycharge > 0)
-            {
-                if (priceSum == 0)
-                {
-                    player.sendMessage(DynamicShop.dsPrefix + LangUtil.ccLang.get().getString("DELIVERYCHARGE_EXEMPTION").
-                            replace("{fee}", "" + deliverycharge).replace("{fee2}", (oldPriceSum - priceSum) * -1 + ""));
-                }
-            }
 
             if (data.get().contains("Options.Balance"))
             {
@@ -198,7 +182,7 @@ public final class Sell
     }
 
     // 판매 jp
-    public static void sellItemJobPoint(Player player, String shopName, String tradeIdx, ItemStack tempIS, double priceSum, double deliverycharge, boolean infiniteStock)
+    public static void sellItemJobPoint(Player player, String shopName, String tradeIdx, ItemStack tempIS, double priceSum, boolean infiniteStock)
     {
         CustomConfig data = ShopUtil.shopConfigFiles.get(shopName);
 
@@ -208,7 +192,7 @@ public final class Sell
         // 상점에 돈이 없음
         if (ShopUtil.getShopBalance(shopName) != -1 && ShopUtil.getShopBalance(shopName) < Calc.calcTotalCost(shopName, tradeIdx, tempIS.getAmount()))
         {
-            player.sendMessage(DynamicShop.dsPrefix + LangUtil.ccLang.get().getString("SHOP_BAL_LOW"));
+            player.sendMessage(DynamicShop.dsPrefix + t("MESSAGE.SHOP_BAL_LOW"));
             return;
         }
 
@@ -224,7 +208,7 @@ public final class Sell
         // 판매할 아이탬이 없음
         if (actualAmount == 0)
         {
-            player.sendMessage(DynamicShop.dsPrefix + LangUtil.ccLang.get().getString("NO_ITEM_TO_SELL"));
+            player.sendMessage(DynamicShop.dsPrefix + t("MESSAGE.NO_ITEM_TO_SELL"));
             return;
         }
 
@@ -237,35 +221,18 @@ public final class Sell
                     data.get().getInt(tradeIdx + ".stock") + actualAmount);
         }
 
-        // 면제된 배달비 계산용
-        double oldPriceSum = 0;
-        if (priceSum <= 0)
-        {
-            oldPriceSum = priceSum;
-            priceSum = 0;
-        }
-
         // 실제 거래부----------
         if (JobsHook.addJobsPoint(player, priceSum))
         {
             //로그 기록
             LogUtil.addLog(shopName, tempIS.getType().toString(), -actualAmount, priceSum, "jobpoint", player.getName());
 
-            player.sendMessage(DynamicShop.dsPrefix + LangUtil.ccLang.get().getString("SELL_SUCCESS_JP")
+            player.sendMessage(DynamicShop.dsPrefix + t("MESSAGE.SELL_SUCCESS_JP")
                     .replace("{item}", ItemsUtil.getBeautifiedName(tempIS.getType()))
                     .replace("{amount}", Integer.toString(actualAmount))
                     .replace("{price}", DynaShopAPI.df.format(priceSum))
                     .replace("{bal}", DynaShopAPI.df.format(JobsHook.getCurJobPoints(player))));
             SoundUtil.playerSoundEffect(player, "sell");
-
-            if (deliverycharge > 0)
-            {
-                if (priceSum == 0)
-                {
-                    player.sendMessage(DynamicShop.dsPrefix + LangUtil.ccLang.get().getString("DELIVERYCHARGE_EXEMPTION").
-                            replace("{fee}", "" + deliverycharge).replace("{fee2}", (oldPriceSum - priceSum) * -1 + ""));
-                }
-            }
 
             if (data.get().contains("Options.Balance"))
             {

@@ -32,6 +32,8 @@ public class JoinQuit implements Listener
                 TextComponent text = new TextComponent("");
                 text.addExtra(DynamicShop.CreateLink("DShop3", false, ChatColor.DARK_AQUA, UpdateChecker.getResourceUrl()));
                 text.addExtra(" ");
+                text.addExtra(DynamicShop.CreateLink("Download", false, ChatColor.WHITE, UpdateChecker.getResourceUrl()));
+                text.addExtra(" ");
                 text.addExtra(DynamicShop.CreateLink("Donate", false, ChatColor.WHITE, "https://www.paypal.com/paypalme/7sat"));
 
                 e.getPlayer().sendMessage("");

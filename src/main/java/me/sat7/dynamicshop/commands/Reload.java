@@ -7,6 +7,7 @@ import me.sat7.dynamicshop.DynamicShop;
 import me.sat7.dynamicshop.guis.StartPage;
 
 import static me.sat7.dynamicshop.utilities.ConfigUtil.configVersion;
+import static me.sat7.dynamicshop.utilities.LangUtil.t;
 
 public final class Reload
 {
@@ -19,12 +20,13 @@ public final class Reload
     {
         if (!player.hasPermission("dshop.admin.reload"))
         {
-            player.sendMessage(DynamicShop.dsPrefix + LangUtil.ccLang.get().getString("ERR.NO_PERMISSION"));
+            player.sendMessage(DynamicShop.dsPrefix + t("ERR.NO_PERMISSION"));
             return;
         }
 
         LangUtil.ccLang.reload();
         LayoutUtil.ccLayout.reload();
+        LayoutUtil.Setup();
         ShopUtil.Reload();
         StartPage.ccStartPage.reload();
         DynamicShop.ccSign.reload();
@@ -41,6 +43,6 @@ public final class Reload
 
         DynamicShop.plugin.getConfig().set("Version", configVersion);
 
-        player.sendMessage(DynamicShop.dsPrefix + LangUtil.ccLang.get().getString("HELP.RELOADED"));
+        player.sendMessage(DynamicShop.dsPrefix + t("HELP.RELOADED"));
     }
 }

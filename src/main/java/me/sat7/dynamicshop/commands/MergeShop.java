@@ -3,8 +3,9 @@ package me.sat7.dynamicshop.commands;
 import org.bukkit.entity.Player;
 
 import me.sat7.dynamicshop.DynamicShop;
-import me.sat7.dynamicshop.utilities.LangUtil;
 import me.sat7.dynamicshop.utilities.ShopUtil;
+
+import static me.sat7.dynamicshop.utilities.LangUtil.t;
 
 public final class MergeShop
 {
@@ -19,13 +20,13 @@ public final class MergeShop
         {
             if (!player.hasPermission("dshop.admin.mergeshop"))
             {
-                player.sendMessage(DynamicShop.dsPrefix + LangUtil.ccLang.get().getString("ERR.NO_PERMISSION"));
+                player.sendMessage(DynamicShop.dsPrefix + t("ERR.NO_PERMISSION"));
                 return true;
             }
 
             if (args[1].equals(args[2]))
             {
-                player.sendMessage(DynamicShop.dsPrefix + LangUtil.ccLang.get().getString("ERR.WRONG_USAGE"));
+                player.sendMessage(DynamicShop.dsPrefix + t("ERR.WRONG_USAGE"));
                 return true;
             }
 
@@ -35,19 +36,19 @@ public final class MergeShop
                     ShopUtil.shopConfigFiles.containsKey(args[2]))
                 {
                     ShopUtil.mergeShop(args[1], args[2]);
-                    player.sendMessage(DynamicShop.dsPrefix + LangUtil.ccLang.get().getString("CHANGES_APPLIED") + args[1]);
+                    player.sendMessage(DynamicShop.dsPrefix + t("MESSAGE.CHANGES_APPLIED") + args[1]);
                 }
                 else
                 {
-                    player.sendMessage(DynamicShop.dsPrefix + LangUtil.ccLang.get().getString("ERR.SHOP_NOT_FOUND"));
+                    player.sendMessage(DynamicShop.dsPrefix + t("ERR.SHOP_NOT_FOUND"));
                 }
             } catch (Exception e)
             {
-                player.sendMessage(DynamicShop.dsPrefix + LangUtil.ccLang.get().getString("ERR.SHOP_NOT_FOUND"));
+                player.sendMessage(DynamicShop.dsPrefix + t("ERR.SHOP_NOT_FOUND"));
             }
         } else
         {
-            player.sendMessage(DynamicShop.dsPrefix + LangUtil.ccLang.get().getString("ERR.WRONG_USAGE"));
+            player.sendMessage(DynamicShop.dsPrefix + t("ERR.WRONG_USAGE"));
         }
         return false;
     }

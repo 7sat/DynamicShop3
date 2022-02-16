@@ -3,8 +3,9 @@ package me.sat7.dynamicshop.commands;
 import org.bukkit.entity.Player;
 
 import me.sat7.dynamicshop.DynamicShop;
-import me.sat7.dynamicshop.utilities.LangUtil;
 import me.sat7.dynamicshop.utilities.ShopUtil;
+
+import static me.sat7.dynamicshop.utilities.LangUtil.t;
 
 public final class RenameShop
 {
@@ -19,7 +20,7 @@ public final class RenameShop
         {
             if (!player.hasPermission("dshop.admin.renameshop"))
             {
-                player.sendMessage(DynamicShop.dsPrefix + LangUtil.ccLang.get().getString("ERR.NO_PERMISSION"));
+                player.sendMessage(DynamicShop.dsPrefix + t("ERR.NO_PERMISSION"));
                 return true;
             }
 
@@ -29,18 +30,18 @@ public final class RenameShop
                 {
                     String newName = args[2].replace("/", "");
                     ShopUtil.renameShop(args[1], newName);
-                    player.sendMessage(DynamicShop.dsPrefix + LangUtil.ccLang.get().getString("CHANGES_APPLIED") + newName);
+                    player.sendMessage(DynamicShop.dsPrefix + t("MESSAGE.CHANGES_APPLIED") + newName);
                 } else
                 {
-                    player.sendMessage(DynamicShop.dsPrefix + LangUtil.ccLang.get().getString("ERR.SHOP_NOT_FOUND"));
+                    player.sendMessage(DynamicShop.dsPrefix + t("ERR.SHOP_NOT_FOUND"));
                 }
             } catch (Exception e)
             {
-                player.sendMessage(DynamicShop.dsPrefix + LangUtil.ccLang.get().getString("ERR.SHOP_NOT_FOUND"));
+                player.sendMessage(DynamicShop.dsPrefix + t("ERR.SHOP_NOT_FOUND"));
             }
         } else
         {
-            player.sendMessage(DynamicShop.dsPrefix + LangUtil.ccLang.get().getString("ERR.WRONG_USAGE"));
+            player.sendMessage(DynamicShop.dsPrefix + t("ERR.WRONG_USAGE"));
         }
         return false;
     }

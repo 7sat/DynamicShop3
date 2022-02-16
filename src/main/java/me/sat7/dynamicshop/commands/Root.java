@@ -3,13 +3,14 @@ package me.sat7.dynamicshop.commands;
 import me.sat7.dynamicshop.DynaShopAPI;
 import me.sat7.dynamicshop.DynamicShop;
 import me.sat7.dynamicshop.constants.Constants;
-import me.sat7.dynamicshop.utilities.LangUtil;
 
 import org.bukkit.GameMode;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandExecutor;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
+
+import static me.sat7.dynamicshop.utilities.LangUtil.t;
 
 public class Root implements CommandExecutor
 {
@@ -32,19 +33,19 @@ public class Root implements CommandExecutor
 
         if (!player.hasPermission(Constants.USE_SHOP_PERMISSION))
         {
-            player.sendMessage(DynamicShop.dsPrefix + LangUtil.ccLang.get().getString("ERR.NO_PERMISSION"));
+            player.sendMessage(DynamicShop.dsPrefix + t("ERR.NO_PERMISSION"));
             return true;
         }
         if (player.getGameMode() == GameMode.CREATIVE && !player.hasPermission(Constants.ADMIN_CREATIVE_PERMISSION))
         {
-            player.sendMessage(DynamicShop.dsPrefix + LangUtil.ccLang.get().getString("ERR.CREATIVE"));
+            player.sendMessage(DynamicShop.dsPrefix + t("ERR.CREATIVE"));
             return true;
         }
 
         // user.yml 에 player가 없으면 재생성 시도. 실패시 리턴.
         if (!DynaShopAPI.recreateUserData(player))
         {
-            player.sendMessage(DynamicShop.dsPrefix + LangUtil.ccLang.get().getString("ERR.NO_USER_ID"));
+            player.sendMessage(DynamicShop.dsPrefix + t("ERR.NO_USER_ID"));
             return true;
         }
 

@@ -3,12 +3,13 @@ package me.sat7.dynamicshop.commands;
 import me.sat7.dynamicshop.DynaShopAPI;
 import me.sat7.dynamicshop.DynamicShop;
 import me.sat7.dynamicshop.files.CustomConfig;
-import me.sat7.dynamicshop.utilities.LangUtil;
 import me.sat7.dynamicshop.utilities.ShopUtil;
 import org.bukkit.Bukkit;
 import org.bukkit.command.CommandSender;
 import org.bukkit.configuration.ConfigurationSection;
 import org.bukkit.entity.Player;
+
+import static me.sat7.dynamicshop.utilities.LangUtil.t;
 
 public class OpenShop
 {
@@ -33,7 +34,7 @@ public class OpenShop
         {
             if (!sender.hasPermission("dshop.admin.openshop"))
             {
-                sender.sendMessage(DynamicShop.dsPrefix + LangUtil.ccLang.get().getString("ERR.NO_PERMISSION"));
+                sender.sendMessage(DynamicShop.dsPrefix + t("ERR.NO_PERMISSION"));
                 return true;
             }
 
@@ -42,14 +43,14 @@ public class OpenShop
                 shopName = args[1];
             } else
             {
-                sender.sendMessage(DynamicShop.dsPrefix + LangUtil.ccLang.get().getString("ERR.SHOP_NOT_FOUND"));
+                sender.sendMessage(DynamicShop.dsPrefix + t("ERR.SHOP_NOT_FOUND"));
                 return true;
             }
 
             target = Bukkit.getPlayer(args[2]);
         } else
         {
-            sender.sendMessage(DynamicShop.dsPrefix + LangUtil.ccLang.get().getString("ERR.WRONG_USAGE"));
+            sender.sendMessage(DynamicShop.dsPrefix + t("ERR.WRONG_USAGE"));
         }
 
         if (target != null)
@@ -71,7 +72,7 @@ public class OpenShop
                 {
                     if (!(open <= curTime && curTime < close))
                     {
-                        target.sendMessage(DynamicShop.dsPrefix + LangUtil.ccLang.get().getString("TIME.SHOP_IS_CLOSED").
+                        target.sendMessage(DynamicShop.dsPrefix + t("TIME.SHOP_IS_CLOSED").
                                 replace("{time}", open + "").replace("{curTime}", curTime + ""));
                         return true;
                     }
@@ -79,7 +80,7 @@ public class OpenShop
                 {
                     if (!(open <= curTime || curTime < close))
                     {
-                        target.sendMessage(DynamicShop.dsPrefix + LangUtil.ccLang.get().getString("TIME.SHOP_IS_CLOSED").
+                        target.sendMessage(DynamicShop.dsPrefix + t("TIME.SHOP_IS_CLOSED").
                                 replace("{time}", open + "").replace("{curTime}", curTime + ""));
                         return true;
                     }

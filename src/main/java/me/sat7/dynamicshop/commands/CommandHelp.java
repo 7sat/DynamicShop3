@@ -3,9 +3,10 @@ package me.sat7.dynamicshop.commands;
 import org.bukkit.entity.Player;
 
 import me.sat7.dynamicshop.DynamicShop;
-import me.sat7.dynamicshop.utilities.LangUtil;
 
 import java.util.UUID;
+
+import static me.sat7.dynamicshop.utilities.LangUtil.t;
 
 public final class CommandHelp
 {
@@ -18,7 +19,7 @@ public final class CommandHelp
     {
         if (args.length < 2)
         {
-            player.sendMessage(DynamicShop.dsPrefix + LangUtil.ccLang.get().getString("ERR.WRONG_USAGE"));
+            player.sendMessage(DynamicShop.dsPrefix + t("ERR.WRONG_USAGE"));
             return true;
         }
 
@@ -38,7 +39,7 @@ public final class CommandHelp
             DynamicShop.ccUser.save();
         } else
         {
-            player.sendMessage(DynamicShop.dsPrefix + LangUtil.ccLang.get().getString("ERR.WRONG_USAGE"));
+            player.sendMessage(DynamicShop.dsPrefix + t("ERR.WRONG_USAGE"));
         }
         return false;
     }

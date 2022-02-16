@@ -4,8 +4,9 @@ import me.sat7.dynamicshop.files.CustomConfig;
 import org.bukkit.entity.Player;
 
 import me.sat7.dynamicshop.DynamicShop;
-import me.sat7.dynamicshop.utilities.LangUtil;
 import me.sat7.dynamicshop.utilities.ShopUtil;
+
+import static me.sat7.dynamicshop.utilities.LangUtil.t;
 
 public final class DeleteShop
 {
@@ -20,7 +21,7 @@ public final class DeleteShop
         {
             if (!player.hasPermission("dshop.admin.deleteshop"))
             {
-                player.sendMessage(DynamicShop.dsPrefix + LangUtil.ccLang.get().getString("ERR.NO_PERMISSION"));
+                player.sendMessage(DynamicShop.dsPrefix + t("ERR.NO_PERMISSION"));
                 return true;
             }
 
@@ -33,18 +34,18 @@ public final class DeleteShop
 
                     ShopUtil.shopConfigFiles.remove(args[1]);
 
-                    player.sendMessage(DynamicShop.dsPrefix + LangUtil.ccLang.get().getString("SHOP_DELETED"));
+                    player.sendMessage(DynamicShop.dsPrefix + t("MESSAGE.SHOP_DELETED"));
                 } else
                 {
-                    player.sendMessage(DynamicShop.dsPrefix + LangUtil.ccLang.get().getString("ERR.SHOP_NOT_FOUND"));
+                    player.sendMessage(DynamicShop.dsPrefix + t("ERR.SHOP_NOT_FOUND"));
                 }
             } catch (Exception e)
             {
-                player.sendMessage(DynamicShop.dsPrefix + LangUtil.ccLang.get().getString("ERR.SHOP_NOT_FOUND"));
+                player.sendMessage(DynamicShop.dsPrefix + t("ERR.SHOP_NOT_FOUND"));
             }
         } else
         {
-            player.sendMessage(DynamicShop.dsPrefix + LangUtil.ccLang.get().getString("ERR.WRONG_USAGE"));
+            player.sendMessage(DynamicShop.dsPrefix + t("ERR.WRONG_USAGE"));
         }
         return false;
     }

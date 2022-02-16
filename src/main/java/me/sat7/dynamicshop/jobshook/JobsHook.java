@@ -8,7 +8,8 @@ import com.gamingmesh.jobs.container.PlayerPoints;
 
 import me.sat7.dynamicshop.DynaShopAPI;
 import me.sat7.dynamicshop.DynamicShop;
-import me.sat7.dynamicshop.utilities.LangUtil;
+
+import static me.sat7.dynamicshop.utilities.LangUtil.t;
 
 public final class JobsHook
 {
@@ -24,7 +25,7 @@ public final class JobsHook
     {
         if (!jobsRebornActive)
         {
-            p.sendMessage(DynamicShop.dsPrefix + LangUtil.ccLang.get().getString("ERR.JOBSREBORN_NOT_FOUND"));
+            p.sendMessage(DynamicShop.dsPrefix + t("ERR.JOBS_REBORN_NOT_FOUND"));
             return false;
         }
 
@@ -40,7 +41,7 @@ public final class JobsHook
             // 포인트 부족
             else
             {
-                p.sendMessage(DynamicShop.dsPrefix + LangUtil.ccLang.get().getString("NOT_ENOUGH_POINT")
+                p.sendMessage(DynamicShop.dsPrefix + t("MESSAGE.NOT_ENOUGH_POINT")
                         .replace("{bal}", DynaShopAPI.df.format(getCurJobPoints(p))));
                 return false;
             }

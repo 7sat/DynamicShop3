@@ -46,7 +46,7 @@ public final class DynamicShop extends JavaPlugin implements Listener
 
     public static DynamicShop plugin;
     public static ConsoleCommandSender console;
-    public static String dsPrefix = "§3[DShop] §f";
+    public static String dsPrefix = "§3DShop3 §7| §f";
 
     public static CustomConfig ccUser;
     public static CustomConfig ccSign;
@@ -94,7 +94,7 @@ public final class DynamicShop extends JavaPlugin implements Listener
     // 볼트 이코노미 초기화
     private boolean setupEconomy()
     {
-        boolean ret = true;
+        boolean ret;
 
         if (getServer().getPluginManager().getPlugin("Vault") == null)
         {
@@ -134,7 +134,6 @@ public final class DynamicShop extends JavaPlugin implements Listener
                 lastVersion = version;
                 yourVersion = getDescription().getVersion();
 
-                DynamicShop.console.sendMessage("§3-------------------------------------------------------");
                 if (yourVersion.equals(lastVersion))
                 {
                     DynamicShop.updateAvailable = false;
@@ -143,9 +142,8 @@ public final class DynamicShop extends JavaPlugin implements Listener
                 {
                     DynamicShop.updateAvailable = true;
                     DynamicShop.console.sendMessage(Constants.DYNAMIC_SHOP_PREFIX + "Plugin outdated!");
+                    DynamicShop.console.sendMessage(Constants.DYNAMIC_SHOP_PREFIX + UpdateChecker.getResourceUrl());
                 }
-                DynamicShop.console.sendMessage(getResourceUrl());
-                DynamicShop.console.sendMessage("§3-------------------------------------------------------");
             } catch (Exception e)
             {
                 DynamicShop.console.sendMessage(Constants.DYNAMIC_SHOP_PREFIX + "Failed to check update. Try again later.");
@@ -165,9 +163,6 @@ public final class DynamicShop extends JavaPlugin implements Listener
 
     private void InitBstats()
     {
-        // bstats
-        //System.setProperty("bstats.relocatecheck", "false"); // 빌드가 외부로 나갈때는 이 라인이 주석처리되야함.
-
         try
         {
             int pluginId = 4258;
@@ -258,8 +253,6 @@ public final class DynamicShop extends JavaPlugin implements Listener
 
         ShopUtil.Reload();
 
-        getConfig().options().copyDefaults();
-        saveDefaultConfig();
         ConfigUtil.configSetup(this);
 
         LangUtil.setupLangFile(getConfig().getString("Language"));

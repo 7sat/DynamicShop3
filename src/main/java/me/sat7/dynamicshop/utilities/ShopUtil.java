@@ -17,9 +17,11 @@ import me.sat7.dynamicshop.DynamicShop;
 import me.sat7.dynamicshop.constants.Constants;
 import me.sat7.dynamicshop.files.CustomConfig;
 
+import static me.sat7.dynamicshop.utilities.LangUtil.t;
+
 public final class ShopUtil
 {
-    public static HashMap<String, CustomConfig> shopConfigFiles = new HashMap<>();
+    public static final HashMap<String, CustomConfig> shopConfigFiles = new HashMap<>();
 
     private ShopUtil()
     {
@@ -39,19 +41,22 @@ public final class ShopUtil
         shopConfigFiles.clear();
 
         File[] listOfFiles = new File(DynamicShop.plugin.getDataFolder() + "/Shop").listFiles();
-        for (File f : listOfFiles)
+        if(listOfFiles != null)
         {
-            CustomConfig shopCC = new CustomConfig();
+            for (File f : listOfFiles)
+            {
+                CustomConfig shopCC = new CustomConfig();
 
-            int idx = f.getName().lastIndexOf( "." );
-            String shopName = f.getName().substring(0, idx );
-            shopCC.setup(shopName, "Shop");
-            shopConfigFiles.put(shopName, shopCC);
+                int idx = f.getName().lastIndexOf( "." );
+                String shopName = f.getName().substring(0, idx );
+                shopCC.setup(shopName, "Shop");
+                shopConfigFiles.put(shopName, shopCC);
+            }
         }
     }
 
     // 상점에서 빈 슬롯 찾기
-    public static int findEmptyShopSlot(String shopName)
+    public static int findEmptyShopSlot(String shopName, int startIdx, boolean addPage)
     {
         ArrayList<Integer> banList = new ArrayList<>();
 
@@ -59,25 +64,26 @@ public final class ShopUtil
         if(data == null)
             return -1;
 
-        for (String s : data.get().getKeys(false))
+        if(startIdx < 0)
+            startIdx = 0;
+
+        int idx = startIdx;
+        while(data.get().contains(String.valueOf(idx)))
+            idx++;
+
+        if (data.get().getInt("Options.page") < idx / 45 + 1)
         {
-            try
+            if(addPage)
             {
-                banList.add(Integer.parseInt(s));
-            } catch (Exception ignored)
-            {
+                data.get().set("Options.page", idx / 45 + 1);
+                data.save();
+                return idx;
             }
+
+            return -1;
         }
 
-        for (int i = 0; i < 45 * data.get().getInt("Options.page"); i++)
-        {
-            if (!banList.contains(i))
-            {
-                return i;
-            }
-        }
-
-        return -1;
+        return idx;
     }
 
     // 상점에서 아이탬타입 찾기
@@ -399,7 +405,7 @@ public final class ShopUtil
             {
                 DynamicShop.console.sendMessage(Constants.DYNAMIC_SHOP_PREFIX +
                         shopName + ", " + linkedShop + "/ " +
-                        LangUtil.ccLang.get().getString("ERR.SHOP_LINK_TARGET_ERR"));
+                        t("ERR.SHOP_LINK_TARGET_ERR"));
 
                 data.get().set("Options.Balance", null);
                 data.save();
@@ -498,7 +504,7 @@ public final class ShopUtil
                 } else
                 {
                     if (player != null)
-                        player.sendMessage(DynamicShop.dsPrefix + LangUtil.ccLang.get().getString("ERR.NO_RECOMMAND_DATA") + " : " + itemName);
+                        player.sendMessage(DynamicShop.dsPrefix + t("ERR.NO_RECOMMEND_DATA") + " : " + itemName);
                 }
             } catch (Exception ignored)
             {
@@ -620,9 +626,15 @@ public final class ShopUtil
                         int median = data.get().getInt(item + ".median");
                         if (median <= 1) continue; // 고정가 상품에 대해서는 스킵
 
-                        boolean dir = generator.nextBoolean();
+                        boolean down = generator.nextBoolean();
+                        double rate = stock / (double)median;
+                        if(rate < 0.5 && generator.nextBoolean())
+                            down = false;
+                        else if(rate > 2 && generator.nextBoolean())
+                            down = true;
+
                         int amount = (int)(median * (confSec.getDouble("strength") / 100.0) * generator.nextFloat());
-                        if(dir)
+                        if(down)
                             amount *= -1;
 
                         stock += amount;
@@ -733,7 +745,7 @@ public final class ShopUtil
             data.get().options().copyHeader(true);
 
             data.get().set("Options.page", 2);
-            data.get().set("Options.title", "Main");
+            data.get().set("Options.title", "Sample Shop");
             data.get().set("Options.lore", "This is sample shop");
             data.get().set("Options.permission", "");
             data.get().set("0.mat", "DIRT");
@@ -782,6 +794,10 @@ public final class ShopUtil
                 {
                     data.get().set("Options.flag.hidepricingtype", "");
                     data.get().set("Options.hidePricingType", null);
+                }
+                if(!data.get().contains("Options.lore"))
+                {
+                    data.get().set("Options.lore","");
                 }
 
                 data.save();

@@ -18,6 +18,8 @@ import me.sat7.dynamicshop.DynamicShop;
 import me.sat7.dynamicshop.constants.Constants;
 import me.sat7.dynamicshop.files.CustomConfig;
 
+import static me.sat7.dynamicshop.utilities.LangUtil.t;
+
 public final class StartPage extends InGameUI
 {
     public StartPage()
@@ -77,12 +79,13 @@ public final class StartPage extends InGameUI
                 {
                     if (cs.getString(s + ".action").length() > 0)
                     {
-                        tempList.add(t("ITEM_MOVE_LORE"));
+                        tempList.add(t("START_PAGE.ITEM_MOVE_LORE"));
                     } else
                     {
-                        tempList.add(t("ITEM_COPY_LORE"));
+                        tempList.add(t("START_PAGE.ITEM_REMOVE_LORE"));
+                        tempList.add(t("START_PAGE.ITEM_COPY_LORE"));
                     }
-                    tempList.add(t("ITEM_EDIT_LORE"));
+                    tempList.add(t("START_PAGE.ITEM_EDIT_LORE"));
                 }
 
                 ItemStack btn = new ItemStack(Material.getMaterial(cs.getConfigurationSection(s).getString("icon")));
@@ -110,34 +113,48 @@ public final class StartPage extends InGameUI
 
         if (e.isLeftClick())
         {
-            if (e.getCurrentItem() == null || e.getCurrentItem().getType() == Material.AIR)
+            if(e.isShiftClick())
             {
-                // 새 버튼 추가
-                if (player.hasPermission("dshop.admin.shopedit"))
+                if(e.getCurrentItem() != null && e.getCurrentItem().getType() != Material.AIR)
                 {
-                    StartPage.ccStartPage.get().set("Buttons." + e.getSlot() + ".displayName", "New Button");
-                    StartPage.ccStartPage.get().set("Buttons." + e.getSlot() + ".lore", "new button");
-                    StartPage.ccStartPage.get().set("Buttons." + e.getSlot() + ".icon", Material.SUNFLOWER.name());
-                    StartPage.ccStartPage.get().set("Buttons." + e.getSlot() + ".action", "ds");
-                    StartPage.ccStartPage.save();
-
-                    DynaShopAPI.openStartPage(player);
-                } else
-                {
-                    return;
+                    String actionString = StartPage.ccStartPage.get().getString("Buttons." + e.getSlot() + ".action");
+                    if(actionString == null || actionString.isEmpty())
+                    {
+                        StartPage.ccStartPage.get().set("Buttons." + e.getSlot(), null);
+                        StartPage.ccStartPage.save();
+                        DynaShopAPI.openStartPage(player);
+                    }
                 }
             }
-
-            String actionStr = StartPage.ccStartPage.get().getString("Buttons." + e.getSlot() + ".action");
-            if (actionStr != null && actionStr.length() > 0)
+            else
             {
-                String[] action = actionStr.split(StartPage.ccStartPage.get().getString("Options.LineBreak"));
-
-                //player.closeInventory();
-
-                for (String s : action)
+                if (e.getCurrentItem() == null || e.getCurrentItem().getType() == Material.AIR)
                 {
-                    Bukkit.dispatchCommand(player, s);
+                    // 새 버튼 추가
+                    if (player.hasPermission("dshop.admin.shopedit"))
+                    {
+                        StartPage.ccStartPage.get().set("Buttons." + e.getSlot() + ".displayName", "§3New Button");
+                        StartPage.ccStartPage.get().set("Buttons." + e.getSlot() + ".lore", "§fnew button");
+                        StartPage.ccStartPage.get().set("Buttons." + e.getSlot() + ".icon", Material.SUNFLOWER.name());
+                        StartPage.ccStartPage.get().set("Buttons." + e.getSlot() + ".action", "ds");
+                        StartPage.ccStartPage.save();
+
+                        DynaShopAPI.openStartPage(player);
+                    } else
+                    {
+                        return;
+                    }
+                }
+
+                String actionStr = StartPage.ccStartPage.get().getString("Buttons." + e.getSlot() + ".action");
+                if (actionStr != null && actionStr.length() > 0)
+                {
+                    String[] action = actionStr.split(StartPage.ccStartPage.get().getString("Options.LineBreak"));
+
+                    for (String s : action)
+                    {
+                        Bukkit.dispatchCommand(player, s);
+                    }
                 }
             }
         }
@@ -169,7 +186,7 @@ public final class StartPage extends InGameUI
                     if (e.getCurrentItem() == null || e.getCurrentItem().getType() == Material.AIR) return;
 
                     DynamicShop.userInteractItem.put(player.getUniqueId(), "startpage/" + e.getSlot()); // 선택한 아이탬의 인덱스 저장
-                    player.sendMessage(DynamicShop.dsPrefix + t("ITEM_MOVE_SELECTED"));
+                    player.sendMessage(DynamicShop.dsPrefix + t("SHOP.ITEM_MOVE_SELECTED"));
                 } else
                 {
                     if (e.getCurrentItem() != null && e.getCurrentItem().getType() != Material.AIR) return;

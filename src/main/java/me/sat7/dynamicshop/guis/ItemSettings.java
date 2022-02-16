@@ -1,6 +1,7 @@
 package me.sat7.dynamicshop.guis;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 
 import me.sat7.dynamicshop.DynaShopAPI;
 import me.sat7.dynamicshop.utilities.*;
@@ -17,6 +18,7 @@ import me.sat7.dynamicshop.models.DSItem;
 import me.sat7.dynamicshop.transactions.Calc;
 
 import static me.sat7.dynamicshop.DynaShopAPI.df;
+import static me.sat7.dynamicshop.utilities.LangUtil.t;
 
 public final class ItemSettings extends InGameUI
 {
@@ -37,34 +39,35 @@ public final class ItemSettings extends InGameUI
 
         inventory = Bukkit.createInventory(player, 36, t("ITEM_SETTING_TITLE") + "§7 | §8" + shopName);
 
-        String buyValueStr = t("VALUE_BUY") + dsItem.getBuyValue();
-        String sellValueStr = t("VALUE_SELL") + dsItem.getSellValue();
-        String priceMinStr = t("PRICE_MIN") + dsItem.getMinPrice();
-        String priceMaxStr = t("PRICE_MAX") + dsItem.getMaxPrice();
-        String medianStr = t("MEDIAN") + dsItem.getMedian();
-        String stockStr = t("STOCK") + dsItem.getStock();
+        String buyValueStr = t("ITEM_SETTING.VALUE_BUY") + dsItem.getBuyValue();
+        String sellValueStr = t("ITEM_SETTING.VALUE_SELL") + dsItem.getSellValue();
+        String priceMinStr = t("ITEM_SETTING.PRICE_MIN") + dsItem.getMinPrice();
+        String priceMaxStr = t("ITEM_SETTING.PRICE_MAX") + dsItem.getMaxPrice();
+        String medianStr = t("ITEM_SETTING.MEDIAN") + dsItem.getMedian();
+        String stockStr = t("ITEM_SETTING.STOCK") + dsItem.getStock();
 
         ArrayList<String> sellValueLore = new ArrayList<>();
         ArrayList<String> medianLore = new ArrayList<>();
+        medianLore.addAll(Arrays.asList(t("ITEM_SETTING.MEDIAN_HELP").split("\n")));
         ArrayList<String> stockLore = new ArrayList<>();
         ArrayList<String> maxPriceLore = new ArrayList<>();
 
         // 고정가, 무한재고, 별도판매가 안내 표시
         if (dsItem.getBuyValue() != dsItem.getSellValue())
         {
-            sellValueLore.add("§7(" + t("TAXIGNORED") + ")");
+            sellValueLore.add("§7(" + t("ITEM_SETTING.TAX_IGNORED") + ")");
         }
         if (dsItem.getMedian() <= 0)
         {
-            medianLore.add("§7(" + t("STATICPRICE") + ")");
+            medianLore.add("§7(" + t("ITEM_SETTING.STATIC_PRICE") + ")");
         }
         if (dsItem.getStock() <= 0)
         {
-            stockLore.add("§7(" + t("INFSTOCK") + ")");
+            stockLore.add("§7(" + t("ITEM_SETTING.INF_STOCK") + ")");
         }
         if (dsItem.getMaxPrice() <= 0)
         {
-            maxPriceLore.add("§7(" + t("UNLIMITED") + ")");
+            maxPriceLore.add("§7(" + t("ITEM_SETTING.UNLIMITED") + ")");
         }
 
         // 가격, 미디안, 스톡 버튼
@@ -88,7 +91,7 @@ public final class ItemSettings extends InGameUI
         if (dsItem.getBuyValue() == dsItem.getSellValue()) sellValueStr = "§7" + ChatColor.stripColor(sellValueStr);
         if (dsItem.getMinPrice() <= 0.01) priceMinStr = "§7" + ChatColor.stripColor(priceMinStr);
         if (dsItem.getMaxPrice() <= 0)
-            priceMaxStr = "§7" + ChatColor.stripColor(t("PRICE_MAX") + t("UNLIMITED"));
+            priceMaxStr = "§7" + ChatColor.stripColor(t("ITEM_SETTING.PRICE_MAX") + t("ITEM_SETTING.UNLIMITED"));
 
         ArrayList<String> editBtnLore = new ArrayList<>();
         editBtnLore.add("§3§m                       ");
@@ -113,8 +116,8 @@ public final class ItemSettings extends InGameUI
         }
 
         if (dsItem.getMedian() <= 0)
-            medianStr = medianStr + "§7(" + t("STATICPRICE") + ")";
-        if (dsItem.getStock() <= 0) stockStr = stockStr + "§7(" + t("INFSTOCK") + ")";
+            medianStr = medianStr + "§7(" + t("ITEM_SETTING.STATIC_PRICE") + ")";
+        if (dsItem.getStock() <= 0) stockStr = stockStr + "§7(" + t("ITEM_SETTING.INF_STOCK") + ")";
 
         editBtnLore.add(buyValueStr);
         editBtnLore.add(sellValueStr);
@@ -124,18 +127,18 @@ public final class ItemSettings extends InGameUI
         editBtnLore.add(stockStr);
 
         editBtnLore.add("§3§m                       ");
-        double buyPrice = 0;
-        double sellPrice = 0;
+        double buyPrice;
+        double sellPrice;
         if (dsItem.getMedian() <= 0 || dsItem.getStock() <= 0)
         {
             buyPrice = dsItem.getBuyValue();
             if (dsItem.getBuyValue() != dsItem.getSellValue())
             {
-                editBtnLore.add("§7" + ChatColor.stripColor(t("TAXIGNORED")));
+                editBtnLore.add("§7" + ChatColor.stripColor(t("ITEM_SETTING.TAX_IGNORED")));
                 sellPrice = dsItem.getSellValue();
             } else
             {
-                String taxStr = "§7" + ChatColor.stripColor(t("TAX.SALESTAX")) + ": ";
+                String taxStr = "§7" + ChatColor.stripColor(t("TAX.SALES_TAX")) + ": ";
                 taxStr += Calc.getTaxRate(shopName) + "%";
                 editBtnLore.add(taxStr);
                 sellPrice = buyPrice - ((buyPrice / 100) * Calc.getTaxRate(shopName));
@@ -145,11 +148,11 @@ public final class ItemSettings extends InGameUI
             buyPrice = (dsItem.getBuyValue() * dsItem.getMedian()) / dsItem.getStock();
             if (dsItem.getBuyValue() != dsItem.getSellValue()) // 판매가 별도설정
             {
-                editBtnLore.add("§7" + ChatColor.stripColor(t("TAXIGNORED")));
+                editBtnLore.add("§7" + ChatColor.stripColor(t("ITEM_SETTING.TAX_IGNORED")));
                 sellPrice = (dsItem.getSellValue() * dsItem.getMedian()) / dsItem.getStock();
             } else
             {
-                String taxStr = "§7" + ChatColor.stripColor(t("TAX.SALESTAX")) + ": ";
+                String taxStr = "§7" + ChatColor.stripColor(t("TAX.SALES_TAX")) + ": ";
                 if (ShopUtil.shopConfigFiles.get(shopName).get().contains("Options.SalesTax"))
                 {
                     taxStr += ShopUtil.shopConfigFiles.get(shopName).get().getInt("Options.SalesTax") + "%";
@@ -165,8 +168,8 @@ public final class ItemSettings extends InGameUI
             }
         }
 
-        editBtnLore.add("§3§l" + ChatColor.stripColor(t("BUY")) + ": " + df.format(buyPrice));
-        editBtnLore.add("§3§l" + ChatColor.stripColor(t("SELL")) + ": " + df.format(sellPrice));
+        editBtnLore.add(t("ITEM_SETTING.BUY").replace("{num}", df.format(buyPrice)));
+        editBtnLore.add(t("ITEM_SETTING.SELL").replace("{num}", df.format(sellPrice)));
 
         ItemStack d2Btn = ItemsUtil.createItemStack(Material.WHITE_STAINED_GLASS_PANE, null, "/2", editBtnLore, 1);
         ItemStack m1000Btn = ItemsUtil.createItemStack(Material.WHITE_STAINED_GLASS_PANE, null, "-1000", editBtnLore, 1);
@@ -181,10 +184,10 @@ public final class ItemSettings extends InGameUI
         ItemStack p100Btn = ItemsUtil.createItemStack(Material.WHITE_STAINED_GLASS_PANE, null, "+100", editBtnLore, 1);
         ItemStack p1000Btn = ItemsUtil.createItemStack(Material.WHITE_STAINED_GLASS_PANE, null, "+1000", editBtnLore, 1);
         ItemStack m2Btn = ItemsUtil.createItemStack(Material.WHITE_STAINED_GLASS_PANE, null, "x2", editBtnLore, 1);
-        ItemStack roundBtn = ItemsUtil.createItemStack(Material.YELLOW_STAINED_GLASS_PANE, null, t("ROUNDDOWN"), editBtnLore, 1);
-        ItemStack setToMedian = ItemsUtil.createItemStack(Material.YELLOW_STAINED_GLASS_PANE, null, t("SETTOMEDIAN"), editBtnLore, 1);
-        ItemStack setToStock = ItemsUtil.createItemStack(Material.YELLOW_STAINED_GLASS_PANE, null, t("SETTOSTOCK"), editBtnLore, 1);
-        ItemStack setToValue = ItemsUtil.createItemStack(Material.YELLOW_STAINED_GLASS_PANE, null, t("SETTOVALUE"), editBtnLore, 1);
+        ItemStack roundBtn = ItemsUtil.createItemStack(Material.YELLOW_STAINED_GLASS_PANE, null, t("ITEM_SETTING.ROUND_DOWN"), editBtnLore, 1);
+        ItemStack setToMedian = ItemsUtil.createItemStack(Material.YELLOW_STAINED_GLASS_PANE, null, t("ITEM_SETTING.SET_TO_MEDIAN"), editBtnLore, 1);
+        ItemStack setToStock = ItemsUtil.createItemStack(Material.YELLOW_STAINED_GLASS_PANE, null, t("ITEM_SETTING.SET_TO_STOCK"), editBtnLore, 1);
+        ItemStack setToValue = ItemsUtil.createItemStack(Material.YELLOW_STAINED_GLASS_PANE, null, t("ITEM_SETTING.SET_TO_VALUE"), editBtnLore, 1);
 
         // 내림 버튼
         inventory.setItem(20, roundBtn);
@@ -232,10 +235,41 @@ public final class ItemSettings extends InGameUI
 
         inventory.setItem(0, dsItem.getItemStack()); // 아이탬 견본
 
-        CreateButton(DONE, Material.STRUCTURE_VOID, t("DONE"), t("DONE_LORE")); // 완료 버튼
-        CreateButton(CLOSE, Material.BARRIER, t("CLOSE"), t("CLOSE_LORE")); // 닫기 버튼
-        CreateButton(RECOMMEND, Material.NETHER_STAR, t("RECOMMEND"), t("RECOMMEND_LORE")); // 추천 버튼
-        CreateButton(REMOVE, Material.BONE, t("REMOVE"), t("REMOVE_LORE")); // 삭제 버튼
+        double worth = TryGetWorth(dsItem.getItemStack().getType().name());
+        String recommendLore;
+        if (worth == 0)
+        {
+            recommendLore = t("ERR.NO_RECOMMEND_DATA");
+        } else
+        {
+            int sugMid = ShopUtil.CalcRecommendedMedian(worth, DynamicShop.plugin.getConfig().getInt("Shop.NumberOfPlayer"));
+
+            String worthChanged = (dsItem.getBuyValue() == worth) ? " ▶§f " : " ▶§a ";
+            String worthChanged2 = (dsItem.getSellValue() == worth) ? " ▶§f " : " ▶§a ";
+            //String minChanged = (dsItem.getMinPrice() == 0.01) ? " ▶§f " : " ▶§a ";
+            //String maxChanged = (dsItem.getMaxPrice() == -1) ? " ▶§f " : " ▶§a ";
+            String medianChanged = (dsItem.getMedian() == sugMid) ? " ▶§f " : " ▶§a ";
+            String stockChanged = (dsItem.getStock() == sugMid) ? " ▶§f " : " ▶§a ";
+
+            recommendLore = t("ITEM_SETTING.VALUE_BUY") + "\n"
+                    + "§7 " + dsItem.getBuyValue() + worthChanged + worth + "\n"
+                    + t("ITEM_SETTING.VALUE_SELL") + "\n"
+                    + "§7 " + dsItem.getSellValue() + worthChanged2 + worth + "\n"
+                    + t("ITEM_SETTING.PRICE_MIN") + "\n"
+                    //+ "§7 " + dsItem.getMinPrice() + minChanged + 0.01 + "\n"
+                    //+ t("ITEM_SETTING.PRICE_MAX") + "\n"
+                    //+ "§7 " + dsItem.getMaxPrice() + maxChanged + -1 + "\n"
+                    //+ t("ITEM_SETTING.MEDIAN") + "\n"
+                    + "§7 " + dsItem.getMedian() + medianChanged + sugMid + "\n"
+                    + t("ITEM_SETTING.STOCK") + "\n"
+                    + "§7 " + dsItem.getStock() + stockChanged + sugMid;
+        }
+
+
+        CreateButton(RECOMMEND, Material.NETHER_STAR, t("ITEM_SETTING.RECOMMEND"), recommendLore); // 추천 버튼
+        CreateButton(DONE, Material.STRUCTURE_VOID, t("ITEM_SETTING.DONE"), t("ITEM_SETTING.DONE_LORE")); // 완료 버튼
+        CreateButton(CLOSE, Material.BARRIER, t("ITEM_SETTING.CLOSE"), t("ITEM_SETTING.CLOSE_LORE")); // 닫기 버튼
+        CreateButton(REMOVE, Material.BONE, t("ITEM_SETTING.REMOVE"), t("ITEM_SETTING.REMOVE_LORE")); // 삭제 버튼
 
         return inventory;
     }
@@ -266,7 +300,7 @@ public final class ItemSettings extends InGameUI
             if (idx != -1)
             {
                 ShopUtil.removeItemFromShop(shopName, idx);
-                player.sendMessage(DynamicShop.dsPrefix + t("ITEM_DELETED"));
+                player.sendMessage(DynamicShop.dsPrefix + t("MESSAGE.ITEM_DELETED"));
                 DynaShopAPI.openShopGui(player, shopName, Integer.parseInt(temp[1]) / 45 + 1);
                 DynamicShop.userInteractItem.put(player.getUniqueId(), "");
                 SoundUtil.playerSoundEffect(player, "deleteItem");
@@ -281,13 +315,13 @@ public final class ItemSettings extends InGameUI
         String median = e.getClickedInventory().getItem(6).getItemMeta().getDisplayName();
         String stock = e.getClickedInventory().getItem(7).getItemMeta().getDisplayName();
 
-        valueBuy = valueBuy.replace(ChatColor.stripColor(t("VALUE_BUY")), "");
-        valueSell = valueSell.replace(ChatColor.stripColor(t("VALUE_SELL")), "");
-        valueMin = valueMin.replace(ChatColor.stripColor(t("PRICE_MIN")), "");
-        valueMax = valueMax.replace(ChatColor.stripColor(t("PRICE_MAX")), "");
+        valueBuy = valueBuy.replace(ChatColor.stripColor(t("ITEM_SETTING.VALUE_BUY")), "");
+        valueSell = valueSell.replace(ChatColor.stripColor(t("ITEM_SETTING.VALUE_SELL")), "");
+        valueMin = valueMin.replace(ChatColor.stripColor(t("ITEM_SETTING.PRICE_MIN")), "");
+        valueMax = valueMax.replace(ChatColor.stripColor(t("ITEM_SETTING.PRICE_MAX")), "");
 
-        median = median.replace(ChatColor.stripColor(t("MEDIAN")), "");
-        stock = stock.replace(ChatColor.stripColor(t("STOCK")), "");
+        median = median.replace(ChatColor.stripColor(t("ITEM_SETTING.MEDIAN")), "");
+        stock = stock.replace(ChatColor.stripColor(t("ITEM_SETTING.STOCK")), "");
         double valueBuyD = Double.parseDouble(ChatColor.stripColor(valueBuy));
         double valueSellD = Double.parseDouble(ChatColor.stripColor(valueSell));
         double valueMinD = Double.parseDouble(ChatColor.stripColor(valueMin));
@@ -317,27 +351,17 @@ public final class ItemSettings extends InGameUI
         // 추천 버튼
         if (e.getSlot() == RECOMMEND)
         {
-            String sug = e.getClickedInventory().getItem(0).getType().name();
-
-            double worth = WorthUtil.ccWorth.get().getDouble(sug);
-            if (worth == 0)
-            {
-                sug = sug.replace("-", "");
-                sug = sug.replace("_", "");
-                sug = sug.toLowerCase();
-
-                worth = WorthUtil.ccWorth.get().getDouble(sug);
-            }
+            double worth = TryGetWorth(e.getClickedInventory().getItem(0).getType().name());
 
             if (worth == 0)
             {
-                player.sendMessage(DynamicShop.dsPrefix + t("ERR.NO_RECOMMAND_DATA"));
+                player.sendMessage(DynamicShop.dsPrefix + t("ERR.NO_RECOMMEND_DATA"));
             } else
             {
                 int numberOfPlayer = DynamicShop.plugin.getConfig().getInt("Shop.NumberOfPlayer");
                 int sugMid = ShopUtil.CalcRecommendedMedian(worth, numberOfPlayer);
 
-                player.sendMessage(DynamicShop.dsPrefix + t("RECOMMAND_APPLIED").replace("{playerNum}", numberOfPlayer + ""));
+                player.sendMessage(DynamicShop.dsPrefix + t("MESSAGE.RECOMMEND_APPLIED").replace("{playerNum}", numberOfPlayer + ""));
 
                 DynaShopAPI.openItemSettingGui(player, e.getInventory().getItem(0), tab,
                         worth, worth, newValueMin, newValueMax, sugMid, sugMid);
@@ -588,14 +612,10 @@ public final class ItemSettings extends InGameUI
                 SoundUtil.playerSoundEffect(player, "addItem");
             } else
             {
-                int idx = ShopUtil.findEmptyShopSlot(shopName);
-
-                try
-                {
-                    idx = Integer.parseInt(DynamicShop.userInteractItem.get(player.getUniqueId()).split("/")[1]);
-                } catch (Exception ignored)
-                {
-                }
+                int idx = -1;
+                try{
+                    idx = ShopUtil.findEmptyShopSlot(shopName, Integer.parseInt(DynamicShop.userInteractItem.get(player.getUniqueId()).split("/")[1]), true);
+                }catch (Exception ignore){}
 
                 if (idx != -1)
                 {
@@ -606,5 +626,20 @@ public final class ItemSettings extends InGameUI
                 }
             }
         }
+    }
+
+    private double TryGetWorth(String itemName)
+    {
+        double worth = WorthUtil.ccWorth.get().getDouble(itemName);
+        if (worth == 0)
+        {
+            itemName = itemName.replace("-", "");
+            itemName = itemName.replace("_", "");
+            itemName = itemName.toLowerCase();
+
+            worth = WorthUtil.ccWorth.get().getDouble(itemName);
+        }
+
+        return worth;
     }
 }

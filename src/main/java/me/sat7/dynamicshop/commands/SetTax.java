@@ -4,9 +4,9 @@ import me.sat7.dynamicshop.utilities.ConfigUtil;
 import org.bukkit.entity.Player;
 
 import me.sat7.dynamicshop.DynamicShop;
-import me.sat7.dynamicshop.utilities.LangUtil;
 import org.bukkit.scheduler.BukkitRunnable;
 
+import static me.sat7.dynamicshop.utilities.LangUtil.t;
 import static me.sat7.dynamicshop.utilities.MathUtil.Clamp;
 
 public final class SetTax
@@ -22,7 +22,7 @@ public final class SetTax
     {
         if (!player.hasPermission("dshop.admin.settax"))
         {
-            player.sendMessage(DynamicShop.dsPrefix + LangUtil.ccLang.get().getString("ERR.NO_PERMISSION"));
+            player.sendMessage(DynamicShop.dsPrefix + t("ERR.NO_PERMISSION"));
             return true;
         }
 
@@ -37,11 +37,11 @@ public final class SetTax
 
                 ConfigUtil.setCurrentTax(newValue);
 
-                player.sendMessage(DynamicShop.dsPrefix + LangUtil.ccLang.get().getString("CHANGES_APPLIED") + newValue);
+                player.sendMessage(DynamicShop.dsPrefix + t("MESSAGE.CHANGES_APPLIED") + newValue);
                 return true;
             } catch (Exception e)
             {
-                player.sendMessage(DynamicShop.dsPrefix + LangUtil.ccLang.get().getString("ERR.WRONG_DATATYPE"));
+                player.sendMessage(DynamicShop.dsPrefix + t("ERR.WRONG_DATATYPE"));
             }
         } else if (args.length == 4 && args[1].equals("temp"))
         {
@@ -71,15 +71,15 @@ public final class SetTax
                 resetTaxTask = new ResetTaxTask();
                 resetTaxTask.runTaskLater(DynamicShop.plugin, 20L * 60L * tempTaxDurationMinutes);
 
-                player.sendMessage(DynamicShop.dsPrefix + LangUtil.ccLang.get().getString("CHANGES_APPLIED") + newValue);
+                player.sendMessage(DynamicShop.dsPrefix + t("MESSAGE.CHANGES_APPLIED") + newValue);
                 return true;
             } catch (Exception e)
             {
-                player.sendMessage(DynamicShop.dsPrefix + LangUtil.ccLang.get().getString("ERR.WRONG_DATATYPE"));
+                player.sendMessage(DynamicShop.dsPrefix + t("ERR.WRONG_DATATYPE"));
             }
         } else
         {
-            player.sendMessage(DynamicShop.dsPrefix + LangUtil.ccLang.get().getString("ERR.WRONG_USAGE"));
+            player.sendMessage(DynamicShop.dsPrefix + t("ERR.WRONG_USAGE"));
         }
         return false;
     }

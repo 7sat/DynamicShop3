@@ -14,12 +14,13 @@ import me.sat7.dynamicshop.DynaShopAPI;
 import me.sat7.dynamicshop.DynamicShop;
 import me.sat7.dynamicshop.jobshook.JobsHook;
 import me.sat7.dynamicshop.utilities.ItemsUtil;
-import me.sat7.dynamicshop.utilities.LangUtil;
 import me.sat7.dynamicshop.utilities.LogUtil;
 import me.sat7.dynamicshop.utilities.ShopUtil;
 import me.sat7.dynamicshop.utilities.SoundUtil;
 import net.milkbowl.vault.economy.Economy;
 import net.milkbowl.vault.economy.EconomyResponse;
+
+import static me.sat7.dynamicshop.utilities.LangUtil.t;
 
 public final class Buy
 {
@@ -29,7 +30,7 @@ public final class Buy
     }
 
     // 구매
-    public static void buyItemCash(Player player, String shopName, String tradeIdx, ItemStack tempIS, double priceSum, double deliverycharge, boolean infiniteStock)
+    public static void buyItemCash(Player player, String shopName, String tradeIdx, ItemStack tempIS, double priceSum, boolean infiniteStock)
     {
         CustomConfig data = ShopUtil.shopConfigFiles.get(shopName);
 
@@ -65,7 +66,7 @@ public final class Buy
         // 실 구매 가능량이 0이다 = 돈이 없다.
         if (actualAmount <= 0)
         {
-            player.sendMessage(DynamicShop.dsPrefix + LangUtil.ccLang.get().getString("NOT_ENOUGH_MONEY").replace("{bal}", econ.format(econ.getBalance(player))));
+            player.sendMessage(DynamicShop.dsPrefix + t("MESSAGE.NOT_ENOUGH_MONEY").replace("{bal}", econ.format(econ.getBalance(player))));
             data.get().set(tradeIdx + ".stock", stockOld);
             return;
         }
@@ -73,7 +74,7 @@ public final class Buy
         // 상점 재고 부족
         if (!infiniteStock && stockOld <= actualAmount)
         {
-            player.sendMessage(DynamicShop.dsPrefix + LangUtil.ccLang.get().getString("OUT_OF_STOCK"));
+            player.sendMessage(DynamicShop.dsPrefix + t("MESSAGE.OUT_OF_STOCK"));
             data.get().set(tradeIdx + ".stock", stockOld);
             return;
         }
@@ -97,7 +98,7 @@ public final class Buy
                     HashMap<Integer, ItemStack> leftOver = player.getInventory().addItem(iStack);
                     if (leftOver.size() != 0)
                     {
-                        player.sendMessage(DynamicShop.dsPrefix + LangUtil.ccLang.get().getString("INVEN_FULL"));
+                        player.sendMessage(DynamicShop.dsPrefix + t("MESSAGE.INVENTORY_FULL"));
                         Location loc = player.getLocation();
 
                         ItemStack leftStack = new ItemStack(tempIS.getType(), leftOver.get(0).getAmount());
@@ -112,7 +113,7 @@ public final class Buy
                 //로그 기록
                 LogUtil.addLog(shopName, tempIS.getType().toString(), actualAmount, priceSum, "vault", player.getName());
 
-                player.sendMessage(DynamicShop.dsPrefix + LangUtil.ccLang.get().getString("BUY_SUCCESS")
+                player.sendMessage(DynamicShop.dsPrefix + t("MESSAGE.BUY_SUCCESS")
                         .replace("{item}", ItemsUtil.getBeautifiedName(tempIS.getType()))
                         .replace("{amount}", Integer.toString(actualAmount))
                         .replace("{price}", econ.format(r.amount))
@@ -135,12 +136,12 @@ public final class Buy
             }
         } else
         {
-            player.sendMessage(DynamicShop.dsPrefix + LangUtil.ccLang.get().getString("NOT_ENOUGH_MONEY").replace("{bal}", econ.format(econ.getBalance(player))));
+            player.sendMessage(DynamicShop.dsPrefix + t("MESSAGE.NOT_ENOUGH_MONEY").replace("{bal}", econ.format(econ.getBalance(player))));
         }
     }
 
     // 구매 jp
-    public static void buyItemJobPoint(Player player, String shopName, String tradeIdx, ItemStack tempIS, double priceSum, double deliverycharge, boolean infiniteStock)
+    public static void buyItemJobPoint(Player player, String shopName, String tradeIdx, ItemStack tempIS, double priceSum, boolean infiniteStock)
     {
         CustomConfig data = ShopUtil.shopConfigFiles.get(shopName);
 
@@ -174,7 +175,7 @@ public final class Buy
         // 실 구매 가능량이 0이다 = 돈이 없다.
         if (actualAmount <= 0)
         {
-            player.sendMessage(DynamicShop.dsPrefix + LangUtil.ccLang.get().getString("NOT_ENOUGH_POINT").replace("{bal}", DynaShopAPI.df.format(JobsHook.getCurJobPoints(player))));
+            player.sendMessage(DynamicShop.dsPrefix + t("MESSAGE.NOT_ENOUGH_POINT").replace("{bal}", DynaShopAPI.df.format(JobsHook.getCurJobPoints(player))));
             data.get().set(tradeIdx + ".stock", stockOld);
             return;
         }
@@ -182,7 +183,7 @@ public final class Buy
         // 상점 재고 부족
         if (!infiniteStock && stockOld <= actualAmount)
         {
-            player.sendMessage(DynamicShop.dsPrefix + LangUtil.ccLang.get().getString("OUT_OF_STOCK"));
+            player.sendMessage(DynamicShop.dsPrefix + t("MESSAGE.OUT_OF_STOCK"));
             data.get().set(tradeIdx + ".stock", stockOld);
             return;
         }
@@ -204,7 +205,7 @@ public final class Buy
                     HashMap<Integer, ItemStack> leftOver = player.getInventory().addItem(iStack);
                     if (leftOver.size() != 0)
                     {
-                        player.sendMessage(DynamicShop.dsPrefix + LangUtil.ccLang.get().getString("INVEN_FULL"));
+                        player.sendMessage(DynamicShop.dsPrefix + t("MESSAGE.INVENTORY_FULL"));
                         Location loc = player.getLocation();
 
                         ItemStack leftStack = new ItemStack(tempIS.getType(), leftOver.get(0).getAmount());
@@ -219,7 +220,7 @@ public final class Buy
                 //로그 기록
                 LogUtil.addLog(shopName, tempIS.getType().toString(), actualAmount, priceSum, "jobpoint", player.getName());
 
-                player.sendMessage(DynamicShop.dsPrefix + LangUtil.ccLang.get().getString("BUY_SUCCESS_JP")
+                player.sendMessage(DynamicShop.dsPrefix + t("MESSAGE.BUY_SUCCESS_JP")
                         .replace("{item}", ItemsUtil.getBeautifiedName(tempIS.getType()))
                         .replace("{amount}", Integer.toString(actualAmount))
                         .replace("{price}", DynaShopAPI.df.format(priceSum))

@@ -1,7 +1,6 @@
 package me.sat7.dynamicshop.guis;
 
 import me.sat7.dynamicshop.utilities.ItemsUtil;
-import me.sat7.dynamicshop.utilities.LangUtil;
 import org.bukkit.Material;
 import org.bukkit.event.inventory.InventoryClickEvent;
 import org.bukkit.inventory.Inventory;
@@ -10,6 +9,8 @@ import org.bukkit.inventory.ItemStack;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
+
+import static me.sat7.dynamicshop.utilities.LangUtil.t;
 
 public class InGameUI
 {
@@ -104,10 +105,5 @@ public class InGameUI
     protected void CreateCloseButton(int slotIndex)
     {
         CreateButton(slotIndex, Material.BARRIER, t("CLOSE"), t("CLOSE_LORE"));
-    }
-
-    protected String t(String tag)
-    {
-        return LangUtil.ccLang.get().getString(tag);
     }
 }

@@ -7,7 +7,8 @@ import org.bukkit.entity.Player;
 
 import me.sat7.dynamicshop.DynamicShop;
 import me.sat7.dynamicshop.constants.Constants;
-import me.sat7.dynamicshop.utilities.LangUtil;
+
+import static me.sat7.dynamicshop.utilities.LangUtil.t;
 
 public final class DeleteUser
 {
@@ -20,30 +21,30 @@ public final class DeleteUser
     {
         if (!player.hasPermission(Constants.DELETE_USER_PERMISSION))
         {
-            player.sendMessage(DynamicShop.dsPrefix + LangUtil.ccLang.get().getString("ERR.NO_PERMISSION"));
+            player.sendMessage(DynamicShop.dsPrefix + t("ERR.NO_PERMISSION"));
             return;
         }
 
         if (args.length != 2)
         {
-            player.sendMessage(DynamicShop.dsPrefix + LangUtil.ccLang.get().getString("ERR.WRONG_USAGE"));
+            player.sendMessage(DynamicShop.dsPrefix + t("ERR.WRONG_USAGE"));
             return;
         }
 
-        long day = 99999L;
+        long day;
 
         try
         {
             day = Long.parseLong(args[1]);
         } catch (Exception e)
         {
-            player.sendMessage(DynamicShop.dsPrefix + LangUtil.ccLang.get().getString("ERR.WRONG_DATATYPE"));
+            player.sendMessage(DynamicShop.dsPrefix + t("ERR.WRONG_DATATYPE"));
             return;
         }
 
         if (day <= 0)
         {
-            player.sendMessage(DynamicShop.dsPrefix + LangUtil.ccLang.get().getString("ERR.VALUE_ZERO"));
+            player.sendMessage(DynamicShop.dsPrefix + t("ERR.VALUE_ZERO"));
             return;
         }
 

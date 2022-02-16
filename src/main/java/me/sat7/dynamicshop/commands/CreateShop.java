@@ -5,8 +5,9 @@ import org.bukkit.entity.Player;
 
 import me.sat7.dynamicshop.DynaShopAPI;
 import me.sat7.dynamicshop.DynamicShop;
-import me.sat7.dynamicshop.utilities.LangUtil;
 import me.sat7.dynamicshop.utilities.ShopUtil;
+
+import static me.sat7.dynamicshop.utilities.LangUtil.t;
 
 public final class CreateShop
 {
@@ -21,7 +22,7 @@ public final class CreateShop
         {
             if (!player.hasPermission("dshop.admin.createshop"))
             {
-                player.sendMessage(DynamicShop.dsPrefix + LangUtil.ccLang.get().getString("ERR.NO_PERMISSION"));
+                player.sendMessage(DynamicShop.dsPrefix + t("ERR.NO_PERMISSION"));
                 return true;
             }
 
@@ -59,18 +60,18 @@ public final class CreateShop
 
                 ShopUtil.shopConfigFiles.put(shopname, data);
 
-                player.sendMessage(DynamicShop.dsPrefix + LangUtil.ccLang.get().getString("SHOP_CREATED"));
+                player.sendMessage(DynamicShop.dsPrefix + t("MESSAGE.SHOP_CREATED"));
                 DynaShopAPI.openShopGui(player, shopname, 1);
             }
             else
             {
-                player.sendMessage(DynamicShop.dsPrefix + LangUtil.ccLang.get().getString("ERR.SHOP_EXIST"));
+                player.sendMessage(DynamicShop.dsPrefix + t("ERR.SHOP_EXIST"));
             }
 
             return true;
         } else
         {
-            player.sendMessage(DynamicShop.dsPrefix + LangUtil.ccLang.get().getString("ERR.WRONG_USAGE"));
+            player.sendMessage(DynamicShop.dsPrefix + t("ERR.WRONG_USAGE"));
         }
         return false;
     }

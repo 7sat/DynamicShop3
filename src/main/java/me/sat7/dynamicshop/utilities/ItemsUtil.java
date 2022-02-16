@@ -8,6 +8,8 @@ import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.ItemMeta;
 
+import static me.sat7.dynamicshop.utilities.LangUtil.t;
+
 public final class ItemsUtil
 {
     private ItemsUtil()
@@ -60,7 +62,7 @@ public final class ItemsUtil
         info += " median:" + data.get().getInt(idx + ".median");
         info += " stock:" + data.get().getInt(idx + ".stock");
 
-        player.sendMessage(" - " + LangUtil.ccLang.get().getString(msgType).
+        player.sendMessage(" - " + t(msgType).
                 replace("{item}", data.get().getString(idx + ".mat")).
                 replace("{info}", info)
         );

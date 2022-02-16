@@ -25,6 +25,7 @@ import me.sat7.dynamicshop.transactions.Calc;
 import me.sat7.dynamicshop.utilities.ShopUtil;
 
 import static me.sat7.dynamicshop.DynaShopAPI.df;
+import static me.sat7.dynamicshop.utilities.LangUtil.t;
 import static me.sat7.dynamicshop.utilities.LayoutUtil.l;
 import static me.sat7.dynamicshop.utilities.MathUtil.Clamp;
 import static me.sat7.dynamicshop.utilities.ShopUtil.GetShopMaxPage;
@@ -47,7 +48,7 @@ public final class Shop extends InGameUI
         // jobreborn 플러그인 있는지 확인.
         if (!JobsHook.jobsRebornActive && data.get().contains("Options.flag.jobpoint"))
         {
-            player.sendMessage(DynamicShop.dsPrefix + t("ERR.JOBSREBORN_NOT_FOUND"));
+            player.sendMessage(DynamicShop.dsPrefix + t("ERR.JOBS_REBORN_NOT_FOUND"));
             return null;
         }
 
@@ -68,14 +69,12 @@ public final class Shop extends InGameUI
         CreateCloseButton(CLOSE);
 
         // 페이지 버튼
-        ArrayList<String> pageLore = new ArrayList<>();
-        pageLore.add(t("PAGE_LORE"));
+        String pageLore = t("SHOP.PAGE_LORE");
         if (player.hasPermission("dshop.admin.shopedit"))
         {
-            pageLore.add(t("PAGE_INSERT"));
-            pageLore.add(t("PAGE_DELETE"));
+            pageLore += "\n" + t("SHOP.PAGE_EDIT_LORE");
         }
-        String pageString = t("PAGE_TITLE");
+        String pageString = t("SHOP.PAGE_TITLE");
         pageString = pageString.replace("{curPage}", page + "");
         pageString = pageString.replace("{maxPage}", maxPage + "");
         CreateButton(PAGE, Material.PAPER, pageString, pageLore, page);
@@ -112,10 +111,10 @@ public final class Shop extends InGameUI
 
                     if (data.get().getInt(s + ".stock") <= 0)
                     {
-                        stockStr = t("INFSTOCK");
+                        stockStr = t("SHOP.INF_STOCK");
                     } else if (DynamicShop.plugin.getConfig().getBoolean("UI.DisplayStockAsStack"))
                     {
-                        stockStr = (data.get().getInt(s + ".stock") / 64) + t("STACKS");
+                        stockStr = t("SHOP.STACKS").replace("{num}", (data.get().getInt(s + ".stock") / 64) + "");
                     } else
                     {
                         stockStr = String.valueOf(data.get().getInt(s + ".stock"));
@@ -133,12 +132,12 @@ public final class Shop extends InGameUI
 
                     if (buyPrice - buyPrice2 >= 0.01)
                     {
-                        valueChanged_Buy = t("ARROW_UP_2") + Math.round(priceSave1 * 100d) / 100d + "%";
-                        valueChanged_Sell = t("ARROW_UP") + Math.round(priceSave1 * 100d) / 100d + "%";
+                        valueChanged_Buy = t("ARROW.UP_2") + Math.round(priceSave1 * 100d) / 100d + "%";
+                        valueChanged_Sell = t("ARROW.UP") + Math.round(priceSave1 * 100d) / 100d + "%";
                     } else if (buyPrice - buyPrice2 <= -0.01)
                     {
-                        valueChanged_Buy = t("ARROW_DOWN_2") + Math.round(priceSave2 * 100d) / 100d + "%";
-                        valueChanged_Sell = t("ARROW_DOWN") + Math.round(priceSave2 * 100d) / 100d + "%";
+                        valueChanged_Buy = t("ARROW.DOWN_2") + Math.round(priceSave2 * 100d) / 100d + "%";
+                        valueChanged_Sell = t("ARROW.DOWN") + Math.round(priceSave2 * 100d) / 100d + "%";
                     } else
                     {
                         valueChanged_Buy = "";
@@ -154,19 +153,17 @@ public final class Shop extends InGameUI
                     boolean showValueChange = data.get().contains("Options.flag.showvaluechange");
 
                     String buyText = "";
-                    String buyArrowText = "";
                     String sellText = "";
-                    String sellArrowText = "";
                     if (!tradeType.equalsIgnoreCase("SellOnly"))
                     {
-                        buyText = t("PRICE") + df.format(buyPrice);
-                        buyArrowText = showValueChange ? valueChanged_Buy : "";
+                        buyText = t("SHOP.BUY_PRICE").replace("{num}", df.format(buyPrice));
+                        buyText += showValueChange ? " " + valueChanged_Buy : "";
                     }
 
                     if (!tradeType.equalsIgnoreCase("BuyOnly"))
                     {
-                        sellText = t("SELLPRICE") + df.format(sellPrice);
-                        sellArrowText = showValueChange ? valueChanged_Sell : "";
+                        sellText = t("SHOP.SELL_PRICE").replace("{num}", df.format(sellPrice));
+                        sellText += showValueChange ? " " + valueChanged_Sell : "";
                     }
 
                     String pricingTypeText = "";
@@ -174,33 +171,44 @@ public final class Shop extends InGameUI
                     {
                         if (!data.get().contains("Options.flag.hidepricingtype"))
                         {
-                            pricingTypeText = "\n§7[" + ChatColor.stripColor(t("STATICPRICE")) + "]";
+                            pricingTypeText = t("SHOP.STATIC_PRICE");
                         }
                     }
 
                     String stockText = "";
                     if (!data.get().contains("Options.flag.hidestock"))
                     {
-                        stockText = t("STOCK") + stockStr;
+                        stockText = t("SHOP.STOCK").replace("{num}", stockStr);
                     }
 
                     String tradeLoreText = "";
-                    if (t("TRADE_LORE").length() > 0)
-                        tradeLoreText = "\n" + t("TRADE_LORE");
+                    if (t("SHOP.TRADE_LORE").length() > 0)
+                        tradeLoreText = t("SHOP.TRADE_LORE");
+
+                    String itemMetaLoreText = (meta != null && meta.hasLore()) ? meta.getLore().toString() : "";
+
+                    lore = lore.replace("{\\nBuy}", buyText.isEmpty() ? "" : "\n" + buyText);
+                    lore = lore.replace("{\\nSell}", sellText.isEmpty() ? "" : "\n" + sellText);
+                    lore = lore.replace("{\\nStock}", stockText.isEmpty() ? "" : "\n" + stockText);
+                    lore = lore.replace("{\\nPricingType}", pricingTypeText.isEmpty() ? "" : "\n" + pricingTypeText);
+                    lore = lore.replace("{\\nTradeLore}", tradeLoreText.isEmpty() ? "" : "\n" + tradeLoreText);
+                    lore = lore.replace("{\\nItemMetaLore}", itemMetaLoreText.isEmpty() ? "" : "\n" + itemMetaLoreText);
 
                     lore = lore.replace("{Buy}", buyText);
-                    lore = lore.replace("{BuyArrow}", buyArrowText);
                     lore = lore.replace("{Sell}", sellText);
-                    lore = lore.replace("{SellArrow}", sellArrowText);
                     lore = lore.replace("{Stock}", stockText);
-                    lore = lore.replace("[PricingType]", pricingTypeText);
-                    lore = lore.replace("[TradeLore]", tradeLoreText);
-                    lore = lore.replace("[ItemMetaLore]", (meta != null && meta.hasLore()) ? "\n" + meta.getLore().toString() : "");
+                    lore = lore.replace("{PricingType}", pricingTypeText);
+                    lore = lore.replace("{TradeLore}", tradeLoreText);
+                    lore = lore.replace("{ItemMetaLore}", itemMetaLoreText);
+
+                    String temp = lore.replace(" ","");
+                    if(ChatColor.stripColor(temp).startsWith("\n"))
+                        lore = lore.replaceFirst("\n","");
 
                     if (player.hasPermission("dshop.admin.shopedit"))
                     {
-                        lore += "\n" + t("ITEM_MOVE_LORE");
-                        lore += "\n" + t("ITEM_EDIT_LORE");
+                        lore += "\n" + t("SHOP.ITEM_MOVE_LORE");
+                        lore += "\n" + t("SHOP.ITEM_EDIT_LORE");
                     }
                 }
                 // 장식용
@@ -208,8 +216,8 @@ public final class Shop extends InGameUI
                 {
                     if (player.hasPermission("dshop.admin.shopedit"))
                     {
-                        lore += t("ITEM_COPY_LORE");
-                        lore += "\n" + t("DECO_DELETE_LORE");
+                        lore += t("SHOP.ITEM_COPY_LORE");
+                        lore += "\n" + t("SHOP.DECO_DELETE_LORE");
                     }
 
                     meta.setDisplayName(" ");
@@ -308,10 +316,10 @@ public final class Shop extends InGameUI
                             DynamicShop.userTempData.put(player.getUniqueId(), "waitforPageDelete");
                             OnChat.WaitForInput(player);
 
-                            player.sendMessage(DynamicShop.dsPrefix + t("RUSURE"));
+                            player.sendMessage(DynamicShop.dsPrefix + t("MESSAGE.DELETE_CONFIRM"));
                         } else
                         {
-                            player.sendMessage(DynamicShop.dsPrefix + t("CANT_DELETE_LAST_PAGE"));
+                            player.sendMessage(DynamicShop.dsPrefix + t("MESSAGE.CANT_DELETE_LAST_PAGE"));
                         }
                         return;
                     }
@@ -369,7 +377,7 @@ public final class Shop extends InGameUI
                         }
                     } else if (itemtoMove.equals(""))
                     {
-                        player.sendMessage(DynamicShop.dsPrefix + t("ITEM_MOVE_SELECTED"));
+                        player.sendMessage(DynamicShop.dsPrefix + t("SHOP.ITEM_MOVE_SELECTED"));
                     }
                 }
             }
@@ -435,43 +443,38 @@ public final class Shop extends InGameUI
                 }
             }
         }
-        shopLore = shopLore.replace("[ShopLore]", finalLoreText.toString());
 
         // 권한
         String finalPermText = "";
         String perm = data.get().getString("Options.permission");
         if (!(perm.length() == 0))
         {
-            finalPermText += t("PERMISSION") + ":" + "\n";
-            finalPermText += "§7 - " + perm + "\n";
+            finalPermText += t("SHOP.PERMISSION") + "\n";
+            finalPermText += t("SHOP.PERMISSION").replace("{permission}", perm) + "\n";
         }
-        shopLore = shopLore.replace("[Permission]", finalPermText);
 
         // 세금
         String finalTaxText = "";
-        finalTaxText += t("TAX.SALESTAX") + ":" + "\n";
-        finalTaxText += "§7 - " + Calc.getTaxRate(shopName) + "%" + "\n";
-        shopLore = shopLore.replace("[Tax]", finalTaxText);
+        finalTaxText += t("TAX.SALES_TAX") + ":" + "\n";
+        finalTaxText += t("SHOP.SHOP_INFO_DASH") + Calc.getTaxRate(shopName) + "%" + "\n";
 
         // 상점 잔액
         String finalShopBalanceText = "";
 
         if(!data.get().contains("Options.flag.hideshopbalance"))
         {
-            finalShopBalanceText += t("SHOP_BAL") + "\n";
+            finalShopBalanceText += t("SHOP.SHOP_BAL") + "\n";
             if (ShopUtil.getShopBalance(shopName) >= 0)
             {
                 String temp = df.format(ShopUtil.getShopBalance(shopName));
                 if (data.get().contains("Options.flag.jobpoint")) temp += "Points";
 
-                finalShopBalanceText += "§7 - " + temp + "\n";
+                finalShopBalanceText += t("SHOP.SHOP_INFO_DASH") + temp + "\n";
             } else
             {
-                finalShopBalanceText += "§7 - " + ChatColor.stripColor(t("SHOP_BAL_INF")) + "\n";
+                finalShopBalanceText += t("SHOP.SHOP_INFO_DASH") + ChatColor.stripColor(t("SHOP.SHOP_BAL_INF")) + "\n";
             }
         }
-
-        shopLore = shopLore.replace("[ShopBalance]", finalShopBalanceText);
 
         // 영업시간
         String finalShopHourText = "";
@@ -482,44 +485,61 @@ public final class Shop extends InGameUI
             int close = Integer.parseInt(temp[1]);
 
             finalShopHourText += t("TIME.SHOPHOURS") + "\n";
-            finalShopHourText += "§7 - " + t("TIME.OPEN") + ": " + open + "\n";
-            finalShopHourText += "§7 - " + t("TIME.CLOSE") + ": " + close + "\n";
+            finalShopHourText += t("SHOP.SHOP_INFO_DASH") + t("TIME.OPEN") + ": " + open + "\n";
+            finalShopHourText += t("SHOP.SHOP_INFO_DASH") + t("TIME.CLOSE") + ": " + close + "\n";
         }
-        shopLore = shopLore.replace("[ShopHour]", finalShopHourText);
 
         // 상점 좌표
         String finalShopPosText = "";
         if (data.get().contains("Options.pos1") && data.get().contains("Options.pos2"))
         {
-            finalShopPosText += t("POSITION") + "\n";
-            finalShopPosText += "§7 - " + data.get().getString("Options.world") + "\n";
-            finalShopPosText += "§7 - " + data.get().getString("Options.pos1") + "\n";
-            finalShopPosText += "§7 - " + data.get().getString("Options.pos2") + "\n";
+            finalShopPosText += t("SHOP.SHOP_LOCATION_B") + "\n";
+            finalShopPosText += t("SHOP.SHOP_INFO_DASH") + data.get().getString("Options.world") + "\n";
+            finalShopPosText += t("SHOP.SHOP_INFO_DASH") + data.get().getString("Options.pos1") + "\n";
+            finalShopPosText += t("SHOP.SHOP_INFO_DASH") + data.get().getString("Options.pos2") + "\n";
         }
-        shopLore = shopLore.replace("[ShopPosition]", finalShopPosText);
+
+        shopLore = shopLore.replace("{\\nShopLore}", finalLoreText.toString().isEmpty() ? "" : "\n" + finalLoreText);
+        shopLore = shopLore.replace("{\\nPermission}", finalPermText.isEmpty() ? "" : "\n" + finalPermText);
+        shopLore = shopLore.replace("{\\nTax}", "\n" + finalTaxText);
+        shopLore = shopLore.replace("{\\nShopBalance}", finalShopBalanceText.isEmpty() ? "" : "\n" + finalShopBalanceText);
+        shopLore = shopLore.replace("{\\nShopHour}", finalShopHourText.isEmpty() ? "" : "\n" + finalShopHourText);
+        shopLore = shopLore.replace("{\\nShopPosition}", finalShopPosText.isEmpty() ? "" : "\n" + finalShopPosText);
+
+        shopLore = shopLore.replace("{ShopLore}", finalLoreText);
+        shopLore = shopLore.replace("{Permission}", finalPermText);
+        shopLore = shopLore.replace("{Tax}", finalTaxText);
+        shopLore = shopLore.replace("{ShopBalance}", finalShopBalanceText);
+        shopLore = shopLore.replace("{ShopHour}", finalShopHourText);
+        shopLore = shopLore.replace("{ShopPosition}", finalShopPosText);
+
+        String temp = shopLore.replace(" ","");
+        if(ChatColor.stripColor(temp).startsWith("\n"))
+            shopLore = shopLore.replaceFirst("\n","");
 
         // 어드민이면----------
         if (player.hasPermission("dshop.admin.shopedit"))
-            shopLore += "§e____________________\n";
+            shopLore += "\n";
 
         // 플래그
-        StringBuilder finalFlagText = new StringBuilder();
+        String finalFlagText = "";
         if (player.hasPermission("dshop.admin.shopedit"))
         {
             if (data.get().contains("Options.flag") && data.get().getConfigurationSection("Options.flag").getKeys(false).size() > 0)
             {
-                finalFlagText.append("§e" + t("FLAGS")).append(":").append("\n");
+                finalFlagText = t("SHOP.FLAGS") + "\n";
                 for (String s : data.get().getConfigurationSection("Options.flag").getKeys(false))
                 {
-                    finalFlagText.append("§e - ").append(s).append("\n");
+                    finalFlagText += t("SHOP.FLAGS_ITEM").replace("{flag}", s) + "\n";
                 }
+                finalFlagText += "\n";
             }
         }
         shopLore += finalFlagText;
 
         if (player.hasPermission("dshop.admin.shopedit"))
         {
-            shopLore += t("RMB_EDIT");
+            shopLore += t("SHOP_SETTING.SHOP_SETTINGS_LORE");
         }
 
         return shopLore;

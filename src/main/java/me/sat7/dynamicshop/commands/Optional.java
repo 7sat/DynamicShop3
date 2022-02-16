@@ -2,7 +2,6 @@ package me.sat7.dynamicshop.commands;
 
 import me.sat7.dynamicshop.DynamicShop;
 import me.sat7.dynamicshop.constants.Constants;
-import me.sat7.dynamicshop.utilities.LangUtil;
 
 import org.bukkit.Bukkit;
 import org.bukkit.GameMode;
@@ -10,6 +9,8 @@ import org.bukkit.command.Command;
 import org.bukkit.command.CommandExecutor;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
+
+import static me.sat7.dynamicshop.utilities.LangUtil.t;
 
 public class Optional implements CommandExecutor
 {
@@ -25,12 +26,12 @@ public class Optional implements CommandExecutor
             Player player = (Player) sender;
             if (!player.hasPermission(Constants.USE_SHOP_PERMISSION))
             {
-                player.sendMessage(DynamicShop.dsPrefix + LangUtil.ccLang.get().getString("ERR.NO_PERMISSION"));
+                player.sendMessage(DynamicShop.dsPrefix + t("ERR.NO_PERMISSION"));
                 return true;
             }
             if (player.getGameMode() == GameMode.CREATIVE && !player.hasPermission(Constants.ADMIN_CREATIVE_PERMISSION))
             {
-                player.sendMessage(DynamicShop.dsPrefix + LangUtil.ccLang.get().getString("ERR.CREATIVE"));
+                player.sendMessage(DynamicShop.dsPrefix + t("ERR.CREATIVE"));
                 return true;
             }
 

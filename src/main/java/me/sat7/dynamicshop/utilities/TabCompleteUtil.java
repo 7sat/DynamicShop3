@@ -194,8 +194,6 @@ public final class TabCompleteUtil
                                     Help.showHelp("edit", (Player) sender, args);
                                 }
 
-                                String shopName = args[1];
-
                                 for (String s : data.get().getKeys(false))
                                 {
                                     try
