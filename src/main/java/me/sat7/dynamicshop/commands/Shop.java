@@ -692,14 +692,19 @@ public final class Shop
                             if (args[3].equalsIgnoreCase("localshop"))
                             {
                                 shopData.get().set("Options.flag.signshop", null);
+
                                 shopData.get().set("Options.pos1", (player.getLocation().getBlockX() - 2) + "_" + (player.getLocation().getBlockY() - 1) + "_" + (player.getLocation().getBlockZ() - 2));
                                 shopData.get().set("Options.pos2", (player.getLocation().getBlockX() + 2) + "_" + (player.getLocation().getBlockY() + 1) + "_" + (player.getLocation().getBlockZ() + 2));
                                 shopData.get().set("Options.world", player.getWorld().getName());
                             }
                             if (args[3].equalsIgnoreCase("deliverycharge"))
                             {
-                                shopData.get().set("Options.flag.localshop", "");
                                 shopData.get().set("Options.flag.signshop", null);
+
+                                shopData.get().set("Options.flag.localshop", "");
+                                shopData.get().set("Options.pos1", (player.getLocation().getBlockX() - 2) + "_" + (player.getLocation().getBlockY() - 1) + "_" + (player.getLocation().getBlockZ() - 2));
+                                shopData.get().set("Options.pos2", (player.getLocation().getBlockX() + 2) + "_" + (player.getLocation().getBlockY() + 1) + "_" + (player.getLocation().getBlockZ() + 2));
+                                shopData.get().set("Options.world", player.getWorld().getName());
                             }
 
                             shopData.get().set("Options.flag." + args[3].toLowerCase(), "");
