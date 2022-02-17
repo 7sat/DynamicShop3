@@ -7,31 +7,29 @@ public final class MathUtil
 
     }
 
-    // 내림
-    public static int RoundDown(int old)
+    public static int RoundDown(double value)
     {
-        if (old < 10)
+        int intNum = (int)value;
+        if(intNum != value)
+            return intNum;
+
+        if (value < 10)
+            return intNum;
+
+        int temp = 10;
+        for (int i = 0; i < 5; i++)
         {
-            return old;
+            if (intNum % temp != 0 && intNum > temp)
+            {
+                intNum = (intNum / temp) * temp;
+                break;
+            }
+            temp *= 10;
         }
 
-        if (old % 10 != 0)
-        {
-            old = (old / 10) * 10;
-        } else if (old % 100 != 0)
-        {
-            old = (old / 100) * 100;
-        } else if (old % 1000 != 0)
-        {
-            old = (old / 1000) * 1000;
-        } else
-        {
-            old = (old / 10000) * 10000;
-        }
+        if (intNum < 1) intNum = 1;
 
-        if (old < 1) old = 1;
-
-        return old;
+        return intNum;
     }
 
     public static int Clamp (int value, int min, int max)

@@ -52,26 +52,25 @@ public final class DynaShopAPI
         UIManager.Open(player, inventory, uiClass);
     }
 
-
     // 아이탬 파렛트 생성 및 열기
-    public static void openItemPalette(Player player, int page, String search)
+    public static void openItemPalette(Player player, String shopName, int targetSlot, int page, String search)
     {
         ItemPalette uiClass = new ItemPalette();
-        Inventory inventory = uiClass.getGui(player, page, search);
+        Inventory inventory = uiClass.getGui(player, shopName, targetSlot, page, search);
         UIManager.Open(player, inventory, uiClass);
     }
 
     // 아이탬 셋팅창
-    public static void openItemSettingGui(Player player, ItemStack itemStack, int tab, double buyValue, double sellValue, double minPrice, double maxPrice, int median, int stock)
+    public static void openItemSettingGui(Player player, String shopName, int shopSlotIndex, int tab, ItemStack itemStack, double buyValue, double sellValue, double minPrice, double maxPrice, int median, int stock)
     {
         DSItem dsItem = new DSItem(itemStack, buyValue, sellValue, minPrice, maxPrice, median, stock);
-        openItemSettingGui(player, tab, dsItem);
+        openItemSettingGui(player, shopName, shopSlotIndex, tab, dsItem);
     }
 
-    private static void openItemSettingGui(Player player, int tab, DSItem dsItem)
+    public static void openItemSettingGui(Player player, String shopName, int shopSlotIndex, int tab, DSItem dsItem)
     {
         ItemSettings uiClass = new ItemSettings();
-        Inventory inventory = uiClass.getGui(player, tab, dsItem);
+        Inventory inventory = uiClass.getGui(player, shopName, shopSlotIndex, tab, dsItem);
         UIManager.Open(player, inventory, uiClass);
     }
 

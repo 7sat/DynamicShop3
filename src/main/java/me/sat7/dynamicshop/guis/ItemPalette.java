@@ -19,6 +19,7 @@ import org.bukkit.inventory.meta.ItemMeta;
 import me.sat7.dynamicshop.DynamicShop;
 
 import static me.sat7.dynamicshop.utilities.LangUtil.t;
+import static me.sat7.dynamicshop.utilities.MathUtil.Clamp;
 
 public final class ItemPalette extends InGameUI
 {
@@ -32,41 +33,166 @@ public final class ItemPalette extends InGameUI
     private final int ADD_ALL = 51;
     private final int SEARCH = 53;
 
-    private static String getSortName(ItemStack stack)
-    {
-        String ret = stack.getType().name();
-
-        int idx = ret.lastIndexOf('_');
-        //int idx = ret.indexOf('_');
-        if (idx != -1)
-            ret = ret.substring(idx);
-
-        return ret;
-    }
-    private static int getArmorType(ItemStack stack)
-    {
-        String name = stack.getType().name();
-        if(name.contains("HELMET"))
-            return 0;
-        if(name.contains("CHESTPLATE"))
-            return 1;
-        if(name.contains("LEGGINGS"))
-            return 2;
-        if(name.contains("BOOTS"))
-            return 3;
-        if(name.contains("TURTLE_SHELL"))
-            return 4;
-
-        return 5;
-    }
-
     private static ArrayList<ItemStack> sortedList = new ArrayList<>();
+    private ArrayList<ItemStack> paletteList = new ArrayList<>();
+
+    private Player player;
+    private String shopName = "";
+    private int shopSlotIndex = 0;
+    private String search = "";
+    private int maxPage;
+    private int currentPage;
+
+    public Inventory getGui(Player player, String shopName, int targetSlot, int page, String search)
+    {
+        this.player = player;
+        this.shopName = shopName;
+        this.shopSlotIndex = targetSlot;
+        this.search = search;
+
+        inventory = Bukkit.createInventory(player, 54, t("PALETTE_TITLE") + "§7 | §8" + shopName);
+        paletteList.clear();
+        paletteList = CreatePaletteList();
+        maxPage = paletteList.size() / 45 + 1;
+        currentPage = Clamp(page, 1, maxPage);
+
+        // Items
+        ShowItems();
+
+        // Close Button
+        CreateCloseButton(CLOSE);
+
+        // Page Button
+        String pageString = t("PALETTE.PAGE_TITLE")
+                .replace("{curPage}", Integer.toString(page))
+                .replace("{maxPage}", Integer.toString(maxPage));
+        CreateButton(PAGE, Material.PAPER, pageString, t("PALETTE.PAGE_LORE"), page);
+
+        // Add all Button
+        if(!paletteList.isEmpty())
+            CreateButton(ADD_ALL, Material.YELLOW_STAINED_GLASS_PANE, t("PALETTE.ADD_ALL"), "");
+
+        // Search Button
+        String filterString = search.isEmpty() ? "" : t("PALETTE.FILTER_APPLIED") + search;
+        filterString += "\n" + t("PALETTE.FILTER_LORE");
+        CreateButton(SEARCH, Material.COMPASS, t("PALETTE.SEARCH"), filterString);
+
+        return inventory;
+    }
+
+    @Override
+    public void OnClickUpperInventory(InventoryClickEvent e)
+    {
+        this.player = (Player) e.getWhoClicked();
+
+        if (e.getSlot() == CLOSE) CloseUI();
+        else if (e.getSlot() == PAGE) MovePage(e.isLeftClick(), e.isRightClick());
+        else if (e.getSlot() == ADD_ALL) AddAll();
+        else if (e.getSlot() == SEARCH) OnClickSearch(e.isLeftClick(), e.isRightClick());
+        else if (e.getSlot() <= 45) OnClickItem(e.isLeftClick(), e.isRightClick(), e.isShiftClick(), e.getCurrentItem());
+    }
+
+    @Override
+    public void OnClickLowerInventory(InventoryClickEvent e)
+    {
+        this.player = (Player) e.getWhoClicked();
+
+        OnClickUserItem(e.isLeftClick(), e.isRightClick(), e.getCurrentItem());
+    }
+
+    private ArrayList<ItemStack> CreatePaletteList()
+    {
+        ArrayList<ItemStack> paletteList = new ArrayList<>();
+
+        if (search.length() > 0)
+        {
+            Material[] allMat = Material.values();
+            for (Material m : allMat)
+            {
+                String target = m.name().toUpperCase();
+                String[] temp = search.split(" ");
+
+                if (temp.length == 1)
+                {
+                    if (target.contains(search.toUpperCase()))
+                    {
+                        paletteList.add(new ItemStack(m));
+                    } else if (target.contains(search.toUpperCase().replace(" ", "_")))
+                    {
+                        paletteList.add(new ItemStack(m));
+                    }
+                } else
+                {
+                    String[] targetTemp = target.split("_");
+
+                    if (targetTemp.length > 1 && temp.length > 1 && targetTemp.length == temp.length)
+                    {
+                        boolean match = true;
+                        for (int i = 0; i < targetTemp.length; i++)
+                        {
+                            if (!targetTemp[i].startsWith(temp[i].toUpperCase()))
+                            {
+                                match = false;
+                                break;
+                            }
+                        }
+                        if (match)
+                            paletteList.add(new ItemStack(m));
+                    }
+                }
+            }
+        } else
+        {
+            if (sortedList.isEmpty())
+                SortAllItems();
+
+            paletteList = sortedList;
+        }
+
+        paletteList.removeIf(itemStack -> ShopUtil.findItemFromShop(this.shopName, new ItemStack(itemStack.getType())) != -1);
+
+        return paletteList;
+    }
+
+    private void ShowItems()
+    {
+        for (int i = 0; i < 45; i++)
+        {
+            try
+            {
+                int idx = i + ((currentPage - 1) * 45);
+                if (idx >= paletteList.size()) break;
+
+                ItemStack btn = paletteList.get(idx);
+                ItemMeta btnMeta = btn.getItemMeta();
+
+                String lastName = btn.getType().name();
+                int subStrIdx = lastName.lastIndexOf('_');
+                if (subStrIdx != -1)
+                    lastName = lastName.substring(subStrIdx);
+
+                if (btnMeta != null)
+                {
+                    String[] lore = t("PALETTE.LORE").replace("{item}", lastName.replace("_", "")).split("\n");
+                    btnMeta.setLore(new ArrayList<>(Arrays.asList(lore)));
+                    btn.setItemMeta(btnMeta);
+                }
+
+                inventory.setItem(i, btn);
+            } catch (Exception ignored)
+            {
+            }
+        }
+    }
 
     private void SortAllItems()
     {
         ArrayList<ItemStack> allItems = new ArrayList<>();
         for (Material m : Material.values())
         {
+            if (m.isAir())
+                continue;
+
             if (m.isItem())
                 allItems.add(new ItemStack(m));
         }
@@ -93,231 +219,155 @@ public final class ItemPalette extends InGameUI
                 return isRecord;
 
             return 0;
-        }).thenComparing(ItemPalette::getArmorType).thenComparing(ItemPalette::getSortName));
+        }).thenComparing(ItemPalette::GetArmorType).thenComparing(ItemPalette::GetSortName));
 
         sortedList = allItems;
     }
 
-    private String search = "";
-    private int maxPage;
-    private int currentPage;
-    String shopName = "";
-    int shopSlotIndex = 0;
-
-    public Inventory getGui(Player player, int page, String search)
+    private static String GetSortName(ItemStack stack)
     {
-        this.search = search;
+        String ret = stack.getType().name();
 
-        String[] userData = DynamicShop.userInteractItem.get(player.getUniqueId()).split("/");
-        shopName = userData[0];
-        shopSlotIndex = Integer.parseInt(userData[1]);
+        int idx = ret.lastIndexOf('_');
+        //int idx = ret.indexOf('_');
+        if (idx != -1)
+            ret = ret.substring(idx);
 
-        inventory = Bukkit.createInventory(player, 54, t("PALETTE_TITLE") + "§7 | §8" + shopName);
-        ArrayList<ItemStack> paletteList = new ArrayList<>();
+        return ret;
+    }
 
-        if (search.length() > 0)
+    private static int GetArmorType(ItemStack stack)
+    {
+        String name = stack.getType().name();
+        if (name.contains("HELMET"))
+            return 0;
+        if (name.contains("CHESTPLATE"))
+            return 1;
+        if (name.contains("LEGGINGS"))
+            return 2;
+        if (name.contains("BOOTS"))
+            return 3;
+        if (name.contains("TURTLE_SHELL"))
+            return 4;
+
+        return 5;
+    }
+
+    private String GetItemLastName(ItemStack iStack)
+    {
+        String itemName = iStack.getType().name();
+        int idx = itemName.lastIndexOf('_');
+        if (idx != -1)
+            itemName = itemName.substring(idx);
+
+        return itemName.replace("_", "");
+    }
+
+    private void CloseUI()
+    {
+        DynamicShop.userInteractItem.put(player.getUniqueId(), "");
+        DynaShopAPI.openShopGui(player, shopName, 1);
+    }
+
+    private void MovePage(boolean isLeft, boolean isRight)
+    {
+        int targetPage = currentPage;
+        if (isLeft)
         {
-            Material[] allMat = Material.values();
-            for (Material m : allMat)
-            {
-                String target = m.name().toUpperCase();
-
-                String[] temp = search.split(" ");
-
-                if (temp.length == 1)
-                {
-                    if (target.contains(search.toUpperCase()))
-                    {
-                        paletteList.add(new ItemStack(m));
-                    }
-                    else if (target.contains(search.toUpperCase().replace(" ", "_")))
-                    {
-                        paletteList.add(new ItemStack(m));
-                    }
-                }
-                else
-                {
-                    String[] targetTemp = target.split("_");
-
-                    if(targetTemp.length > 1 && temp.length > 1 && targetTemp.length == temp.length)
-                    {
-                        boolean match = true;
-                        for(int i = 0; i < targetTemp.length; i++)
-                        {
-                            if(!targetTemp[i].startsWith(temp[i].toUpperCase()))
-                            {
-                                match = false;
-                                break;
-                            }
-                        }
-                        if(match)
-                            paletteList.add(new ItemStack(m));
-                    }
-                }
-            }
-        } else
+            targetPage -= 1;
+            if (targetPage < 1) targetPage = maxPage;
+        } else if (isRight)
         {
-            if (sortedList.isEmpty())
-                SortAllItems();
-
-            paletteList = sortedList;
+            targetPage += 1;
+            if (targetPage > maxPage) targetPage = 1;
         }
 
-        paletteList.removeIf(itemStack -> ShopUtil.findItemFromShop(shopName, new ItemStack(itemStack.getType())) != -1);
+        if(targetPage == currentPage)
+            return;
 
-        maxPage = paletteList.size() / 45 + 1;
-        currentPage = page;
+        DynaShopAPI.openItemPalette(player, shopName, shopSlotIndex, targetPage, this.search);
+    }
 
-        CreateCloseButton(CLOSE); // 닫기 버튼
+    private void AddAll()
+    {
+        if(paletteList.isEmpty())
+            return;
 
-        String pageString = t("PALETTE.PAGE_TITLE");
-        pageString = pageString.replace("{curPage}", page + "");
-        pageString = pageString.replace("{maxPage}", maxPage + "");
-
-        CreateButton(PAGE, Material.PAPER, pageString, t("PALETTE.PAGE_LORE"), page); // 페이지 버튼
-        CreateButton(ADD_ALL, Material.YELLOW_STAINED_GLASS_PANE, t("PALETTE.ADD_ALL"), ""); // 모두추가 버튼
-        String filterString = search.isEmpty() ? "" : t("PALETTE.FILTER_APPLIED") + search;
-        filterString += "\n" + t("PALETTE.FILTER_LORE");
-        CreateButton(SEARCH, Material.COMPASS, t("PALETTE.SEARCH"), filterString); // 검색 버튼
-
-        //45개씩 끊어서 표시.
+        int targetSlotIdx;
         for (int i = 0; i < 45; i++)
         {
-            try
+            if (inventory.getItem(i) != null)
             {
-                int idx = i + ((page - 1) * 45);
-                if (idx >= paletteList.size()) break;
+                //noinspection ConstantConditions
+                Material material = inventory.getItem(i).getType();
+                if (material == Material.AIR)
+                    continue;
 
-                ItemStack btn = paletteList.get(idx);
-                ItemMeta btnMeta = btn.getItemMeta();
+                ItemStack itemStack = new ItemStack(material); // UI요소를 그대로 쓰는 대신 새로 생성.
 
-                String searchName = btn.getType().name();
-                int subStrIdx = searchName.lastIndexOf('_');
-                if (subStrIdx != -1)
-                    searchName = searchName.substring(subStrIdx);
+                int existSlot = ShopUtil.findItemFromShop(shopName, itemStack);
+                if (-1 != existSlot) // 이미 상점에 등록되어 있는 아이템 무시
+                    continue;
 
-                if (btnMeta != null)
-                {
-                    String[] lore = t("PALETTE.LORE").replace("{item}", searchName.replace("_","")).split("\n");
-                    btnMeta.setLore(new ArrayList<>(Arrays.asList(lore)));
-                    btn.setItemMeta(btnMeta);
-                }
+                targetSlotIdx = ShopUtil.findEmptyShopSlot(shopName, shopSlotIndex, true);
 
-                inventory.setItem(i, btn);
-            } catch (Exception ignored)
-            {
+                ShopUtil.addItemToShop(shopName, targetSlotIdx, itemStack, 1, 1, 0.01, -1, 10000, 10000);
             }
         }
-        return inventory;
+        DynaShopAPI.openShopGui(player, shopName, 1);
     }
 
-    @Override
-    public void OnClickUpperInventory(InventoryClickEvent e)
+    private void OnClickSearch(boolean isLeft, boolean isRight)
     {
-        Player player = (Player) e.getWhoClicked();
-
-        // 닫기 버튼
-        if (e.getSlot() == CLOSE)
+        if (isLeft)
         {
-            DynamicShop.userInteractItem.put(player.getUniqueId(), "");
-            DynaShopAPI.openShopGui(player, shopName, 1);
-        }
-        // 페이지 버튼
-        else if (e.getSlot() == PAGE)
+            player.closeInventory();
+
+            DynamicShop.userTempData.put(player.getUniqueId(), "waitforPalette");
+            OnChat.WaitForInput(player);
+
+            player.sendMessage(DynamicShop.dsPrefix + t("MESSAGE.SEARCH_ITEM"));
+        } else if (isRight)
         {
-            int targetPage = currentPage;
-            if (e.isLeftClick())
-            {
-                targetPage -= 1;
-                if (targetPage < 1) targetPage = maxPage;
-            } else if (e.isRightClick())
-            {
-                targetPage += 1;
-                if (targetPage > maxPage) targetPage = 1;
-            }
-
-            DynaShopAPI.openItemPalette(player, targetPage, this.search);
-        }
-        // 모두 추가 버튼
-        else if (e.getSlot() == ADD_ALL)
-        {
-            int targetSlotIdx = shopSlotIndex;
-            for (int i = 0; i < 45; i++)
-            {
-                if (e.getClickedInventory() != null && e.getClickedInventory().getItem(i) != null)
-                {
-                    //noinspection ConstantConditions
-                    Material material = e.getClickedInventory().getItem(i).getType();
-                    if (material == Material.AIR)
-                        continue;
-
-                    int existSlot = ShopUtil.findItemFromShop(shopName, new ItemStack(material));
-                    if (-1 != existSlot) // 이미 상점에 등록되어 있는 아이템 무시
-                        continue;
-
-                    targetSlotIdx = ShopUtil.findEmptyShopSlot(shopName, shopSlotIndex, true);
-                    ItemStack tempIs = new ItemStack(material);
-                    ShopUtil.addItemToShop(shopName, targetSlotIdx, tempIs, 1, 1, 0.01, -1, 10000, 10000);
-                }
-            }
-            DynaShopAPI.openShopGui(player, shopName, 1);
-        }
-        // 검색 버튼
-        else if (e.getSlot() == SEARCH)
-        {
-            if(e.isLeftClick())
-            {
-                player.closeInventory();
-
-                DynamicShop.userTempData.put(player.getUniqueId(), "waitforPalette");
-                OnChat.WaitForInput(player);
-
-                player.sendMessage(DynamicShop.dsPrefix + t("MESSAGE.SEARCH_ITEM"));
-            }
-            else if(e.isRightClick())
-            {
-                DynaShopAPI.openItemPalette(player, currentPage, "");
-            }
-        }
-        // 파렛트에서 뭔가 선택
-        else if (e.getSlot() <= 45)
-        {
-            if (e.getCurrentItem() != null && !e.getCurrentItem().getType().toString().equals(Material.AIR.toString()))
-            {
-                ItemStack iStack = new ItemStack(e.getCurrentItem().getType());
-
-                if (e.isLeftClick())
-                {
-                    DynaShopAPI.openItemSettingGui(player, iStack, 1, 10, 10, 0.01, -1, 10000, 10000);
-                } else if (e.isRightClick())
-                {
-                    int targetSlotIdx = ShopUtil.findEmptyShopSlot(shopName, shopSlotIndex, true);
-                    DynamicShop.userInteractItem.put(player.getUniqueId(), shopName + "/" + targetSlotIdx + 1);
-
-                    ShopUtil.addItemToShop(shopName, targetSlotIdx, iStack, -1, -1, -1, -1, -1, -1);
-                    DynaShopAPI.openShopGui(player, shopName, targetSlotIdx / 45 + 1);
-                }
-            }
+            if(!search.isEmpty())
+                DynaShopAPI.openItemPalette(player, shopName, shopSlotIndex, currentPage, "");
         }
     }
 
-    @Override
-    public void OnClickLowerInventory(InventoryClickEvent e)
+    private void OnClickItem(boolean isLeft, boolean isRight, boolean isShift, ItemStack item)
     {
-        Player player = (Player) e.getWhoClicked();
+        if (item == null || item.getType() == Material.AIR)
+            return;
 
-        if (e.getCurrentItem() != null && !e.getCurrentItem().getType().toString().equals(Material.AIR.toString()))
+        // 인자로 들어오는 item은 UI요소임
+        ItemStack itemStack = new ItemStack(item.getType());
+
+        if (isLeft)
         {
-            if (e.isLeftClick())
-            {
-                DynaShopAPI.openItemSettingGui(player, e.getCurrentItem(), 1, 10, 10, 0.01, -1, 1000, 1000);
-            } else
-            {
-                String[] temp = DynamicShop.userInteractItem.get(player.getUniqueId()).split("/");
+            DynaShopAPI.openItemSettingGui(player, shopName, shopSlotIndex,0, itemStack, 10, 10, 0.01, -1, 10000, 10000);
+        } else if (isRight)
+        {
+            int targetSlotIdx = ShopUtil.findEmptyShopSlot(shopName, shopSlotIndex, true);
+            DynamicShop.userInteractItem.put(player.getUniqueId(), shopName + "/" + targetSlotIdx + 1);
+            ShopUtil.addItemToShop(shopName, targetSlotIdx, itemStack, -1, -1, -1, -1, -1, -1);
 
-                ShopUtil.addItemToShop(temp[0], Integer.parseInt(temp[1]), e.getCurrentItem(), -1, -1, -1, -1, -1, -1);
-                DynaShopAPI.openShopGui(player, temp[0], Integer.parseInt(temp[1]) / 45 + 1);
-            }
+            DynaShopAPI.openShopGui(player, shopName, targetSlotIdx / 45 + 1);
+        }
+    }
+
+    private void OnClickUserItem(boolean isLeft, boolean isRight, ItemStack item)
+    {
+        if (item == null || item.getType() == Material.AIR)
+            return;
+
+        if (isLeft)
+        {
+            DynaShopAPI.openItemSettingGui(player, shopName, shopSlotIndex, 0, item, 10, 10, 0.01, -1, 1000, 1000);
+        } else if (isRight)
+        {
+            ShopUtil.addItemToShop(shopName, shopSlotIndex, item, -1, -1, -1, -1, -1, -1);
+
+            DynaShopAPI.openShopGui(player, shopName, shopSlotIndex / 45 + 1);
         }
     }
 }

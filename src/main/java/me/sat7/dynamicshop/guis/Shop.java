@@ -369,7 +369,7 @@ public final class Shop extends InGameUI
                             ItemStack iStack = new ItemStack(e.getCurrentItem().getType());
                             iStack.setItemMeta((ItemMeta) data.get().get(idx + ".itemStack"));
 
-                            DynaShopAPI.openItemSettingGui(player, iStack, 1, buyValue, sellValue, valueMin, valueMax, median, stock);
+                            DynaShopAPI.openItemSettingGui(player, shopName, idx, 0, iStack, buyValue, sellValue, valueMin, valueMax, median, stock);
                         } else
                         {
                             ShopUtil.removeItemFromShop(shopName, idx);
@@ -419,7 +419,7 @@ public final class Shop extends InGameUI
             else if (player.hasPermission("dshop.admin.shopedit"))
             {
                 DynamicShop.userInteractItem.put(player.getUniqueId(), shopName + "/" + clickedIdx); // 선택한 아이탬의 인덱스 저장
-                DynaShopAPI.openItemPalette(player, 1, "");
+                DynaShopAPI.openItemPalette(player, shopName, clickedIdx, 1, "");
             }
         }
     }

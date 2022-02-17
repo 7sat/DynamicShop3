@@ -374,8 +374,8 @@ public final class LangUtil
             ccLang.get().addDefault("SHOP_SETTING.SHOP_SETTINGS_LORE", "§eRMB: Shop Settings");
             ccLang.get().addDefault("SHOP_SETTING.SIGN_SHOP_LORE", "§fOnly accessible via sign.");
             ccLang.get().addDefault("SHOP_SETTING.LOCAL_SHOP_LORE", "§fMust visit actual store locations.");
-            ccLang.get().addDefault("SHOP_SETTING.DELIVERY_CHARGE_LORE", "§fYou can pay for delivery without having to go to the shop location to transact.");
-            ccLang.get().addDefault("SHOP_SETTING.JOB_POINT_LORE", "§fTrade with job points. Requires 'Jobs Reborn' plugin");
+            ccLang.get().addDefault("SHOP_SETTING.DELIVERY_CHARGE_LORE", "§fYou can pay for delivery without \n§fhaving to go to the shop location to transact.");
+            ccLang.get().addDefault("SHOP_SETTING.JOB_POINT_LORE", "§fTrade with job points. \n§fRequires 'Jobs Reborn' plugin");
             ccLang.get().addDefault("SHOP_SETTING.SHOW_VALUE_CHANGE_LORE", "§fShows the amount of change in price.");
             ccLang.get().addDefault("SHOP_SETTING.HIDE_STOCK", "§fHide stock.");
             ccLang.get().addDefault("SHOP_SETTING.HIDE_PRICING_TYPE", "§fHide price type.");

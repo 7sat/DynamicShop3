@@ -75,8 +75,9 @@ public class OnChat implements Listener
         {
             e.setCancelled(true);
 
+            String[] userInteractData = DynamicShop.userInteractItem.get(p.getUniqueId()).split("/");
             DynamicShop.userTempData.put(uuid, "");
-            DynaShopAPI.openItemPalette(p, 1, e.getMessage());
+            DynaShopAPI.openItemPalette(p, userInteractData[0], Integer.parseInt(userInteractData[1]), 1, e.getMessage());
             cancelRunnable(p);
         } else if (userData.contains("waitforInput"))
         {
@@ -152,7 +153,6 @@ public class OnChat implements Listener
                 p.sendMessage(DynamicShop.dsPrefix + t("MESSAGE.INPUT_CANCELED"));
             }
 
-            DynamicShop.userInteractItem.put(uuid, "");
             DynamicShop.userTempData.put(uuid, "");
             cancelRunnable(p);
         }
