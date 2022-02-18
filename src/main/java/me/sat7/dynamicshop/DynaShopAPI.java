@@ -61,9 +61,9 @@ public final class DynaShopAPI
     }
 
     // 아이탬 셋팅창
-    public static void openItemSettingGui(Player player, String shopName, int shopSlotIndex, int tab, ItemStack itemStack, double buyValue, double sellValue, double minPrice, double maxPrice, int median, int stock)
+    public static void openItemSettingGui(Player player, String shopName, int shopSlotIndex, int tab, ItemStack itemStack, double buyValue, double sellValue, double minPrice, double maxPrice, int median, int stock, int maxStock)
     {
-        DSItem dsItem = new DSItem(itemStack, buyValue, sellValue, minPrice, maxPrice, median, stock);
+        DSItem dsItem = new DSItem(itemStack, buyValue, sellValue, minPrice, maxPrice, median, stock, maxStock);
         openItemSettingGui(player, shopName, shopSlotIndex, tab, dsItem);
     }
 
@@ -162,7 +162,7 @@ public final class DynaShopAPI
         if (validateShopName(shopName))
         {
             CustomConfig data = ShopUtil.shopConfigFiles.get(shopName);
-            
+
             ArrayList<ItemStack> list = new ArrayList<>();
             for (String s : data.get().getKeys(false))
             {

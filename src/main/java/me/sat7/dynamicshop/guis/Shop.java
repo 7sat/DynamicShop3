@@ -365,11 +365,12 @@ public final class Shop extends InGameUI
                             if (valueMax <= 0) valueMax = -1;
                             int median = data.get().getInt(idx + ".median");
                             int stock = data.get().getInt(idx + ".stock");
+                            int maxStock = data.get().getInt(idx + ".maxStock", -1);
 
                             ItemStack iStack = new ItemStack(e.getCurrentItem().getType());
                             iStack.setItemMeta((ItemMeta) data.get().get(idx + ".itemStack"));
 
-                            DynaShopAPI.openItemSettingGui(player, shopName, idx, 0, iStack, buyValue, sellValue, valueMin, valueMax, median, stock);
+                            DynaShopAPI.openItemSettingGui(player, shopName, idx, 0, iStack, buyValue, sellValue, valueMin, valueMax, median, stock, maxStock);
                         } else
                         {
                             ShopUtil.removeItemFromShop(shopName, idx);

@@ -95,6 +95,8 @@ public final class LangUtil
             ccLang.get().addDefault("ITEM_SETTING.PRICE_MAX", "§f최대 가격: ");
             ccLang.get().addDefault("ITEM_SETTING.MEDIAN", "§f중앙값: ");
             ccLang.get().addDefault("ITEM_SETTING.STOCK", "§f재고: ");
+            ccLang.get().addDefault("ITEM_SETTING.MAX_STOCK", "§f재고 상한: ");
+            ccLang.get().addDefault("ITEM_SETTING.MAX_STOCK_LORE", "§f재고량이 이보다 많아지면\n§f더이상 상점에 판매할 수 없게됩니다.");
             ccLang.get().addDefault("ITEM_SETTING.INF_STOCK", "무한 재고");
             ccLang.get().addDefault("ITEM_SETTING.STATIC_PRICE", "고정 가격");
             ccLang.get().addDefault("ITEM_SETTING.UNLIMITED", "무제한");
@@ -244,6 +246,7 @@ public final class LangUtil
             ccLang.get().addDefault("MESSAGE.CHANGES_APPLIED_2", "변경사항 적용됨");
             ccLang.get().addDefault("MESSAGE.RECOMMEND_APPLIED", "추천 값 적용됨. {playerNum}명 기준입니다. config파일에서 이 값을 바꿀 수 있습니다.");
             ccLang.get().addDefault("MESSAGE.TRANSFER_SUCCESS", "송금 완료");
+            ccLang.get().addDefault("MESSAGE.PURCHASE_REJECTED", "상점에 이 아이템이 너무 많습니다. 지금은 팔 수 없습니다.");
 
             ccLang.get().addDefault("HELP.TITLE", "§f도움말: {command} --------------------");
             ccLang.get().addDefault("HELP.SHOP", "상점을 엽니다.");
@@ -260,7 +263,7 @@ public final class LangUtil
             ccLang.get().addDefault("HELP.EDIT_ALL_2", "§c주의. 값이 유효한지는 확인하지 않음.");
             ccLang.get().addDefault("HELP.RELOAD", "플러그인을 재시작 합니다.");
             ccLang.get().addDefault("HELP.RELOADED", "플러그인 리로드됨!");
-            ccLang.get().addDefault("HELP.USAGE", "사용법");            
+            ccLang.get().addDefault("HELP.USAGE", "사용법");
             ccLang.get().addDefault("HELP.ITEM_ALREADY_EXIST", "§7§o{item}(은)는 이미 판매중임.\n   {info}\n   명령어를 입력하면 값이 수정됩니다.");
             ccLang.get().addDefault("HELP.ITEM_INFO", "§7§o{item}의 현재 설정:\n   {info}");
             ccLang.get().addDefault("HELP.REMOVE_ITEM", "§f§o인자를 0으로 입력하면 이 아이탬을 상점에서 §4제거§f합니다.");
@@ -391,6 +394,8 @@ public final class LangUtil
             ccLang.get().addDefault("ITEM_SETTING.PRICE_MAX", "§fMaximum price: ");
             ccLang.get().addDefault("ITEM_SETTING.MEDIAN", "§fMedian: ");
             ccLang.get().addDefault("ITEM_SETTING.STOCK", "§fStock: ");
+            ccLang.get().addDefault("ITEM_SETTING.MAX_STOCK", "§fMax stock: ");
+            ccLang.get().addDefault("ITEM_SETTING.MAX_STOCK_LORE", "§fIf the stock exceeds this,\n§fthe shop will refuse to purchase.");
             ccLang.get().addDefault("ITEM_SETTING.INF_STOCK", "Infinite stock");
             ccLang.get().addDefault("ITEM_SETTING.STATIC_PRICE", "Fixed price");
             ccLang.get().addDefault("ITEM_SETTING.UNLIMITED", "Unlimited");
@@ -540,6 +545,7 @@ public final class LangUtil
             ccLang.get().addDefault("MESSAGE.CHANGES_APPLIED_2", "Changes applied");
             ccLang.get().addDefault("MESSAGE.RECOMMEND_APPLIED", "Recommended value applied. It is based on {playerNum}players. You can change this value in the config file.");
             ccLang.get().addDefault("MESSAGE.TRANSFER_SUCCESS", "Remittance completed");
+            ccLang.get().addDefault("MESSAGE.PURCHASE_REJECTED", "There are too many of these items in the shop. Can't sell it now.");
 
             ccLang.get().addDefault("HELP.TITLE", "§fHelp: {command} --------------------");
             ccLang.get().addDefault("HELP.SHOP", "Open shop");

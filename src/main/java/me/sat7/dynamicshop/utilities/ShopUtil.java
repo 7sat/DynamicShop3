@@ -126,6 +126,10 @@ public final class ShopUtil
     // 상점에 아이탬 추가
     public static boolean addItemToShop(String shopName, int idx, ItemStack item, double buyValue, double sellValue, double minValue, double maxValue, int median, int stock)
     {
+        return addItemToShop(shopName, idx, item, buyValue, sellValue, minValue, maxValue, median, stock, -1);
+    }
+    public static boolean addItemToShop(String shopName, int idx, ItemStack item, double buyValue, double sellValue, double minValue, double maxValue, int median, int stock, int maxStock)
+    {
         CustomConfig data = shopConfigFiles.get(shopName);
         if (data == null)
             return false;
@@ -171,6 +175,16 @@ public final class ShopUtil
 
                 data.get().set(idx + ".median", median);
                 data.get().set(idx + ".stock", stock);
+
+                if(maxStock > 0)
+                {
+                    data.get().set(idx + ".maxStock", maxStock);
+                }
+                else
+                {
+                    data.get().set(idx + ".maxStock", null);
+                }
+
             } else
             {
                 // idx,null하면 안됨. 존재는 하되 하위 데이터만 없어야함.
@@ -180,6 +194,7 @@ public final class ShopUtil
                 data.get().set(idx + ".valueMax", null);
                 data.get().set(idx + ".median", null);
                 data.get().set(idx + ".stock", null);
+                data.get().set(idx + ".maxStock", null);
             }
 
             data.save();
@@ -198,6 +213,10 @@ public final class ShopUtil
 
     // 상점 아이탬의 value, median, stock을 수정
     public static void editShopItem(String shopName, int idx, double buyValue, double sellValue, double minValue, double maxValue, int median, int stock)
+    {
+        editShopItem(shopName, idx, buyValue, sellValue, minValue, maxValue, median, stock, -1);
+    }
+    public static void editShopItem(String shopName, int idx, double buyValue, double sellValue, double minValue, double maxValue, int median, int stock, int maxStock)
     {
         CustomConfig data = shopConfigFiles.get(shopName);
         if (data == null)
@@ -224,6 +243,14 @@ public final class ShopUtil
         } else
         {
             data.get().set(idx + ".valueMax", null);
+        }
+        if(maxStock > 0)
+        {
+            data.get().set(idx + ".maxStock", maxStock);
+        }
+        else
+        {
+            data.get().set(idx + ".maxStock", null);
         }
         data.get().set(idx + ".median", median);
         data.get().set(idx + ".stock", stock);
@@ -552,6 +579,12 @@ public final class ShopUtil
                     continue;
                 }
 
+                // 최대 재고를 넘겨서 매입 거절
+                int maxStock = data.get().getInt(sameItemIdx + ".maxStock", -1);
+                int stock = data.get().getInt(sameItemIdx + ".stock");
+                if (maxStock != -1 && maxStock <= stock)
+                    continue;
+
                 double value = data.get().getDouble(sameItemIdx + ".value");
 
                 int tax = ConfigUtil.getCurrentTax();
@@ -763,7 +796,7 @@ public final class ShopUtil
             data.save();
         }
     }
-    
+
     // Shop.yml 한덩어리로 되있는 데이터를 새 버전 방식으로 변환함
     public static void ConvertOldShopData()
     {

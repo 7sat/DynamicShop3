@@ -366,6 +366,15 @@ public final class ItemTrade extends InGameUI
             return;
         }
 
+        // 상점이 매입을 거절.
+        int stock = shopData.get().getInt(tradeIdx + ".stock");
+        int maxStock = shopData.get().getInt(tradeIdx + ".maxStock", -1);
+        if (maxStock != -1 && maxStock < stock + itemStack.getAmount())
+        {
+            player.sendMessage(DynamicShop.dsPrefix + t("MESSAGE.PURCHASE_REJECTED"));
+            return;
+        }
+
         if (options.contains("flag.jobpoint"))
         {
             Sell.sellItemJobPoint(player, shopName, tradeIdx, itemStack, -deliveryCharge, infiniteStock);

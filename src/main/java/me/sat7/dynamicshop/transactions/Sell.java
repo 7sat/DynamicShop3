@@ -20,6 +20,7 @@ import net.milkbowl.vault.economy.Economy;
 import net.milkbowl.vault.economy.EconomyResponse;
 
 import static me.sat7.dynamicshop.utilities.LangUtil.t;
+import static me.sat7.dynamicshop.utilities.MathUtil.Clamp;
 
 public final class Sell
 {
@@ -36,44 +37,80 @@ public final class Sell
         double priceSellOld = DynaShopAPI.getSellPrice(shopName, tempIS);
         double priceBuyOld = Calc.getCurrentPrice(shopName, String.valueOf(tradeIdx), true);
         int stockOld = data.get().getInt(tradeIdx + ".stock");
+        int maxStock = data.get().getInt(tradeIdx + ".maxStock", -1);
         double priceSum;
 
         // 실제 판매 가능량 확인
-        int actualAmount;
+        int tradeAmount;
         if (isShiftClick)
         {
             int amount = 0;
             for (ItemStack item : player.getInventory().getStorageContents())
             {
-                if (item == null || item.getType() == null) continue;
+                if (item == null)
+                    continue;
+
                 if (item.isSimilar(tempIS))
                 {
-                    amount += item.getAmount();
-                    player.getInventory().removeItem(item);
+                    if(maxStock == -1)
+                    {
+                        amount += item.getAmount();
+                        player.getInventory().removeItem(item);
+                    }
+                    else
+                    {
+                        int tempAmount = Clamp(tempIS.getAmount(), 0, maxStock - stockOld);
+                        int itemLeft = item.getAmount() - tempAmount;
+                        if(itemLeft <= 0)
+                        {
+                            player.getInventory().removeItem(item);
+                        }
+                        else
+                        {
+                            item.setAmount(itemLeft);
+                        }
+                        amount += tempAmount;
+                    }
                 }
+
+                if(maxStock != -1 && amount + stockOld <= maxStock)
+                    break;
             }
-            actualAmount = amount;
+            tradeAmount = amount;
         } else
         {
-            actualAmount = tempIS.getAmount();
-            player.getInventory().setItem(slot, null);
+            if(maxStock == -1)
+            {
+                tradeAmount = player.getInventory().getItem(slot).getAmount();
+                player.getInventory().setItem(slot, null);
+            }
+            else
+            {
+                tradeAmount = Clamp(tempIS.getAmount(), 0, maxStock - stockOld);
+                int itemAmountOld = player.getInventory().getItem(slot).getAmount();
+                int itemLeft = itemAmountOld - tradeAmount;
+
+                if(itemLeft <= 0)
+                    player.getInventory().setItem(slot, null);
+                else
+                    player.getInventory().getItem(slot).setAmount(itemLeft);
+            }
         }
         player.updateInventory();
 
         // 판매할 아이탬이 없음
-        if (actualAmount == 0)
+        if (tradeAmount == 0)
         {
             player.sendMessage(DynamicShop.dsPrefix + t("MESSAGE.NO_ITEM_TO_SELL"));
             return 0;
         }
 
-        priceSum = Calc.calcTotalCost(shopName, String.valueOf(tradeIdx), -actualAmount);
+        priceSum = Calc.calcTotalCost(shopName, String.valueOf(tradeIdx), -tradeAmount);
 
         // 재고 증가
-        if (data.get().getInt(tradeIdx + ".stock") > 0)
+        if (stockOld > 0)
         {
-            data.get().set(tradeIdx + ".stock",
-                    data.get().getInt(tradeIdx + ".stock") + actualAmount);
+            data.get().set(tradeIdx + ".stock", stockOld + tradeAmount);
         }
 
         // 실제 거래부----------
@@ -85,11 +122,11 @@ public final class Sell
             data.save();
 
             //로그 기록
-            LogUtil.addLog(shopName, tempIS.getType().toString(), -actualAmount, priceSum, "vault", player.getName());
+            LogUtil.addLog(shopName, tempIS.getType().toString(), -tradeAmount, priceSum, "vault", player.getName());
 
             player.sendMessage(DynamicShop.dsPrefix + t("MESSAGE.SELL_SUCCESS")
                     .replace("{item}", tempIS.getType().name())
-                    .replace("{amount}", Integer.toString(actualAmount))
+                    .replace("{amount}", Integer.toString(tradeAmount))
                     .replace("{price}", econ.format(r.amount))
                     .replace("{bal}", econ.format(econ.getBalance((player)))));
             player.playSound(player.getLocation(), Sound.valueOf("ENTITY_EXPERIENCE_ORB_PICKUP"), 1, 1);
