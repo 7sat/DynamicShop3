@@ -39,8 +39,8 @@ public class OnSignClick implements Listener
 
         //noinspection ConstantConditions
         if (e.getLine(0).equalsIgnoreCase("[dshop]")
-            || e.getLine(0).equalsIgnoreCase("[ds]")
-            || e.getLine(0).equalsIgnoreCase("[dynamicshop]"))
+                || e.getLine(0).equalsIgnoreCase("[ds]")
+                || e.getLine(0).equalsIgnoreCase("[dynamicshop]"))
         {
             String signId = CreateID(e.getBlock());
 
@@ -61,7 +61,6 @@ public class OnSignClick implements Listener
                 return;
             }
 
-            //e.setLine(0,"§3[DynamicShop]");
             e.setLine(0, e.getLine(3));
             e.setLine(1, "§a" + e.getLine(1));
             e.setLine(3, "");
@@ -121,7 +120,6 @@ public class OnSignClick implements Listener
         {
             if (e.getClickedBlock().getType().toString().contains("WALL_SIGN"))
             {
-
                 Sign s = (Sign) e.getClickedBlock().getState();
                 String signId = CreateID(e.getClickedBlock());
 
@@ -185,6 +183,16 @@ public class OnSignClick implements Listener
                         p.sendMessage(DynamicShop.dsPrefix + t("ERR.CREATIVE"));
                         return;
                     }
+
+                    if(!p.hasPermission("dshop.admin.shopedit"))
+                        e.setCancelled(true);
+                    else
+                    {
+                        String itemName = p.getInventory().getItemInMainHand().getType().name();
+                        if(itemName.contains("INK_SAC") || itemName.contains("_DYE"))
+                            return;
+                    }
+
 
                     //권한 확인
                     String permission = ShopUtil.shopConfigFiles.get(shopName).get().getString("Options.permission");

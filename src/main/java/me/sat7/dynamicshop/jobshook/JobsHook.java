@@ -6,9 +6,9 @@ import org.bukkit.entity.Player;
 import com.gamingmesh.jobs.Jobs;
 import com.gamingmesh.jobs.container.PlayerPoints;
 
-import me.sat7.dynamicshop.DynaShopAPI;
 import me.sat7.dynamicshop.DynamicShop;
 
+import static me.sat7.dynamicshop.utilities.LangUtil.n;
 import static me.sat7.dynamicshop.utilities.LangUtil.t;
 
 public final class JobsHook
@@ -42,7 +42,7 @@ public final class JobsHook
             else
             {
                 p.sendMessage(DynamicShop.dsPrefix + t("MESSAGE.NOT_ENOUGH_POINT")
-                        .replace("{bal}", DynaShopAPI.df.format(getCurJobPoints(p))));
+                        .replace("{bal}", n(getCurJobPoints(p))));
                 return false;
             }
         }

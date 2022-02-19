@@ -6,6 +6,8 @@ import me.sat7.dynamicshop.DynamicShop;
 import me.sat7.dynamicshop.constants.Constants;
 import me.sat7.dynamicshop.files.CustomConfig;
 
+import java.text.DecimalFormat;
+
 public final class LangUtil
 {
     public static CustomConfig ccLang;
@@ -164,6 +166,7 @@ public final class LangUtil
             ccLang.get().addDefault("LOG.DELETE", "§4로그 삭제");
 
             ccLang.get().addDefault("STOCK_SIMULATOR_TITLE", "§3재고 시뮬레이터");
+            ccLang.get().addDefault("STOCK_SIMULATOR.CHANGE_SAMPLE_LORE", "§e좌, 우클릭: 아이템 변경");
             ccLang.get().addDefault("STOCK_SIMULATOR.SIMULATOR_BUTTON_LORE", "§e우클릭: 시뮬레이터");
             ccLang.get().addDefault("STOCK_SIMULATOR.RUN_TITLE", "§f실행");
             ccLang.get().addDefault("STOCK_SIMULATOR.RUN_LORE", "§e좌클릭: 시뮬레이션 실행\n§e우클릭: 설정값을 상점에 적용합니다\n§f아이템은 영향받지 않습니다.");
@@ -465,6 +468,7 @@ public final class LangUtil
             ccLang.get().addDefault("LOG.DELETE", "§4Delete log");
 
             ccLang.get().addDefault("STOCK_SIMULATOR_TITLE", "§3Stock Simulator");
+            ccLang.get().addDefault("STOCK_SIMULATOR.CHANGE_SAMPLE_LORE", "§eLMB, RMB: Change Item");
             ccLang.get().addDefault("STOCK_SIMULATOR.SIMULATOR_BUTTON_LORE", "§eRMB: Simulator");
             ccLang.get().addDefault("STOCK_SIMULATOR.RUN_TITLE", "§fRun");
             ccLang.get().addDefault("STOCK_SIMULATOR.RUN_LORE", "§eLMB: Run simulation\n§eRMB: Apply the settings to the shop\n§fItems are not affected.");
@@ -642,10 +646,31 @@ public final class LangUtil
 
         ccLang.get().options().copyDefaults(true);
         ccLang.save();
+
+        ReloadNumberFormat();
     }
 
     public static String t(String key)
     {
         return ccLang.get().getString(key);
+    }
+
+    private static void ReloadNumberFormat()
+    {
+        intFormat = new DecimalFormat(DynamicShop.plugin.getConfig().getString("UI.IntFormat", "###,###"));
+        doubleFormat = new DecimalFormat(DynamicShop.plugin.getConfig().getString("UI.DoubleFormat", "###,###.##"));
+    }
+
+    private static DecimalFormat intFormat;
+    private static DecimalFormat doubleFormat;
+
+    public static String n(int i)
+    {
+        return intFormat.format(i);
+    }
+
+    public static String n(double i)
+    {
+        return doubleFormat.format(i);
     }
 }

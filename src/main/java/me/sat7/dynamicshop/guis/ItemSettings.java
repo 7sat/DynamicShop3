@@ -18,7 +18,7 @@ import me.sat7.dynamicshop.DynamicShop;
 import me.sat7.dynamicshop.models.DSItem;
 import me.sat7.dynamicshop.transactions.Calc;
 
-import static me.sat7.dynamicshop.DynaShopAPI.df;
+import static me.sat7.dynamicshop.utilities.LangUtil.n;
 import static me.sat7.dynamicshop.utilities.LangUtil.t;
 import static me.sat7.dynamicshop.utilities.MathUtil.Clamp;
 
@@ -79,13 +79,13 @@ public final class ItemSettings extends InGameUI
 
         inventory = Bukkit.createInventory(player, 36, t("ITEM_SETTING_TITLE") + "§7 | §8" + shopName);
 
-        String buyValueStr = t("ITEM_SETTING.VALUE_BUY") + dsItem.getBuyValue();
-        String sellValueStr = t("ITEM_SETTING.VALUE_SELL") + dsItem.getSellValue();
-        String priceMinStr = t("ITEM_SETTING.PRICE_MIN") + dsItem.getMinPrice();
-        String priceMaxStr = t("ITEM_SETTING.PRICE_MAX") + dsItem.getMaxPrice();
-        String medianStr = t("ITEM_SETTING.MEDIAN") + dsItem.getMedian();
-        String stockStr = t("ITEM_SETTING.STOCK") + dsItem.getStock();
-        String maxStockStr = t("ITEM_SETTING.MAX_STOCK") + dsItem.getMaxStock();
+        String buyValueStr = t("ITEM_SETTING.VALUE_BUY") + n(dsItem.getBuyValue());
+        String sellValueStr = t("ITEM_SETTING.VALUE_SELL") + n(dsItem.getSellValue());
+        String priceMinStr = t("ITEM_SETTING.PRICE_MIN") + n(dsItem.getMinPrice());
+        String priceMaxStr = t("ITEM_SETTING.PRICE_MAX") + n(dsItem.getMaxPrice());
+        String medianStr = t("ITEM_SETTING.MEDIAN") + n(dsItem.getMedian());
+        String stockStr = t("ITEM_SETTING.STOCK") + n(dsItem.getStock());
+        String maxStockStr = t("ITEM_SETTING.MAX_STOCK") + n(dsItem.getMaxStock());
 
         String sellValueLore = (dsItem.getBuyValue() != dsItem.getSellValue()) ? "§8(" + t("ITEM_SETTING.TAX_IGNORED") + ")" : "";
         String medianLore = (dsItem.getMedian() <= 0) ? "§8(" + t("ITEM_SETTING.STATIC_PRICE") + ")\n" : "";
@@ -191,8 +191,8 @@ public final class ItemSettings extends InGameUI
             }
         }
 
-        editBtnLore.add(t("ITEM_SETTING.BUY").replace("{num}", df.format(buyPrice)));
-        editBtnLore.add(t("ITEM_SETTING.SELL").replace("{num}", df.format(sellPrice)));
+        editBtnLore.add(t("ITEM_SETTING.BUY").replace("{num}", n(buyPrice)));
+        editBtnLore.add(t("ITEM_SETTING.SELL").replace("{num}", n(sellPrice)));
 
         CreateButton(RESET, white, "Reset", editBtnLore);
         CreateButton(ROUND_DOWN, white, t("ITEM_SETTING.ROUND_DOWN"), editBtnLore);

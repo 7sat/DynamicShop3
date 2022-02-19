@@ -24,9 +24,10 @@ import me.sat7.dynamicshop.jobshook.JobsHook;
 import me.sat7.dynamicshop.transactions.Calc;
 import me.sat7.dynamicshop.utilities.ShopUtil;
 
-import static me.sat7.dynamicshop.DynaShopAPI.df;
+import static me.sat7.dynamicshop.utilities.LangUtil.n;
 import static me.sat7.dynamicshop.utilities.LangUtil.t;
 import static me.sat7.dynamicshop.utilities.LayoutUtil.l;
+import static me.sat7.dynamicshop.utilities.MathUtil.Clamp;
 
 public final class ItemTrade extends InGameUI
 {
@@ -91,10 +92,10 @@ public final class ItemTrade extends InGameUI
             {
                 if (data.get().contains("Options.flag.jobpoint"))
                 {
-                    player.sendMessage(DynamicShop.dsPrefix + t("TRADE.BALANCE") + ":§f " + df.format(JobsHook.getCurJobPoints(player)) + "Points");
+                    player.sendMessage(DynamicShop.dsPrefix + t("TRADE.BALANCE") + ":§f " + n(JobsHook.getCurJobPoints(player)) + "Points");
                 } else
                 {
-                    player.sendMessage(DynamicShop.dsPrefix + t("TRADE.BALANCE") + ":§f " + DynamicShop.getEconomy().format(DynamicShop.getEconomy().getBalance(player)));
+                    player.sendMessage(DynamicShop.dsPrefix + t("TRADE.BALANCE") + ":§f " + n(DynamicShop.getEconomy().getBalance(player)));
                 }
             }
             else if (e.getSlot() == SELL_ONLY_TOGGLE)
@@ -196,7 +197,7 @@ public final class ItemTrade extends InGameUI
             {
                 Location lo = new Location(player.getWorld(), x1, y1, z1);
                 int dist = (int) (player.getLocation().distance(lo) * 0.1 * DynamicShop.plugin.getConfig().getDouble("Shop.DeliveryChargeScale"));
-                deliverycharge = 1 + dist;
+                deliverycharge = Clamp(dist, DynamicShop.plugin.getConfig().getInt("Shop.DeliveryChargeMin"), DynamicShop.plugin.getConfig().getInt("Shop.DeliveryChargeMax"));
             }
         }
 
@@ -211,16 +212,16 @@ public final class ItemTrade extends InGameUI
 
         if (optionS.contains("flag.jobpoint"))
         {
-            myBalanceString = "§f" + df.format(JobsHook.getCurJobPoints(player)) + "Points";
+            myBalanceString = "§f" + n(JobsHook.getCurJobPoints(player)) + "Points";
         } else
         {
-            myBalanceString = "§f" + DynamicShop.getEconomy().format(DynamicShop.getEconomy().getBalance(player));
+            myBalanceString = "§f" + n(DynamicShop.getEconomy().getBalance(player));
         }
         String balStr;
         if (ShopUtil.getShopBalance(shopName) >= 0)
         {
             double d = ShopUtil.getShopBalance(shopName);
-            balStr = DynamicShop.getEconomy().format(d);
+            balStr = n(d);
             if (optionS.contains("flag.jobpoint")) balStr += "Points";
         } else
         {
@@ -291,12 +292,12 @@ public final class ItemTrade extends InGameUI
             if(sell)
             {
                 lore = l("TRADE_VIEW.SELL");
-                priceText = t("TRADE.SELL_PRICE").replace("{num}", String.valueOf(price));
+                priceText = t("TRADE.SELL_PRICE").replace("{num}", n(price));
             }
             else
             {
                 lore = l("TRADE_VIEW.BUY");
-                priceText = t("TRADE.PRICE").replace("{num}", String.valueOf(price));
+                priceText = t("TRADE.PRICE").replace("{num}", n(price));
             }
 
             if(!sell)
@@ -313,10 +314,10 @@ public final class ItemTrade extends InGameUI
                     stockText = t("TRADE.INF_STOCK");
                 } else if (DynamicShop.plugin.getConfig().getBoolean("UI.DisplayStockAsStack"))
                 {
-                    stockText = t("TRADE.STACKS").replace("{num}", (stock / 64) + "");
+                    stockText = t("TRADE.STACKS").replace("{num}", n(stock / 64));
                 } else
                 {
-                    stockText = String.valueOf(stock);
+                    stockText = n(stock);
                 }
             }
 
@@ -325,10 +326,10 @@ public final class ItemTrade extends InGameUI
             {
                 if (DynamicShop.plugin.getConfig().getBoolean("UI.DisplayStockAsStack"))
                 {
-                    maxStockText = t("TRADE.STACKS").replace("{num}", (maxStock / 64) + "");
+                    maxStockText = t("TRADE.STACKS").replace("{num}", n(maxStock / 64));
                 } else
                 {
-                    maxStockText = String.valueOf(maxStock);
+                    maxStockText = n(maxStock);
                 }
 
                 stockText = t("SHOP.STOCK_2").replace("{stock}", stockText).replace("{max_stock}", maxStockText);
@@ -343,16 +344,16 @@ public final class ItemTrade extends InGameUI
             {
                 if(sell && price < deliveryCharge)
                 {
-                    deliveryChargeText = "§c" + ChatColor.stripColor(t("MESSAGE.DELIVERY_CHARGE")).replace("{fee}", String.valueOf(deliveryCharge));
+                    deliveryChargeText = "§c" + ChatColor.stripColor(t("MESSAGE.DELIVERY_CHARGE")).replace("{fee}", n(deliveryCharge));
                 }
                 else
                 {
-                    deliveryChargeText = t("MESSAGE.DELIVERY_CHARGE").replace("{fee}", String.valueOf(deliveryCharge));
+                    deliveryChargeText = t("MESSAGE.DELIVERY_CHARGE").replace("{fee}", n(deliveryCharge));
                 }
             }
 
             String tradeLoreText = sell ? t("TRADE.CLICK_TO_SELL") : t("TRADE.CLICK_TO_BUY");
-            tradeLoreText = tradeLoreText.replace("{amount}", String.valueOf(amount));
+            tradeLoreText = tradeLoreText.replace("{amount}", n(amount));
 
             lore = lore.replace("{\\nPrice}", priceText.isEmpty() ? "" : "\n" + priceText);
             lore = lore.replace("{\\nStock}", stockText.isEmpty() ? "" : "\n" + stockText);

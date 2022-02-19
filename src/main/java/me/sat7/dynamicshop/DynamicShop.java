@@ -1,10 +1,12 @@
 package me.sat7.dynamicshop;
 
+import me.pikamug.localelib.LocaleManager;
 import me.sat7.dynamicshop.commands.Optional;
 import me.sat7.dynamicshop.commands.Root;
 import me.sat7.dynamicshop.constants.Constants;
 import me.sat7.dynamicshop.events.*;
 import me.sat7.dynamicshop.files.CustomConfig;
+import me.sat7.dynamicshop.guis.QuickSell;
 import me.sat7.dynamicshop.guis.StartPage;
 import me.sat7.dynamicshop.guis.UIManager;
 import me.sat7.dynamicshop.jobshook.JobsHook;
@@ -33,7 +35,6 @@ import java.util.List;
 import java.util.Random;
 import java.util.UUID;
 
-import static me.sat7.dynamicshop.UpdateChecker.getResourceUrl;
 import static me.sat7.dynamicshop.utilities.ConfigUtil.configVersion;
 
 public final class DynamicShop extends JavaPlugin implements Listener
@@ -61,6 +62,8 @@ public final class DynamicShop extends JavaPlugin implements Listener
     public static UIManager uiManager;
     public static final HashMap<UUID, String> userTempData = new HashMap<>();
     public static final HashMap<UUID, String> userInteractItem = new HashMap<>();
+
+    public static LocaleManager localeManager = new LocaleManager();
 
     @Override
     public void onEnable()
@@ -264,6 +267,9 @@ public final class DynamicShop extends JavaPlugin implements Listener
         WorthUtil.setupWorthFile();
         SoundUtil.setupSoundFile();
         LogUtil.setupLogFile();
+
+        QuickSell.quickSellGui = new CustomConfig();
+        QuickSell.SetupQuickSellGUIFile();
 
         getConfig().set("Version", configVersion);
         saveConfig();

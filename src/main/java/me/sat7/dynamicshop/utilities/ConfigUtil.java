@@ -24,11 +24,16 @@ public final class ConfigUtil
                     "Command.DefaultShopName",
                     "Shop.SalesTax",
                     "Shop.DeliveryChargeScale",
+                    "Shop.DeliveryChargeMin",
+                    "Shop.DeliveryChargeMax",
                     "Shop.NumberOfPlayer",
                     "Shop.UseLegacyStockStabilization",
                     "UI.DisplayStockAsStack",
                     "UI.OpenStartPageWhenClickCloseButton",
                     "UI.ShopInfoButtonIcon",
+                    "UI.IntFormat",
+                    "UI.DoubleFormat",
+                    "UI.UseTranslatedItemName",
                     "Log.SaveLogs",
                     "Log.LogFileNameFormat",
                     "Log.CullLogs",
@@ -69,8 +74,18 @@ public final class ConfigUtil
         setCurrentTax((int) salesTax);
 
         double DeliveryChargeScale = config.getDouble("Shop.DeliveryChargeScale");
-        if (DeliveryChargeScale <= 0.01) DeliveryChargeScale = 0.01;
+        if (DeliveryChargeScale < 0.01) DeliveryChargeScale = 0.01;
         config.set("Shop.DeliveryChargeScale", DeliveryChargeScale);
+
+        int DeliveryChargeMin = config.getInt("Shop.DeliveryChargeMin");
+        if (DeliveryChargeMin < 1) DeliveryChargeMin = 1;
+        config.set("Shop.DeliveryChargeMin", DeliveryChargeMin);
+
+        int DeliveryChargeMax = config.getInt("Shop.DeliveryChargeMax");
+        if (DeliveryChargeMax < 1) DeliveryChargeMax = 1;
+        if (DeliveryChargeMax < DeliveryChargeMin)
+            DeliveryChargeMax = DeliveryChargeMin;
+        config.set("Shop.DeliveryChargeMax", DeliveryChargeMax);
 
         int numPlayer = Clamp(config.getInt("Shop.NumberOfPlayer"), 3, 100);
         config.set("Shop.NumberOfPlayer", numPlayer);

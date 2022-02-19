@@ -24,7 +24,7 @@ import me.sat7.dynamicshop.jobshook.JobsHook;
 import me.sat7.dynamicshop.transactions.Calc;
 import me.sat7.dynamicshop.utilities.ShopUtil;
 
-import static me.sat7.dynamicshop.DynaShopAPI.df;
+import static me.sat7.dynamicshop.utilities.LangUtil.n;
 import static me.sat7.dynamicshop.utilities.LangUtil.t;
 import static me.sat7.dynamicshop.utilities.LayoutUtil.l;
 import static me.sat7.dynamicshop.utilities.MathUtil.Clamp;
@@ -64,14 +64,9 @@ public final class Shop extends InGameUI
         int maxPage = GetShopMaxPage(shopName);
         page = Clamp(page,1,maxPage);
 
-        String uiName = "";
-        if (shopData.contains("Options.title"))
-        {
-            uiName = shopData.getString("Options.title");
-        } else
-        {
+        String uiName = shopData.getString("Options.title");
+        if (uiName == null || uiName.isEmpty())
             uiName = shopName;
-        }
 
         inventory = Bukkit.createInventory(player, 54, "§3" + uiName);
 
@@ -93,183 +88,8 @@ public final class Shop extends InGameUI
         String infoBtnIconName = ShopUtil.GetShopInfoIconMat();
         CreateButton(SHOP_INFO, Material.getMaterial(infoBtnIconName), "§3" + shopName, shopLore);
 
-        // 상품목록 등록
-        int idx = 0;
-        for (String s : shopData.getKeys(false))
-        {
-            try
-            {
-                // 현재 페이지에 해당하는 것들만 출력
-                idx = Integer.parseInt(s);
-                idx -= ((page - 1) * 45);
-                if (!(idx < 45 && idx >= 0)) continue;
+        ShowItems();
 
-                // 아이탬 생성
-                String itemName = shopData.getString(s + ".mat"); // 메테리얼
-                ItemStack itemStack = new ItemStack(Material.getMaterial(itemName), 1); // 아이탬 생성
-                itemStack.setItemMeta((ItemMeta) shopData.get(s + ".itemStack")); // 저장된 메타 적용
-
-                // 커스텀 메타 설정
-                ItemMeta meta = itemStack.getItemMeta();
-                String lore = "";
-
-                // 상품
-                if (shopData.contains(s + ".value"))
-                {
-                    lore = l("SHOP.ITEM_INFO");
-
-                    int stock = shopData.getInt(s + ".stock");
-                    int maxStock = shopData.getInt(s + ".maxStock", -1);
-                    String stockStr;
-                    String maxStockStr = "";
-
-                    if (stock <= 0)
-                    {
-                        stockStr = t("SHOP.INF_STOCK");
-                    } else if (DynamicShop.plugin.getConfig().getBoolean("UI.DisplayStockAsStack"))
-                    {
-                        stockStr = t("SHOP.STACKS").replace("{num}", (stock / 64) + "");
-                    } else
-                    {
-                        stockStr = String.valueOf(stock);
-                    }
-
-                    if (maxStock != -1)
-                    {
-                        if (DynamicShop.plugin.getConfig().getBoolean("UI.DisplayStockAsStack"))
-                        {
-                            maxStockStr = t("SHOP.STACKS").replace("{num}", (maxStock / 64) + "");
-                        }
-                        else
-                        {
-                            maxStockStr = String.valueOf(maxStock);
-                        }
-                    }
-
-                    double buyPrice = Calc.getCurrentPrice(shopName, s, true);
-                    double sellPrice = Calc.getCurrentPrice(shopName, s, false);
-
-                    double buyPrice2 = shopData.getDouble(s + ".value");
-                    double priceSave1 = ((buyPrice / buyPrice2) * 100) - 100;
-                    double priceSave2 = 100 - ((buyPrice / buyPrice2) * 100);
-
-                    String valueChanged_Buy;
-                    String valueChanged_Sell;
-
-                    if (buyPrice - buyPrice2 >= 0.01)
-                    {
-                        valueChanged_Buy = t("ARROW.UP_2") + Math.round(priceSave1 * 100d) / 100d + "%";
-                        valueChanged_Sell = t("ARROW.UP") + Math.round(priceSave1 * 100d) / 100d + "%";
-                    } else if (buyPrice - buyPrice2 <= -0.01)
-                    {
-                        valueChanged_Buy = t("ARROW.DOWN_2") + Math.round(priceSave2 * 100d) / 100d + "%";
-                        valueChanged_Sell = t("ARROW.DOWN") + Math.round(priceSave2 * 100d) / 100d + "%";
-                    } else
-                    {
-                        valueChanged_Buy = "";
-                        valueChanged_Sell = "";
-                    }
-
-                    if (buyPrice == sellPrice) sellPrice = buyPrice - ((buyPrice / 100) * Calc.getTaxRate(shopName));
-
-                    String tradeType = "default";
-                    if (shopData.contains(s + ".tradeType"))
-                        tradeType = shopData.getString(s + ".tradeType");
-
-                    boolean showValueChange = shopData.contains("Options.flag.showvaluechange");
-
-                    String buyText = "";
-                    String sellText = "";
-                    if (!tradeType.equalsIgnoreCase("SellOnly"))
-                    {
-                        buyText = t("SHOP.BUY_PRICE").replace("{num}", df.format(buyPrice));
-                        buyText += showValueChange ? " " + valueChanged_Buy : "";
-                    }
-
-                    if (!tradeType.equalsIgnoreCase("BuyOnly"))
-                    {
-                        sellText = t("SHOP.SELL_PRICE").replace("{num}", df.format(sellPrice));
-                        sellText += showValueChange ? " " + valueChanged_Sell : "";
-                    }
-
-                    String pricingTypeText = "";
-                    if (shopData.getInt(s + ".stock") <= 0 || shopData.getInt(s + ".median") <= 0)
-                    {
-                        if (!shopData.contains("Options.flag.hidepricingtype"))
-                        {
-                            pricingTypeText = t("SHOP.STATIC_PRICE");
-                        }
-                    }
-
-                    String stockText = "";
-                    if (!shopData.contains("Options.flag.hidestock"))
-                    {
-                        if (maxStock != -1 && shopData.contains("Options.flag.showmaxstock"))
-                            stockText = t("SHOP.STOCK_2").replace("{stock}", stockStr).replace("{max_stock}", maxStockStr);
-                        else
-                            stockText = t("SHOP.STOCK").replace("{num}", stockStr);
-                    }
-
-                    String tradeLoreText = "";
-                    if (t("SHOP.TRADE_LORE").length() > 0)
-                        tradeLoreText = t("SHOP.TRADE_LORE");
-
-                    String itemMetaLoreText = (meta != null && meta.hasLore()) ? meta.getLore().toString() : "";
-
-                    lore = lore.replace("{\\nBuy}", buyText.isEmpty() ? "" : "\n" + buyText);
-                    lore = lore.replace("{\\nSell}", sellText.isEmpty() ? "" : "\n" + sellText);
-                    lore = lore.replace("{\\nStock}", stockText.isEmpty() ? "" : "\n" + stockText);
-                    lore = lore.replace("{\\nPricingType}", pricingTypeText.isEmpty() ? "" : "\n" + pricingTypeText);
-                    lore = lore.replace("{\\nTradeLore}", tradeLoreText.isEmpty() ? "" : "\n" + tradeLoreText);
-                    lore = lore.replace("{\\nItemMetaLore}", itemMetaLoreText.isEmpty() ? "" : "\n" + itemMetaLoreText);
-
-                    lore = lore.replace("{Buy}", buyText);
-                    lore = lore.replace("{Sell}", sellText);
-                    lore = lore.replace("{Stock}", stockText);
-                    lore = lore.replace("{PricingType}", pricingTypeText);
-                    lore = lore.replace("{TradeLore}", tradeLoreText);
-                    lore = lore.replace("{ItemMetaLore}", itemMetaLoreText);
-
-                    String temp = lore.replace(" ","");
-                    if(ChatColor.stripColor(temp).startsWith("\n"))
-                        lore = lore.replaceFirst("\n","");
-
-                    if (player.hasPermission("dshop.admin.shopedit"))
-                    {
-                        lore += "\n" + t("SHOP.ITEM_MOVE_LORE");
-                        lore += "\n" + t("SHOP.ITEM_EDIT_LORE");
-                    }
-                }
-                // 장식용
-                else
-                {
-                    if (player.hasPermission("dshop.admin.shopedit"))
-                    {
-                        lore += t("SHOP.ITEM_COPY_LORE");
-                        lore += "\n" + t("SHOP.DECO_DELETE_LORE");
-                    }
-
-                    meta.setDisplayName(" ");
-                    meta.addItemFlags(ItemFlag.HIDE_ATTRIBUTES);
-                    meta.addItemFlags(ItemFlag.HIDE_ENCHANTS);
-                    meta.addItemFlags(ItemFlag.HIDE_POTION_EFFECTS);
-                }
-
-                meta.setLore(new ArrayList<>(Arrays.asList(lore.split("\n"))));
-                itemStack.setItemMeta(meta);
-                inventory.setItem(idx, itemStack);
-            } catch (Exception e)
-            {
-                if (!s.equalsIgnoreCase("Options"))
-                {
-                    DynamicShop.console.sendMessage(Constants.DYNAMIC_SHOP_PREFIX + "ERR.Shop.getGUI/Failed to create itemstack. yml file is corrupt. shop name: " + shopName + ", page: " + page + ", itemIndex: " + idx);
-//                    for(StackTraceElement ste: e.getStackTrace())
-//                    {
-//                        DynamicShop.console.sendMessage(DynamicShop.dsPrefix_server+ste);
-//                    }
-                }
-            }
-        }
         return inventory;
     }
 
@@ -449,6 +269,182 @@ public final class Shop extends InGameUI
         }
     }
 
+    private void ShowItems()
+    {
+        int idx = 0;
+        for (String s : shopData.getKeys(false))
+        {
+            try
+            {
+                // 현재 페이지에 해당하는 것들만 출력
+                idx = Integer.parseInt(s);
+                idx -= ((page - 1) * 45);
+                if (!(idx < 45 && idx >= 0)) continue;
+
+                // 아이탬 생성
+                String itemName = shopData.getString(s + ".mat"); // 메테리얼
+                ItemStack itemStack = new ItemStack(Material.getMaterial(itemName), 1); // 아이탬 생성
+                itemStack.setItemMeta((ItemMeta) shopData.get(s + ".itemStack")); // 저장된 메타 적용
+
+                // 커스텀 메타 설정
+                ItemMeta meta = itemStack.getItemMeta();
+                String lore = "";
+
+                // 상품
+                if (shopData.contains(s + ".value"))
+                {
+                    lore = l("SHOP.ITEM_INFO");
+
+                    int stock = shopData.getInt(s + ".stock");
+                    int maxStock = shopData.getInt(s + ".maxStock", -1);
+                    String stockStr;
+                    String maxStockStr = "";
+
+                    if (stock <= 0)
+                    {
+                        stockStr = t("SHOP.INF_STOCK");
+                    } else if (DynamicShop.plugin.getConfig().getBoolean("UI.DisplayStockAsStack"))
+                    {
+                        stockStr = t("SHOP.STACKS").replace("{num}", n(stock / 64));
+                    } else
+                    {
+                        stockStr = n(stock);
+                    }
+
+                    if (maxStock != -1)
+                    {
+                        if (DynamicShop.plugin.getConfig().getBoolean("UI.DisplayStockAsStack"))
+                        {
+                            maxStockStr = t("SHOP.STACKS").replace("{num}", n(maxStock / 64));
+                        }
+                        else
+                        {
+                            maxStockStr = n(maxStock);
+                        }
+                    }
+
+                    double buyPrice = Calc.getCurrentPrice(shopName, s, true);
+                    double sellPrice = Calc.getCurrentPrice(shopName, s, false);
+
+                    double buyPrice2 = shopData.getDouble(s + ".value");
+                    double priceSave1 = (buyPrice / buyPrice2) - 1;
+                    double priceSave2 = 1 - (buyPrice / buyPrice2);
+
+                    String valueChanged_Buy;
+                    String valueChanged_Sell;
+
+                    if (buyPrice - buyPrice2 >= 0.01)
+                    {
+                        valueChanged_Buy = t("ARROW.UP_2") + n(priceSave1 * 100) + "%";
+                        valueChanged_Sell = t("ARROW.UP") + n(priceSave1 * 100) + "%";
+                    } else if (buyPrice - buyPrice2 <= -0.01)
+                    {
+                        valueChanged_Buy = t("ARROW.DOWN_2") + n(priceSave2 * 100) + "%";
+                        valueChanged_Sell = t("ARROW.DOWN") + n(priceSave2 * 100) + "%";
+                    } else
+                    {
+                        valueChanged_Buy = "";
+                        valueChanged_Sell = "";
+                    }
+
+                    if (buyPrice == sellPrice) sellPrice = buyPrice - ((buyPrice / 100) * Calc.getTaxRate(shopName));
+
+                    String tradeType = "default";
+                    if (shopData.contains(s + ".tradeType"))
+                        tradeType = shopData.getString(s + ".tradeType");
+
+                    boolean showValueChange = shopData.contains("Options.flag.showvaluechange");
+
+                    String buyText = "";
+                    String sellText = "";
+                    if (!tradeType.equalsIgnoreCase("SellOnly"))
+                    {
+                        buyText = t("SHOP.BUY_PRICE").replace("{num}", n(buyPrice));
+                        buyText += showValueChange ? " " + valueChanged_Buy : "";
+                    }
+
+                    if (!tradeType.equalsIgnoreCase("BuyOnly"))
+                    {
+                        sellText = t("SHOP.SELL_PRICE").replace("{num}", n(sellPrice));
+                        sellText += showValueChange ? " " + valueChanged_Sell : "";
+                    }
+
+                    String pricingTypeText = "";
+                    if (shopData.getInt(s + ".stock") <= 0 || shopData.getInt(s + ".median") <= 0)
+                    {
+                        if (!shopData.contains("Options.flag.hidepricingtype"))
+                        {
+                            pricingTypeText = t("SHOP.STATIC_PRICE");
+                        }
+                    }
+
+                    String stockText = "";
+                    if (!shopData.contains("Options.flag.hidestock"))
+                    {
+                        if (maxStock != -1 && shopData.contains("Options.flag.showmaxstock"))
+                            stockText = t("SHOP.STOCK_2").replace("{stock}", stockStr).replace("{max_stock}", maxStockStr);
+                        else
+                            stockText = t("SHOP.STOCK").replace("{num}", stockStr);
+                    }
+
+                    String tradeLoreText = "";
+                    if (t("SHOP.TRADE_LORE").length() > 0)
+                        tradeLoreText = t("SHOP.TRADE_LORE");
+
+                    String itemMetaLoreText = (meta != null && meta.hasLore()) ? meta.getLore().toString() : "";
+
+                    lore = lore.replace("{\\nBuy}", buyText.isEmpty() ? "" : "\n" + buyText);
+                    lore = lore.replace("{\\nSell}", sellText.isEmpty() ? "" : "\n" + sellText);
+                    lore = lore.replace("{\\nStock}", stockText.isEmpty() ? "" : "\n" + stockText);
+                    lore = lore.replace("{\\nPricingType}", pricingTypeText.isEmpty() ? "" : "\n" + pricingTypeText);
+                    lore = lore.replace("{\\nTradeLore}", tradeLoreText.isEmpty() ? "" : "\n" + tradeLoreText);
+                    lore = lore.replace("{\\nItemMetaLore}", itemMetaLoreText.isEmpty() ? "" : "\n" + itemMetaLoreText);
+
+                    lore = lore.replace("{Buy}", buyText);
+                    lore = lore.replace("{Sell}", sellText);
+                    lore = lore.replace("{Stock}", stockText);
+                    lore = lore.replace("{PricingType}", pricingTypeText);
+                    lore = lore.replace("{TradeLore}", tradeLoreText);
+                    lore = lore.replace("{ItemMetaLore}", itemMetaLoreText);
+
+                    String temp = lore.replace(" ","");
+                    if(ChatColor.stripColor(temp).startsWith("\n"))
+                        lore = lore.replaceFirst("\n","");
+
+                    if (player.hasPermission("dshop.admin.shopedit"))
+                    {
+                        lore += "\n" + t("SHOP.ITEM_MOVE_LORE");
+                        lore += "\n" + t("SHOP.ITEM_EDIT_LORE");
+                    }
+                }
+                // 장식용
+                else
+                {
+                    if (player.hasPermission("dshop.admin.shopedit"))
+                    {
+                        lore += t("SHOP.ITEM_COPY_LORE");
+                        lore += "\n" + t("SHOP.DECO_DELETE_LORE");
+                    }
+
+                    meta.setDisplayName(" ");
+                    meta.addItemFlags(ItemFlag.HIDE_ATTRIBUTES);
+                    meta.addItemFlags(ItemFlag.HIDE_ENCHANTS);
+                    meta.addItemFlags(ItemFlag.HIDE_POTION_EFFECTS);
+                }
+
+                meta.setLore(new ArrayList<>(Arrays.asList(lore.split("\n"))));
+                itemStack.setItemMeta(meta);
+                inventory.setItem(idx, itemStack);
+            } catch (Exception e)
+            {
+                if (!s.equalsIgnoreCase("Options"))
+                {
+                    DynamicShop.console.sendMessage(Constants.DYNAMIC_SHOP_PREFIX + "ERR.Shop.getGUI/Failed to create itemstack. yml file is corrupt. shop name: " + shopName + ", page: " + page + ", itemIndex: " + idx);
+                }
+            }
+        }
+    }
+
     private String CreateShopInfoText(Player player, String shopName)
     {
         String shopLore = l("SHOP.INFO");
@@ -489,7 +485,7 @@ public final class Shop extends InGameUI
             finalShopBalanceText += t("SHOP.SHOP_BAL") + "\n";
             if (ShopUtil.getShopBalance(shopName) >= 0)
             {
-                String temp = df.format(ShopUtil.getShopBalance(shopName));
+                String temp = n(ShopUtil.getShopBalance(shopName));
                 if (shopData.contains("Options.flag.jobpoint")) temp += "Points";
 
                 finalShopBalanceText += t("SHOP.SHOP_INFO_DASH") + temp + "\n";

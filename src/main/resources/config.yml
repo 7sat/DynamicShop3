@@ -6,13 +6,18 @@ Command.OpenStartPageInsteadOfDefaultShop: true
 Command.DefaultShopName: SampleShop
 
 Shop.SalesTax: 25
-Shop.DeliveryChargeScale: 1
+Shop.DeliveryChargeScale: 0.3
+Shop.DeliveryChargeMin: 1
+Shop.DeliveryChargeMax: 25
 Shop.NumberOfPlayer: 10
 Shop.UseLegacyStockStabilization: false
 
 UI.DisplayStockAsStack: false
 UI.OpenStartPageWhenClickCloseButton: true
 UI.ShopInfoButtonIcon : OAK_SIGN
+UI.IntFormat: ###,###
+UI.DoubleFormat: ###,###.##
+UI.UseTranslatedItemName: true
 
 Log.SaveLogs: true
 Log.LogFileNameFormat: MM_dd_yyyy

@@ -18,6 +18,7 @@ import me.sat7.dynamicshop.utilities.ShopUtil;
 import net.milkbowl.vault.economy.Economy;
 import net.milkbowl.vault.economy.EconomyResponse;
 
+import static me.sat7.dynamicshop.utilities.LangUtil.n;
 import static me.sat7.dynamicshop.utilities.LangUtil.t;
 import static me.sat7.dynamicshop.utilities.MathUtil.Clamp;
 
@@ -111,9 +112,9 @@ public final class Shop
                     player.sendMessage(DynamicShop.dsPrefix + t("ERR.LOCAL_SHOP_REMOTE_ACCESS"));
 
                     String posString = t("SHOP.SHOP_LOCATION");
-                    posString = posString.replace("{x}", String.valueOf(x1));
-                    posString = posString.replace("{y}", String.valueOf(y1));
-                    posString = posString.replace("{z}", String.valueOf(z1));
+                    posString = posString.replace("{x}", n(x1));
+                    posString = posString.replace("{y}", n(y1));
+                    posString = posString.replace("{z}", n(z1));
                     player.sendMessage(DynamicShop.dsPrefix + posString);
                     return true;
                 }
@@ -708,18 +709,24 @@ public final class Shop
                             {
                                 shopData.get().set("Options.flag.signshop", null);
 
-                                shopData.get().set("Options.pos1", (player.getLocation().getBlockX() - 2) + "_" + (player.getLocation().getBlockY() - 1) + "_" + (player.getLocation().getBlockZ() - 2));
-                                shopData.get().set("Options.pos2", (player.getLocation().getBlockX() + 2) + "_" + (player.getLocation().getBlockY() + 1) + "_" + (player.getLocation().getBlockZ() + 2));
-                                shopData.get().set("Options.world", player.getWorld().getName());
+                                if(!shopData.get().contains("Options.pos1") || !shopData.get().contains("Options.pos2") || !shopData.get().contains("Options.world"))
+                                {
+                                    shopData.get().set("Options.pos1", (player.getLocation().getBlockX() - 2) + "_" + (player.getLocation().getBlockY() - 1) + "_" + (player.getLocation().getBlockZ() - 2));
+                                    shopData.get().set("Options.pos2", (player.getLocation().getBlockX() + 2) + "_" + (player.getLocation().getBlockY() + 1) + "_" + (player.getLocation().getBlockZ() + 2));
+                                    shopData.get().set("Options.world", player.getWorld().getName());
+                                }
                             }
                             if (args[3].equalsIgnoreCase("deliverycharge"))
                             {
                                 shopData.get().set("Options.flag.signshop", null);
 
                                 shopData.get().set("Options.flag.localshop", "");
-                                shopData.get().set("Options.pos1", (player.getLocation().getBlockX() - 2) + "_" + (player.getLocation().getBlockY() - 1) + "_" + (player.getLocation().getBlockZ() - 2));
-                                shopData.get().set("Options.pos2", (player.getLocation().getBlockX() + 2) + "_" + (player.getLocation().getBlockY() + 1) + "_" + (player.getLocation().getBlockZ() + 2));
-                                shopData.get().set("Options.world", player.getWorld().getName());
+                                if(!shopData.get().contains("Options.pos1") || !shopData.get().contains("Options.pos2") || !shopData.get().contains("Options.world"))
+                                {
+                                    shopData.get().set("Options.pos1", (player.getLocation().getBlockX() - 2) + "_" + (player.getLocation().getBlockY() - 1) + "_" + (player.getLocation().getBlockZ() - 2));
+                                    shopData.get().set("Options.pos2", (player.getLocation().getBlockX() + 2) + "_" + (player.getLocation().getBlockY() + 1) + "_" + (player.getLocation().getBlockZ() + 2));
+                                    shopData.get().set("Options.world", player.getWorld().getName());
+                                }
                             }
 
                             shopData.get().set("Options.flag." + args[3].toLowerCase(), "");
@@ -1060,11 +1067,11 @@ public final class Shop
                             if (shopData.get().contains("Options.flag.jobpoint"))
                             {
                                 player.sendMessage(DynamicShop.dsPrefix + t("MESSAGE.NOT_ENOUGH_POINT").
-                                        replace("{bal}", DynaShopAPI.df.format(ShopUtil.getShopBalance(args[1]))));
+                                        replace("{bal}", n(ShopUtil.getShopBalance(args[1]))));
                             } else
                             {
                                 player.sendMessage(DynamicShop.dsPrefix + t("MESSAGE.NOT_ENOUGH_MONEY").
-                                        replace("{bal}", DynaShopAPI.df.format(ShopUtil.getShopBalance(args[1]))));
+                                        replace("{bal}", n(ShopUtil.getShopBalance(args[1]))));
                             }
                             return true;
                         }

@@ -19,6 +19,7 @@ import me.sat7.dynamicshop.utilities.SoundUtil;
 import net.milkbowl.vault.economy.Economy;
 import net.milkbowl.vault.economy.EconomyResponse;
 
+import static me.sat7.dynamicshop.utilities.LangUtil.n;
 import static me.sat7.dynamicshop.utilities.LangUtil.t;
 import static me.sat7.dynamicshop.utilities.MathUtil.Clamp;
 
@@ -124,11 +125,22 @@ public final class Sell
             //로그 기록
             LogUtil.addLog(shopName, tempIS.getType().toString(), -tradeAmount, priceSum, "vault", player.getName());
 
-            player.sendMessage(DynamicShop.dsPrefix + t("MESSAGE.SELL_SUCCESS")
-                    .replace("{item}", tempIS.getType().name())
+            String message = DynamicShop.dsPrefix + t("MESSAGE.SELL_SUCCESS")
                     .replace("{amount}", Integer.toString(tradeAmount))
-                    .replace("{price}", econ.format(r.amount))
-                    .replace("{bal}", econ.format(econ.getBalance((player)))));
+                    .replace("{price}", n(r.amount))
+                    .replace("{bal}", n(econ.getBalance((player))));
+
+            if(DynamicShop.localeManager == null)
+            {
+                message = message.replace("{item}", ItemsUtil.getBeautifiedName(tempIS.getType()));
+                player.sendMessage(message);
+            }
+            else
+            {
+                message = message.replace("{item}", "<item>");
+                DynamicShop.localeManager.sendMessage(player, message, tempIS.getType(), (short)0, null);
+            }
+
             player.playSound(player.getLocation(), Sound.valueOf("ENTITY_EXPERIENCE_ORB_PICKUP"), 1, 1);
 
             if (data.get().contains("Options.Balance"))
@@ -195,11 +207,22 @@ public final class Sell
             //로그 기록
             LogUtil.addLog(shopName, tempIS.getType().toString(), -actualAmount, priceSum, "vault", player.getName());
 
-            player.sendMessage(DynamicShop.dsPrefix + t("MESSAGE.SELL_SUCCESS")
-                    .replace("{item}", ItemsUtil.getBeautifiedName(tempIS.getType()))
+            String message = DynamicShop.dsPrefix + t("MESSAGE.SELL_SUCCESS")
                     .replace("{amount}", Integer.toString(actualAmount))
-                    .replace("{price}", econ.format(r.amount))
-                    .replace("{bal}", econ.format(econ.getBalance((player)))));
+                    .replace("{price}", n(r.amount))
+                    .replace("{bal}", n(econ.getBalance((player))));
+
+            if(DynamicShop.localeManager == null)
+            {
+                message = message.replace("{item}", ItemsUtil.getBeautifiedName(tempIS.getType()));
+                player.sendMessage(message);
+            }
+            else
+            {
+                message = message.replace("{item}", "<item>");
+                DynamicShop.localeManager.sendMessage(player, message, tempIS.getType(), (short)0, null);
+            }
+
             SoundUtil.playerSoundEffect(player, "sell");
 
             if (data.get().contains("Options.Balance"))
@@ -264,11 +287,22 @@ public final class Sell
             //로그 기록
             LogUtil.addLog(shopName, tempIS.getType().toString(), -actualAmount, priceSum, "jobpoint", player.getName());
 
-            player.sendMessage(DynamicShop.dsPrefix + t("MESSAGE.SELL_SUCCESS_JP")
-                    .replace("{item}", ItemsUtil.getBeautifiedName(tempIS.getType()))
+            String message = DynamicShop.dsPrefix + t("MESSAGE.SELL_SUCCESS_JP")
                     .replace("{amount}", Integer.toString(actualAmount))
-                    .replace("{price}", DynaShopAPI.df.format(priceSum))
-                    .replace("{bal}", DynaShopAPI.df.format(JobsHook.getCurJobPoints(player))));
+                    .replace("{price}", n(priceSum))
+                    .replace("{bal}", n(JobsHook.getCurJobPoints(player)));
+
+            if(DynamicShop.localeManager == null)
+            {
+                message = message.replace("{item}", ItemsUtil.getBeautifiedName(tempIS.getType()));
+                player.sendMessage(message);
+            }
+            else
+            {
+                message = message.replace("{item}", "<item>");
+                DynamicShop.localeManager.sendMessage(player, message, tempIS.getType(), (short)0, null);
+            }
+
             SoundUtil.playerSoundEffect(player, "sell");
 
             if (data.get().contains("Options.Balance"))

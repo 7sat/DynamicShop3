@@ -1,5 +1,6 @@
 package me.sat7.dynamicshop.commands;
 
+import me.sat7.dynamicshop.guis.QuickSell;
 import me.sat7.dynamicshop.utilities.*;
 import org.bukkit.entity.Player;
 
@@ -44,6 +45,9 @@ public final class Reload
         DynamicShop.plugin.startRandomChangeTask();
 
         DynamicShop.plugin.startCullLogsTask();
+
+        QuickSell.quickSellGui.reload();
+        QuickSell.SetupQuickSellGUIFile();
 
         LangUtil.setupLangFile(DynamicShop.plugin.getConfig().getString("Language"));
 
