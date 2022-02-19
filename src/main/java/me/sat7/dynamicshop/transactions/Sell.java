@@ -130,7 +130,7 @@ public final class Sell
                     .replace("{price}", n(r.amount))
                     .replace("{bal}", n(econ.getBalance((player))));
 
-            if(DynamicShop.localeManager == null)
+            if(DynamicShop.localeManager == null || !DynamicShop.plugin.getConfig().getBoolean("UI.LocalizedItemName"))
             {
                 message = message.replace("{item}", ItemsUtil.getBeautifiedName(tempIS.getType()));
                 player.sendMessage(message);
@@ -212,7 +212,7 @@ public final class Sell
                     .replace("{price}", n(r.amount))
                     .replace("{bal}", n(econ.getBalance((player))));
 
-            if(DynamicShop.localeManager == null)
+            if(DynamicShop.localeManager == null || !DynamicShop.plugin.getConfig().getBoolean("UI.LocalizedItemName"))
             {
                 message = message.replace("{item}", ItemsUtil.getBeautifiedName(tempIS.getType()));
                 player.sendMessage(message);
@@ -292,7 +292,7 @@ public final class Sell
                     .replace("{price}", n(priceSum))
                     .replace("{bal}", n(JobsHook.getCurJobPoints(player)));
 
-            if(DynamicShop.localeManager == null)
+            if(DynamicShop.localeManager == null || !DynamicShop.plugin.getConfig().getBoolean("UI.LocalizedItemName"))
             {
                 message = message.replace("{item}", ItemsUtil.getBeautifiedName(tempIS.getType()));
                 player.sendMessage(message);

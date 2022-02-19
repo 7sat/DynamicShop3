@@ -33,6 +33,7 @@ public final class ConfigUtil
                     "UI.ShopInfoButtonIcon",
                     "UI.IntFormat",
                     "UI.DoubleFormat",
+                    "UI.LocalizedItemName",
                     "UI.UseTranslatedItemName",
                     "Log.SaveLogs",
                     "Log.LogFileNameFormat",
