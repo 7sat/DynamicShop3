@@ -152,7 +152,7 @@ public final class Shop
             DynaShopAPI.openShopGui(player, shopName, 1);
             return true;
         }
-        // ds shop shopName <add | addhand | edit | editall>
+        // ds shop shopName <add | addhand | edit | editall | maxstock>
         else if (args.length >= 3)
         {
             // ds shop shopName add <item> <value> <median> <stock>
@@ -388,6 +388,7 @@ public final class Shop
                 double valueMax = -1;
                 int median;
                 int stock;
+                int maxStock = -1;
                 if (args.length < 4)
                 {
                     player.sendMessage(DynamicShop.dsPrefix + t("ERR.WRONG_USAGE"));
@@ -412,7 +413,7 @@ public final class Shop
                         return true;
                     } else
                     {
-                        if (args.length != 7 && args.length != 9)
+                        if (args.length != 7 && args.length != 9 && args.length != 10)
                         {
                             player.sendMessage(DynamicShop.dsPrefix + t("ERR.WRONG_USAGE"));
                             return true;
@@ -428,6 +429,11 @@ public final class Shop
                             valueMax = Integer.parseInt(args[6]);
                             median = Integer.parseInt(args[7]);
                             stock = Integer.parseInt(args[8]);
+
+                            if (args.length == 10)
+                                maxStock = Integer.parseInt(args[9]);
+                            if (maxStock < 1)
+                                maxStock = -1;
 
                             // 유효성 검사
                             if (valueMax > 0 && valueMin > 0 && valueMin >= valueMax)
@@ -454,7 +460,7 @@ public final class Shop
                 }
 
                 // 수정
-                ShopUtil.editShopItem(shopName, idx, buyValue, buyValue, valueMin, valueMax, median, stock);
+                ShopUtil.editShopItem(shopName, idx, buyValue, buyValue, valueMin, valueMax, median, stock, maxStock);
                 player.sendMessage(DynamicShop.dsPrefix + t("MESSAGE.ITEM_UPDATED"));
                 ItemsUtil.sendItemInfo(player, shopName, idx, "HELP.ITEM_INFO");
             }
@@ -481,7 +487,7 @@ public final class Shop
                 try
                 {
                     dataType = args[3];
-                    if (!dataType.equals("stock") && !dataType.equals("median") && !dataType.equals("value") && !dataType.equals("valueMin") && !dataType.equals("valueMax"))
+                    if (!dataType.equals("stock") && !dataType.equals("median") && !dataType.equals("value") && !dataType.equals("valueMin") && !dataType.equals("valueMax") && !dataType.equals("maxStock"))
                     {
                         player.sendMessage(DynamicShop.dsPrefix + t("ERR.WRONG_DATATYPE"));
                         return true;
@@ -496,7 +502,7 @@ public final class Shop
                         return true;
                     }
 
-                    if (!args[5].equals("stock") && !args[5].equals("median") && !args[5].equals("value") && !args[5].equals("valueMin") && !args[5].equals("valueMax"))
+                    if (!args[5].equals("stock") && !args[5].equals("median") && !args[5].equals("value") && !args[5].equals("valueMin") && !args[5].equals("valueMax") && !args[5].equals("maxStock"))
                         value = Float.parseFloat(args[5]);
                 } catch (Exception e)
                 {
@@ -533,6 +539,9 @@ public final class Shop
                         case "valueMax":
                             value = shopData.get().getInt(s + ".valueMax");
                             break;
+                        case "maxStock":
+                            value = shopData.get().getInt(s + ".maxStock");
+                            break;
                     }
 
                     if (mod.equalsIgnoreCase("="))
@@ -546,7 +555,7 @@ public final class Shop
                         shopData.get().set(s + "." + dataType, (int) (shopData.get().getInt(s + "." + dataType) - value));
                     } else if (mod.equalsIgnoreCase("/"))
                     {
-                        if (args[5].equals("stock") || args[5].equals("median"))
+                        if (args[5].equals("stock") || args[5].equals("median") || args[5].equals("maxStock"))
                         {
                             shopData.get().set(s + "." + dataType, (int) (shopData.get().getInt(s + "." + dataType) / value));
                         }
@@ -556,7 +565,7 @@ public final class Shop
                         }
                     } else if (mod.equalsIgnoreCase("*"))
                     {
-                        if (args[5].equals("stock") || args[5].equals("median"))
+                        if (args[5].equals("stock") || args[5].equals("median") || args[5].equals("maxStock"))
                         {
                             shopData.get().set(s + "." + dataType, (int) (shopData.get().getInt(s + "." + dataType) * value));
                         }
@@ -573,6 +582,10 @@ public final class Shop
                     if (shopData.get().getDouble(s + ".valueMax") < 0)
                     {
                         shopData.get().set(s + ".valueMax", null);
+                    }
+                    if (shopData.get().getDouble(s + ".maxStock") < 1)
+                    {
+                        shopData.get().set(s + ".maxStock", null);
                     }
                 }
                 shopData.save();
@@ -680,7 +693,9 @@ public final class Shop
                             args[3].equalsIgnoreCase("showValueChange") ||
                             args[3].equalsIgnoreCase("hidestock") ||
                             args[3].equalsIgnoreCase("hidepricingtype") ||
-                            args[3].equalsIgnoreCase("hideshopbalance"))
+                            args[3].equalsIgnoreCase("hideshopbalance") ||
+                            args[3].equalsIgnoreCase("showmaxstock")
+                    )
                     {
                         if (set)
                         {

@@ -52,6 +52,7 @@ public final class ShopSettings extends InGameUI
     private final int FLAG6 = 19;
     private final int FLAG7 = 20;
     private final int FLAG8 = 21;
+    private final int FLAG9 = 22;
     private final int LOG_TOGGLE = 30;
     private final int LOG_DELETE = 31;
 
@@ -214,6 +215,7 @@ public final class ShopSettings extends InGameUI
         CreateFlagButton(FLAG6, confSec_Options.contains("flag.hidestock"), "hidestock", t("SHOP_SETTING.HIDE_STOCK"));
         CreateFlagButton(FLAG7, confSec_Options.contains("flag.hidepricingtype"), "hidepricingtype", t("SHOP_SETTING.HIDE_PRICING_TYPE"));
         CreateFlagButton(FLAG8, confSec_Options.contains("flag.hideshopbalance"), "hideshopbalance", t("SHOP_SETTING.HIDE_SHOP_BALANCE"));
+        CreateFlagButton(FLAG9, confSec_Options.contains("flag.showmaxstock"), "showmaxstock", t("SHOP_SETTING.SHOW_MAX_STOCK"));
 
         // 로그 버튼
         String log_cur;
@@ -565,6 +567,18 @@ public final class ShopSettings extends InGameUI
             } else
             {
                 Bukkit.dispatchCommand(player, "DynamicShop shop " + shopName + " flag hideshopbalance set");
+            }
+            DynaShopAPI.openShopSettingGui(player, shopName);
+        }
+        // SHOW_MAX_STOCK
+        else if (e.getSlot() == FLAG9)
+        {
+            if (data.get().contains("Options.flag.showmaxstock"))
+            {
+                Bukkit.dispatchCommand(player, "DynamicShop shop " + shopName + " flag showmaxstock unset");
+            } else
+            {
+                Bukkit.dispatchCommand(player, "DynamicShop shop " + shopName + " flag showmaxstock set");
             }
             DynaShopAPI.openShopSettingGui(player, shopName);
         }

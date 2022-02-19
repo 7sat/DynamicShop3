@@ -116,7 +116,7 @@ public final class Help
 
                 player.sendMessage("");
             }
-        } else if (helpcode.contains("edit") && !helpcode.equals("editall") && player.hasPermission("dshop.admin.shopedit"))
+        } else if (helpcode.contains("edit") && !helpcode.equals("edit_all") && player.hasPermission("dshop.admin.shopedit"))
         {
             if (helpcode.length() > "edit".length())
             {
@@ -138,7 +138,7 @@ public final class Help
             {
                 player.sendMessage(DynamicShop.dsPrefix + t("HELP.TITLE").replace("{command}", "edit"));
                 player.sendMessage(" - " + t("HELP.USAGE") + ": /ds shop <shopname> edit <item> <value> <median> <stock>");
-                player.sendMessage(" - " + t("HELP.USAGE") + ": /ds shop <shopname> edit <item> <value> <min value> <max value> <median> <stock>");
+                player.sendMessage(" - " + t("HELP.USAGE") + ": /ds shop <shopname> edit <item> <value> <min value> <max value> <median> <stock> [<max stock>]");
                 player.sendMessage(" - " + t("HELP.SHOP_EDIT"));
                 player.sendMessage(" - " + t("HELP.PRICE"));
                 player.sendMessage(" - " + t("HELP.INF_STATIC"));
@@ -148,7 +148,7 @@ public final class Help
         } else if (helpcode.equals("edit_all") && player.hasPermission("dshop.admin.shopedit"))
         {
             player.sendMessage(DynamicShop.dsPrefix + t("HELP.TITLE").replace("{command}", "editall"));
-            player.sendMessage(" - " + t("HELP.USAGE") + ": /ds shop <shopname> editall <value | median | stock> <= | + | - | * | /> <amount>");
+            player.sendMessage(" - " + t("HELP.USAGE") + ": /ds shop <shopname> editall <value | median | stock | max stock> <= | + | - | * | /> <amount>");
             player.sendMessage(" - " + t("HELP.EDIT_ALL"));
             player.sendMessage(" - " + t("HELP.EDIT_ALL_2"));
 

@@ -12,6 +12,7 @@ import org.bukkit.ChatColor;
 import org.bukkit.Location;
 import org.bukkit.Material;
 import org.bukkit.configuration.ConfigurationSection;
+import org.bukkit.configuration.file.FileConfiguration;
 import org.bukkit.entity.Player;
 import org.bukkit.event.inventory.InventoryClickEvent;
 import org.bukkit.inventory.Inventory;
@@ -43,7 +44,7 @@ public final class ItemTrade extends InGameUI
     private String shopName;
     private String tradeIdx;
     private int deliveryCharge;
-    private CustomConfig shopData;
+    private FileConfiguration shopData;
     private String sellBuyOnly;
 
     public Inventory getGui(Player player, String shopName, String tradeIdx)
@@ -52,8 +53,8 @@ public final class ItemTrade extends InGameUI
         this.shopName = shopName;
         this.tradeIdx = tradeIdx;
         this.deliveryCharge = CalcShipping(player, shopName);
-        this.shopData = ShopUtil.shopConfigFiles.get(shopName);
-        this.sellBuyOnly = shopData.get().getString(this.tradeIdx + ".tradeType", "");
+        this.shopData = ShopUtil.shopConfigFiles.get(shopName).get();
+        this.sellBuyOnly = shopData.getString(this.tradeIdx + ".tradeType", "");
 
         inventory = Bukkit.createInventory(player, 18, t("TRADE_TITLE"));
 
@@ -206,7 +207,7 @@ public final class ItemTrade extends InGameUI
     {
         String moneyLore = l("TRADE_VIEW.BALANCE");
         String myBalanceString;
-        ConfigurationSection optionS = shopData.get().getConfigurationSection("Options");
+        ConfigurationSection optionS = shopData.getConfigurationSection("Options");
 
         if (optionS.contains("flag.jobpoint"))
         {
@@ -227,7 +228,7 @@ public final class ItemTrade extends InGameUI
         }
 
         String shopBalanceString = "";
-        if(!shopData.get().contains("Options.flag.hideshopbalance"))
+        if(!shopData.contains("Options.flag.hideshopbalance"))
             shopBalanceString = t("TRADE.SHOP_BAL").replace("{num}", balStr);
 
         moneyLore = moneyLore.replace("{\\nPlayerBalance}", "\n" + myBalanceString);
@@ -264,7 +265,7 @@ public final class ItemTrade extends InGameUI
 
     private void CreateTradeButtons()
     {
-        String mat = shopData.get().getString(tradeIdx + ".mat");
+        String mat = shopData.getString(tradeIdx + ".mat");
         if (!sellBuyOnly.equals("BuyOnly"))
             CreateTradeButtons(mat, true);
         if (!sellBuyOnly.equals("SellOnly"))
@@ -278,8 +279,11 @@ public final class ItemTrade extends InGameUI
         for (int i = 1; i < 8; i++)
         {
             ItemStack itemStack = new ItemStack(Material.getMaterial(mat), amount);
-            itemStack.setItemMeta((ItemMeta) shopData.get().get(tradeIdx + ".itemStack"));
+            itemStack.setItemMeta((ItemMeta) shopData.get(tradeIdx + ".itemStack"));
             ItemMeta meta = itemStack.getItemMeta();
+
+            int stock = shopData.getInt(tradeIdx + ".stock");
+            int maxStock = shopData.getInt(tradeIdx + ".maxStock", -1);
 
             double price = Calc.calcTotalCost(shopName, tradeIdx, sell ? -amount : amount);
             String lore;
@@ -297,24 +301,41 @@ public final class ItemTrade extends InGameUI
 
             if(!sell)
             {
-                int stock = shopData.get().getInt(tradeIdx + ".stock");
                 if (stock != -1 && stock <= amount) // stock은 1이거나 그보다 작을 수 없음. 단 -1은 무한재고를 의미함.
                     continue;
             }
 
             String stockText = "";
-            if (!shopData.get().contains("Options.flag.hidestock"))
+            if (!shopData.contains("Options.flag.hidestock"))
             {
-                if (shopData.get().getInt(tradeIdx + ".stock") <= 0)
+                if (stock <= 0)
                 {
-                    stockText = t("TRADE.STOCK") + t("TRADE.INF_STOCK");
+                    stockText = t("TRADE.INF_STOCK");
                 } else if (DynamicShop.plugin.getConfig().getBoolean("UI.DisplayStockAsStack"))
                 {
-                    stockText = t("TRADE.STOCK") + t("TRADE.STACKS").replace("{num}", (shopData.get().getInt(tradeIdx + ".stock") / 64) + "");
+                    stockText = t("TRADE.STACKS").replace("{num}", (stock / 64) + "");
                 } else
                 {
-                    stockText = t("TRADE.STOCK") + shopData.get().getInt(tradeIdx + ".stock");
+                    stockText = String.valueOf(stock);
                 }
+            }
+
+            String maxStockText = "";
+            if (shopData.contains("Options.flag.showmaxstock") && maxStock != -1)
+            {
+                if (DynamicShop.plugin.getConfig().getBoolean("UI.DisplayStockAsStack"))
+                {
+                    maxStockText = t("TRADE.STACKS").replace("{num}", (maxStock / 64) + "");
+                } else
+                {
+                    maxStockText = String.valueOf(maxStock);
+                }
+
+                stockText = t("SHOP.STOCK_2").replace("{stock}", stockText).replace("{max_stock}", maxStockText);
+            }
+            else
+            {
+                stockText = t("SHOP.STOCK").replace("{num}", stockText);
             }
 
             String deliveryChargeText = "";
@@ -367,8 +388,8 @@ public final class ItemTrade extends InGameUI
         }
 
         // 상점이 매입을 거절.
-        int stock = shopData.get().getInt(tradeIdx + ".stock");
-        int maxStock = shopData.get().getInt(tradeIdx + ".maxStock", -1);
+        int stock = shopData.getInt(tradeIdx + ".stock");
+        int maxStock = shopData.getInt(tradeIdx + ".maxStock", -1);
         if (maxStock != -1 && maxStock < stock + itemStack.getAmount())
         {
             player.sendMessage(DynamicShop.dsPrefix + t("MESSAGE.PURCHASE_REJECTED"));

@@ -25,7 +25,7 @@ public class JoinQuit implements Listener
         DynamicShop.ccUser.get().addDefault(player.getUniqueId() + ".cmdHelp", true);
         DynamicShop.ccUser.save();
 
-        //if (DynamicShop.updateAvailable)
+        if (DynamicShop.updateAvailable)
         {
             if (e.getPlayer().hasPermission("dshop.admin.shopedit") || e.getPlayer().hasPermission("dshop.admin.reload"))
             {
@@ -34,10 +34,13 @@ public class JoinQuit implements Listener
                 text.addExtra(" ");
                 text.addExtra(DynamicShop.CreateLink("Download", false, ChatColor.WHITE, UpdateChecker.getResourceUrl()));
                 text.addExtra(" ");
+                text.addExtra(DynamicShop.CreateLink("Premium", false, ChatColor.WHITE, "https://spigotmc.org/resources/100058"));
+                text.addExtra(" ");
                 text.addExtra(DynamicShop.CreateLink("Donate", false, ChatColor.WHITE, "https://www.paypal.com/paypalme/7sat"));
 
                 e.getPlayer().sendMessage("");
                 e.getPlayer().spigot().sendMessage(text);
+                e.getPlayer().sendMessage("New Update available");
                 e.getPlayer().sendMessage("§7Latest version: §f" + DynamicShop.lastVersion);
                 e.getPlayer().sendMessage("§7Your version: §f" + DynamicShop.yourVersion);
                 e.getPlayer().sendMessage("");

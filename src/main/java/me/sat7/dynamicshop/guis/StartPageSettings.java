@@ -129,6 +129,8 @@ public final class StartPageSettings extends InGameUI
         else if (e.getSlot() == DECO)
         {
             player.sendMessage(DynamicShop.dsPrefix + t("START_PAGE.ENTER_COLOR"));
+            player.sendMessage(DynamicShop.dsPrefix + "BLACK, GRAY, LIGHT_GRAY, WHITE, CYAN, LIGHT_BLUE, BLUE, BROWN, " +
+                    "GREEN, LIME, YELLOW, ORANGE, PINK, MAGENTA, PURPLE, RED");
             ShopUtil.closeInventoryWithDelay(player);
             DynamicShop.userTempData.put(uuid,"waitforInput" + "deco");
             OnChat.WaitForInput(player);

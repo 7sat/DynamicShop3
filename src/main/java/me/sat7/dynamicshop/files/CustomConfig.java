@@ -20,7 +20,17 @@ public class CustomConfig
     public void setup(String name, String folder)
     {
         String path = name + ".yml";
-        if (folder != null) path = folder + "/" + path;
+        if (folder != null)
+        {
+            path = folder + "/" + path;
+
+            File directory = new File(DynamicShop.plugin.getDataFolder() + "/" + folder);
+            if (!directory.exists())
+            {
+                directory.mkdir();
+            }
+        }
+
         file = new File(DynamicShop.plugin.getDataFolder(), path);
 
         if (!file.exists())
@@ -30,7 +40,8 @@ public class CustomConfig
                 file.createNewFile();
             } catch (IOException e)
             {
-                System.out.println("Config Setup Fail: " + e);
+                System.out.println("Fatal error! Config Setup Fail. File name: " + name);
+                System.out.println(e);
             }
         }
 

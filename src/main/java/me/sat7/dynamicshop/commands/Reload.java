@@ -25,13 +25,19 @@ public final class Reload
         }
 
         LangUtil.ccLang.reload();
+
         LayoutUtil.ccLayout.reload();
         LayoutUtil.Setup();
+
         ShopUtil.Reload();
         StartPage.ccStartPage.reload();
         DynamicShop.ccSign.reload();
+
         WorthUtil.ccWorth.reload();
+        WorthUtil.setupWorthFile();
+
         SoundUtil.ccSound.reload();
+        SoundUtil.setupSoundFile();
 
         DynamicShop.plugin.reloadConfig();
         ConfigUtil.configSetup(DynamicShop.plugin);

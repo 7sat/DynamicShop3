@@ -201,7 +201,7 @@ public final class TabCompleteUtil
                                         int i = Integer.parseInt(s);
                                         if (!data.get().contains(s + ".value"))
                                             continue; // 장식용임
-                                        temp.add(data.get().getName() + "/" + data.get().getString(s + ".mat"));
+                                        temp.add(s + "/" + data.get().getString(s + ".mat"));
                                     } catch (Exception ignored)
                                     {
                                     }
@@ -242,6 +242,7 @@ public final class TabCompleteUtil
                                 temp.add("valueMax");
                                 temp.add("stock");
                                 temp.add("median");
+                                temp.add("maxStock");
 
                                 for (String s : temp)
                                 {
@@ -268,6 +269,7 @@ public final class TabCompleteUtil
                                     temp.add("valueMax");
                                     temp.add("stock");
                                     temp.add("median");
+                                    temp.add("maxStock");
 
                                     for (String s : temp)
                                     {
@@ -318,6 +320,7 @@ public final class TabCompleteUtil
                                 temp.add("hidestock");
                                 temp.add("hidepricingtype");
                                 temp.add("hideshopbalance");
+                                temp.add("showmaxstock");
 
                                 for (String s : temp)
                                 {

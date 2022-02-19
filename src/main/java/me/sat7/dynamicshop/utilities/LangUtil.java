@@ -47,6 +47,7 @@ public final class LangUtil
             ccLang.get().addDefault("SHOP.BUY_PRICE", "§f구매: {num}");
             ccLang.get().addDefault("SHOP.SELL_PRICE", "§f판매: {num}");
             ccLang.get().addDefault("SHOP.STOCK", "§8재고: {num}");
+            ccLang.get().addDefault("SHOP.STOCK_2", "§8재고: {stock}/{max_stock}");
             ccLang.get().addDefault("SHOP.INF_STOCK", "§8무한");
             ccLang.get().addDefault("SHOP.STATIC_PRICE", "§8[고정 가격]");
             ccLang.get().addDefault("SHOP.STACKS", "§8{num} 스택");
@@ -84,6 +85,7 @@ public final class LangUtil
             ccLang.get().addDefault("SHOP_SETTING.HIDE_STOCK", "§f재고 수량 표시를 숨깁니다.");
             ccLang.get().addDefault("SHOP_SETTING.HIDE_PRICING_TYPE", "§f가격 유형 표기를 숨깁니다.");
             ccLang.get().addDefault("SHOP_SETTING.HIDE_SHOP_BALANCE", "§f상점 계좌 잔액을 숨깁니다.");
+            ccLang.get().addDefault("SHOP_SETTING.SHOW_MAX_STOCK", "§f재고 상한을 표시합니다.");
             ccLang.get().addDefault("SHOP_SETTING.PERMISSION", "§f퍼미션");
 
             ccLang.get().addDefault("ITEM_SETTING_TITLE", "§3아이탬 셋팅");
@@ -266,11 +268,11 @@ public final class LangUtil
             ccLang.get().addDefault("HELP.USAGE", "사용법");
             ccLang.get().addDefault("HELP.ITEM_ALREADY_EXIST", "§7§o{item}(은)는 이미 판매중임.\n   {info}\n   명령어를 입력하면 값이 수정됩니다.");
             ccLang.get().addDefault("HELP.ITEM_INFO", "§7§o{item}의 현재 설정:\n   {info}");
-            ccLang.get().addDefault("HELP.REMOVE_ITEM", "§f§o인자를 0으로 입력하면 이 아이탬을 상점에서 §4제거§f합니다.");
+            ccLang.get().addDefault("HELP.REMOVE_ITEM", "§f인자를 0으로 입력하면 이 아이탬을 상점에서 §4제거§f합니다.");
             ccLang.get().addDefault("HELP.QSELL", "§f빠르게 아이탬을 판매합니다.");
             ccLang.get().addDefault("HELP.DELETE_OLD_USER", "장기간 접속하지 않은 유저의 데이터를 삭제합니다.");
             ccLang.get().addDefault("HELP.ACCOUNT", "상점의 계좌 잔액을 설정합니다. -1 = 무제한");
-            ccLang.get().addDefault("HELP.SET_TO_REC_ALL", "§c상점의 모든 아이템 설정값을 권장값으로 초기화합니다.");
+            ccLang.get().addDefault("HELP.SET_TO_REC_ALL", "§e상점의 모든 아이템 설정값을 권장값으로 §c초기화§e합니다.");
 
             ccLang.get().addDefault("ERR.NO_USER_ID", "§6플레이어 uuid를 찾을 수 없습니다. 상점 이용 불가능.");
             ccLang.get().addDefault("ERR.ITEM_NOT_EXIST", "상점에 해당 아이탬이 존재하지 않습니다.");
@@ -346,6 +348,7 @@ public final class LangUtil
             ccLang.get().addDefault("SHOP.BUY_PRICE", "§fBuy: {num}");
             ccLang.get().addDefault("SHOP.SELL_PRICE", "§fSell: {num}");
             ccLang.get().addDefault("SHOP.STOCK", "§8Stock: {num}");
+            ccLang.get().addDefault("SHOP.STOCK_2", "§8Stock: {stock}/{max_stock}");
             ccLang.get().addDefault("SHOP.INF_STOCK", "§8Infinite");
             ccLang.get().addDefault("SHOP.STATIC_PRICE", "§8[Fixed price]");
             ccLang.get().addDefault("SHOP.STACKS", "§8{num} Stacks");
@@ -383,6 +386,7 @@ public final class LangUtil
             ccLang.get().addDefault("SHOP_SETTING.HIDE_STOCK", "§fHide stock.");
             ccLang.get().addDefault("SHOP_SETTING.HIDE_PRICING_TYPE", "§fHide price type.");
             ccLang.get().addDefault("SHOP_SETTING.HIDE_SHOP_BALANCE", "§fHide shop account balance.");
+            ccLang.get().addDefault("SHOP_SETTING.SHOW_MAX_STOCK", "§fShow max stock.");
             ccLang.get().addDefault("SHOP_SETTING.PERMISSION", "§fPermission");
 
             ccLang.get().addDefault("ITEM_SETTING_TITLE", "§3Item Settings");
@@ -565,11 +569,11 @@ public final class LangUtil
             ccLang.get().addDefault("HELP.USAGE", "Usage");
             ccLang.get().addDefault("HELP.ITEM_ALREADY_EXIST", "§7§o{item} is already on sale.\n   {info}\n   Entering a command modifies the value.");
             ccLang.get().addDefault("HELP.ITEM_INFO", "§7§o{item}'s current settings:\n   {info}");
-            ccLang.get().addDefault("HELP.REMOVE_ITEM", "§f§Entering an argument of 0 will §4remove§f this item from the store.");
+            ccLang.get().addDefault("HELP.REMOVE_ITEM", "§fEntering an argument of 0 will §4remove§f this item from the store.");
             ccLang.get().addDefault("HELP.QSELL", "§fSell items quickly.");
             ccLang.get().addDefault("HELP.DELETE_OLD_USER", "Delete long-term inactive user data");
             ccLang.get().addDefault("HELP.ACCOUNT", "Sets the account balance of the shop. -1 = unlimited");
-            ccLang.get().addDefault("HELP.SET_TO_REC_ALL", "§cResets all item settings in the store to the recommended values.");
+            ccLang.get().addDefault("HELP.SET_TO_REC_ALL", "§cResets§e all item settings in the store to the recommended values.");
 
             ccLang.get().addDefault("ERR.NO_USER_ID", "§6Player uuid not found. Shop unavailable.");
             ccLang.get().addDefault("ERR.ITEM_NOT_EXIST", "The item does not exist in the store.");
