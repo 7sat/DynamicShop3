@@ -17,7 +17,6 @@ UI.OpenStartPageWhenClickCloseButton: true
 UI.ShopInfoButtonIcon : OAK_SIGN
 UI.IntFormat: ###,###
 UI.DoubleFormat: ###,###.##
-UI.UseTranslatedItemName: true
 UI.LocalizedItemName: true
 
 Log.SaveLogs: true

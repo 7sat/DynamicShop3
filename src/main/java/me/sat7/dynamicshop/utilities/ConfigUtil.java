@@ -34,7 +34,6 @@ public final class ConfigUtil
                     "UI.IntFormat",
                     "UI.DoubleFormat",
                     "UI.LocalizedItemName",
-                    "UI.UseTranslatedItemName",
                     "Log.SaveLogs",
                     "Log.LogFileNameFormat",
                     "Log.CullLogs",
