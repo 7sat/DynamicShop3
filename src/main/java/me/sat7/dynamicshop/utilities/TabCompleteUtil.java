@@ -1,9 +1,6 @@
 package me.sat7.dynamicshop.utilities;
 
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Map;
-import java.util.UUID;
+import java.util.*;
 import java.util.stream.Collectors;
 
 import me.sat7.dynamicshop.files.CustomConfig;
@@ -30,7 +27,8 @@ public final class TabCompleteUtil
     {
         if (!(sender instanceof Player)) return null;
 
-        UUID uuid = ((Player) sender).getUniqueId();
+        Player p = (Player)sender;
+        UUID uuid = p.getUniqueId();
 
         try
         {
@@ -45,7 +43,7 @@ public final class TabCompleteUtil
                 {
                     ConfigurationSection options = entry.getValue().get().getConfigurationSection("Options");
 
-                    if (options.contains("flag.signshop") && !sender.hasPermission(Constants.REMOTE_ACCESS_PERMISSION))
+                    if (options.contains("flag.signshop") && !sender.hasPermission(Constants.P_ADMIN_REMOTE_ACCESS))
                         continue;
 
                     temp.add(entry.getKey());
@@ -76,7 +74,7 @@ public final class TabCompleteUtil
                     if (sender.hasPermission("dshop.admin.settax")) temp.add("settax");
                     if (sender.hasPermission("dshop.admin.settax")) temp.add("settax temp");
                     if (sender.hasPermission("dshop.admin.setdefaultshop")) temp.add("setdefaultshop");
-                    if (sender.hasPermission(Constants.DELETE_USER_PERMISSION)) temp.add("deleteOldUser");
+                    if (sender.hasPermission(Constants.P_ADMIN_DELETE_OLD_USER)) temp.add("deleteOldUser");
                     if (sender.hasPermission("dshop.admin.reload")) temp.add("reload");
                     temp.add("cmdHelp");
 
@@ -103,7 +101,7 @@ public final class TabCompleteUtil
                             if (options == null)
                                 continue;
 
-                            if (options.contains("flag") && options.getConfigurationSection("flag").contains("signshop") && !sender.hasPermission(Constants.REMOTE_ACCESS_PERMISSION))
+                            if (options.contains("flag") && options.getConfigurationSection("flag").contains("signshop") && !sender.hasPermission(Constants.P_ADMIN_REMOTE_ACCESS))
                                 continue;
 
                             temp.add(entry.getKey());
@@ -423,9 +421,9 @@ public final class TabCompleteUtil
                                             Help.showHelp("account_transfer", (Player) sender, args);
                                         }
 
-                                        for (Player p : Bukkit.getServer().getOnlinePlayers())
+                                        for (Player onlinePlayer : Bukkit.getServer().getOnlinePlayers())
                                         {
-                                            temp.add(p.getName());
+                                            temp.add(onlinePlayer.getName());
                                         }
                                         break;
                                     case "linkto":

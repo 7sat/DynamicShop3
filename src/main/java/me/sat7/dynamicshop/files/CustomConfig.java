@@ -40,8 +40,8 @@ public class CustomConfig
                 file.createNewFile();
             } catch (IOException e)
             {
-                System.out.println("Fatal error! Config Setup Fail. File name: " + name);
-                System.out.println(e);
+                DynamicShop.console.sendMessage("Fatal error! Config Setup Fail. File name: " + name);
+                //DynamicShop.console.sendMessage(e.toString());
             }
         }
 
@@ -74,7 +74,7 @@ public class CustomConfig
             customFile.save(file);
         } catch (IOException e)
         {
-            System.out.println("Couldn't save file :" + e);
+            DynamicShop.console.sendMessage("Couldn't save file :" + e);
         }
     }
 

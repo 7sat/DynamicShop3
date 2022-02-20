@@ -1,5 +1,6 @@
 package me.sat7.dynamicshop.guis;
 
+import me.sat7.dynamicshop.DynamicShop;
 import me.sat7.dynamicshop.utilities.ItemsUtil;
 import org.bukkit.Material;
 import org.bukkit.event.inventory.InventoryClickEvent;
@@ -104,6 +105,45 @@ public class InGameUI
     @SuppressWarnings("SameParameterValue")
     protected void CreateCloseButton(int slotIndex)
     {
-        CreateButton(slotIndex, Material.BARRIER, t("CLOSE"), t("CLOSE_LORE"));
+        CreateButton(slotIndex, InGameUI.GetCloseButtonIconMat(), t("CLOSE"), t("CLOSE_LORE"));
+    }
+
+    public static Material GetCloseButtonIconMat()
+    {
+        String iconName = DynamicShop.plugin.getConfig().getString("UI.CloseButtonIcon");
+        Material mat = Material.getMaterial(iconName);
+        if (mat == null)
+        {
+            mat = Material.BARRIER;
+            DynamicShop.plugin.getConfig().set("UI.CloseButtonIcon", "BARRIER");
+            DynamicShop.plugin.saveConfig();
+        }
+        return mat;
+    }
+
+    public static Material GetPageButtonIconMat()
+    {
+        String iconName = DynamicShop.plugin.getConfig().getString("UI.PageButtonIcon");
+        Material mat = Material.getMaterial(iconName);
+        if (mat == null)
+        {
+            mat = Material.PAPER;
+            DynamicShop.plugin.getConfig().set("UI.PageButtonIcon", "PAPER");
+            DynamicShop.plugin.saveConfig();
+        }
+        return mat;
+    }
+
+    public static Material GetShopInfoButtonIconMat()
+    {
+        String iconName = DynamicShop.plugin.getConfig().getString("UI.ShopInfoButtonIcon");
+        Material mat = Material.getMaterial(iconName);
+        if (mat == null)
+        {
+            mat = Material.GOLD_BLOCK;
+            DynamicShop.plugin.getConfig().set("UI.ShopInfoButtonIcon", "GOLD_BLOCK");
+            DynamicShop.plugin.saveConfig();
+        }
+        return mat;
     }
 }

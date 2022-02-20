@@ -8,7 +8,6 @@ import me.sat7.dynamicshop.guis.InGameUI;
 import me.sat7.dynamicshop.guis.UIManager;
 import me.sat7.dynamicshop.transactions.Calc;
 import org.bukkit.Bukkit;
-import org.bukkit.Material;
 import org.bukkit.configuration.ConfigurationSection;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
@@ -396,7 +395,7 @@ public final class ShopUtil
         // 무한
         if (!data.get().contains("Options.Balance")) return -1;
 
-        double shopBal = 0;
+        double shopBal;
 
         try
         {
@@ -473,19 +472,6 @@ public final class ShopUtil
             if (linkedShopData != null)
                 linkedShopData.get().set("Options.Balance", newValue);
         }
-    }
-
-    public static String GetShopInfoIconMat()
-    {
-        String infoBtnIconName = DynamicShop.plugin.getConfig().getString("UI.ShopInfoButtonIcon");
-        Material mat = Material.getMaterial(infoBtnIconName);
-        if (mat == null)
-        {
-            DynamicShop.plugin.getConfig().set("UI.ShopInfoButtonIcon", "GOLD_BLOCK");
-            DynamicShop.plugin.saveConfig();
-            infoBtnIconName = "GOLD_BLOCK";
-        }
-        return infoBtnIconName;
     }
 
     // 2틱 후 인벤토리 닫기
@@ -617,6 +603,8 @@ public final class ShopUtil
     private static int randomStockTimer = 1;
     public static void randomChange(Random generator)
     {
+        boolean legacyStabilizer = DynamicShop.plugin.getConfig().getBoolean("Shop.UseLegacyStockStabilization");
+
         for(Map.Entry<String, CustomConfig> entry : shopConfigFiles.entrySet())
         {
             boolean somethingIsChanged = false;
@@ -659,19 +647,7 @@ public final class ShopUtil
                         int median = data.get().getInt(item + ".median");
                         if (median <= 1) continue; // 고정가 상품에 대해서는 스킵
 
-                        boolean down = generator.nextBoolean();
-                        double rate = stock / (double)median;
-                        if(rate < 0.5 && generator.nextBoolean())
-                            down = false;
-                        else if(rate > 2 && generator.nextBoolean())
-                            down = true;
-
-                        int amount = (int)(median * (confSec.getDouble("strength") / 100.0) * generator.nextFloat());
-                        if(down)
-                            amount *= -1;
-
-                        stock += amount;
-                        if (stock < 2) stock = 2;
+                        stock = RandomStockFluctuation(generator, stock, median, confSec.getDouble("strength"));
 
                         data.get().set(item + ".stock", stock);
                         somethingIsChanged = true;
@@ -709,40 +685,10 @@ public final class ShopUtil
                         int median = data.get().getInt(item + ".median");
                         if (median < 1) continue; // 고정가 상품에 대해서는 스킵
 
-                        //DynamicShop.console.sendMessage("DEBUG: " + data.get().get(item + ".mat") + " / " + oldMedian + "/" + stock);
-
                         if (stock == median)
                             continue; // 이미 같으면 스킵
 
-                        if (DynamicShop.plugin.getConfig().getBoolean("Shop.UseLegacyStockStabilization"))
-                        {
-                            int amount = (int)(median * (confSec2.getDouble("strength") / 100.0));
-                            if (stock < median)
-                            {
-                                stock += amount;
-                                if (stock > median) stock = median;
-                            } else
-                            {
-                                stock -= amount;
-                                if (stock < median) stock = median;
-                            }
-                        }
-                        else
-                        {
-                            int amount = (int)((median - stock) * (confSec2.getDouble("strength") / 100.0));
-                            if (amount == 0)
-                            {
-                                if (generator.nextInt() % 2 == 0)
-                                {
-                                    amount = (stock > median) ? -1 : 1;
-                                }
-                            }
-
-                            if (amount == 0)
-                                continue;
-
-                            stock += amount;
-                        }
+                        stock = StockStabilizing(legacyStabilizer, generator, stock, median, confSec2.getDouble("strength"));
 
                         data.get().set(item + ".stock", stock);
                         somethingIsChanged = true;
@@ -761,7 +707,7 @@ public final class ShopUtil
         {
             if (UIManager.GetPlayerCurrentUIType(p) == InGameUI.UI_TYPE.ItemTrade)
             {
-                String[] temp = DynamicShop.userInteractItem.get(p.getUniqueId()).split("/");
+                String[] temp = DynamicShop.userInteractItem.get(p.getUniqueId()).split("/"); // 이건 있어야겠네.
                 DynaShopAPI.openItemTradeGui(p, temp[0], temp[1]);
             }
         }
@@ -796,7 +742,7 @@ public final class ShopUtil
             data.save();
         }
     }
-
+    
     // Shop.yml 한덩어리로 되있는 데이터를 새 버전 방식으로 변환함
     public static void ConvertOldShopData()
     {
@@ -878,5 +824,56 @@ public final class ShopUtil
         }
 
         data.save();
+    }
+
+    public static int RandomStockFluctuation(Random generator, int stock, int median, double strength)
+    {
+        boolean down = generator.nextBoolean();
+        double rate = stock / (double)median;
+        if(rate < 0.5 && generator.nextBoolean())
+            down = false;
+        else if(rate > 2 && generator.nextBoolean())
+            down = true;
+
+        int amount = (int)(median * (strength / 100.0) * generator.nextFloat());
+        if(down)
+            amount *= -1;
+
+        stock += amount;
+        if (stock < 2) stock = 2;
+
+        return stock;
+    }
+
+    public static int StockStabilizing(Boolean isLegacyMode, Random generator,int stock, int median, double strength)
+    {
+        if (isLegacyMode)
+        {
+            int amount = (int)(median * (strength / 100.0));
+            if (stock < median)
+            {
+                stock += amount;
+                if (stock > median) stock = median;
+            } else
+            {
+                stock -= amount;
+                if (stock < median) stock = median;
+            }
+        }
+        else
+        {
+            int amount = (int)((median - stock) * (strength / 100.0));
+            if (amount == 0)
+            {
+                if (generator.nextInt() % 2 == 0)
+                {
+                    amount = (stock > median) ? -1 : 1;
+                }
+            }
+
+            stock += amount;
+        }
+
+        return stock;
     }
 }

@@ -57,8 +57,8 @@ public class OnClick implements Listener
         else
         {
             if (UIManager.GetPlayerCurrentUIType(player) == InGameUI.UI_TYPE.ItemPalette ||
-                    UIManager.GetPlayerCurrentUIType(player) == InGameUI.UI_TYPE.QuickSell ||
-                    UIManager.GetPlayerCurrentUIType(player) == InGameUI.UI_TYPE.ItemSettings)
+                UIManager.GetPlayerCurrentUIType(player) == InGameUI.UI_TYPE.QuickSell ||
+                UIManager.GetPlayerCurrentUIType(player) == InGameUI.UI_TYPE.ItemSettings)
             {
                 e.setCancelled(true);
                 UIManager.OnClickLowerInventory(e);

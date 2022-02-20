@@ -31,12 +31,12 @@ public class Root implements CommandExecutor
         }
         Player player = (Player) sender;
 
-        if (!player.hasPermission(Constants.USE_SHOP_PERMISSION))
+        if (!player.hasPermission(Constants.P_USE))
         {
             player.sendMessage(DynamicShop.dsPrefix + t("ERR.NO_PERMISSION"));
             return true;
         }
-        if (player.getGameMode() == GameMode.CREATIVE && !player.hasPermission(Constants.ADMIN_CREATIVE_PERMISSION))
+        if (player.getGameMode() == GameMode.CREATIVE && !player.hasPermission(Constants.P_ADMIN_CREATIVE))
         {
             player.sendMessage(DynamicShop.dsPrefix + t("ERR.CREATIVE"));
             return true;
@@ -52,7 +52,6 @@ public class Root implements CommandExecutor
         // 스타트페이지
         if (args.length == 0)
         {
-            DynamicShop.userInteractItem.put(player.getUniqueId(), "");
             DynaShopAPI.openStartPage(player);
             return true;
         }
@@ -75,7 +74,7 @@ public class Root implements CommandExecutor
         // qsell
         else if (args[0].equalsIgnoreCase("qsell"))
         {
-            if (sender.hasPermission(Constants.USE_QSELL_PERMISSION))
+            if (sender.hasPermission(Constants.P_USE_QSELL))
             {
                 DynaShopAPI.openQuickSellGUI(player);
             }

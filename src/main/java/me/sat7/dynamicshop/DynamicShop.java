@@ -63,7 +63,7 @@ public final class DynamicShop extends JavaPlugin implements Listener
     public static final HashMap<UUID, String> userTempData = new HashMap<>();
     public static final HashMap<UUID, String> userInteractItem = new HashMap<>();
 
-    public static LocaleManager localeManager = new LocaleManager();
+    public static final LocaleManager localeManager = new LocaleManager();
 
     @Override
     public void onEnable()

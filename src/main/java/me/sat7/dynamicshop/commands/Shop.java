@@ -38,7 +38,6 @@ public final class Shop
         {
             if (DynamicShop.plugin.getConfig().getBoolean("Command.OpenStartPageInsteadOfDefaultShop"))
             {
-                DynamicShop.userInteractItem.put(player.getUniqueId(), "");
                 DynaShopAPI.openStartPage(player);
                 return true;
             }
@@ -78,7 +77,7 @@ public final class Shop
             ConfigurationSection shopConf = shopData.get().getConfigurationSection("Options");
             if (shopConf.contains("flag.signshop"))
             {
-                if (!player.hasPermission(Constants.REMOTE_ACCESS_PERMISSION))
+                if (!player.hasPermission(Constants.P_ADMIN_REMOTE_ACCESS))
                 {
                     player.sendMessage(DynamicShop.dsPrefix + t("ERR.SIGN_SHOP_REMOTE_ACCESS"));
                     return true;
@@ -107,7 +106,7 @@ public final class Shop
                         (z2 <= player.getLocation().getBlockZ() && player.getLocation().getBlockZ() <= z1)))
                     outside = true;
 
-                if (outside && !player.hasPermission(Constants.REMOTE_ACCESS_PERMISSION))
+                if (outside && !player.hasPermission(Constants.P_ADMIN_REMOTE_ACCESS))
                 {
                     player.sendMessage(DynamicShop.dsPrefix + t("ERR.LOCAL_SHOP_REMOTE_ACCESS"));
 
@@ -148,8 +147,6 @@ public final class Shop
                 }
             }
 
-            DynamicShop.userTempData.put(player.getUniqueId(), "");
-            DynamicShop.userInteractItem.put(player.getUniqueId(), "");
             DynaShopAPI.openShopGui(player, shopName, 1);
             return true;
         }
@@ -1171,7 +1168,7 @@ public final class Shop
                 }
 
                 // 수정
-                String temp = "";
+                String temp;
                 if (args[3].equalsIgnoreCase("SellOnly"))
                 {
                     temp = "SellOnly";

@@ -30,6 +30,8 @@ public final class ConfigUtil
                     "Shop.UseLegacyStockStabilization",
                     "UI.DisplayStockAsStack",
                     "UI.OpenStartPageWhenClickCloseButton",
+                    "UI.CloseButtonIcon",
+                    "UI.PageButtonIcon",
                     "UI.ShopInfoButtonIcon",
                     "UI.IntFormat",
                     "UI.DoubleFormat",

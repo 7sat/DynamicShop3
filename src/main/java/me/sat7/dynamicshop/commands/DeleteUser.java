@@ -19,7 +19,7 @@ public final class DeleteUser
 
     static void deleteUser(String[] args, Player player)
     {
-        if (!player.hasPermission(Constants.DELETE_USER_PERMISSION))
+        if (!player.hasPermission(Constants.P_ADMIN_DELETE_OLD_USER))
         {
             player.sendMessage(DynamicShop.dsPrefix + t("ERR.NO_PERMISSION"));
             return;

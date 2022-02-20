@@ -52,6 +52,7 @@ public final class DynaShopAPI
         UIManager.Open(player, inventory, uiClass);
     }
 
+
     // 아이탬 파렛트 생성 및 열기
     public static void openItemPalette(Player player, String shopName, int targetSlot, int page, String search)
     {
@@ -108,10 +109,10 @@ public final class DynaShopAPI
     }
 
     // 스타트페이지 셋팅창
-    public static void openStartPageSettingGui(Player player)
+    public static void openStartPageSettingGui(Player player, int slotIndex)
     {
         StartPageSettings uiClass = new StartPageSettings();
-        Inventory inventory = uiClass.getGui(player);
+        Inventory inventory = uiClass.getGui(player, slotIndex);
         UIManager.Open(player, inventory, uiClass);
     }
 
@@ -162,7 +163,7 @@ public final class DynaShopAPI
         if (validateShopName(shopName))
         {
             CustomConfig data = ShopUtil.shopConfigFiles.get(shopName);
-
+            
             ArrayList<ItemStack> list = new ArrayList<>();
             for (String s : data.get().getKeys(false))
             {

@@ -57,6 +57,9 @@ public final class LogUtil
     public static void cullLogs()
     {
         File[] logs = new File(DynamicShop.plugin.getDataFolder() + "/Log").listFiles();
+        if(logs == null)
+            return;
+
         if (logs.length > 0)
         {
             int deleted = 0;

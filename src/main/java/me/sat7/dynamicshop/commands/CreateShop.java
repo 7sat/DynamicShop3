@@ -30,7 +30,7 @@ public final class CreateShop
 
             CustomConfig data = new CustomConfig();
             data.setup(shopname, "Shop");
-            if (false == ShopUtil.shopConfigFiles.containsKey(shopname))
+            if (!ShopUtil.shopConfigFiles.containsKey(shopname))
             {
                 data.get().set("Options.title", shopname);
                 data.get().set("Options.lore", "");

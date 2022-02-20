@@ -278,7 +278,7 @@ public final class Help
             player.sendMessage(" - " + t("HELP.USAGE") + ": /ds setdefaultshop <shop name>");
 
             player.sendMessage("");
-        } else if (helpcode.equals("delete_old_user") && player.hasPermission(Constants.DELETE_USER_PERMISSION))
+        } else if (helpcode.equals("delete_old_user") && player.hasPermission(Constants.P_ADMIN_DELETE_OLD_USER))
         {
             player.sendMessage(DynamicShop.dsPrefix + t("HELP.TITLE").replace("{command}", "§c§ldeleteOldUser§f§r"));
             player.sendMessage(" - " + t("HELP.USAGE") + ": /ds deleteOldUser <days>");

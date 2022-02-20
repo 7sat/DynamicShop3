@@ -46,13 +46,18 @@ public final class Shop extends InGameUI
     private int page;
     FileConfiguration shopData;
 
+    private int selectedSlot = -1;
+
     public Inventory getGui(Player player, String shopName, int page)
     {
         this.player = player;
         this.shopName = shopName;
         this.page = page;
+        this.selectedSlot = -1;
 
         shopData = ShopUtil.shopConfigFiles.get(shopName).get();
+
+        DynamicShop.userInteractItem.put(player.getUniqueId(), shopName + "/" + page);
 
         // jobreborn 플러그인 있는지 확인.
         if (!JobsHook.jobsRebornActive && shopData.contains("Options.flag.jobpoint"))
@@ -81,12 +86,11 @@ public final class Shop extends InGameUI
         String pageString = t("SHOP.PAGE_TITLE");
         pageString = pageString.replace("{curPage}", page + "");
         pageString = pageString.replace("{maxPage}", maxPage + "");
-        CreateButton(PAGE, Material.PAPER, pageString, pageLore, page);
+        CreateButton(PAGE, InGameUI.GetPageButtonIconMat(), pageString, pageLore, page);
 
         // 정보,설정 버튼
         String shopLore = CreateShopInfoText(player, shopName);
-        String infoBtnIconName = ShopUtil.GetShopInfoIconMat();
-        CreateButton(SHOP_INFO, Material.getMaterial(infoBtnIconName), "§3" + shopName, shopLore);
+        CreateButton(SHOP_INFO, InGameUI.GetShopInfoButtonIconMat(), "§3" + shopName, shopLore);
 
         ShowItems();
 
@@ -98,174 +102,16 @@ public final class Shop extends InGameUI
     {
         player = (Player) e.getWhoClicked();
 
-        String itemtoMove = "";
-        if (DynamicShop.userInteractItem.get(player.getUniqueId()) != null)
+        if (e.getSlot() == CLOSE)
+            CloseUI();
+        else if (e.getSlot() == PAGE)
+            OnClickPageButton(e.isLeftClick(), e.isRightClick(), e.isShiftClick());
+        else if (e.getSlot() == SHOP_INFO && e.isRightClick())
+            OnClickShopSettingsButton();
+        else if (e.getSlot() <= 45)
         {
-            String[] temp = DynamicShop.userInteractItem.get(player.getUniqueId()).split("/");
-            if (temp.length > 1) itemtoMove = temp[1];
-        }
-
-        // 빈칸이 아닌 뭔가 클릭함
-        if (e.getCurrentItem() != null && e.getCurrentItem().getType() != Material.AIR)
-        {
-            // 닫기버튼
-            if (e.getSlot() == CLOSE)
-            {
-                // 표지판으로 접근한 경우에는 그냥 창을 닫음
-                if (DynamicShop.userTempData.get(player.getUniqueId()).equalsIgnoreCase("sign"))
-                {
-                    DynamicShop.userTempData.put(player.getUniqueId(), "");
-                    player.closeInventory();
-                }
-                else
-                {
-                    if (DynamicShop.plugin.getConfig().getBoolean("UI.OpenStartPageWhenClickCloseButton"))
-                    {
-                        DynaShopAPI.openStartPage(player);
-                    } else
-                    {
-                        ShopUtil.closeInventoryWithDelay(player);
-                    }
-                }
-            }
-            // 페이지 이동 버튼
-            else if (e.getSlot() == PAGE)
-            {
-                int targetPage = page;
-                if (e.isLeftClick())
-                {
-                    if (!e.isShiftClick())
-                    {
-                        targetPage -= 1;
-                        if (targetPage < 1)
-                            targetPage = GetShopMaxPage(shopName);
-                    } else if (player.hasPermission("dshop.admin.shopedit"))
-                    {
-                        ShopUtil.insetShopPage(shopName, page);
-                    }
-                } else if (e.isRightClick())
-                {
-                    if (!e.isShiftClick())
-                    {
-                        targetPage += 1;
-                        if (targetPage > GetShopMaxPage(shopName))
-                            targetPage = 1;
-                    } else if (player.hasPermission("dshop.admin.shopedit"))
-                    {
-                        if (shopData.getInt("Options.page") > 1)
-                        {
-                            ShopUtil.closeInventoryWithDelay(player);
-
-                            DynamicShop.userInteractItem.put(player.getUniqueId(), shopName + "/" + page);
-                            DynamicShop.userTempData.put(player.getUniqueId(), "waitforPageDelete");
-                            OnChat.WaitForInput(player);
-
-                            player.sendMessage(DynamicShop.dsPrefix + t("MESSAGE.DELETE_CONFIRM"));
-                        } else
-                        {
-                            player.sendMessage(DynamicShop.dsPrefix + t("MESSAGE.CANT_DELETE_LAST_PAGE"));
-                        }
-                        return;
-                    }
-                }
-                DynaShopAPI.openShopGui(player, shopName, targetPage);
-            }
-            // 상점 설정 버튼
-            else if (e.getSlot() == SHOP_INFO && e.isRightClick() && player.hasPermission("dshop.admin.shopedit"))
-            {
-                DynamicShop.userInteractItem.put(player.getUniqueId(), shopName + "/" + 0); // 선택한 아이탬의 인덱스 저장
-                DynaShopAPI.openShopSettingGui(player, shopName);
-            } else if (e.getSlot() <= 45)
-            {
-                // 상점의 아이탬 클릭
-                int idx = e.getSlot() + (45 * (page - 1));
-
-                // 거래화면 열기
-                if (e.isLeftClick())
-                {
-                    if (!shopData.contains(idx + ".value")) return; // 장식용 버튼임
-
-                    SoundUtil.playerSoundEffect(player, "tradeview");
-                    DynaShopAPI.openItemTradeGui(player, shopName, String.valueOf(idx));
-                    DynamicShop.userInteractItem.put(player.getUniqueId(), shopName + "/" + idx); // 선택한 아이탬의 인덱스 저장
-                }
-                // 아이탬 이동, 수정, 또는 장식탬 삭제
-                else if (player.hasPermission("dshop.admin.shopedit"))
-                {
-                    DynamicShop.userInteractItem.put(player.getUniqueId(), shopName + "/" + idx); // 선택한 아이탬의 인덱스 저장
-                    if (e.isShiftClick())
-                    {
-                        if (shopData.contains(idx + ".value"))
-                        {
-                            double buyValue = shopData.getDouble(idx + ".value");
-                            double sellValue = buyValue;
-                            if (shopData.contains(idx + ".value2"))
-                            {
-                                sellValue = shopData.getDouble(idx + ".value2");
-                            }
-                            double valueMin = shopData.getDouble(idx + ".valueMin");
-                            if (valueMin <= 0.01) valueMin = 0.01;
-                            double valueMax = shopData.getDouble(idx + ".valueMax");
-                            if (valueMax <= 0) valueMax = -1;
-                            int median = shopData.getInt(idx + ".median");
-                            int stock = shopData.getInt(idx + ".stock");
-                            int maxStock = shopData.getInt(idx + ".maxStock", -1);
-
-                            ItemStack iStack = new ItemStack(e.getCurrentItem().getType());
-                            iStack.setItemMeta((ItemMeta) shopData.get(idx + ".itemStack"));
-
-                            DynaShopAPI.openItemSettingGui(player, shopName, idx, 0, iStack, buyValue, sellValue, valueMin, valueMax, median, stock, maxStock);
-                        } else
-                        {
-                            ShopUtil.removeItemFromShop(shopName, idx);
-                            DynaShopAPI.openShopGui(player, shopName, idx / 45 + 1);
-                        }
-                    } else if (itemtoMove.equals(""))
-                    {
-                        player.sendMessage(DynamicShop.dsPrefix + t("SHOP.ITEM_MOVE_SELECTED"));
-                    }
-                }
-            }
-        }
-        // 빈칸 클릭함
-        else
-        {
-            if (e.getSlot() > 45)
-            {
-                return;
-            }
-
-            int clickedIdx = e.getSlot() + ((page - 1) * 45);
-
-            // 아이탬 이동. 또는 장식 복사
-            if (e.isRightClick() && player.hasPermission("dshop.admin.shopedit") && !itemtoMove.equals(""))
-            {
-                shopData.set(clickedIdx + ".mat", shopData.get(itemtoMove + ".mat"));
-                shopData.set(clickedIdx + ".itemStack", shopData.get(itemtoMove + ".itemStack"));
-                shopData.set(clickedIdx + ".value", shopData.get(itemtoMove + ".value"));
-                shopData.set(clickedIdx + ".value2", shopData.get(itemtoMove + ".value2"));
-                shopData.set(clickedIdx + ".valueMin", shopData.get(itemtoMove + ".valueMin"));
-                shopData.set(clickedIdx + ".valueMax", shopData.get(itemtoMove + ".valueMax"));
-                shopData.set(clickedIdx + ".median", shopData.get(itemtoMove + ".median"));
-                shopData.set(clickedIdx + ".stock", shopData.get(itemtoMove + ".stock"));
-                shopData.set(clickedIdx + ".tradeType", shopData.get(itemtoMove + ".tradeType"));
-
-                if (shopData.contains(itemtoMove + ".value"))
-                {
-                    shopData.set(itemtoMove, null);
-                }
-
-                ShopUtil.shopConfigFiles.get(shopName).save();
-
-                DynaShopAPI.openShopGui(player, shopName, page);
-                DynamicShop.userInteractItem.put(player.getUniqueId(), "");
-            }
-            // 팔렛트 열기
-            else if (player.hasPermission("dshop.admin.shopedit"))
-            {
-                DynamicShop.userInteractItem.put(player.getUniqueId(), shopName + "/" + clickedIdx); // 선택한 아이탬의 인덱스 저장
-                DynaShopAPI.openItemPalette(player, shopName, clickedIdx, 1, "");
-            }
+            int idx = e.getSlot() + (45 * (page - 1));
+            OnClickItemSlot(idx, e);
         }
     }
 
@@ -333,11 +179,11 @@ public final class Shop extends InGameUI
                     String valueChanged_Buy;
                     String valueChanged_Sell;
 
-                    if (buyPrice - buyPrice2 >= 0.01)
+                    if (buyPrice - buyPrice2 > 0.005)
                     {
                         valueChanged_Buy = t("ARROW.UP_2") + n(priceSave1 * 100) + "%";
                         valueChanged_Sell = t("ARROW.UP") + n(priceSave1 * 100) + "%";
-                    } else if (buyPrice - buyPrice2 <= -0.01)
+                    } else if (buyPrice - buyPrice2 < -0.005)
                     {
                         valueChanged_Buy = t("ARROW.DOWN_2") + n(priceSave2 * 100) + "%";
                         valueChanged_Sell = t("ARROW.DOWN") + n(priceSave2 * 100) + "%";
@@ -347,7 +193,9 @@ public final class Shop extends InGameUI
                         valueChanged_Sell = "";
                     }
 
-                    if (buyPrice == sellPrice) sellPrice = buyPrice - ((buyPrice / 100) * Calc.getTaxRate(shopName));
+                    double buyValue = shopData.getDouble(s + ".value");
+                    if (buyValue == shopData.getDouble(s + ".value2", buyValue))
+                        sellPrice = sellPrice - ((sellPrice / 100) * Calc.getTaxRate(shopName));
 
                     String tradeType = "default";
                     if (shopData.contains(s + ".tradeType"))
@@ -562,5 +410,153 @@ public final class Shop extends InGameUI
         }
 
         return shopLore;
+    }
+
+    private void CloseUI()
+    {
+        // 표지판으로 접근한 경우에는 그냥 창을 닫음
+        if (DynamicShop.userTempData.get(player.getUniqueId()).equalsIgnoreCase("sign"))
+        {
+            DynamicShop.userTempData.put(player.getUniqueId(), "");
+            player.closeInventory();
+        }
+        else
+        {
+            if (DynamicShop.plugin.getConfig().getBoolean("UI.OpenStartPageWhenClickCloseButton"))
+            {
+                DynaShopAPI.openStartPage(player);
+            } else
+            {
+                ShopUtil.closeInventoryWithDelay(player);
+            }
+        }
+    }
+
+    private void OnClickPageButton(boolean isLeftClick, boolean isRightClick, boolean isShiftClick)
+    {
+        int targetPage = page;
+        if (isLeftClick)
+        {
+            if (!isShiftClick)
+            {
+                targetPage -= 1;
+                if (targetPage < 1)
+                    targetPage = GetShopMaxPage(shopName);
+            } else if (player.hasPermission("dshop.admin.shopedit"))
+            {
+                ShopUtil.insetShopPage(shopName, page);
+            }
+        } else if (isRightClick)
+        {
+            if (!isShiftClick)
+            {
+                targetPage += 1;
+                if (targetPage > GetShopMaxPage(shopName))
+                    targetPage = 1;
+            } else if (player.hasPermission("dshop.admin.shopedit"))
+            {
+                if (shopData.getInt("Options.page") > 1)
+                {
+                    ShopUtil.closeInventoryWithDelay(player);
+
+                    DynamicShop.userInteractItem.put(player.getUniqueId(), shopName + "/" + page);
+                    DynamicShop.userTempData.put(player.getUniqueId(), "waitforPageDelete");
+                    OnChat.WaitForInput(player);
+
+                    player.sendMessage(DynamicShop.dsPrefix + t("MESSAGE.DELETE_CONFIRM"));
+                } else
+                {
+                    player.sendMessage(DynamicShop.dsPrefix + t("MESSAGE.CANT_DELETE_LAST_PAGE"));
+                }
+                return;
+            }
+        }
+        DynaShopAPI.openShopGui(player, shopName, targetPage);
+    }
+
+    private void OnClickShopSettingsButton()
+    {
+        if(player.hasPermission("dshop.admin.shopedit"))
+        {
+            DynaShopAPI.openShopSettingGui(player, shopName);
+        }
+    }
+
+    private void OnClickItemSlot(int idx, InventoryClickEvent e)
+    {
+        if (e.getCurrentItem() != null && e.getCurrentItem().getType() != Material.AIR)
+        {
+            // 거래화면 열기
+            if (e.isLeftClick() && shopData.contains(idx + ".value"))
+            {
+                SoundUtil.playerSoundEffect(player, "tradeview");
+                DynaShopAPI.openItemTradeGui(player, shopName, String.valueOf(idx));
+            }
+            // 아이탬 이동, 수정, 또는 장식탬 삭제
+            else if (e.isRightClick() && player.hasPermission("dshop.admin.shopedit"))
+            {
+                if (e.isShiftClick())
+                {
+                    if (shopData.contains(idx + ".value"))
+                    {
+                        double buyValue = shopData.getDouble(idx + ".value");
+                        double sellValue = buyValue;
+                        if (shopData.contains(idx + ".value2"))
+                        {
+                            sellValue = shopData.getDouble(idx + ".value2");
+                        }
+                        double valueMin = shopData.getDouble(idx + ".valueMin");
+                        if (valueMin <= 0.01) valueMin = 0.01;
+                        double valueMax = shopData.getDouble(idx + ".valueMax");
+                        if (valueMax <= 0) valueMax = -1;
+                        int median = shopData.getInt(idx + ".median");
+                        int stock = shopData.getInt(idx + ".stock");
+                        int maxStock = shopData.getInt(idx + ".maxStock", -1);
+
+                        ItemStack iStack = new ItemStack(e.getCurrentItem().getType());
+                        iStack.setItemMeta((ItemMeta) shopData.get(idx + ".itemStack"));
+
+                        DynaShopAPI.openItemSettingGui(player, shopName, idx, 0, iStack, buyValue, sellValue, valueMin, valueMax, median, stock, maxStock);
+                    } else
+                    {
+                        ShopUtil.removeItemFromShop(shopName, idx);
+                        DynaShopAPI.openShopGui(player, shopName, idx / 45 + 1);
+                    }
+                } else if (selectedSlot == -1)
+                {
+                    player.sendMessage(DynamicShop.dsPrefix + t("SHOP.ITEM_MOVE_SELECTED"));
+                    selectedSlot = idx;
+                }
+            }
+        }
+        else if (player.hasPermission("dshop.admin.shopedit"))
+        {
+            // 아이탬 이동. 또는 장식 복사
+            if (e.isRightClick() && selectedSlot != -1)
+            {
+                shopData.set(idx + ".mat", shopData.get(selectedSlot + ".mat"));
+                shopData.set(idx + ".itemStack", shopData.get(selectedSlot + ".itemStack"));
+                shopData.set(idx + ".value", shopData.get(selectedSlot + ".value"));
+                shopData.set(idx + ".value2", shopData.get(selectedSlot + ".value2"));
+                shopData.set(idx + ".valueMin", shopData.get(selectedSlot + ".valueMin"));
+                shopData.set(idx + ".valueMax", shopData.get(selectedSlot + ".valueMax"));
+                shopData.set(idx + ".median", shopData.get(selectedSlot + ".median"));
+                shopData.set(idx + ".stock", shopData.get(selectedSlot + ".stock"));
+                shopData.set(idx + ".tradeType", shopData.get(selectedSlot + ".tradeType"));
+
+                if (shopData.contains(selectedSlot + ".value"))
+                {
+                    shopData.set(String.valueOf(selectedSlot), null);
+                }
+
+                ShopUtil.shopConfigFiles.get(shopName).save();
+                DynaShopAPI.openShopGui(player, shopName, page);
+            }
+            // 팔렛트 열기
+            else
+            {
+                DynaShopAPI.openItemPalette(player, shopName, idx, 1, "");
+            }
+        }
     }
 }

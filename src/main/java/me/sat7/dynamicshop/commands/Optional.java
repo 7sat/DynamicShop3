@@ -24,12 +24,12 @@ public class Optional implements CommandExecutor
         if (sender instanceof Player)
         {
             Player player = (Player) sender;
-            if (!player.hasPermission(Constants.USE_SHOP_PERMISSION))
+            if (!player.hasPermission(Constants.P_USE))
             {
                 player.sendMessage(DynamicShop.dsPrefix + t("ERR.NO_PERMISSION"));
                 return true;
             }
-            if (player.getGameMode() == GameMode.CREATIVE && !player.hasPermission(Constants.ADMIN_CREATIVE_PERMISSION))
+            if (player.getGameMode() == GameMode.CREATIVE && !player.hasPermission(Constants.P_ADMIN_CREATIVE))
             {
                 player.sendMessage(DynamicShop.dsPrefix + t("ERR.CREATIVE"));
                 return true;

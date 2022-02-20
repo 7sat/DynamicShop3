@@ -31,8 +31,13 @@ public final class StartPageSettings extends InGameUI
     private final int DECO = 7;
     private final int DELETE = 8;
 
-    public Inventory getGui(Player player)
+    private int slotIndex;
+
+    public Inventory getGui(Player player, int slotIndex)
     {
+        this.slotIndex = slotIndex;
+        DynamicShop.userInteractItem.put(player.getUniqueId(), "startPage/" + slotIndex);
+
         inventory = Bukkit.createInventory(player, 9, t("START_PAGE.EDITOR_TITLE"));
 
         CreateCloseButton(CLOSE); // 닫기 버튼
@@ -41,10 +46,9 @@ public final class StartPageSettings extends InGameUI
         CreateButton(LORE, Material.BOOK, t("START_PAGE.EDIT_LORE"), ""); // 설명 버튼
 
         // 아이콘 버튼
-        String[] temp = DynamicShop.userInteractItem.get(player.getUniqueId()).split("/");
-        CreateButton(ICON, Material.getMaterial(StartPage.ccStartPage.get().getString("Buttons." + temp[1] + ".icon")), t("START_PAGE.EDIT_ICON"), "");
+        CreateButton(ICON, Material.getMaterial(StartPage.ccStartPage.get().getString("Buttons." + slotIndex + ".icon")), t("START_PAGE.EDIT_ICON"), "");
 
-        String cmdString = StartPage.ccStartPage.get().getString("Buttons." + temp[1] + ".action");
+        String cmdString = StartPage.ccStartPage.get().getString("Buttons." + slotIndex + ".action");
         CreateButton(CMD, Material.REDSTONE_TORCH, t("START_PAGE.EDIT_ACTION"), cmdString == null || cmdString.isEmpty() ? null : "§7/" + cmdString); // 액션 버튼
         CreateButton(SHOP_SHORTCUT, Material.EMERALD, t("START_PAGE.SHOP_SHORTCUT"), ""); // 상점 바로가기 생성 버튼
         CreateButton(DECO, Material.BLUE_STAINED_GLASS_PANE, t("START_PAGE.CREATE_DECO"), ""); // 장식 버튼
@@ -59,8 +63,6 @@ public final class StartPageSettings extends InGameUI
         Player player = (Player) e.getWhoClicked();
         UUID uuid = player.getUniqueId();
 
-        String[] temp = DynamicShop.userInteractItem.get(player.getUniqueId()).split("/");
-
         // 돌아가기
         if (e.getSlot() == CLOSE)
         {
@@ -69,10 +71,8 @@ public final class StartPageSettings extends InGameUI
         // 버튼 삭제
         else if (e.getSlot() == DELETE)
         {
-            StartPage.ccStartPage.get().set("Buttons." + temp[1], null);
+            StartPage.ccStartPage.get().set("Buttons." + slotIndex, null);
             StartPage.ccStartPage.save();
-
-            DynamicShop.userInteractItem.put(player.getUniqueId(), "");
 
             DynaShopAPI.openStartPage(player);
         }

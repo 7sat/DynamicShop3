@@ -18,14 +18,14 @@ public final class LayoutUtil
                 "{Tag} : A predefined placeholder. Available for each item only." +
                 "\n{\\nTag} : Line breaks when this item is displayed." +
                 "\nSHOP.INFO: §f{ShopLore}{\\nPermission}{\\nTax}{\\nShopBalance}{\\nShopHour}{\\nShopPosition}" +
-                "\nSHOP.ITEM_INFO: §f{Buy}{\\nSell}{\\nStock}{\\nPricingType}{\\nItemMetaLore}{\\nTradeLore}" +
+                "\nSHOP.ITEM_INFO: §f{Sell}{\\nBuy}{\\nStock}{\\nPricingType}{\\nItemMetaLore}{\\nTradeLore}" +
                 "\nTRADE_VIEW.BUY: §f{Price}{\\nStock}{\\nDeliveryCharge}{\\nTradeLore}" +
                 "\nTRADE_VIEW.SELL: §f{Price}{\\nStock}{\\nDeliveryCharge}{\\nTradeLore}" +
                 "\nTRADE_VIEW.BALANCE: §f{PlayerBalance}{\\nShopBalance}"
         );
 
         ccLayout.get().addDefault("SHOP.INFO", "§f{ShopLore}{\\nPermission}{\\nTax}{\\nShopBalance}{\\nShopHour}{\\nShopPosition}");
-        ccLayout.get().addDefault("SHOP.ITEM_INFO", "§f{Buy}{\\nSell}{\\nStock}{\\nPricingType}\n{\\nItemMetaLore}{\\nTradeLore}");
+        ccLayout.get().addDefault("SHOP.ITEM_INFO", "§f{Sell}{\\nBuy}{\\nStock}{\\nPricingType}\n{\\nItemMetaLore}{\\nTradeLore}");
         ccLayout.get().addDefault("TRADE_VIEW.BUY", "§f{Price}{\\nStock}{\\nDeliveryCharge}\n{\\nTradeLore}");
         ccLayout.get().addDefault("TRADE_VIEW.SELL", "§f{Price}{\\nStock}{\\nDeliveryCharge}\n{\\nTradeLore}");
         ccLayout.get().addDefault("TRADE_VIEW.BALANCE", "§f{PlayerBalance}{\\nShopBalance}");

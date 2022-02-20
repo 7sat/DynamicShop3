@@ -24,7 +24,6 @@ public class OpenShop
             {
                 if (DynamicShop.plugin.getConfig().getBoolean("Command.OpenStartPageInsteadOfDefaultShop"))
                 {
-                    DynamicShop.userInteractItem.put(target.getUniqueId(), "");
                     DynaShopAPI.openStartPage(target);
                     return false;
                 }
@@ -87,8 +86,6 @@ public class OpenShop
                 }
             }
 
-            DynamicShop.userTempData.put(target.getUniqueId(), "");
-            DynamicShop.userInteractItem.put(target.getUniqueId(), "");
             DynaShopAPI.openShopGui(target, shopName, 1);
         }
 

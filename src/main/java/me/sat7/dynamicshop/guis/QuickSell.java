@@ -37,7 +37,7 @@ public final class QuickSell extends InGameUI
 
                 Material mat = Material.getMaterial(confSec.getString(s));
                 if(mat == null)
-                    mat = Material.RED_STAINED_GLASS_PANE;
+                    mat = Material.GREEN_STAINED_GLASS_PANE;
 
                 CreateButton(i, mat, t("QUICK_SELL.GUIDE_TITLE"), t("QUICK_SELL.GUIDE_LORE"));
             }catch (Exception ignore){}
@@ -53,7 +53,7 @@ public final class QuickSell extends InGameUI
         if (quickSellGui.get().getKeys(false).size() == 0)
         {
             for (int i = 0; i<9; i++)
-                quickSellGui.get().set("Buttons." + i, "RED_STAINED_GLASS_PANE");
+                quickSellGui.get().set("Buttons." + i, "GREEN_STAINED_GLASS_PANE");
         }
 
         quickSellGui.get().options().copyDefaults(true);

@@ -39,8 +39,8 @@ public class OnSignClick implements Listener
 
         //noinspection ConstantConditions
         if (e.getLine(0).equalsIgnoreCase("[dshop]")
-                || e.getLine(0).equalsIgnoreCase("[ds]")
-                || e.getLine(0).equalsIgnoreCase("[dynamicshop]"))
+            || e.getLine(0).equalsIgnoreCase("[ds]")
+            || e.getLine(0).equalsIgnoreCase("[dynamicshop]"))
         {
             String signId = CreateID(e.getBlock());
 
@@ -178,7 +178,7 @@ public class OnSignClick implements Listener
                 // 상점 존재 확인
                 if (ShopUtil.shopConfigFiles.containsKey(shopName))
                 {
-                    if (p.getGameMode() == GameMode.CREATIVE && !p.hasPermission(Constants.ADMIN_CREATIVE_PERMISSION))
+                    if (p.getGameMode() == GameMode.CREATIVE && !p.hasPermission(Constants.P_ADMIN_CREATIVE))
                     {
                         p.sendMessage(DynamicShop.dsPrefix + t("ERR.CREATIVE"));
                         return;
@@ -190,7 +190,7 @@ public class OnSignClick implements Listener
                     {
                         String itemName = p.getInventory().getItemInMainHand().getType().name();
                         if(itemName.contains("INK_SAC") || itemName.contains("_DYE"))
-                            return;
+                        return;
                     }
 
 
@@ -211,7 +211,6 @@ public class OnSignClick implements Listener
 
                         if (idx != -1)
                         {
-                            DynamicShop.userInteractItem.put(p.getUniqueId(), shopName + "/" + idx);
                             DynamicShop.userTempData.put(p.getUniqueId(), "sign");
 
                             DynaShopAPI.openItemTradeGui(p, shopName, String.valueOf(idx));

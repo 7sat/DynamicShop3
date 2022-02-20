@@ -66,7 +66,7 @@ public final class ItemPalette extends InGameUI
         String pageString = t("PALETTE.PAGE_TITLE")
                 .replace("{curPage}", Integer.toString(page))
                 .replace("{maxPage}", Integer.toString(maxPage));
-        CreateButton(PAGE, Material.PAPER, pageString, t("PALETTE.PAGE_LORE"), page);
+        CreateButton(PAGE, InGameUI.GetPageButtonIconMat(), pageString, t("PALETTE.PAGE_LORE"), page);
 
         // Add all Button
         if(!paletteList.isEmpty())
@@ -197,7 +197,7 @@ public final class ItemPalette extends InGameUI
                 allItems.add(new ItemStack(m));
         }
 
-        Collections.sort(allItems, ((Comparator<ItemStack>) (o1, o2) ->
+        allItems.sort(((Comparator<ItemStack>) (o1, o2) ->
         {
             if (o1.getType().getMaxDurability() > 0 && o2.getType().getMaxDurability() > 0)
                 return 0;
@@ -265,7 +265,6 @@ public final class ItemPalette extends InGameUI
 
     private void CloseUI()
     {
-        DynamicShop.userInteractItem.put(player.getUniqueId(), "");
         DynaShopAPI.openShopGui(player, shopName, 1);
     }
 
@@ -362,7 +361,7 @@ public final class ItemPalette extends InGameUI
 
         if (isLeft)
         {
-            DynaShopAPI.openItemSettingGui(player, shopName, shopSlotIndex, 0, item, 10, 10, 0.01, -1, 1000, 1000, -1);
+            DynaShopAPI.openItemSettingGui(player, shopName, shopSlotIndex, 0, item, 10, 10, 0.01, -1, 10000, 10000, -1);
         } else if (isRight)
         {
             ShopUtil.addItemToShop(shopName, shopSlotIndex, item, -1, -1, -1, -1, -1, -1);

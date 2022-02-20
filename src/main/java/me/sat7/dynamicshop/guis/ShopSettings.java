@@ -56,8 +56,12 @@ public final class ShopSettings extends InGameUI
     private final int LOG_TOGGLE = 30;
     private final int LOG_DELETE = 31;
 
+    private String shopName;
+
     public Inventory getGui(Player player, String shopName)
     {
+        this.shopName = shopName;
+
         inventory = Bukkit.createInventory(player, 36, t("SHOP_SETTING_TITLE") + "§7 | §8" + shopName);
 
         CustomConfig data = ShopUtil.shopConfigFiles.get(shopName);
@@ -91,7 +95,7 @@ public final class ShopSettings extends InGameUI
         CreateButton(PERMISSION, permIcon, t("SHOP_SETTING.PERMISSION"), permLore);
 
         //최대 페이지 버튼
-        CreateButton(MAX_PAGE, Material.PAPER, t("SHOP_SETTING.MAX_PAGE"), new ArrayList<>(Arrays.asList(t("SHOP_SETTING.MAX_PAGE_LORE"), t("SHOP_SETTING.L_R_SHIFT"))), data.get().getInt("Options.page"));
+        CreateButton(MAX_PAGE, InGameUI.GetPageButtonIconMat(), t("SHOP_SETTING.MAX_PAGE"), new ArrayList<>(Arrays.asList(t("SHOP_SETTING.MAX_PAGE_LORE"), t("SHOP_SETTING.L_R_SHIFT"))), data.get().getInt("Options.page"));
 
         // 영업시간 버튼
         int curTime = (int) (player.getWorld().getTime()) / 1000 + 6;
@@ -243,16 +247,12 @@ public final class ShopSettings extends InGameUI
     {
         Player player = (Player) e.getWhoClicked();
 
-        String[] temp = DynamicShop.userInteractItem.get(player.getUniqueId()).split("/");
-        String shopName = temp[0];
-
         CustomConfig data = ShopUtil.shopConfigFiles.get(shopName);
 
         // 닫기버튼
         if (e.getSlot() == CLOSE)
         {
-            DynaShopAPI.openShopGui(player, temp[0], 1);
-            DynamicShop.userInteractItem.put(player.getUniqueId(), "");
+            DynaShopAPI.openShopGui(player, shopName, 1);
         }
         // 권한
         else if (e.getSlot() == PERMISSION)

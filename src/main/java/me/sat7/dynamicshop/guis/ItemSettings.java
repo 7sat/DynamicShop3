@@ -1,7 +1,6 @@
 package me.sat7.dynamicshop.guis;
 
 import java.util.ArrayList;
-import java.util.Arrays;
 
 import me.sat7.dynamicshop.DynaShopAPI;
 import me.sat7.dynamicshop.utilities.*;
@@ -451,6 +450,8 @@ public final class ItemSettings extends InGameUI
             if(median <= 0 && editNum > 0)
             {
                 median = (int)editNum;
+                if(stock == -1)
+                    stock = 1;
             }
             else
             {
@@ -517,16 +518,25 @@ public final class ItemSettings extends InGameUI
             if(maxValue < 0.01) maxValue = 0.01;
         } else if (currentTab == MEDIAN)
         {
-            median /= div;
-            if(median < 1) median = 1;
+            if(median > 1)
+            {
+                median /= div;
+                if(median < 1) median = 1;
+            }
         } else if (currentTab == STOCK)
         {
-            stock /= div;
-            if(stock < 1) stock = 1;
+            if (stock > 1)
+            {
+                stock /= div;
+                if (stock < 1) stock = 1;
+            }
         } else if (currentTab == MAX_STOCK)
         {
-            maxStock /= div;
-            if(maxStock < 1) maxStock = 1;
+            if (maxStock > 1)
+            {
+                maxStock /= div;
+                if(maxStock < 1) maxStock = 1;
+            }
         }
 
         RefreshWindow();
