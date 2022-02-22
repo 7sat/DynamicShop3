@@ -352,14 +352,10 @@ public final class ItemSettings extends InGameUI
 
     private void RemoveItem()
     {
-        int idx = ShopUtil.findItemFromShop(shopName, inventory.getItem(SAMPLE_ITEM));
-        if (idx != -1)
-        {
-            ShopUtil.removeItemFromShop(shopName, idx);
-            player.sendMessage(DynamicShop.dsPrefix + t("MESSAGE.ITEM_DELETED"));
-            DynaShopAPI.openShopGui(player, shopName, shopSlotIndex / 45 + 1);
-            SoundUtil.playerSoundEffect(player, "deleteItem");
-        }
+        ShopUtil.removeItemFromShop(shopName, shopSlotIndex);
+        player.sendMessage(DynamicShop.dsPrefix + t("MESSAGE.ITEM_DELETED"));
+        DynaShopAPI.openShopGui(player, shopName, shopSlotIndex / 45 + 1);
+        SoundUtil.playerSoundEffect(player, "deleteItem");
     }
 
     private void SetToRecommend()

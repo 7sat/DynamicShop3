@@ -90,7 +90,7 @@ public final class ItemTrade extends InGameUI
                     player.closeInventory();
                 } else
                 {
-                    DynaShopAPI.openShopGui(player, shopName, 1);
+                    DynaShopAPI.openShopGui(player, shopName, Integer.parseInt(tradeIdx) / 45 + 1);
                 }
             } else if (e.getSlot() == CHECK_BALANCE)
             {
@@ -106,34 +106,36 @@ public final class ItemTrade extends InGameUI
                 if (player.hasPermission("dshop.admin.shopedit"))
                 {
                     String path = tradeIdx + ".tradeType";
-                    String tradeType = data.get().getString(path);
-                    if (tradeType == null || !tradeType.equals("SellOnly"))
+                    if (sellBuyOnly == null || !sellBuyOnly.equals("SellOnly"))
                     {
+                        sellBuyOnly = "SellOnly";
                         data.get().set(path, "SellOnly");
                     } else
                     {
+                        sellBuyOnly = "";
                         data.get().set(path, null);
                     }
 
                     data.save();
-                    DynaShopAPI.openItemTradeGui(player, shopName, tradeIdx);
+                    RefreshUI();
                 }
             } else if (e.getSlot() == BUY_ONLY_TOGGLE)
             {
                 if (player.hasPermission("dshop.admin.shopedit"))
                 {
                     String path = tradeIdx + ".tradeType";
-                    String tradeType = data.get().getString(path);
-                    if (tradeType == null || !tradeType.equals("BuyOnly"))
+                    if (sellBuyOnly == null || !sellBuyOnly.equals("BuyOnly"))
                     {
+                        sellBuyOnly = "BuyOnly";
                         data.get().set(path, "BuyOnly");
                     } else
                     {
+                        sellBuyOnly = "";
                         data.get().set(path, null);
                     }
 
                     data.save();
-                    DynaShopAPI.openItemTradeGui(player, shopName, tradeIdx);
+                    RefreshUI();
                 }
             } else
             {
@@ -420,5 +422,18 @@ public final class ItemTrade extends InGameUI
         {
             Buy.buy(CURRENCY.VAULT, player, shopName, tradeIdx, itemStack, deliveryCharge, infiniteStock);
         }
+    }
+
+    @Override
+    public void RefreshUI()
+    {
+        for (int i = 2; i < 9; i++)
+            inventory.setItem(i, null);
+        for (int i = 11; i < 18; i++)
+            inventory.setItem(i, null);
+
+        CreateBalanceButton();
+        CreateSellBuyOnlyToggle();
+        CreateTradeButtons();
     }
 }

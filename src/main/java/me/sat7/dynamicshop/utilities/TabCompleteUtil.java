@@ -46,7 +46,11 @@ public final class TabCompleteUtil
                     if (options.contains("flag.signshop") && !sender.hasPermission(Constants.P_ADMIN_REMOTE_ACCESS))
                         continue;
 
-                    temp.add(entry.getKey());
+                    String permission = options.getString("permission", "");
+                    if (permission.isEmpty()
+                        || !DynamicShop.plugin.getConfig().getBoolean("Command.PermissionCheckWhenCreatingAShopList")
+                        || p.hasPermission(permission))
+                        temp.add(entry.getKey());
                 }
 
                 for (String s : temp)
@@ -104,7 +108,11 @@ public final class TabCompleteUtil
                             if (options.contains("flag") && options.getConfigurationSection("flag").contains("signshop") && !sender.hasPermission(Constants.P_ADMIN_REMOTE_ACCESS))
                                 continue;
 
-                            temp.add(entry.getKey());
+                            String permission = options.getString("permission", "");
+                            if (permission.isEmpty()
+                                || !DynamicShop.plugin.getConfig().getBoolean("Command.PermissionCheckWhenCreatingAShopList")
+                                || p.hasPermission(permission))
+                                temp.add(entry.getKey());
                         }
 
                         for (String s : temp)

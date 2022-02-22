@@ -52,7 +52,7 @@ public final class DynamicShop extends JavaPlugin implements Listener
     public static CustomConfig ccUser;
     public static CustomConfig ccSign;
 
-    private BukkitTask randomChangeTask;
+    private BukkitTask periodicRepetitiveTask;
     private BukkitTask cullLogsTask;
 
     public static boolean updateAvailable = false;
@@ -83,7 +83,8 @@ public final class DynamicShop extends JavaPlugin implements Listener
         makeFolders();
         InitConfig();
 
-        startRandomChangeTask();
+        PeriodicRepetitiveTask();
+
         startCullLogsTask();
 
         // 완료
@@ -188,13 +189,30 @@ public final class DynamicShop extends JavaPlugin implements Listener
         }
     }
 
-    public void startRandomChangeTask()
+    public void PeriodicRepetitiveTask()
     {
-        if (randomChangeTask != null)
+        if (periodicRepetitiveTask != null)
         {
-            randomChangeTask.cancel();
+            periodicRepetitiveTask.cancel();
         }
-        randomChangeTask = Bukkit.getScheduler().runTaskTimer(DynamicShop.plugin, () -> ShopUtil.randomChange(new Random()), 500, 500);
+        periodicRepetitiveTask = Bukkit.getScheduler().runTaskTimer(DynamicShop.plugin, this::RepeatAction, 100, 100); // 1000틱 = 50초/25/12.5
+    }
+
+    private int repeatTaskCount = 0;
+    private void RepeatAction()
+    {
+        repeatTaskCount++;
+
+        //SimpleDateFormat sdf = new SimpleDateFormat("MM.dd.yyyy,HH.mm.ss");
+        //String time = sdf.format(System.currentTimeMillis());
+        //console.sendMessage(time + " / " + repeatTaskCount);
+
+        if(repeatTaskCount == 5)
+        {
+            ShopUtil.randomChange(new Random());
+            repeatTaskCount = 0;
+        }
+        UIManager.RefreshUI();
     }
 
     private void hookIntoJobs()
@@ -281,7 +299,7 @@ public final class DynamicShop extends JavaPlugin implements Listener
         ccUser.get().options().copyDefaults(true);
 
         int userVersion = getConfig().getInt("Version");
-        if (userVersion < configVersion)
+        if (userVersion < 3)
         {
             for (String s : ccUser.get().getKeys(false))
             {

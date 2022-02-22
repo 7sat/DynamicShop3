@@ -44,21 +44,13 @@ public final class Shop extends InGameUI
     private Player player;
     private String shopName;
     private int page;
+    private int maxPage;
     FileConfiguration shopData;
 
     private int selectedSlot = -1;
 
     public Inventory getGui(Player player, String shopName, int page)
     {
-        this.player = player;
-        this.shopName = shopName;
-        this.page = page;
-        this.selectedSlot = -1;
-
-        shopData = ShopUtil.shopConfigFiles.get(shopName).get();
-
-        DynamicShop.userInteractItem.put(player.getUniqueId(), shopName + "/" + page);
-
         // jobreborn 플러그인 있는지 확인.
         if (!JobsHook.jobsRebornActive && shopData.contains("Options.flag.jobpoint"))
         {
@@ -66,31 +58,23 @@ public final class Shop extends InGameUI
             return null;
         }
 
-        int maxPage = GetShopMaxPage(shopName);
+        this.player = player;
+        this.shopName = shopName;
+        this.page = page;
+        this.selectedSlot = -1;
+
+        maxPage = GetShopMaxPage(shopName);
         page = Clamp(page,1,maxPage);
 
-        String uiName = shopData.getString("Options.title");
-        if (uiName == null || uiName.isEmpty())
-            uiName = shopName;
+        shopData = ShopUtil.shopConfigFiles.get(shopName).get();
+        DynamicShop.userInteractItem.put(player.getUniqueId(), shopName + "/" + page);
 
+        String uiName = shopData.getString("Options.title", shopName);
         inventory = Bukkit.createInventory(player, 54, "§3" + uiName);
 
         CreateCloseButton(CLOSE);
-
-        // 페이지 버튼
-        String pageLore = t("SHOP.PAGE_LORE");
-        if (player.hasPermission("dshop.admin.shopedit"))
-        {
-            pageLore += "\n" + t("SHOP.PAGE_EDIT_LORE");
-        }
-        String pageString = t("SHOP.PAGE_TITLE");
-        pageString = pageString.replace("{curPage}", page + "");
-        pageString = pageString.replace("{maxPage}", maxPage + "");
-        CreateButton(PAGE, InGameUI.GetPageButtonIconMat(), pageString, pageLore, page);
-
-        // 정보,설정 버튼
-        String shopLore = CreateShopInfoText(player, shopName);
-        CreateButton(SHOP_INFO, InGameUI.GetShopInfoButtonIconMat(), "§3" + shopName, shopLore);
+        CreateButton(PAGE, InGameUI.GetPageButtonIconMat(), CreatePageButtonName(), CreatePageButtonLore(), page);
+        CreateButton(SHOP_INFO, InGameUI.GetShopInfoButtonIconMat(), "§3" + shopName, CreateShopInfoText());
 
         ShowItems();
 
@@ -112,6 +96,22 @@ public final class Shop extends InGameUI
         {
             int idx = e.getSlot() + (45 * (page - 1));
             OnClickItemSlot(idx, e);
+        }
+    }
+
+    @Override
+    public void OnClickLowerInventory(InventoryClickEvent e)
+    {
+        if(!DynamicShop.plugin.getConfig().getBoolean("UI.EnableInventoryClickSearch.Shop"))
+            return;
+
+        player = (Player) e.getWhoClicked();
+
+        int idx = ShopUtil.findItemFromShop(shopName, e.getCurrentItem());
+        if(idx != -1)
+        {
+            page = idx / 45 + 1;
+            RefreshUI();
         }
     }
 
@@ -293,7 +293,25 @@ public final class Shop extends InGameUI
         }
     }
 
-    private String CreateShopInfoText(Player player, String shopName)
+    private String CreatePageButtonName()
+    {
+        String pageString = t("SHOP.PAGE_TITLE");
+        pageString = pageString.replace("{curPage}", page + "");
+        pageString = pageString.replace("{maxPage}", maxPage + "");
+        return pageString;
+    }
+
+    private String CreatePageButtonLore()
+    {
+        String pageLore = t("SHOP.PAGE_LORE_V2");
+        if (player.hasPermission("dshop.admin.shopedit"))
+        {
+            pageLore += "\n" + t("SHOP.PAGE_EDIT_LORE");
+        }
+        return pageLore;
+    }
+
+    private String CreateShopInfoText()
     {
         String shopLore = l("SHOP.INFO");
 
@@ -317,7 +335,7 @@ public final class Shop extends InGameUI
         if (!(perm.length() == 0))
         {
             finalPermText += t("SHOP.PERMISSION") + "\n";
-            finalPermText += t("SHOP.PERMISSION").replace("{permission}", perm) + "\n";
+            finalPermText += t("SHOP.PERMISSION_ITEM").replace("{permission}", perm) + "\n";
         }
 
         // 세금
@@ -471,7 +489,8 @@ public final class Shop extends InGameUI
                 return;
             }
         }
-        DynaShopAPI.openShopGui(player, shopName, targetPage);
+        page = targetPage;
+        RefreshUI();
     }
 
     private void OnClickShopSettingsButton()
@@ -520,7 +539,8 @@ public final class Shop extends InGameUI
                     } else
                     {
                         ShopUtil.removeItemFromShop(shopName, idx);
-                        DynaShopAPI.openShopGui(player, shopName, idx / 45 + 1);
+                        selectedSlot = -1;
+                        RefreshUI();
                     }
                 } else if (selectedSlot == -1)
                 {
@@ -550,7 +570,8 @@ public final class Shop extends InGameUI
                 }
 
                 ShopUtil.shopConfigFiles.get(shopName).save();
-                DynaShopAPI.openShopGui(player, shopName, page);
+                selectedSlot = -1;
+                RefreshUI();
             }
             // 팔렛트 열기
             else
@@ -558,5 +579,25 @@ public final class Shop extends InGameUI
                 DynaShopAPI.openItemPalette(player, shopName, idx, 1, "");
             }
         }
+    }
+
+    @Override
+    public void RefreshUI()
+    {
+        for (int i = 0; i < 45; i++)
+            inventory.setItem(i, null);
+
+        ItemStack pageButton = inventory.getItem(PAGE);
+        ItemMeta pageButtonMeta = pageButton.getItemMeta();
+        pageButtonMeta.setDisplayName(CreatePageButtonName());
+        pageButton.setItemMeta(pageButtonMeta);
+        pageButton.setAmount(page);
+
+        ItemStack infoButton = inventory.getItem(SHOP_INFO);
+        ItemMeta infoMeta = infoButton.getItemMeta();
+        infoMeta.setLore(new ArrayList<>(Arrays.asList(CreateShopInfoText().split("\n"))));
+        infoButton.setItemMeta(infoMeta);
+
+        ShowItems();
     }
 }

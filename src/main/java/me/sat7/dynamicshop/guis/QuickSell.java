@@ -71,6 +71,7 @@ public final class QuickSell extends InGameUI
         }
 
         String[] targetShopInfo = ShopUtil.FindTheBestShopToSell(player, e.getCurrentItem());
+
         String topShopName = targetShopInfo[0];
         int tradeIdx = Integer.parseInt(targetShopInfo[1]);
 

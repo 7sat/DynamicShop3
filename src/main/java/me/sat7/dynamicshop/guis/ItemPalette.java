@@ -265,7 +265,7 @@ public final class ItemPalette extends InGameUI
 
     private void CloseUI()
     {
-        DynaShopAPI.openShopGui(player, shopName, 1);
+        DynaShopAPI.openShopGui(player, shopName, shopSlotIndex / 45 + 1);
     }
 
     private void MovePage(boolean isLeft, boolean isRight)

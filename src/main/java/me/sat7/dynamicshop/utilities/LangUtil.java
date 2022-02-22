@@ -58,7 +58,7 @@ public final class LangUtil
             ccLang.get().addDefault("SHOP.ITEM_EDIT_LORE", "§eShift우클릭: 편집");
             ccLang.get().addDefault("SHOP.DECO_DELETE_LORE", "§eShift우클릭: 삭제");
             ccLang.get().addDefault("SHOP.PAGE_TITLE", "§f{curPage}/{maxPage} 페이지");
-            ccLang.get().addDefault("SHOP.PAGE_LORE", "§f§n좌클릭: 이전 페이지\n§f§n우클릭: 다음 페이지");
+            ccLang.get().addDefault("SHOP.PAGE_LORE_V2", "§f§n좌클릭: 이전 페이지\n§f§n우클릭: 다음 페이지\n§7인벤토리에서 아이템을 클릭하면 \n§7그 아이템이 있는 페이지로 이동합니다.");
             ccLang.get().addDefault("SHOP.GO_TO_PAGE_EDITOR", "§eShift+우: 페이지 에디터");
             ccLang.get().addDefault("SHOP.PAGE_EDIT_LORE", "§eShift 좌클릭: 페이지 삽입\n§eShift 우클릭: 페이지 삭제");
             ccLang.get().addDefault("SHOP.ITEM_MOVE_SELECTED", "아이탬 선택됨. 비어있는 칸을 우클릭하면 이동합니다.");
@@ -150,6 +150,7 @@ public final class LangUtil
             ccLang.get().addDefault("PAGE_EDITOR.STOCK", "§8재고: {num}");
             ccLang.get().addDefault("PAGE_EDITOR.STACKS", "§8{num} 스택");
             ccLang.get().addDefault("PAGE_EDITOR.STATIC_PRICE", "§8[고정 가격]");
+            ccLang.get().addDefault("PAGE_EDITOR.EMPTY", "§8(비어있음)");
 
             ccLang.get().addDefault("LOG_VIEWER_TITLE", "§3로그 뷰어");
             ccLang.get().addDefault("LOG_VIEWER.USER", "§f유저: ");
@@ -252,6 +253,9 @@ public final class LangUtil
             ccLang.get().addDefault("MESSAGE.RECOMMEND_APPLIED", "추천 값 적용됨. {playerNum}명 기준입니다. config파일에서 이 값을 바꿀 수 있습니다.");
             ccLang.get().addDefault("MESSAGE.TRANSFER_SUCCESS", "송금 완료");
             ccLang.get().addDefault("MESSAGE.PURCHASE_REJECTED", "상점에 이 아이템이 너무 많습니다. 지금은 팔 수 없습니다.");
+            ccLang.get().addDefault("MESSAGE.CLICK_YOUR_ITEM_START_PAGE", "인벤토리의 아이템을 클릭하면 가장 좋은 조건의 상점으로 이동합니다.\n좌클릭: 구매   우클릭: 판매");
+            ccLang.get().addDefault("MESSAGE.MOVE_TO_BEST_SHOP_BUY", "{item}을 가장 저렴하게 살 수 있는 상점으로 이동했습니다.");
+            ccLang.get().addDefault("MESSAGE.MOVE_TO_BEST_SHOP_SELL", "{item}을 가장 비싸게 팔 수 있는 상점으로 이동했습니다.");
 
             ccLang.get().addDefault("HELP.TITLE", "§f도움말: {command} --------------------");
             ccLang.get().addDefault("HELP.SHOP", "상점을 엽니다.");
@@ -360,7 +364,7 @@ public final class LangUtil
             ccLang.get().addDefault("SHOP.ITEM_EDIT_LORE", "§eShiftRMB: Edit");
             ccLang.get().addDefault("SHOP.DECO_DELETE_LORE", "§eShiftRMB: Remove");
             ccLang.get().addDefault("SHOP.PAGE_TITLE", "§f{curPage}/{maxPage} Page");
-            ccLang.get().addDefault("SHOP.PAGE_LORE", "§f§nLMB: Previous page\n§f§nRMB: Next page");
+            ccLang.get().addDefault("SHOP.PAGE_LORE_V2", "§f§nLMB: Previous page\n§f§nRMB: Next page\n§7Clicking on your item will\n§7take you to the page where\n§7that item is located.");
             ccLang.get().addDefault("SHOP.GO_TO_PAGE_EDITOR", "§eShift RMB: Page Editor");
             ccLang.get().addDefault("SHOP.PAGE_EDIT_LORE", "§eShift LMB: Insert page\n§eShift RMB: Delete page");
             ccLang.get().addDefault("SHOP.ITEM_MOVE_SELECTED", "Item selected. Right-click on an empty field to move it.");
@@ -452,6 +456,7 @@ public final class LangUtil
             ccLang.get().addDefault("PAGE_EDITOR.STOCK", "§8Stock: {num}");
             ccLang.get().addDefault("PAGE_EDITOR.STACKS", "§8{num} Stakcs");
             ccLang.get().addDefault("PAGE_EDITOR.STATIC_PRICE", "§8[Fixed price]");
+            ccLang.get().addDefault("PAGE_EDITOR.EMPTY", "§8(empty)");
 
             ccLang.get().addDefault("LOG_VIEWER_TITLE", "§3Log Viewer");
             ccLang.get().addDefault("LOG_VIEWER.USER", "§fUser: ");
@@ -554,6 +559,9 @@ public final class LangUtil
             ccLang.get().addDefault("MESSAGE.RECOMMEND_APPLIED", "Recommended value applied. It is based on {playerNum}players. You can change this value in the config file.");
             ccLang.get().addDefault("MESSAGE.TRANSFER_SUCCESS", "Remittance completed");
             ccLang.get().addDefault("MESSAGE.PURCHASE_REJECTED", "There are too many of these items in the shop. Can't sell it now.");
+            ccLang.get().addDefault("MESSAGE.CLICK_YOUR_ITEM_START_PAGE", "Click on an item in your inventory to find the shop with the best deal.\nLMB: Buy   RMB: Sell");
+            ccLang.get().addDefault("MESSAGE.MOVE_TO_BEST_SHOP_BUY", "Moved to the shop where you can buy {item} at the lowest price.");
+            ccLang.get().addDefault("MESSAGE.MOVE_TO_BEST_SHOP_SELL", "Moved to the shop where you can sell {item} at the highest price.");
 
             ccLang.get().addDefault("HELP.TITLE", "§fHelp: {command} --------------------");
             ccLang.get().addDefault("HELP.SHOP", "Open shop");

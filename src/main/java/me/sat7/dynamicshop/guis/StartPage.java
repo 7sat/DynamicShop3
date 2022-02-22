@@ -4,6 +4,8 @@ import java.util.ArrayList;
 import java.util.Arrays;
 
 import me.sat7.dynamicshop.DynaShopAPI;
+import me.sat7.dynamicshop.utilities.ItemsUtil;
+import me.sat7.dynamicshop.utilities.ShopUtil;
 import org.bukkit.Bukkit;
 import org.bukkit.Material;
 import org.bukkit.configuration.ConfigurationSection;
@@ -200,6 +202,64 @@ public final class StartPage extends InGameUI
                     DynaShopAPI.openStartPage(player);
                 }
             }
+        }
+    }
+
+    @Override
+    public void OnClickLowerInventory(InventoryClickEvent e)
+    {
+        if(!DynamicShop.plugin.getConfig().getBoolean("UI.EnableInventoryClickSearch.StartPage"))
+            return;
+
+        Player player = (Player) e.getWhoClicked();
+        ItemStack itemStack = e.getCurrentItem();
+
+        if(itemStack == null || itemStack.getType().isAir())
+        {
+            player.sendMessage(DynamicShop.dsPrefix + t("MESSAGE.CLICK_YOUR_ITEM_START_PAGE"));
+            return;
+        }
+
+        if(!e.isLeftClick() && !e.isRightClick())
+            return;
+
+        boolean isSell = e.isRightClick();
+
+        String[] ret;
+
+        if(isSell)
+        {
+            ret = ShopUtil.FindTheBestShopToSell(player, e.getCurrentItem());
+        }
+        else
+        {
+            ret = ShopUtil.FindTheBestShopToBuy(player, e.getCurrentItem());
+        }
+
+        if(ret[0].isEmpty())
+            return;
+
+        DynaShopAPI.openShopGui(player, ret[0], Integer.parseInt(ret[1]) / 45 + 1);
+
+        String message = "";
+        if(isSell)
+        {
+            message = DynamicShop.dsPrefix + t("MESSAGE.MOVE_TO_BEST_SHOP_SELL");
+        }
+        else
+        {
+            message = DynamicShop.dsPrefix + t("MESSAGE.MOVE_TO_BEST_SHOP_BUY");
+        }
+
+        if (DynamicShop.localeManager == null || !DynamicShop.plugin.getConfig().getBoolean("UI.LocalizedItemName"))
+        {
+            String itemName = ItemsUtil.getBeautifiedName(e.getCurrentItem().getType());
+            player.sendMessage(message.replace("{item}", itemName));
+        }
+        else
+        {
+            message = message.replace("{item}", "<item>");
+            DynamicShop.localeManager.sendMessage(player, message, e.getCurrentItem().getType(), (short) 0, null);
         }
     }
 }

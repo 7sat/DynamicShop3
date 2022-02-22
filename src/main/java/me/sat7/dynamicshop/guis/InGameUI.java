@@ -37,6 +37,8 @@ public class InGameUI
     {
     }
 
+    public void RefreshUI(){}
+
     protected Inventory inventory;
 
     @SuppressWarnings({"UnusedReturnValue", "SameParameterValue"})

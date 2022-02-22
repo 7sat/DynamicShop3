@@ -3,9 +3,6 @@ package me.sat7.dynamicshop.utilities;
 import java.io.File;
 import java.util.*;
 
-import me.sat7.dynamicshop.DynaShopAPI;
-import me.sat7.dynamicshop.guis.InGameUI;
-import me.sat7.dynamicshop.guis.UIManager;
 import me.sat7.dynamicshop.transactions.Calc;
 import org.bukkit.Bukkit;
 import org.bukkit.configuration.ConfigurationSection;
@@ -88,6 +85,9 @@ public final class ShopUtil
     // 상점에서 아이탬타입 찾기
     public static int findItemFromShop(String shopName, ItemStack item)
     {
+        if (item == null || item.getType().isAir())
+            return -1;
+
         CustomConfig data = shopConfigFiles.get(shopName);
         if (data == null)
             return -1;
@@ -533,7 +533,7 @@ public final class ShopUtil
     public static String[] FindTheBestShopToSell(Player player, ItemStack itemStack)
     {
         String topShopName = "";
-        double topPrice = -1;
+        double bestPrice = -1;
         int tradeIdx = -1;
 
         // 접근가능한 상점중 최고가 찾기
@@ -557,6 +557,7 @@ public final class ShopUtil
             if (sameItemIdx != -1)
             {
                 String tradeType = data.get().getString(sameItemIdx + ".tradeType");
+
                 if (tradeType != null && tradeType.equals("BuyOnly")) continue; // 구매만 가능함
 
                 // 상점에 돈이 없음
@@ -571,7 +572,7 @@ public final class ShopUtil
                 if (maxStock != -1 && maxStock <= stock)
                     continue;
 
-                double value = data.get().getDouble(sameItemIdx + ".value");
+                double value = Calc.getCurrentPrice(entry.getKey(), String.valueOf(sameItemIdx), false);
 
                 int tax = ConfigUtil.getCurrentTax();
                 if (data.get().contains("Options.SalesTax"))
@@ -579,10 +580,58 @@ public final class ShopUtil
                     tax = data.get().getInt("Options.SalesTax");
                 }
 
-                if (topPrice < value - ((value / 100) * tax))
+                if (bestPrice < value - ((value / 100) * tax))
                 {
                     topShopName = entry.getKey();
-                    topPrice = data.get().getDouble(sameItemIdx + ".value");
+                    bestPrice = value;
+                    tradeIdx = sameItemIdx;
+                }
+            }
+        }
+
+        return new String[]{topShopName, Integer.toString(tradeIdx)};
+    }
+
+    public static String[] FindTheBestShopToBuy(Player player, ItemStack itemStack)
+    {
+        String topShopName = "";
+        double bestPrice = Double.MAX_VALUE;
+        int tradeIdx = -1;
+
+        // 접근가능한 상점중 최저가 찾기
+        for(Map.Entry<String, CustomConfig> entry : shopConfigFiles.entrySet())
+        {
+            CustomConfig data = entry.getValue();
+
+            // 권한 없는 상점
+            String permission = data.get().getString("Options.permission");
+            if (permission != null && permission.length() > 0 && !player.hasPermission(permission) && !player.hasPermission(permission + ".buy"))
+            {
+                continue;
+            }
+
+            // 표지판 전용 상점, 지역상점, 잡포인트 상점
+            if (data.get().contains("Options.flag.localshop") || data.get().contains("Options.flag.signshop") || data.get().contains("Options.flag.jobpoint"))
+                continue;
+
+            int sameItemIdx = ShopUtil.findItemFromShop(entry.getKey(), itemStack);
+
+            if (sameItemIdx != -1)
+            {
+                String tradeType = data.get().getString(sameItemIdx + ".tradeType");
+
+                if (tradeType != null && tradeType.equals("SellOnly")) continue;
+
+                // 재고가 없음
+                int stock = data.get().getInt(sameItemIdx + ".stock");
+                if (stock != -1 && stock < 2)
+                    continue;
+
+                double value = Calc.getCurrentPrice(entry.getKey(), String.valueOf(sameItemIdx), true);
+                if (bestPrice > value)
+                {
+                    topShopName = entry.getKey();
+                    bestPrice = value;
                     tradeIdx = sameItemIdx;
                 }
             }
@@ -700,16 +749,6 @@ public final class ShopUtil
 
             if(somethingIsChanged)
                 data.save();
-        }
-
-        // 무작위,안정화에 의한 변화가 없더라도 갱신. 다른 유저의 거래에 의해 변동되었을 수 있음.
-        for (Player p : DynamicShop.plugin.getServer().getOnlinePlayers())
-        {
-            if (UIManager.GetPlayerCurrentUIType(p) == InGameUI.UI_TYPE.ItemTrade)
-            {
-                String[] temp = DynamicShop.userInteractItem.get(p.getUniqueId()).split("/"); // 이건 있어야겠네.
-                DynaShopAPI.openItemTradeGui(p, temp[0], temp[1]);
-            }
         }
     }
 
