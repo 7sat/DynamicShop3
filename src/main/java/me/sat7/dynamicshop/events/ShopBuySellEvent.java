@@ -2,7 +2,6 @@ package me.sat7.dynamicshop.events;
 
 import lombok.Getter;
 import me.sat7.dynamicshop.DynaShopAPI;
-import org.bukkit.Material;
 import org.bukkit.entity.Player;
 import org.bukkit.event.HandlerList;
 import org.bukkit.event.player.PlayerEvent;
@@ -33,7 +32,7 @@ public class ShopBuySellEvent extends PlayerEvent
     @Getter
     private final String shopName;
     @Getter
-    private final Material material;
+    private final ItemStack itemStack;
     @Getter
     private final boolean jobPoint;
 
@@ -49,7 +48,7 @@ public class ShopBuySellEvent extends PlayerEvent
         this.newStock = newStock;
         this.median = median;
         this.shopName = shopName;
-        this.material = merchandise.getType();
+        this.itemStack = merchandise;
         this.jobPoint = DynaShopAPI.isJobsPointShop(shopName);
     }
 
@@ -71,7 +70,7 @@ public class ShopBuySellEvent extends PlayerEvent
                 ", newStock=" + newStock +
                 ", median=" + median +
                 ", shopName='" + shopName + '\'' +
-                ", material=" + material.toString() +
+                ", itemStack=" + itemStack +
                 ", jobPoint=" + jobPoint +
                 ", player=" + player.toString() +
                 '}';
