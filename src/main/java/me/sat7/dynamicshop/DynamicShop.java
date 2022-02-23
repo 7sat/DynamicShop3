@@ -129,6 +129,26 @@ public final class DynamicShop extends JavaPlugin implements Listener
         return ret;
     }
 
+    private int ConvertVersionStringToNumber(String string)
+    {
+        String[] temp = string.split("\\.");
+        if(temp.length != 3)
+            return 1;
+
+        try
+        {
+            int ret = Integer.parseInt(temp[0]) * 10000;
+            ret += Integer.parseInt(temp[1]) * 100;
+            ret += Integer.parseInt(temp[2]);
+
+            return ret;
+        }
+        catch (Exception e)
+        {
+            return 1;
+        }
+    }
+
     private void CheckUpdate()
     {
         new UpdateChecker(this, UpdateChecker.PROJECT_ID).getVersion(version ->
@@ -138,7 +158,10 @@ public final class DynamicShop extends JavaPlugin implements Listener
                 lastVersion = version;
                 yourVersion = getDescription().getVersion();
 
-                if (yourVersion.equals(lastVersion))
+                int you = ConvertVersionStringToNumber(yourVersion);
+                int last = ConvertVersionStringToNumber(lastVersion);
+
+                if (last <= you)
                 {
                     DynamicShop.updateAvailable = false;
                     DynamicShop.console.sendMessage(Constants.DYNAMIC_SHOP_PREFIX + " Plugin is up to date!");
