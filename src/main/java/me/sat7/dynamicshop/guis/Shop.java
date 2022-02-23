@@ -51,6 +51,8 @@ public final class Shop extends InGameUI
 
     public Inventory getGui(Player player, String shopName, int page)
     {
+        shopData = ShopUtil.shopConfigFiles.get(shopName).get();
+
         // jobreborn 플러그인 있는지 확인.
         if (!JobsHook.jobsRebornActive && shopData.contains("Options.flag.jobpoint"))
         {
@@ -66,7 +68,6 @@ public final class Shop extends InGameUI
         maxPage = GetShopMaxPage(shopName);
         page = Clamp(page,1,maxPage);
 
-        shopData = ShopUtil.shopConfigFiles.get(shopName).get();
         DynamicShop.userInteractItem.put(player.getUniqueId(), shopName + "/" + page);
 
         String uiName = shopData.getString("Options.title", shopName);
