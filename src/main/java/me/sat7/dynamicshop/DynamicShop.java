@@ -71,12 +71,53 @@ public final class DynamicShop extends JavaPlugin implements Listener
         plugin = this;
         console = plugin.getServer().getConsoleSender();
 
-        if (!setupEconomy())
+        SetupVault();
+    }
+
+    private void SetupVault()
+    {
+        if (getServer().getPluginManager().getPlugin("Vault") == null)
         {
+            console.sendMessage(Constants.DYNAMIC_SHOP_PREFIX + " Disabled due to no Vault dependency found!");
             getServer().getPluginManager().disablePlugin(this);
             return;
         }
+        else
+        {
+            console.sendMessage(Constants.DYNAMIC_SHOP_PREFIX + " Vault Found");
+        }
 
+        SetupRSP();
+    }
+
+    private int setupRspRetryCount = 0;
+    private void SetupRSP()
+    {
+        RegisteredServiceProvider<Economy> rsp = getServer().getServicesManager().getRegistration(Economy.class);
+        if (rsp != null)
+        {
+            econ = rsp.getProvider();
+
+            Init();
+        }
+        else
+        {
+            if(setupRspRetryCount >= 3)
+            {
+                console.sendMessage(Constants.DYNAMIC_SHOP_PREFIX + " Disabled due to no Vault dependency found!");
+                getServer().getPluginManager().disablePlugin(this);
+                return;
+            }
+
+            setupRspRetryCount++;
+            console.sendMessage(Constants.DYNAMIC_SHOP_PREFIX + " Economy provider not found. Retry... " + setupRspRetryCount + "/3");
+
+            Bukkit.getScheduler().runTaskLater(this, this::SetupRSP, 30L);
+        }
+    }
+
+    private void Init()
+    {
         registerEvents();
         initCommands();
 
@@ -84,49 +125,14 @@ public final class DynamicShop extends JavaPlugin implements Listener
         InitConfig();
 
         PeriodicRepetitiveTask();
-
         startCullLogsTask();
+        hookIntoJobs();
 
         // 완료
         console.sendMessage(Constants.DYNAMIC_SHOP_PREFIX + " Enabled! :)");
 
-        hookIntoJobs();
         CheckUpdate();
         InitBstats();
-    }
-
-    // 볼트 이코노미 초기화
-    private boolean setupEconomy()
-    {
-        boolean ret;
-
-        if (getServer().getPluginManager().getPlugin("Vault") == null)
-        {
-            console.sendMessage(Constants.DYNAMIC_SHOP_PREFIX + " Vault Not Found");
-            ret = false;
-        }
-        RegisteredServiceProvider<Economy> rsp = getServer().getServicesManager().getRegistration(Economy.class);
-        if (rsp == null)
-        {
-            console.sendMessage(Constants.DYNAMIC_SHOP_PREFIX + " RSP is null!");
-            ret = false;
-        }
-        else
-        {
-            econ = rsp.getProvider();
-            ret = true;
-        }
-
-        if (ret)
-        {
-            console.sendMessage(Constants.DYNAMIC_SHOP_PREFIX + " Vault Found");
-        }
-        else
-        {
-            console.sendMessage(String.format("[%s] - Disabled due to no Vault dependency found!", getDescription().getName()));
-        }
-
-        return ret;
     }
 
     private int ConvertVersionStringToNumber(String string)
