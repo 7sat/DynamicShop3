@@ -46,6 +46,9 @@ public final class TabCompleteUtil
                     if (options.contains("flag.signshop") && !sender.hasPermission(Constants.P_ADMIN_REMOTE_ACCESS))
                         continue;
 
+                    if (options.contains("flag.hiddenincommand") && !sender.hasPermission("dshop.admin.shopedit"))
+                        continue;
+
                     String permission = options.getString("permission", "");
                     if (permission.isEmpty()
                         || !DynamicShop.plugin.getConfig().getBoolean("Command.PermissionCheckWhenCreatingAShopList")
@@ -108,6 +111,9 @@ public final class TabCompleteUtil
                             if (options.contains("flag") && options.getConfigurationSection("flag").contains("signshop") && !sender.hasPermission(Constants.P_ADMIN_REMOTE_ACCESS))
                                 continue;
 
+                            if (options.contains("flag.hiddenincommand") && !sender.hasPermission("dshop.admin.shopedit"))
+                                continue;
+
                             String permission = options.getString("permission", "");
                             if (permission.isEmpty()
                                 || !DynamicShop.plugin.getConfig().getBoolean("Command.PermissionCheckWhenCreatingAShopList")
@@ -127,6 +133,7 @@ public final class TabCompleteUtil
                         //add,addhand,edit,editall,permission,maxpage,flag
                         if (sender.hasPermission("dshop.admin.shopedit"))
                         {
+                            temp.add("enable");
                             temp.add("add");
                             temp.add("addhand");
                             temp.add("edit");
@@ -150,7 +157,25 @@ public final class TabCompleteUtil
                         }
                     } else if (args.length >= 4)
                     {
-                        if (args[2].equalsIgnoreCase("addhand") && sender.hasPermission("dshop.admin.shopedit"))
+                        if (args[2].equalsIgnoreCase("enable") && sender.hasPermission("dshop.admin.shopedit"))
+                        {
+                            if (!DynamicShop.userTempData.get(uuid).equals("enable"))
+                            {
+                                DynamicShop.userTempData.put(uuid,"enable");
+                                Help.showHelp("enable", (Player) sender, args);
+                            }
+
+                            if(args.length == 4)
+                            {
+                                temp.add("true");
+                                temp.add("false");
+                            }
+
+                            for (String s : temp)
+                            {
+                                if (s.startsWith(args[3])) alist.add(s);
+                            }
+                        } else if (args[2].equalsIgnoreCase("addhand") && sender.hasPermission("dshop.admin.shopedit"))
                         {
                             if (!DynamicShop.userTempData.get(uuid).equals("addhand"))
                             {
@@ -327,6 +352,7 @@ public final class TabCompleteUtil
                                 temp.add("hidepricingtype");
                                 temp.add("hideshopbalance");
                                 temp.add("showmaxstock");
+                                temp.add("hiddenincommand");
 
                                 for (String s : temp)
                                 {

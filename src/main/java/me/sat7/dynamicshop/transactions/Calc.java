@@ -26,7 +26,7 @@ public final class Calc
             value = data.getDouble(idx + ".value");
         }
 
-        double min = data.getDouble(idx + ".valueMin");
+        double min = data.getDouble(idx + ".valueMin", 0.01);
         double max = data.getDouble(idx + ".valueMax");
         int median = data.getInt(idx + ".median");
         int stock = data.getInt(idx + ".stock");
@@ -37,13 +37,13 @@ public final class Calc
             price = value;
         } else
         {
-            if(!buy)
+            if(!buy && stock < Integer.MAX_VALUE)
                 stock = stock + 1;
 
             price = (median * value) / stock;
         }
 
-        if (min != 0 && price < min)
+        if (price < min)
         {
             price = min;
         }
@@ -80,15 +80,15 @@ public final class Calc
         {
             for (int i = 0; i < Math.abs(amount); i++)
             {
-                if (amount < 0)
+                if (amount < 0 && stock < Integer.MAX_VALUE)
                 {
                     stock++;
                 }
                 double temp = median * value / stock;
-                double min = data.getDouble(idx + ".valueMin");
+                double min = data.getDouble(idx + ".valueMin", 0.01);
                 double max = data.getDouble(idx + ".valueMax");
 
-                if (min != 0 && temp < min)
+                if (temp < min)
                 {
                     temp = min;
                 }

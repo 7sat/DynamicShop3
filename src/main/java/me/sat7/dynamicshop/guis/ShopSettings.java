@@ -30,9 +30,9 @@ public final class ShopSettings extends InGameUI
         uiType = UI_TYPE.ShopSettings;
     }
 
-    private final int CLOSE = 27;
-    private final int PERMISSION = 0;
-    private final int MAX_PAGE = 1;
+    private final int ENABLE_TOGGLE = 0;
+    private final int PERMISSION = 1;
+    private final int MAX_PAGE = 2;
     private final int SHOP_HOUR = 6;
     private final int SHOP_HOUR_OPEN = 7;
     private final int SHOP_HOUR_CLOSE = 8;
@@ -53,8 +53,10 @@ public final class ShopSettings extends InGameUI
     private final int FLAG7 = 20;
     private final int FLAG8 = 21;
     private final int FLAG9 = 22;
+    private final int FLAG10 = 13;
     private final int LOG_TOGGLE = 30;
     private final int LOG_DELETE = 31;
+    private final int CLOSE = 27;
 
     private String shopName;
 
@@ -65,12 +67,21 @@ public final class ShopSettings extends InGameUI
         inventory = Bukkit.createInventory(player, 36, t("SHOP_SETTING_TITLE") + "§7 | §8" + shopName);
 
         CustomConfig data = ShopUtil.shopConfigFiles.get(shopName);
+        ConfigurationSection confSec_Options = data.get().getConfigurationSection("Options");
 
         // 닫기 버튼
         CreateCloseButton(CLOSE);
 
+        // 활성화 버튼
+        boolean isShopEnable = confSec_Options.getBoolean("enable", true);
+        Material enableToggleMat = isShopEnable ? Material.GREEN_STAINED_GLASS : Material.RED_STAINED_GLASS;
+        String current = isShopEnable ? t("SHOP_SETTING.STATE_ENABLE") : t("SHOP_SETTING.STATE_DISABLE");
+        String set = isShopEnable ? t("SHOP_SETTING.STATE_DISABLE") : t("SHOP_SETTING.STATE_ENABLE");
+        String enableToggleLore = "§9" + t("CUR_STATE") + ": " + current;
+        enableToggleLore += "\n§e" + t("CLICK") + ": " + set;
+        CreateButton(ENABLE_TOGGLE, enableToggleMat, t("SHOP_SETTING.STATE"), enableToggleLore);
+
         // 권한 버튼
-        ConfigurationSection confSec_Options = data.get().getConfigurationSection("Options");
         String permStr = confSec_Options.getString("permission");
         String permNew = "dshop.user.shop." + shopName;
         Material permIcon;
@@ -220,6 +231,7 @@ public final class ShopSettings extends InGameUI
         CreateFlagButton(FLAG7, confSec_Options.contains("flag.hidepricingtype"), "hidepricingtype", t("SHOP_SETTING.HIDE_PRICING_TYPE"));
         CreateFlagButton(FLAG8, confSec_Options.contains("flag.hideshopbalance"), "hideshopbalance", t("SHOP_SETTING.HIDE_SHOP_BALANCE"));
         CreateFlagButton(FLAG9, confSec_Options.contains("flag.showmaxstock"), "showmaxstock", t("SHOP_SETTING.SHOW_MAX_STOCK"));
+        CreateFlagButton(FLAG10, confSec_Options.contains("flag.hiddenincommand"), "hiddenincommand", t("SHOP_SETTING.HIDDEN_IN_COMMAND"));
 
         // 로그 버튼
         String log_cur;
@@ -253,6 +265,18 @@ public final class ShopSettings extends InGameUI
         if (e.getSlot() == CLOSE)
         {
             DynaShopAPI.openShopGui(player, shopName, 1);
+        }
+        // 활성화
+        if (e.getSlot() == ENABLE_TOGGLE)
+        {
+            if (data.get().getBoolean("Options.enable", true))
+            {
+                Bukkit.dispatchCommand(player, "DynamicShop shop " + shopName + " enable false");
+            } else
+            {
+                Bukkit.dispatchCommand(player, "DynamicShop shop " + shopName + " enable true");
+            }
+            DynaShopAPI.openShopSettingGui(player, shopName);
         }
         // 권한
         else if (e.getSlot() == PERMISSION)
@@ -579,6 +603,18 @@ public final class ShopSettings extends InGameUI
             } else
             {
                 Bukkit.dispatchCommand(player, "DynamicShop shop " + shopName + " flag showmaxstock set");
+            }
+            DynaShopAPI.openShopSettingGui(player, shopName);
+        }
+        // HIDDEN_IN_COMMAND
+        else if (e.getSlot() == FLAG10)
+        {
+            if (data.get().contains("Options.flag.hiddenincommand"))
+            {
+                Bukkit.dispatchCommand(player, "DynamicShop shop " + shopName + " flag hiddenincommand unset");
+            } else
+            {
+                Bukkit.dispatchCommand(player, "DynamicShop shop " + shopName + " flag hiddenincommand set");
             }
             DynaShopAPI.openShopSettingGui(player, shopName);
         }

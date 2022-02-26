@@ -16,6 +16,8 @@ import org.bukkit.inventory.ItemStack;
 import java.text.DecimalFormat;
 import java.util.ArrayList;
 
+import static me.sat7.dynamicshop.utilities.LangUtil.t;
+
 public final class DynaShopAPI
 {
     public static final DecimalFormat df = new DecimalFormat("0.00");
@@ -25,9 +27,31 @@ public final class DynaShopAPI
 
     }
 
+    public static boolean IsShopEnable(String shopName)
+    {
+        if(!ShopUtil.shopConfigFiles.containsKey(shopName))
+            return false;
+
+        CustomConfig shopData = ShopUtil.shopConfigFiles.get(shopName);
+        return shopData.get().getBoolean("Options.enable", true);
+    }
+
     // 상점 UI생성 후 열기
     public static void openShopGui(Player player, String shopName, int page)
     {
+        if(!IsShopEnable(shopName))
+        {
+            if(player.hasPermission("dshop.admin.shopedit"))
+            {
+                player.sendMessage(DynamicShop.dsPrefix + t("MESSAGE.SHOP_DISABLED"));
+            }
+            else
+            {
+                player.sendMessage(DynamicShop.dsPrefix + t("MESSAGE.SHOP_IS_CLOSED_BY_ADMIN"));
+                return;
+            }
+        }
+
         Shop uiClass = new Shop();
         Inventory inventory = uiClass.getGui(player, shopName, page);
         if (inventory != null)
@@ -47,6 +71,19 @@ public final class DynaShopAPI
     // 거래화면 생성 및 열기
     public static void openItemTradeGui(Player player, String shopName, String tradeIdx)
     {
+        if(!IsShopEnable(shopName))
+        {
+            if(player.hasPermission("dshop.admin.shopedit"))
+            {
+                player.sendMessage(DynamicShop.dsPrefix + t("MESSAGE.SHOP_DISABLED"));
+            }
+            else
+            {
+                player.sendMessage(DynamicShop.dsPrefix + t("MESSAGE.SHOP_IS_CLOSED_BY_ADMIN"));
+                return;
+            }
+        }
+
         ItemTrade uiClass = new ItemTrade();
         Inventory inventory = uiClass.getGui(player, shopName, tradeIdx);
         UIManager.Open(player, inventory, uiClass);

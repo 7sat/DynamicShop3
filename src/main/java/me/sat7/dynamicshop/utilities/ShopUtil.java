@@ -548,6 +548,10 @@ public final class ShopUtil
                 continue;
             }
 
+            boolean enable = data.get().getBoolean("Options.enable", true);
+            if (!enable)
+                continue;
+
             // 표지판 전용 상점, 지역상점, 잡포인트 상점
             if (data.get().contains("Options.flag.localshop") || data.get().contains("Options.flag.signshop") || data.get().contains("Options.flag.jobpoint"))
                 continue;
@@ -609,6 +613,10 @@ public final class ShopUtil
             {
                 continue;
             }
+
+            boolean enable = data.get().getBoolean("Options.enable", true);
+            if (!enable)
+                continue;
 
             // 표지판 전용 상점, 지역상점, 잡포인트 상점
             if (data.get().contains("Options.flag.localshop") || data.get().contains("Options.flag.signshop") || data.get().contains("Options.flag.jobpoint"))

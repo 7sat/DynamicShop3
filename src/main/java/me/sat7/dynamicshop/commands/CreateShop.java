@@ -33,6 +33,7 @@ public final class CreateShop
             if (!ShopUtil.shopConfigFiles.containsKey(shopname))
             {
                 data.get().set("Options.title", shopname);
+                data.get().set("Options.enable", false);
                 data.get().set("Options.lore", "");
                 data.get().set("Options.page", 2);
                 if (args.length >= 3)

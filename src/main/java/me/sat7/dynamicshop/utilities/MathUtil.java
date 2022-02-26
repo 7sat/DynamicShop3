@@ -17,7 +17,7 @@ public final class MathUtil
             return intNum;
 
         int temp = 10;
-        for (int i = 0; i < 5; i++)
+        for (int i = 0; i < 7; i++)
         {
             if (intNum % temp != 0 && intNum > temp)
             {
@@ -48,5 +48,21 @@ public final class MathUtil
         else if (value > max)
             return max;
         return value;
+    }
+
+    public static int SafeAdd(int a, int b)
+    {
+        int temp = a + b;
+        if (b > 0)
+        {
+            if (a > Integer.MAX_VALUE - b - 1)
+                return Integer.MAX_VALUE - 1;
+        } else
+        {
+            if (a < Integer.MIN_VALUE - b)
+                return Integer.MIN_VALUE;
+        }
+
+        return temp;
     }
 }

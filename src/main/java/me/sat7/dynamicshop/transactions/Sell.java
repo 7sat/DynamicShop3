@@ -5,6 +5,7 @@ import java.util.HashMap;
 import me.sat7.dynamicshop.events.ShopBuySellEvent;
 import me.sat7.dynamicshop.files.CustomConfig;
 import me.sat7.dynamicshop.guis.ItemTrade;
+import me.sat7.dynamicshop.utilities.*;
 import org.bukkit.Bukkit;
 import org.bukkit.Sound;
 import org.bukkit.entity.Player;
@@ -13,10 +14,6 @@ import org.bukkit.inventory.ItemStack;
 import me.sat7.dynamicshop.DynaShopAPI;
 import me.sat7.dynamicshop.DynamicShop;
 import me.sat7.dynamicshop.jobshook.JobsHook;
-import me.sat7.dynamicshop.utilities.ItemsUtil;
-import me.sat7.dynamicshop.utilities.LogUtil;
-import me.sat7.dynamicshop.utilities.ShopUtil;
-import me.sat7.dynamicshop.utilities.SoundUtil;
 import net.milkbowl.vault.economy.Economy;
 import net.milkbowl.vault.economy.EconomyResponse;
 
@@ -108,7 +105,7 @@ public final class Sell
         // 재고 증가
         if (stockOld > 0)
         {
-            data.get().set(tradeIdx + ".stock", stockOld + tradeAmount);
+            data.get().set(tradeIdx + ".stock", MathUtil.SafeAdd(stockOld, tradeAmount));
         }
 
         // 실제 거래부----------
@@ -189,8 +186,7 @@ public final class Sell
         // 재고 증가
         if (!infiniteStock)
         {
-            data.get().set(tradeIdx + ".stock",
-                    data.get().getInt(tradeIdx + ".stock") + actualAmount);
+            data.get().set(tradeIdx + ".stock", MathUtil.SafeAdd(stockOld, actualAmount));
         }
 
         Economy econ = null;

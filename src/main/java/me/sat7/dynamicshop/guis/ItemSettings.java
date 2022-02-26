@@ -153,6 +153,7 @@ public final class ItemSettings extends InGameUI
         if (dsItem.getMedian() <= 0 || dsItem.getStock() <= 0)
         {
             buyPrice = dsItem.getBuyValue();
+
             if (dsItem.getBuyValue() != dsItem.getSellValue())
             {
                 editBtnLore.add("§7" + ChatColor.stripColor(t("ITEM_SETTING.TAX_IGNORED")));
@@ -167,6 +168,9 @@ public final class ItemSettings extends InGameUI
         } else
         {
             buyPrice = (dsItem.getBuyValue() * dsItem.getMedian()) / dsItem.getStock();
+            if(buyPrice < 0.01)
+                buyPrice = 0.01;
+
             if (dsItem.getBuyValue() != dsItem.getSellValue()) // 판매가 별도설정
             {
                 editBtnLore.add("§7" + ChatColor.stripColor(t("ITEM_SETTING.TAX_IGNORED")));
@@ -227,6 +231,7 @@ public final class ItemSettings extends InGameUI
         }
 
         inventory.setItem(SAMPLE_ITEM, dsItem.getItemStack()); // 아이탬 견본
+        inventory.getItem(SAMPLE_ITEM).setAmount(1);
 
         double worth = TryGetWorth(dsItem.getItemStack().getType().name());
         String recommendLore;

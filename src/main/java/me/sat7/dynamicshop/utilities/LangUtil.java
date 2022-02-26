@@ -71,6 +71,7 @@ public final class LangUtil
             ccLang.get().addDefault("SHOP.SHOP_LOCATION", "§f상점 위치: x {x}, y {y}, z {z}");
             ccLang.get().addDefault("SHOP.SHOP_LOCATION_B", "§f상점 위치: ");
             ccLang.get().addDefault("SHOP.SHOP_INFO_DASH", "§7 - ");
+            ccLang.get().addDefault("SHOP.DISABLED", "§c비활성§8|§f");
 
             ccLang.get().addDefault("SHOP_SETTING_TITLE", "§3상점 설정");
             ccLang.get().addDefault("SHOP_SETTING.LOG_TOGGLE_LORE", "§e우클릭: 로그 뷰어");
@@ -88,7 +89,11 @@ public final class LangUtil
             ccLang.get().addDefault("SHOP_SETTING.HIDE_PRICING_TYPE", "§f가격 유형 표기를 숨깁니다.");
             ccLang.get().addDefault("SHOP_SETTING.HIDE_SHOP_BALANCE", "§f상점 계좌 잔액을 숨깁니다.");
             ccLang.get().addDefault("SHOP_SETTING.SHOW_MAX_STOCK", "§f재고 상한을 표시합니다.");
+            ccLang.get().addDefault("SHOP_SETTING.HIDDEN_IN_COMMAND", "§f명령어 자동완성시 이 상점을 표시하지 않습니다.");
             ccLang.get().addDefault("SHOP_SETTING.PERMISSION", "§f퍼미션");
+            ccLang.get().addDefault("SHOP_SETTING.STATE", "§f상태");
+            ccLang.get().addDefault("SHOP_SETTING.STATE_ENABLE", "§a활성");
+            ccLang.get().addDefault("SHOP_SETTING.STATE_DISABLE", "§c비활성");
 
             ccLang.get().addDefault("ITEM_SETTING_TITLE", "§3아이탬 셋팅");
             ccLang.get().addDefault("ITEM_SETTING.VALUE_BUY", "§f구매가치: ");
@@ -256,6 +261,8 @@ public final class LangUtil
             ccLang.get().addDefault("MESSAGE.CLICK_YOUR_ITEM_START_PAGE", "인벤토리의 아이템을 클릭하면 가장 좋은 조건의 상점으로 이동합니다.\n좌클릭: 구매   우클릭: 판매");
             ccLang.get().addDefault("MESSAGE.MOVE_TO_BEST_SHOP_BUY", "{item}을 가장 저렴하게 살 수 있는 상점으로 이동했습니다.");
             ccLang.get().addDefault("MESSAGE.MOVE_TO_BEST_SHOP_SELL", "{item}을 가장 비싸게 팔 수 있는 상점으로 이동했습니다.");
+            ccLang.get().addDefault("MESSAGE.SHOP_IS_CLOSED_BY_ADMIN", "이 상점은 서버 관리자에 의해 닫혔습니다.");
+            ccLang.get().addDefault("MESSAGE.SHOP_DISABLED", "이 상점은 비황성화된 상태입니다. 어드민이 아닌 유저는 접근할 수 없습니다. 상점 설정에서 활성화 할 수 있습니다.");
 
             ccLang.get().addDefault("HELP.TITLE", "§f도움말: {command} --------------------");
             ccLang.get().addDefault("HELP.SHOP", "상점을 엽니다.");
@@ -280,6 +287,7 @@ public final class LangUtil
             ccLang.get().addDefault("HELP.DELETE_OLD_USER", "장기간 접속하지 않은 유저의 데이터를 삭제합니다.");
             ccLang.get().addDefault("HELP.ACCOUNT", "상점의 계좌 잔액을 설정합니다. -1 = 무제한");
             ccLang.get().addDefault("HELP.SET_TO_REC_ALL", "§e상점의 모든 아이템 설정값을 권장값으로 §c초기화§e합니다.");
+            ccLang.get().addDefault("HELP.SHOP_ENABLE", "상점을 활성화 또는 비활성화 합니다.");
 
             ccLang.get().addDefault("ERR.NO_USER_ID", "§6플레이어 uuid를 찾을 수 없습니다. 상점 이용 불가능.");
             ccLang.get().addDefault("ERR.ITEM_NOT_EXIST", "상점에 해당 아이탬이 존재하지 않습니다.");
@@ -308,6 +316,7 @@ public final class LangUtil
             ccLang.get().addDefault("ERR.NESTED_STRUCTURE", "계층 구조를 이루는것은 금지되어 있습니다. (ex. aa-bb, bb-cc)");
             ccLang.get().addDefault("ERR.CREATIVE", "§eCreative mode 에서 이 명령어를 사용할 수 없습니다. 권한이 없습니다.");
             ccLang.get().addDefault("ERR.FILE_CREATE_FAIL", "§e파일 생성에 실패했습니다.");
+            ccLang.get().addDefault("ERR.INVALID_TRANSACTION", "이 거래는 더이상 유효하지 않습니다. 문제가 반복되면 서버 관리자에게 문의하세요.");
 
             ccLang.get().addDefault("ON", "켜짐");
             ccLang.get().addDefault("OFF", "꺼짐");
@@ -377,6 +386,7 @@ public final class LangUtil
             ccLang.get().addDefault("SHOP.SHOP_LOCATION", "§fShop location: x {x}, y {y}, z {z}");
             ccLang.get().addDefault("SHOP.SHOP_LOCATION_B", "§fShop location: ");
             ccLang.get().addDefault("SHOP.SHOP_INFO_DASH", "§7 - ");
+            ccLang.get().addDefault("SHOP.DISABLED", "§cDisabled§8|§f");
 
             ccLang.get().addDefault("SHOP_SETTING_TITLE", "§3Shop Settings");
             ccLang.get().addDefault("SHOP_SETTING.LOG_TOGGLE_LORE", "§eRMB: Log Viewer");
@@ -394,7 +404,11 @@ public final class LangUtil
             ccLang.get().addDefault("SHOP_SETTING.HIDE_PRICING_TYPE", "§fHide price type.");
             ccLang.get().addDefault("SHOP_SETTING.HIDE_SHOP_BALANCE", "§fHide shop account balance.");
             ccLang.get().addDefault("SHOP_SETTING.SHOW_MAX_STOCK", "§fShow max stock.");
+            ccLang.get().addDefault("SHOP_SETTING.HIDDEN_IN_COMMAND", "§fDon't show this store\n§fin command autocomplete.");
             ccLang.get().addDefault("SHOP_SETTING.PERMISSION", "§fPermission");
+            ccLang.get().addDefault("SHOP_SETTING.STATE", "§fState");
+            ccLang.get().addDefault("SHOP_SETTING.STATE_ENABLE", "§aEnable");
+            ccLang.get().addDefault("SHOP_SETTING.STATE_DISABLE", "§cDisable");
 
             ccLang.get().addDefault("ITEM_SETTING_TITLE", "§3Item Settings");
             ccLang.get().addDefault("ITEM_SETTING.VALUE_BUY", "§fPurchase value: ");
@@ -562,6 +576,8 @@ public final class LangUtil
             ccLang.get().addDefault("MESSAGE.CLICK_YOUR_ITEM_START_PAGE", "Click on an item in your inventory to find the shop with the best deal.\nLMB: Buy   RMB: Sell");
             ccLang.get().addDefault("MESSAGE.MOVE_TO_BEST_SHOP_BUY", "Moved to the shop where you can buy {item} at the lowest price.");
             ccLang.get().addDefault("MESSAGE.MOVE_TO_BEST_SHOP_SELL", "Moved to the shop where you can sell {item} at the highest price.");
+            ccLang.get().addDefault("MESSAGE.SHOP_IS_CLOSED_BY_ADMIN", "This shop is currently closed by the server administrator.");
+            ccLang.get().addDefault("MESSAGE.SHOP_DISABLED", "This shop is currently disabled. Non-admin users cannot use it. You can enable it in the shop settings.");
 
             ccLang.get().addDefault("HELP.TITLE", "§fHelp: {command} --------------------");
             ccLang.get().addDefault("HELP.SHOP", "Open shop");
@@ -586,6 +602,7 @@ public final class LangUtil
             ccLang.get().addDefault("HELP.DELETE_OLD_USER", "Delete long-term inactive user data");
             ccLang.get().addDefault("HELP.ACCOUNT", "Sets the account balance of the shop. -1 = unlimited");
             ccLang.get().addDefault("HELP.SET_TO_REC_ALL", "§cResets§e all item settings in the store to the recommended values.");
+            ccLang.get().addDefault("HELP.SHOP_ENABLE", "Enables or disables the shop.");
 
             ccLang.get().addDefault("ERR.NO_USER_ID", "§6Player uuid not found. Shop unavailable.");
             ccLang.get().addDefault("ERR.ITEM_NOT_EXIST", "The item does not exist in the store.");
@@ -614,6 +631,7 @@ public final class LangUtil
             ccLang.get().addDefault("ERR.NESTED_STRUCTURE", "It is forbidden to build hierarchies. (ex. aa-bb, bb-cc)");
             ccLang.get().addDefault("ERR.CREATIVE", "§eYou cannot use this command in Creative mode. You do not have permission.");
             ccLang.get().addDefault("ERR.FILE_CREATE_FAIL", "§eFile creation failed");
+            ccLang.get().addDefault("ERR.INVALID_TRANSACTION", "This transaction is no longer valid. If this problem recurs, contact your server administrator");
 
             ccLang.get().addDefault("ON", "ON");
             ccLang.get().addDefault("OFF", "OFF");

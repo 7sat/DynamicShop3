@@ -47,6 +47,7 @@ public final class ItemTrade extends InGameUI
     private int deliveryCharge;
     private FileConfiguration shopData;
     private String sellBuyOnly;
+    private String material;
 
     public enum CURRENCY
     {VAULT, JOB_POINT}
@@ -59,10 +60,13 @@ public final class ItemTrade extends InGameUI
         this.deliveryCharge = CalcShipping(player, shopName);
         this.shopData = ShopUtil.shopConfigFiles.get(shopName).get();
         this.sellBuyOnly = shopData.getString(this.tradeIdx + ".tradeType", "");
+        this.material = shopData.getString(tradeIdx + ".mat");
 
         DynamicShop.userInteractItem.put(player.getUniqueId(), shopName + "/" + tradeIdx);
 
-        inventory = Bukkit.createInventory(player, 18, t("TRADE_TITLE"));
+        String uiTitle = shopData.getBoolean("Options.enable", true) ? "" : t("SHOP.DISABLED");
+        uiTitle += t("TRADE_TITLE");
+        inventory = Bukkit.createInventory(player, 18, uiTitle);
 
         CreateBalanceButton();
         CreateSellBuyOnlyToggle();
@@ -76,6 +80,9 @@ public final class ItemTrade extends InGameUI
     public void OnClickUpperInventory(InventoryClickEvent e)
     {
         Player player = (Player) e.getWhoClicked();
+
+        if(!CheckShopIsEnable())
+            return;
 
         CustomConfig data = ShopUtil.shopConfigFiles.get(shopName);
 
@@ -271,18 +278,18 @@ public final class ItemTrade extends InGameUI
     {
         String mat = shopData.getString(tradeIdx + ".mat");
         if (!sellBuyOnly.equals("BuyOnly"))
-            CreateTradeButtons(mat, true);
+            CreateTradeButtons(true);
         if (!sellBuyOnly.equals("SellOnly"))
-            CreateTradeButtons(mat, false);
+            CreateTradeButtons(false);
     }
 
-    private void CreateTradeButtons(String mat, boolean sell)
+    private void CreateTradeButtons(boolean sell)
     {
         int amount = 1;
         int idx = sell ? 2 : 11;
         for (int i = 1; i < 8; i++)
         {
-            ItemStack itemStack = new ItemStack(Material.getMaterial(mat), amount);
+            ItemStack itemStack = new ItemStack(Material.getMaterial(material), amount);
             itemStack.setItemMeta((ItemMeta) shopData.get(tradeIdx + ".itemStack"));
             ItemMeta meta = itemStack.getItemMeta();
 
@@ -427,6 +434,9 @@ public final class ItemTrade extends InGameUI
     @Override
     public void RefreshUI()
     {
+        if(!CheckShopIsEnable())
+            return;
+
         for (int i = 2; i < 9; i++)
             inventory.setItem(i, null);
         for (int i = 11; i < 18; i++)
@@ -435,5 +445,28 @@ public final class ItemTrade extends InGameUI
         CreateBalanceButton();
         CreateSellBuyOnlyToggle();
         CreateTradeButtons();
+    }
+
+    public boolean CheckShopIsEnable()
+    {
+        if (!ShopUtil.shopConfigFiles.containsKey(shopName)
+                || shopData == null
+                || !shopData.contains(tradeIdx)
+                || !shopData.getString(tradeIdx + ".mat").equals(material))
+        {
+            player.sendMessage(DynamicShop.dsPrefix + t("ERR.INVALID_TRANSACTION"));
+            player.closeInventory();
+            return false;
+        }
+
+        boolean ret = DynaShopAPI.IsShopEnable(shopName) || player.hasPermission("dshop.admin.shopedit");
+
+        if(!ret)
+        {
+            player.sendMessage(DynamicShop.dsPrefix + t("MESSAGE.SHOP_IS_CLOSED_BY_ADMIN"));
+            player.closeInventory();
+        }
+
+        return ret;
     }
 }

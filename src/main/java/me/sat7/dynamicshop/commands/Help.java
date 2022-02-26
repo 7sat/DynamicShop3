@@ -44,15 +44,17 @@ public final class Help
             if (player.hasPermission("dshop.admin.shopedit") || player.hasPermission("dshop.admin.shopedit") || player.hasPermission("dshop.admin.editall"))
             {
                 player.sendMessage(" - " + t("HELP.USAGE")
-                        + ": /ds shop <shopname> <addhand | add | edit | editall | setToRecAll | sellbuy | permission | maxpage | flag | position | shophours | fluctuation | stockStabilizing | account | log>");
+                        + ": /ds shop <shopname> <enable | addhand | add | edit | editall | setToRecAll | sellbuy | permission | maxpage | flag | position | shophours | fluctuation | stockStabilizing | account | log>");
             }
 
             if (player.hasPermission("dshop.admin.shopedit"))
+            {
+                player.sendMessage("§e - enable: " + t("HELP.SHOP_ENABLE"));
                 player.sendMessage("§e - addhand: " + t("HELP.SHOP_ADD_HAND"));
-            if (player.hasPermission("dshop.admin.shopedit"))
                 player.sendMessage("§e - add: " + t("HELP.SHOP_ADD_ITEM"));
-            if (player.hasPermission("dshop.admin.shopedit"))
                 player.sendMessage("§e - edit: " + t("HELP.SHOP_EDIT"));
+            }
+
             if (player.hasPermission("dshop.admin.editall"))
                 player.sendMessage("§e - editall: " + t("HELP.EDIT_ALL"));
             if (player.hasPermission("dshop.admin.shopedit"))
@@ -62,6 +64,11 @@ public final class Help
         {
             player.sendMessage(DynamicShop.dsPrefix + t("HELP.TITLE").replace("{command}", "openshop"));
             player.sendMessage(" - " + t("HELP.USAGE") + ": /ds openshop [shopname] <playername>");
+            player.sendMessage("");
+        } else if (helpcode.equals("enable") && player.hasPermission("dshop.admin.shopedit"))
+        {
+            player.sendMessage(DynamicShop.dsPrefix + t("HELP.TITLE").replace("{command}", "enable"));
+            player.sendMessage(" - " + t("HELP.USAGE") + ": /ds shop <shopname> <true|false>");
             player.sendMessage("");
         } else if (helpcode.equals("add_hand") && player.hasPermission("dshop.admin.shopedit"))
         {

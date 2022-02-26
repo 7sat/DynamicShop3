@@ -591,6 +591,39 @@ public final class Shop
             }
 
             // ds shop shopname permission [<new value>]
+            else if (args[2].equalsIgnoreCase("enable"))
+            {
+                // 권한 확인
+                if (!player.hasPermission("dshop.admin.shopedit"))
+                {
+                    player.sendMessage(DynamicShop.dsPrefix + t("ERR.NO_PERMISSION"));
+                    return true;
+                }
+
+                if (args.length != 4)
+                {
+                    player.sendMessage(DynamicShop.dsPrefix + t("ERR.WRONG_USAGE"));
+                    return true;
+                }
+
+                if (args[3].equalsIgnoreCase("true"))
+                {
+                    shopData.get().set("Options.enable", true);
+                    player.sendMessage(DynamicShop.dsPrefix + LangUtil.ccLang.get().get("MESSAGE.CHANGES_APPLIED") + t("SHOP_SETTING.STATE") + ":" + args[3]);
+                } else if (args[3].equalsIgnoreCase("false"))
+                {
+                    shopData.get().set("Options.enable", false);
+                    player.sendMessage(DynamicShop.dsPrefix + LangUtil.ccLang.get().get("MESSAGE.CHANGES_APPLIED") + t("SHOP_SETTING.STATE") + ":" + args[3]);
+                } else
+                {
+                    player.sendMessage(DynamicShop.dsPrefix + t("ERR.WRONG_USAGE"));
+                    return true;
+
+                }
+                shopData.save();
+            }
+
+            // ds shop shopname permission [<new value>]
             else if (args[2].equalsIgnoreCase("permission"))
             {
                 // 권한 확인
@@ -692,7 +725,8 @@ public final class Shop
                             args[3].equalsIgnoreCase("hidestock") ||
                             args[3].equalsIgnoreCase("hidepricingtype") ||
                             args[3].equalsIgnoreCase("hideshopbalance") ||
-                            args[3].equalsIgnoreCase("showmaxstock")
+                            args[3].equalsIgnoreCase("showmaxstock") ||
+                            args[3].equalsIgnoreCase("hiddenincommand")
                     )
                     {
                         if (set)

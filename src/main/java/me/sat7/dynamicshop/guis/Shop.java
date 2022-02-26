@@ -70,8 +70,9 @@ public final class Shop extends InGameUI
 
         DynamicShop.userInteractItem.put(player.getUniqueId(), shopName + "/" + page);
 
-        String uiName = shopData.getString("Options.title", shopName);
-        inventory = Bukkit.createInventory(player, 54, "§3" + uiName);
+        String uiName = shopData.getBoolean("Options.enable", true) ? "" : t("SHOP.DISABLED");
+        uiName += "§3" + shopData.getString("Options.title", shopName);
+        inventory = Bukkit.createInventory(player, 54, uiName);
 
         CreateCloseButton(CLOSE);
         CreateButton(PAGE, InGameUI.GetPageButtonIconMat(), CreatePageButtonName(), CreatePageButtonLore(), page);
@@ -86,6 +87,9 @@ public final class Shop extends InGameUI
     public void OnClickUpperInventory(InventoryClickEvent e)
     {
         player = (Player) e.getWhoClicked();
+
+        if(!CheckShopIsEnable())
+            return;
 
         if (e.getSlot() == CLOSE)
             CloseUI();
@@ -103,6 +107,9 @@ public final class Shop extends InGameUI
     @Override
     public void OnClickLowerInventory(InventoryClickEvent e)
     {
+        if(!CheckShopIsEnable())
+            return;
+
         if(!DynamicShop.plugin.getConfig().getBoolean("UI.EnableInventoryClickSearch.Shop"))
             return;
 
@@ -585,6 +592,9 @@ public final class Shop extends InGameUI
     @Override
     public void RefreshUI()
     {
+        if(!CheckShopIsEnable())
+            return;
+
         for (int i = 0; i < 45; i++)
             inventory.setItem(i, null);
 
@@ -600,5 +610,25 @@ public final class Shop extends InGameUI
         infoButton.setItemMeta(infoMeta);
 
         ShowItems();
+    }
+
+    public boolean CheckShopIsEnable()
+    {
+        if (!ShopUtil.shopConfigFiles.containsKey(shopName))
+        {
+            player.sendMessage(DynamicShop.dsPrefix + t("ERR.INVALID_TRANSACTION"));
+            player.closeInventory();
+            return false;
+        }
+
+        boolean ret = DynaShopAPI.IsShopEnable(shopName) || player.hasPermission("dshop.admin.shopedit");
+
+        if(!ret)
+        {
+            player.sendMessage(DynamicShop.dsPrefix + t("MESSAGE.SHOP_IS_CLOSED_BY_ADMIN"));
+            player.closeInventory();
+        }
+
+        return ret;
     }
 }
