@@ -36,7 +36,7 @@ public class ShopBuySellEvent extends PlayerEvent
     @Getter
     private final boolean jobPoint;
 
-    public ShopBuySellEvent(boolean buy, double oldBuyPrice, double newBuyPrice, double oldSellPrice, double newSellPrice, int oldStock, int newStock, int median, String shopName, ItemStack merchandise, Player p)
+    public ShopBuySellEvent(boolean buy, double oldBuyPrice, double newBuyPrice, double oldSellPrice, double newSellPrice, int oldStock, int newStock, int median, String shopName, ItemStack itemStack, Player p)
     {
         super(p);
         this.buy = buy;
@@ -48,7 +48,7 @@ public class ShopBuySellEvent extends PlayerEvent
         this.newStock = newStock;
         this.median = median;
         this.shopName = shopName;
-        this.itemStack = merchandise;
+        this.itemStack = itemStack;
         this.jobPoint = DynaShopAPI.isJobsPointShop(shopName);
     }
 

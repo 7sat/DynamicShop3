@@ -6,30 +6,34 @@ import org.bukkit.Bukkit;
 import org.bukkit.entity.Player;
 
 import me.sat7.dynamicshop.DynamicShop;
-import me.sat7.dynamicshop.constants.Constants;
 
+import static me.sat7.dynamicshop.constants.Constants.P_ADMIN_DELETE_OLD_USER;
 import static me.sat7.dynamicshop.utilities.LangUtil.t;
 
-public final class DeleteUser
+public final class DeleteUser extends DSCMD
 {
-    private DeleteUser()
+    public DeleteUser()
     {
-
+        permission = P_ADMIN_DELETE_OLD_USER;
+        validArgCount.add(2);
     }
 
-    static void deleteUser(String[] args, Player player)
+    @Override
+    public void SendHelpMessage(Player player)
     {
-        if (!player.hasPermission(Constants.P_ADMIN_DELETE_OLD_USER))
-        {
-            player.sendMessage(DynamicShop.dsPrefix + t("ERR.NO_PERMISSION"));
-            return;
-        }
+        player.sendMessage(DynamicShop.dsPrefix + t("HELP.TITLE").replace("{command}", "§c§ldeleteOldUser§f§r"));
+        player.sendMessage(" - " + t("HELP.USAGE") + ": /ds deleteOldUser <days>");
+        player.sendMessage(" - " + t("HELP.DELETE_OLD_USER"));
+        player.sendMessage(" - " + t("MESSAGE.IRREVERSIBLE"));
 
-        if (args.length != 2)
-        {
-            player.sendMessage(DynamicShop.dsPrefix + t("ERR.WRONG_USAGE"));
+        player.sendMessage("");
+    }
+
+    @Override
+    public void RunCMD(String[] args, Player player)
+    {
+        if(!CheckValid(args, player))
             return;
-        }
 
         long day;
 

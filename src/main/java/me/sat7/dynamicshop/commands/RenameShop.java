@@ -5,44 +5,40 @@ import org.bukkit.entity.Player;
 import me.sat7.dynamicshop.DynamicShop;
 import me.sat7.dynamicshop.utilities.ShopUtil;
 
+import static me.sat7.dynamicshop.constants.Constants.P_ADMIN_RENAME_SHOP;
 import static me.sat7.dynamicshop.utilities.LangUtil.t;
 
-public final class RenameShop
+public final class RenameShop extends DSCMD
 {
-    private RenameShop()
+    public RenameShop()
     {
-
+        permission = P_ADMIN_RENAME_SHOP;
+        validArgCount.add(3);
     }
 
-    static boolean renameShop(String[] args, Player player)
+    @Override
+    public void SendHelpMessage(Player player)
     {
-        if (args.length >= 3)
-        {
-            if (!player.hasPermission("dshop.admin.renameshop"))
-            {
-                player.sendMessage(DynamicShop.dsPrefix + t("ERR.NO_PERMISSION"));
-                return true;
-            }
+        player.sendMessage(DynamicShop.dsPrefix + t("HELP.TITLE").replace("{command}", "renameshop"));
+        player.sendMessage(" - " + t("HELP.USAGE") + ": /ds renameshop <old name> <new name>");
 
-            try
-            {
-                if (ShopUtil.shopConfigFiles.containsKey(args[1]))
-                {
-                    String newName = args[2].replace("/", "");
-                    ShopUtil.renameShop(args[1], newName);
-                    player.sendMessage(DynamicShop.dsPrefix + t("MESSAGE.CHANGES_APPLIED") + newName);
-                } else
-                {
-                    player.sendMessage(DynamicShop.dsPrefix + t("ERR.SHOP_NOT_FOUND"));
-                }
-            } catch (Exception e)
-            {
-                player.sendMessage(DynamicShop.dsPrefix + t("ERR.SHOP_NOT_FOUND"));
-            }
+        player.sendMessage("");
+    }
+
+    @Override
+    public void RunCMD(String[] args, Player player)
+    {
+        if(!CheckValid(args, player))
+            return;
+
+        if (ShopUtil.shopConfigFiles.containsKey(args[1]))
+        {
+            String newName = args[2].replace("/", "");
+            ShopUtil.renameShop(args[1], newName);
+            player.sendMessage(DynamicShop.dsPrefix + t("MESSAGE.CHANGES_APPLIED") + newName);
         } else
         {
-            player.sendMessage(DynamicShop.dsPrefix + t("ERR.WRONG_USAGE"));
+            player.sendMessage(DynamicShop.dsPrefix + t("ERR.SHOP_NOT_FOUND"));
         }
-        return false;
     }
 }

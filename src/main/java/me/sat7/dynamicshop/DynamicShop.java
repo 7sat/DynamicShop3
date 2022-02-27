@@ -1,6 +1,7 @@
 package me.sat7.dynamicshop;
 
 import me.pikamug.localelib.LocaleManager;
+import me.sat7.dynamicshop.commands.CMDManager;
 import me.sat7.dynamicshop.commands.Optional;
 import me.sat7.dynamicshop.commands.Root;
 import me.sat7.dynamicshop.constants.Constants;
@@ -118,6 +119,8 @@ public final class DynamicShop extends JavaPlugin implements Listener
 
     private void Init()
     {
+        CMDManager.Init();
+
         registerEvents();
         initCommands();
 

@@ -7,23 +7,32 @@ import org.bukkit.entity.Player;
 import me.sat7.dynamicshop.DynamicShop;
 import me.sat7.dynamicshop.guis.StartPage;
 
+import static me.sat7.dynamicshop.constants.Constants.P_ADMIN_RELOAD;
 import static me.sat7.dynamicshop.utilities.ConfigUtil.configVersion;
 import static me.sat7.dynamicshop.utilities.LangUtil.t;
 
-public final class Reload
+public final class Reload extends DSCMD
 {
-    private Reload()
+    public Reload()
     {
-
+        permission = P_ADMIN_RELOAD;
+        validArgCount.add(1);
     }
 
-    static void reload(Player player)
+    @Override
+    public void SendHelpMessage(Player player)
     {
-        if (!player.hasPermission("dshop.admin.reload"))
-        {
-            player.sendMessage(DynamicShop.dsPrefix + t("ERR.NO_PERMISSION"));
+        player.sendMessage(DynamicShop.dsPrefix + t("HELP.TITLE").replace("{command}", "reload"));
+        player.sendMessage(" - " + t("HELP.USAGE") + ": /ds reload");
+
+        player.sendMessage("");
+    }
+
+    @Override
+    public void RunCMD(String[] args, Player player)
+    {
+        if(!CheckValid(args, player))
             return;
-        }
 
         LangUtil.ccLang.reload();
 

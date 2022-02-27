@@ -6,31 +6,44 @@ import org.bukkit.entity.Player;
 import me.sat7.dynamicshop.DynamicShop;
 import org.bukkit.scheduler.BukkitRunnable;
 
+import static me.sat7.dynamicshop.constants.Constants.P_ADMIN_SET_TAX;
 import static me.sat7.dynamicshop.utilities.LangUtil.t;
 import static me.sat7.dynamicshop.utilities.MathUtil.Clamp;
 
-public final class SetTax
+public final class SetTax extends DSCMD
 {
     private static BukkitRunnable resetTaxTask = null;
 
-    private SetTax()
+    public SetTax()
     {
-
+        permission = P_ADMIN_SET_TAX;
+        validArgCount.add(2);
+        validArgCount.add(4);
     }
 
-    static boolean setTax(String[] args, Player player)
+    @Override
+    public void SendHelpMessage(Player player)
     {
-        if (!player.hasPermission("dshop.admin.settax"))
-        {
-            player.sendMessage(DynamicShop.dsPrefix + t("ERR.NO_PERMISSION"));
-            return true;
-        }
+        player.sendMessage(DynamicShop.dsPrefix + t("HELP.TITLE").replace("{command}", "settax"));
+        player.sendMessage(" - " + t("HELP.USAGE") + ": /ds settax <value>");
+
+        player.sendMessage(DynamicShop.dsPrefix + t("HELP.TITLE").replace("{command}", "settax temp"));
+        player.sendMessage(" - " + t("HELP.USAGE") + ": /ds settax temp <tax_value> <minutes_until_reset>");
+
+        player.sendMessage("");
+    }
+
+    @Override
+    public void RunCMD(String[] args, Player player)
+    {
+        if(!CheckValid(args, player))
+            return;
 
         if (args.length == 2)
         {
             try
             {
-                int newValue = Clamp(Integer.parseInt(args[1]), 2, 99);
+                int newValue = Clamp(Integer.parseInt(args[1]), 1, 99);
 
                 DynamicShop.plugin.getConfig().set("Shop.SalesTax", newValue);
                 DynamicShop.plugin.saveConfig();
@@ -38,7 +51,6 @@ public final class SetTax
                 ConfigUtil.setCurrentTax(newValue);
 
                 player.sendMessage(DynamicShop.dsPrefix + t("MESSAGE.CHANGES_APPLIED") + newValue);
-                return true;
             } catch (Exception e)
             {
                 player.sendMessage(DynamicShop.dsPrefix + t("ERR.WRONG_DATATYPE"));
@@ -47,7 +59,7 @@ public final class SetTax
         {
             try
             {
-                int newValue = Clamp(Integer.parseInt(args[2]), 2, 99);
+                int newValue = Clamp(Integer.parseInt(args[2]), 1, 99);
                 int tempTaxDurationMinutes = Integer.parseInt(args[3]);
 
                 if (tempTaxDurationMinutes <= 1) tempTaxDurationMinutes = 1;
@@ -72,15 +84,14 @@ public final class SetTax
                 resetTaxTask.runTaskLater(DynamicShop.plugin, 20L * 60L * tempTaxDurationMinutes);
 
                 player.sendMessage(DynamicShop.dsPrefix + t("MESSAGE.CHANGES_APPLIED") + newValue);
-                return true;
             } catch (Exception e)
             {
                 player.sendMessage(DynamicShop.dsPrefix + t("ERR.WRONG_DATATYPE"));
             }
-        } else
+        }
+        else
         {
             player.sendMessage(DynamicShop.dsPrefix + t("ERR.WRONG_USAGE"));
         }
-        return false;
     }
 }

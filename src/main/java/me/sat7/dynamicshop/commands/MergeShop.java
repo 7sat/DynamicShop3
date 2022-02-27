@@ -5,51 +5,46 @@ import org.bukkit.entity.Player;
 import me.sat7.dynamicshop.DynamicShop;
 import me.sat7.dynamicshop.utilities.ShopUtil;
 
+import static me.sat7.dynamicshop.constants.Constants.P_ADMIN_MERGE_SHOP;
 import static me.sat7.dynamicshop.utilities.LangUtil.t;
 
-public final class MergeShop
+public final class MergeShop extends DSCMD
 {
-    private MergeShop()
+    public MergeShop()
     {
-
+        permission = P_ADMIN_MERGE_SHOP;
+        validArgCount.add(3);
     }
 
-    static boolean mergeShop(String[] args, Player player)
+    @Override
+    public void SendHelpMessage(Player player)
     {
-        if (args.length >= 3)
-        {
-            if (!player.hasPermission("dshop.admin.mergeshop"))
-            {
-                player.sendMessage(DynamicShop.dsPrefix + t("ERR.NO_PERMISSION"));
-                return true;
-            }
+        player.sendMessage(DynamicShop.dsPrefix + t("HELP.TITLE").replace("{command}", "mergeshop"));
+        player.sendMessage(" - " + t("HELP.USAGE") + ": /ds mergeshop <shop1> <shop2>");
 
-            if (args[1].equals(args[2]))
-            {
-                player.sendMessage(DynamicShop.dsPrefix + t("ERR.WRONG_USAGE"));
-                return true;
-            }
+        player.sendMessage("");
+    }
 
-            try
-            {
-                if (ShopUtil.shopConfigFiles.containsKey(args[1]) &&
-                    ShopUtil.shopConfigFiles.containsKey(args[2]))
-                {
-                    ShopUtil.mergeShop(args[1], args[2]);
-                    player.sendMessage(DynamicShop.dsPrefix + t("MESSAGE.CHANGES_APPLIED") + args[1]);
-                }
-                else
-                {
-                    player.sendMessage(DynamicShop.dsPrefix + t("ERR.SHOP_NOT_FOUND"));
-                }
-            } catch (Exception e)
-            {
-                player.sendMessage(DynamicShop.dsPrefix + t("ERR.SHOP_NOT_FOUND"));
-            }
-        } else
+    @Override
+    public void RunCMD(String[] args, Player player)
+    {
+        if(!CheckValid(args, player))
+            return;
+
+        if (args[1].equals(args[2]))
         {
             player.sendMessage(DynamicShop.dsPrefix + t("ERR.WRONG_USAGE"));
+            return;
         }
-        return false;
+
+        if (ShopUtil.shopConfigFiles.containsKey(args[1]) && ShopUtil.shopConfigFiles.containsKey(args[2]))
+        {
+            ShopUtil.mergeShop(args[1], args[2]);
+            player.sendMessage(DynamicShop.dsPrefix + t("MESSAGE.CHANGES_APPLIED") + args[1]);
+        }
+        else
+        {
+            player.sendMessage(DynamicShop.dsPrefix + t("ERR.SHOP_NOT_FOUND"));
+        }
     }
 }

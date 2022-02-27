@@ -7,73 +7,77 @@ import me.sat7.dynamicshop.DynaShopAPI;
 import me.sat7.dynamicshop.DynamicShop;
 import me.sat7.dynamicshop.utilities.ShopUtil;
 
+import static me.sat7.dynamicshop.constants.Constants.P_ADMIN_CREATE_SHOP;
 import static me.sat7.dynamicshop.utilities.LangUtil.t;
 
-public final class CreateShop
+public final class CreateShop extends DSCMD
 {
-    private CreateShop()
+    public CreateShop()
     {
-
+        permission = P_ADMIN_CREATE_SHOP;
+        validArgCount.add(2);
+        validArgCount.add(3);
     }
 
-    static boolean createShop(String[] args, Player player)
+    @Override
+    public void SendHelpMessage(Player player)
     {
-        if (args.length >= 2)
+        player.sendMessage(DynamicShop.dsPrefix + t("HELP.TITLE").replace("{command}", "createshop"));
+        player.sendMessage(" - " + t("HELP.USAGE") + ": /ds create <shopname> [<permission>]");
+        player.sendMessage(" - " + t("HELP.CREATE_SHOP_2"));
+
+        player.sendMessage("");
+    }
+
+    @Override
+    public void RunCMD(String[] args, Player player)
+    {
+        if(!CheckValid(args, player))
+            return;
+
+        String shopname = args[1].replace("/", "");
+
+        CustomConfig data = new CustomConfig();
+        data.setup(shopname, "Shop");
+        if (!ShopUtil.shopConfigFiles.containsKey(shopname))
         {
-            if (!player.hasPermission("dshop.admin.createshop"))
+            data.get().set("Options.title", shopname);
+            data.get().set("Options.enable", false);
+            data.get().set("Options.lore", "");
+            data.get().set("Options.page", 2);
+            if (args.length >= 3)
             {
-                player.sendMessage(DynamicShop.dsPrefix + t("ERR.NO_PERMISSION"));
-                return true;
-            }
-
-            String shopname = args[1].replace("/", "");
-
-            CustomConfig data = new CustomConfig();
-            data.setup(shopname, "Shop");
-            if (!ShopUtil.shopConfigFiles.containsKey(shopname))
-            {
-                data.get().set("Options.title", shopname);
-                data.get().set("Options.enable", false);
-                data.get().set("Options.lore", "");
-                data.get().set("Options.page", 2);
-                if (args.length >= 3)
+                if (args[2].equalsIgnoreCase("true"))
                 {
-                    if (args[2].equalsIgnoreCase("true"))
-                    {
-                        data.get().set("Options.permission", "dshop.user.shop." + shopname);
-                    } else if (args[2].equalsIgnoreCase("false"))
-                    {
-                        data.get().set("Options.permission", "");
-                    } else
-                    {
-                        data.get().set("Options.permission", args[2]);
-                    }
-                } else
+                    data.get().set("Options.permission", "dshop.user.shop." + shopname);
+                } else if (args[2].equalsIgnoreCase("false"))
                 {
                     data.get().set("Options.permission", "");
+                } else
+                {
+                    data.get().set("Options.permission", args[2]);
                 }
-
-                data.get().set("0.mat", "DIRT");
-                data.get().set("0.value", 1);
-                data.get().set("0.median", 10000);
-                data.get().set("0.stock", 10000);
-                data.save();
-
-                ShopUtil.shopConfigFiles.put(shopname, data);
-
-                player.sendMessage(DynamicShop.dsPrefix + t("MESSAGE.SHOP_CREATED"));
-                DynaShopAPI.openShopGui(player, shopname, 1);
-            }
-            else
+            } else
             {
-                player.sendMessage(DynamicShop.dsPrefix + t("ERR.SHOP_EXIST"));
+                data.get().set("Options.permission", "");
             }
 
-            return true;
-        } else
-        {
-            player.sendMessage(DynamicShop.dsPrefix + t("ERR.WRONG_USAGE"));
+            data.get().set("0.mat", "DIRT");
+            data.get().set("0.value", 1);
+            data.get().set("0.median", 10000);
+            data.get().set("0.stock", 10000);
+            data.save();
+
+            ShopUtil.shopConfigFiles.put(shopname, data);
+
+            player.sendMessage(DynamicShop.dsPrefix + t("MESSAGE.SHOP_CREATED"));
+            DynaShopAPI.openShopGui(player, shopname, 1);
         }
-        return false;
+        else
+        {
+            player.sendMessage(DynamicShop.dsPrefix + t("ERR.SHOP_EXIST"));
+        }
+
+        return;
     }
 }

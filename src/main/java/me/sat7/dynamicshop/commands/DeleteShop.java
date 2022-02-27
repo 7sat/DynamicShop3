@@ -6,47 +6,43 @@ import org.bukkit.entity.Player;
 import me.sat7.dynamicshop.DynamicShop;
 import me.sat7.dynamicshop.utilities.ShopUtil;
 
+import static me.sat7.dynamicshop.constants.Constants.P_ADMIN_DELETE_SHOP;
 import static me.sat7.dynamicshop.utilities.LangUtil.t;
 
-public final class DeleteShop
+public final class DeleteShop extends DSCMD
 {
-    private DeleteShop()
+    public DeleteShop()
     {
-
+        permission = P_ADMIN_DELETE_SHOP;
+        validArgCount.add(2);
     }
 
-    static boolean deleteShop(String[] args, Player player)
+    @Override
+    public void SendHelpMessage(Player player)
     {
-        if (args.length >= 2)
+        player.sendMessage(DynamicShop.dsPrefix + t("HELP.TITLE").replace("{command}", "§c§ldeleteshop§f§r"));
+        player.sendMessage(" - " + t("HELP.USAGE") + ": /ds deleteshop <shopname>");
+
+        player.sendMessage("");
+    }
+
+    @Override
+    public void RunCMD(String[] args, Player player)
+    {
+        if(!CheckValid(args, player))
+            return;
+
+        if (ShopUtil.shopConfigFiles.containsKey(args[1]))
         {
-            if (!player.hasPermission("dshop.admin.deleteshop"))
-            {
-                player.sendMessage(DynamicShop.dsPrefix + t("ERR.NO_PERMISSION"));
-                return true;
-            }
+            CustomConfig data = ShopUtil.shopConfigFiles.get(args[1]);
+            data.delete();
 
-            try
-            {
-                if (ShopUtil.shopConfigFiles.containsKey(args[1]))
-                {
-                    CustomConfig data = ShopUtil.shopConfigFiles.get(args[1]);
-                    data.delete();
+            ShopUtil.shopConfigFiles.remove(args[1]);
 
-                    ShopUtil.shopConfigFiles.remove(args[1]);
-
-                    player.sendMessage(DynamicShop.dsPrefix + t("MESSAGE.SHOP_DELETED"));
-                } else
-                {
-                    player.sendMessage(DynamicShop.dsPrefix + t("ERR.SHOP_NOT_FOUND"));
-                }
-            } catch (Exception e)
-            {
-                player.sendMessage(DynamicShop.dsPrefix + t("ERR.SHOP_NOT_FOUND"));
-            }
+            player.sendMessage(DynamicShop.dsPrefix + t("MESSAGE.SHOP_DELETED"));
         } else
         {
-            player.sendMessage(DynamicShop.dsPrefix + t("ERR.WRONG_USAGE"));
+            player.sendMessage(DynamicShop.dsPrefix + t("ERR.SHOP_NOT_FOUND"));
         }
-        return false;
     }
 }

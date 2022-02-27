@@ -2,93 +2,59 @@ package me.sat7.dynamicshop.commands;
 
 import me.sat7.dynamicshop.DynaShopAPI;
 import me.sat7.dynamicshop.DynamicShop;
-import me.sat7.dynamicshop.files.CustomConfig;
 import me.sat7.dynamicshop.utilities.ShopUtil;
 import org.bukkit.Bukkit;
-import org.bukkit.command.CommandSender;
-import org.bukkit.configuration.ConfigurationSection;
 import org.bukkit.entity.Player;
 
+import static me.sat7.dynamicshop.constants.Constants.P_ADMIN_OPEN_SHOP;
 import static me.sat7.dynamicshop.utilities.LangUtil.t;
 
-public class OpenShop
+public class OpenShop extends DSCMD
 {
-    public static boolean openShop(String[] args, CommandSender sender)
+    public OpenShop()
     {
+        permission = P_ADMIN_OPEN_SHOP;
+        validArgCount.add(2);
+        validArgCount.add(3);
+    }
+
+    @Override
+    public void SendHelpMessage(Player player)
+    {
+        player.sendMessage(DynamicShop.dsPrefix + t("HELP.TITLE").replace("{command}", "openshop"));
+        player.sendMessage(" - " + t("HELP.USAGE") + ": /ds openshop [shopname] <playername>");
+        player.sendMessage("");
+    }
+
+    @Override
+    public void RunCMD(String[] args, Player player)
+    {
+        if(!CheckValid(args, player))
+            return;
+
         Player target = null;
-        String shopName = null;
-        if (args.length == 2)
+        String shopName;
+        if (ShopUtil.shopConfigFiles.containsKey(args[1]))
         {
-            target = Bukkit.getPlayer(args[1]);
-            if (target != null)
-            {
-                if (DynamicShop.plugin.getConfig().getBoolean("Command.OpenStartPageInsteadOfDefaultShop"))
-                {
-                    DynaShopAPI.openStartPage(target);
-                    return false;
-                }
-            }
-            shopName = DynamicShop.plugin.getConfig().getString("Command.DefaultShopName");
-        } else if (args.length > 2)
-        {
-            if (!sender.hasPermission("dshop.admin.openshop"))
-            {
-                sender.sendMessage(DynamicShop.dsPrefix + t("ERR.NO_PERMISSION"));
-                return true;
-            }
-
-            if (ShopUtil.shopConfigFiles.containsKey(args[1]))
-            {
-                shopName = args[1];
-            } else
-            {
-                sender.sendMessage(DynamicShop.dsPrefix + t("ERR.SHOP_NOT_FOUND"));
-                return true;
-            }
-
-            target = Bukkit.getPlayer(args[2]);
+            shopName = args[1];
         } else
         {
-            sender.sendMessage(DynamicShop.dsPrefix + t("ERR.WRONG_USAGE"));
+            player.sendMessage(DynamicShop.dsPrefix + t("ERR.SHOP_NOT_FOUND"));
+            return;
+        }
+
+        if (args.length == 2)
+        {
+            target = player;
+        }
+        if (args.length > 2)
+        {
+            target = Bukkit.getPlayer(args[2]);
         }
 
         if (target != null)
         {
-            CustomConfig data = ShopUtil.shopConfigFiles.get(shopName);
-            ConfigurationSection shopConf = data.get().getConfigurationSection("Options");
-
-            if (shopConf.contains("shophours") && !target.hasPermission("dshop.admin.shopedit"))
-            {
-                int curTime = (int) (target.getWorld().getTime()) / 1000 + 6;
-                if (curTime > 24) curTime -= 24;
-
-                String[] temp = shopConf.getString("shophours").split("~");
-
-                int open = Integer.parseInt(temp[0]);
-                int close = Integer.parseInt(temp[1]);
-
-                if (close > open)
-                {
-                    if (!(open <= curTime && curTime < close))
-                    {
-                        target.sendMessage(DynamicShop.dsPrefix + t("TIME.SHOP_IS_CLOSED").
-                                replace("{time}", open + "").replace("{curTime}", curTime + ""));
-                        return true;
-                    }
-                } else
-                {
-                    if (!(open <= curTime || curTime < close))
-                    {
-                        target.sendMessage(DynamicShop.dsPrefix + t("TIME.SHOP_IS_CLOSED").
-                                replace("{time}", open + "").replace("{curTime}", curTime + ""));
-                        return true;
-                    }
-                }
-            }
-
             DynaShopAPI.openShopGui(target, shopName, 1);
         }
-
-        return false;
     }
 }

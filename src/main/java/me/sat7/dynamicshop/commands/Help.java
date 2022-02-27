@@ -5,9 +5,10 @@ import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
 
 import me.sat7.dynamicshop.DynamicShop;
-import me.sat7.dynamicshop.constants.Constants;
 import me.sat7.dynamicshop.utilities.ItemsUtil;
 import me.sat7.dynamicshop.utilities.ShopUtil;
+
+import java.util.UUID;
 
 import static me.sat7.dynamicshop.utilities.LangUtil.t;
 
@@ -21,7 +22,14 @@ public final class Help
     // 명령어 도움말 표시
     public static void showHelp(String helpcode, Player player, String[] args)
     {
-        if (!DynamicShop.ccUser.get().getBoolean(player.getUniqueId() + ".cmdHelp")) return;
+        if (!DynamicShop.ccUser.get().getBoolean(player.getUniqueId() + ".cmdHelp"))
+            return;
+
+        UUID uuid = player.getUniqueId();
+        if (DynamicShop.userTempData.get(uuid).equals(helpcode))
+            return;
+
+        DynamicShop.userTempData.put(uuid, helpcode);
 
         if (helpcode.equals("main"))
         {
@@ -60,24 +68,15 @@ public final class Help
             if (player.hasPermission("dshop.admin.shopedit"))
                 player.sendMessage("§e - setToRecAll: " + t("HELP.SET_TO_REC_ALL"));
             player.sendMessage("");
-        } else if (helpcode.equals("open_shop") && player.hasPermission("dshop.admin.openshop"))
+        } else if (helpcode.equals("open_shop"))
         {
-            player.sendMessage(DynamicShop.dsPrefix + t("HELP.TITLE").replace("{command}", "openshop"));
-            player.sendMessage(" - " + t("HELP.USAGE") + ": /ds openshop [shopname] <playername>");
-            player.sendMessage("");
-        } else if (helpcode.equals("enable") && player.hasPermission("dshop.admin.shopedit"))
+            CMDManager.openShop.SendHelpMessage(player);
+        } else if (helpcode.equals("enable"))
         {
-            player.sendMessage(DynamicShop.dsPrefix + t("HELP.TITLE").replace("{command}", "enable"));
-            player.sendMessage(" - " + t("HELP.USAGE") + ": /ds shop <shopname> <true|false>");
-            player.sendMessage("");
+            CMDManager.enable.SendHelpMessage(player);
         } else if (helpcode.equals("add_hand") && player.hasPermission("dshop.admin.shopedit"))
         {
-            player.sendMessage(DynamicShop.dsPrefix + t("HELP.TITLE").replace("{command}", "addhand"));
-            player.sendMessage(" - " + t("HELP.USAGE") + ": /ds shop <shopname> addhand <value> <median> <stock>");
-            player.sendMessage(" - " + t("HELP.USAGE") + ": /ds shop <shopname> addhand <value> <min value> <max value> <median> <stock>");
-            player.sendMessage(" - " + t("HELP.SHOP_ADD_HAND"));
-            player.sendMessage(" - " + t("HELP.PRICE"));
-            player.sendMessage(" - " + t("HELP.INF_STATIC"));
+            CMDManager.addHand.SendHelpMessage(player);
 
             ItemStack tempItem = player.getInventory().getItemInMainHand();
 
@@ -114,14 +113,7 @@ public final class Help
                 }
             } else
             {
-                player.sendMessage(DynamicShop.dsPrefix + t("HELP.TITLE").replace("{command}", "add"));
-                player.sendMessage(" - " + t("HELP.USAGE") + ": /ds shop <shopname> add <item> <value> <median> <stock>");
-                player.sendMessage(" - " + t("HELP.USAGE") + ": /ds shop <shopname> add <item> <value> <min value> <max value> <median> <stock>");
-                player.sendMessage(" - " + t("HELP.SHOP_ADD_ITEM"));
-                player.sendMessage(" - " + t("HELP.PRICE"));
-                player.sendMessage(" - " + t("HELP.INF_STATIC"));
-
-                player.sendMessage("");
+                CMDManager.add.SendHelpMessage(player);
             }
         } else if (helpcode.contains("edit") && !helpcode.equals("edit_all") && player.hasPermission("dshop.admin.shopedit"))
         {
@@ -143,168 +135,68 @@ public final class Help
                 }
             } else
             {
-                player.sendMessage(DynamicShop.dsPrefix + t("HELP.TITLE").replace("{command}", "edit"));
-                player.sendMessage(" - " + t("HELP.USAGE") + ": /ds shop <shopname> edit <item> <value> <median> <stock>");
-                player.sendMessage(" - " + t("HELP.USAGE") + ": /ds shop <shopname> edit <item> <value> <min value> <max value> <median> <stock> [<max stock>]");
-                player.sendMessage(" - " + t("HELP.SHOP_EDIT"));
-                player.sendMessage(" - " + t("HELP.PRICE"));
-                player.sendMessage(" - " + t("HELP.INF_STATIC"));
-
-                player.sendMessage("");
+                CMDManager.edit.SendHelpMessage(player);
             }
-        } else if (helpcode.equals("edit_all") && player.hasPermission("dshop.admin.shopedit"))
+        } else if (helpcode.equals("edit_all"))
         {
-            player.sendMessage(DynamicShop.dsPrefix + t("HELP.TITLE").replace("{command}", "editall"));
-            player.sendMessage(" - " + t("HELP.USAGE") + ": /ds shop <shopname> editall <value | median | stock | max stock> <= | + | - | * | /> <amount>");
-            player.sendMessage(" - " + t("HELP.EDIT_ALL"));
-            player.sendMessage(" - " + t("HELP.EDIT_ALL_2"));
-
-            player.sendMessage("");
-        } else if (helpcode.equals("set_to_rec_all") && player.hasPermission("dshop.admin.shopedit"))
+            CMDManager.editAll.SendHelpMessage(player);
+        } else if (helpcode.equals("set_to_rec_all"))
         {
-            player.sendMessage(DynamicShop.dsPrefix + t("HELP.TITLE").replace("{command}", "SetToRecAll"));
-            player.sendMessage(" - " + t("HELP.USAGE") + ": /ds shop <shopname> SetToRecAll");
-            player.sendMessage(" - " + t("HELP.SET_TO_REC_ALL"));
-
-            player.sendMessage("");
+            CMDManager.setToRecAll.SendHelpMessage(player);
         } else if (helpcode.equals("cmd_help"))
         {
-            player.sendMessage(DynamicShop.dsPrefix + t("HELP.TITLE").replace("{command}", "cmdHelp"));
-            player.sendMessage(" - " + t("HELP.USAGE") + ": /ds cmdHelp <on | off>");
-            player.sendMessage(" - " + t("HELP.CMD"));
-
-            player.sendMessage("");
-        } else if (helpcode.equals("create_shop") && player.hasPermission("dshop.admin.createshop"))
+            CMDManager.commandHelp.SendHelpMessage(player);
+        } else if (helpcode.equals("create_shop"))
         {
-            player.sendMessage(DynamicShop.dsPrefix + t("HELP.TITLE").replace("{command}", "createshop"));
-            player.sendMessage(" - " + t("HELP.USAGE") + ": /ds create <shopname> [<permission>]");
-            player.sendMessage(" - " + t("HELP.CREATE_SHOP_2"));
-
-            player.sendMessage("");
-        } else if (helpcode.equals("delete_shop") && player.hasPermission("dshop.admin.deleteshop"))
+            CMDManager.createShop.SendHelpMessage(player);
+        } else if (helpcode.equals("delete_shop"))
         {
-            player.sendMessage(DynamicShop.dsPrefix + t("HELP.TITLE").replace("{command}", "§c§ldeleteshop§f§r"));
-            player.sendMessage(" - " + t("HELP.USAGE") + ": /ds deleteshop <shopname>");
-
-            player.sendMessage("");
-        } else if (helpcode.equals("merge_shop") && player.hasPermission("dshop.admin.mergeshop"))
+            CMDManager.deleteShop.SendHelpMessage(player);
+        } else if (helpcode.equals("merge_shop"))
         {
-            player.sendMessage(DynamicShop.dsPrefix + t("HELP.TITLE").replace("{command}", "mergeshop"));
-            player.sendMessage(" - " + t("HELP.USAGE") + ": /ds mergeshop <shop1> <shop2>");
-
-            player.sendMessage("");
-        } else if (helpcode.equals("rename_shop") && player.hasPermission("dshop.admin.renameshop"))
+            CMDManager.mergeShop.SendHelpMessage(player);
+        } else if (helpcode.equals("rename_shop"))
         {
-            player.sendMessage(DynamicShop.dsPrefix + t("HELP.TITLE").replace("{command}", "renameshop"));
-            player.sendMessage(" - " + t("HELP.USAGE") + ": /ds renameshop <old name> <new name>");
-
-            player.sendMessage("");
-        } else if (helpcode.equals("permission") && player.hasPermission("dshop.admin.shopedit"))
+            CMDManager.renameShop.SendHelpMessage(player);
+        } else if (helpcode.equals("permission"))
         {
-            player.sendMessage(DynamicShop.dsPrefix + t("HELP.TITLE").replace("{command}", "permission"));
-            player.sendMessage(" - " + t("HELP.USAGE") + ": /ds shop <shopname> permission [<true | false | custom >]");
-
-            player.sendMessage("");
-        } else if (helpcode.equals("max_page") && player.hasPermission("dshop.admin.shopedit"))
+            CMDManager.permission.SendHelpMessage(player);
+        } else if (helpcode.equals("max_page"))
         {
-            player.sendMessage(DynamicShop.dsPrefix + t("HELP.TITLE").replace("{command}", "maxpage"));
-            player.sendMessage(" - " + t("HELP.USAGE") + ": /ds shop <shopname> maxpage <number>");
-
-            player.sendMessage("");
-        } else if (helpcode.equals("flag") && player.hasPermission("dshop.admin.shopedit"))
+            CMDManager.maxPage.SendHelpMessage(player);
+        } else if (helpcode.equals("flag"))
         {
-            player.sendMessage(DynamicShop.dsPrefix + t("HELP.TITLE").replace("{command}", "flag"));
-            player.sendMessage(" - " + t("HELP.USAGE") + ": /ds shop <shopname> flag <flag> <set | unset>");
-
-            player.sendMessage("");
-        } else if (helpcode.equals("position") && player.hasPermission("dshop.admin.shopedit"))
+            CMDManager.flag.SendHelpMessage(player);
+        } else if (helpcode.equals("position"))
         {
-            player.sendMessage(DynamicShop.dsPrefix + t("HELP.TITLE").replace("{command}", "position"));
-            player.sendMessage(" - " + t("HELP.USAGE") + ": /ds shop <shopname> position <pos1 | pos2 | clear>");
-
-            player.sendMessage("");
-        } else if (helpcode.equals("shophours") && player.hasPermission("dshop.admin.shopedit"))
+            CMDManager.position.SendHelpMessage(player);
+        } else if (helpcode.equals("shophours"))
         {
-            player.sendMessage(DynamicShop.dsPrefix + t("HELP.TITLE").replace("{command}", "shophours"));
-            player.sendMessage(" - " + t("HELP.USAGE") + ": /ds shop <shopname> shophours <open> <close>");
-
-            player.sendMessage("");
-        } else if (helpcode.equals("fluctuation") && player.hasPermission("dshop.admin.shopedit"))
+            CMDManager.shopHours.SendHelpMessage(player);
+        } else if (helpcode.equals("fluctuation"))
         {
-            player.sendMessage(DynamicShop.dsPrefix + t("HELP.TITLE").replace("{command}", "fluctuation"));
-            player.sendMessage(" - " + t("HELP.USAGE") + ": /ds shop <shopname> fluctuation <interval> <strength>");
-            player.sendMessage(" - " + t("HELP.USAGE") + ": /ds shop <shopname> fluctuation off");
-
-            player.sendMessage("");
-        } else if (helpcode.equals("stock_stabilizing") && player.hasPermission("dshop.admin.shopedit"))
+            CMDManager.fluctuation.SendHelpMessage(player);
+        } else if (helpcode.equals("stock_stabilizing"))
         {
-            player.sendMessage(DynamicShop.dsPrefix + t("HELP.TITLE").replace("{command}", "stockStabilizing"));
-            player.sendMessage(" - " + t("HELP.USAGE") + ": /ds shop <shopname> stockStabilizing <interval> <strength>");
-            player.sendMessage(" - " + t("HELP.USAGE") + ": /ds shop <shopname> stockStabilizing off");
-
-            player.sendMessage("");
-        }else if (helpcode.equals("account") && player.hasPermission("dshop.admin.shopedit"))
+            CMDManager.stockStabilizing.SendHelpMessage(player);
+        } else if (helpcode.equals("account"))
         {
-            player.sendMessage(DynamicShop.dsPrefix + t("HELP.TITLE").replace("{command}", "account"));
-            player.sendMessage(" - " + t("HELP.USAGE") + ": /ds shop <shopname> account <set | linkto | transfer>");
-
-            player.sendMessage("");
-        } else if (helpcode.equals("account_set") && player.hasPermission("dshop.admin.shopedit"))
+            CMDManager.account.SendHelpMessage(player);
+        } else if (helpcode.equals("set_tax"))
         {
-            player.sendMessage(DynamicShop.dsPrefix + t("HELP.TITLE").replace("{command}", "account set"));
-            player.sendMessage(" - " + t("HELP.USAGE") + ": /ds shop <shopname> account set <amount>");
-            player.sendMessage(" - " + t("HELP.ACCOUNT"));
-
-            player.sendMessage("");
-        } else if (helpcode.equals("account_link_to") && player.hasPermission("dshop.admin.shopedit"))
+            CMDManager.setTax.SendHelpMessage(player);
+        } else if (helpcode.equals("set_default_shop"))
         {
-            player.sendMessage(DynamicShop.dsPrefix + t("HELP.TITLE").replace("{command}", "account linkto"));
-            player.sendMessage(" - " + t("HELP.USAGE") + ": /ds shop <shopname> account linkto <shopname>");
-            //player.sendMessage(" - " + ccLang.get().getString("HELP.ACCOUNT"));
-
-            player.sendMessage("");
-        } else if (helpcode.equals("account_transfer") && player.hasPermission("dshop.admin.shopedit"))
+            CMDManager.setDefaultShop.SendHelpMessage(player);
+        } else if (helpcode.equals("delete_old_user"))
         {
-            player.sendMessage(DynamicShop.dsPrefix + t("HELP.TITLE").replace("{command}", "account transfer"));
-            player.sendMessage(" - " + t("HELP.USAGE") + ": /ds shop <shopname> account transfer <target> <amount>");
-            //player.sendMessage(" - " + ccLang.get().getString("HELP.ACCOUNT"));
-
-            player.sendMessage("");
-        } else if (helpcode.equals("set_tax") && player.hasPermission("dshop.admin.settax"))
+            CMDManager.deleteUser.SendHelpMessage(player);
+        } else if (helpcode.equals("sellbuy"))
         {
-            player.sendMessage(DynamicShop.dsPrefix + t("HELP.TITLE").replace("{command}", "settax"));
-            player.sendMessage(" - " + t("HELP.USAGE") + ": /ds settax <value>");
-
-            player.sendMessage(DynamicShop.dsPrefix + t("HELP.TITLE").replace("{command}", "settax temp"));
-            player.sendMessage(" - " + t("HELP.USAGE") + ": /ds settax temp <tax_value> <minutes_until_reset>");
-
-            player.sendMessage("");
-        } else if (helpcode.equals("set_default_shop") && player.hasPermission("dshop.admin.setdefaultshop"))
+            CMDManager.sellBuy.SendHelpMessage(player);
+        } else if (helpcode.equals("log"))
         {
-            player.sendMessage(DynamicShop.dsPrefix + t("HELP.TITLE").replace("{command}", "setdefaultshop"));
-            player.sendMessage(" - " + t("HELP.USAGE") + ": /ds setdefaultshop <shop name>");
-
-            player.sendMessage("");
-        } else if (helpcode.equals("delete_old_user") && player.hasPermission(Constants.P_ADMIN_DELETE_OLD_USER))
-        {
-            player.sendMessage(DynamicShop.dsPrefix + t("HELP.TITLE").replace("{command}", "§c§ldeleteOldUser§f§r"));
-            player.sendMessage(" - " + t("HELP.USAGE") + ": /ds deleteOldUser <days>");
-            player.sendMessage(" - " + t("HELP.DELETE_OLD_USER"));
-            player.sendMessage(" - " + t("MESSAGE.IRREVERSIBLE"));
-
-            player.sendMessage("");
-        } else if (helpcode.equals("sellbuy") && player.hasPermission("dshop.admin.shopedit"))
-        {
-            player.sendMessage(DynamicShop.dsPrefix + t("HELP.TITLE").replace("{command}", "sellbuy"));
-            player.sendMessage(" - " + t("HELP.USAGE") + ": /ds shop <shop name> sellbuy < sellonly | buyonly | clear >");
-
-            player.sendMessage("");
-        } else if (helpcode.equals("log") && player.hasPermission("dshop.admin.shopedit"))
-        {
-            player.sendMessage(DynamicShop.dsPrefix + t("HELP.TITLE").replace("{command}", "log"));
-            player.sendMessage(" - " + t("HELP.USAGE") + ": /ds shop <shop name> log < enable | disable | clear >");
-
-            player.sendMessage("");
+            CMDManager.log.SendHelpMessage(player);
         }
     }
 }

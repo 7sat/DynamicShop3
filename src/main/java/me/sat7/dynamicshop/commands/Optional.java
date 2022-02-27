@@ -14,21 +14,21 @@ import static me.sat7.dynamicshop.utilities.LangUtil.t;
 
 public class Optional implements CommandExecutor
 {
-
     @Override
     public boolean onCommand(CommandSender sender, Command command, String label, String[] args)
     {
-
         if (!DynamicShop.plugin.getConfig().getBoolean("Command.UseShopCommand")) return true;
 
         if (sender instanceof Player)
         {
             Player player = (Player) sender;
+
             if (!player.hasPermission(Constants.P_USE))
             {
                 player.sendMessage(DynamicShop.dsPrefix + t("ERR.NO_PERMISSION"));
                 return true;
             }
+
             if (player.getGameMode() == GameMode.CREATIVE && !player.hasPermission(Constants.P_ADMIN_CREATIVE))
             {
                 player.sendMessage(DynamicShop.dsPrefix + t("ERR.CREATIVE"));

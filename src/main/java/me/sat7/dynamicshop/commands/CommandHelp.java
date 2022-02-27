@@ -8,20 +8,29 @@ import java.util.UUID;
 
 import static me.sat7.dynamicshop.utilities.LangUtil.t;
 
-public final class CommandHelp
+public final class CommandHelp extends DSCMD
 {
-    private CommandHelp()
+    public CommandHelp()
     {
-
+        permission = "";
+        validArgCount.add(2);
     }
 
-    static boolean commandHelp(String[] args, Player player)
+    @Override
+    public void SendHelpMessage(Player player)
     {
-        if (args.length < 2)
-        {
-            player.sendMessage(DynamicShop.dsPrefix + t("ERR.WRONG_USAGE"));
-            return true;
-        }
+        player.sendMessage(DynamicShop.dsPrefix + t("HELP.TITLE").replace("{command}", "cmdHelp"));
+        player.sendMessage(" - " + t("HELP.USAGE") + ": /ds cmdHelp <on | off>");
+        player.sendMessage(" - " + t("HELP.CMD"));
+
+        player.sendMessage("");
+    }
+
+    @Override
+    public void RunCMD(String[] args, Player player)
+    {
+        if(!CheckValid(args, player))
+            return;
 
         UUID uuid = player.getUniqueId();
 
@@ -41,6 +50,7 @@ public final class CommandHelp
         {
             player.sendMessage(DynamicShop.dsPrefix + t("ERR.WRONG_USAGE"));
         }
-        return false;
+
+        return;
     }
 }
