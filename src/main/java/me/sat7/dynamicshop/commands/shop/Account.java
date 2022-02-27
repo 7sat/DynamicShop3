@@ -29,23 +29,10 @@ public class Account extends DSCMD
     public void SendHelpMessage(Player player)
     {
         player.sendMessage(DynamicShop.dsPrefix + t("HELP.TITLE").replace("{command}", "account"));
-        player.sendMessage(" - " + t("HELP.USAGE") + ": /ds shop <shopname> account <set | linkto | transfer>");
-
-        player.sendMessage("");
-
-        player.sendMessage(DynamicShop.dsPrefix + t("HELP.TITLE").replace("{command}", "account set"));
         player.sendMessage(" - " + t("HELP.USAGE") + ": /ds shop <shopname> account set <amount>");
-        player.sendMessage(" - " + t("HELP.ACCOUNT"));
-
-        player.sendMessage("");
-
-        player.sendMessage(DynamicShop.dsPrefix + t("HELP.TITLE").replace("{command}", "account linkto"));
         player.sendMessage(" - " + t("HELP.USAGE") + ": /ds shop <shopname> account linkto <shopname>");
-
-        player.sendMessage("");
-
-        player.sendMessage(DynamicShop.dsPrefix + t("HELP.TITLE").replace("{command}", "account transfer"));
         player.sendMessage(" - " + t("HELP.USAGE") + ": /ds shop <shopname> account transfer <target> <amount>");
+        player.sendMessage(" - " + t("HELP.ACCOUNT"));
 
         player.sendMessage("");
     }
