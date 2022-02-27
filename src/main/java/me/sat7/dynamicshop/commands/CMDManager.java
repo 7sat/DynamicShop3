@@ -39,6 +39,9 @@ public class CMDManager
 
     public static void Init()
     {
+        CMDHashMap.clear();
+
+        // ds
         commandHelp = new CommandHelp();
         createShop = new CreateShop();
         deleteShop = new DeleteShop();
@@ -50,6 +53,18 @@ public class CMDManager
         setDefaultShop = new SetDefaultShop();
         setTax = new SetTax();
 
+        CMDHashMap.put("cmdhelp", commandHelp);
+        CMDHashMap.put("createshop", createShop);
+        CMDHashMap.put("deleteshop", deleteShop);
+        CMDHashMap.put("deleteolduser", deleteUser);
+        CMDHashMap.put("mergeshop", mergeShop);
+        CMDHashMap.put("openshop", openShop);
+        CMDHashMap.put("renameshop", renameShop);
+        CMDHashMap.put("reload", reload);
+        CMDHashMap.put("setdefaultshop", setDefaultShop);
+        CMDHashMap.put("settax", setTax);
+
+        // ds shop
         account = new Account();
         add = new Add();
         addHand = new AddHand();
@@ -67,17 +82,22 @@ public class CMDManager
         shopHours = new ShopHours();
         stockStabilizing = new StockStabilizing();
 
-        CMDHashMap.clear();
-        CMDHashMap.put("cmdhelp", commandHelp);
-        CMDHashMap.put("createshop", createShop);
-        CMDHashMap.put("deleteshop", deleteShop);
-        CMDHashMap.put("deleteolduser", deleteUser);
-        CMDHashMap.put("mergeshop", mergeShop);
-        CMDHashMap.put("openshop", openShop);
-        CMDHashMap.put("renameshop", renameShop);
-        CMDHashMap.put("reload", reload);
-        CMDHashMap.put("setdefaultshop", setDefaultShop);
-        CMDHashMap.put("settax", setTax);
+        CMDHashMap.put("account", account);
+        CMDHashMap.put("add", add);
+        CMDHashMap.put("addhand", addHand);
+        CMDHashMap.put("edit", edit);
+        CMDHashMap.put("editall", editAll);
+        CMDHashMap.put("enable", enable);
+        CMDHashMap.put("flag", flag);
+        CMDHashMap.put("fluctuation", fluctuation);
+        CMDHashMap.put("log", log);
+        CMDHashMap.put("maxpage", maxPage);
+        CMDHashMap.put("permission", permission);
+        CMDHashMap.put("position", position);
+        CMDHashMap.put("sellbuy", sellBuy);
+        CMDHashMap.put("settorecall", setToRecAll);
+        CMDHashMap.put("shophours", shopHours);
+        CMDHashMap.put("stockstabilizing", stockStabilizing);
     }
 
     public static void RunCMD(String key, String[] args, Player player)

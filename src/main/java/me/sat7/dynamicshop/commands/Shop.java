@@ -149,70 +149,7 @@ public final class Shop
         // ds shop shopName <add | addhand | ...>
         else if (args.length >= 3)
         {
-            if (args[2].equalsIgnoreCase("add"))
-            {
-                CMDManager.add.RunCMD(args,player);
-            }
-            else if (args[2].equalsIgnoreCase("addhand"))
-            {
-                CMDManager.addHand.RunCMD(args,player);
-            }
-            else if (args[2].equalsIgnoreCase("edit"))
-            {
-                CMDManager.edit.RunCMD(args,player);
-            }
-            else if (args[2].equalsIgnoreCase("editall"))
-            {
-                CMDManager.editAll.RunCMD(args,player);
-            }
-            else if (args[2].equalsIgnoreCase("enable"))
-            {
-                CMDManager.enable.RunCMD(args,player);
-            }
-            else if (args[2].equalsIgnoreCase("permission"))
-            {
-                CMDManager.permission.RunCMD(args,player);
-            }
-            else if (args[2].equalsIgnoreCase("maxpage"))
-            {
-                CMDManager.maxPage.RunCMD(args,player);
-            }
-            else if (args[2].equalsIgnoreCase("flag"))
-            {
-                CMDManager.flag.RunCMD(args,player);
-            }
-            else if (args[2].equalsIgnoreCase("position"))
-            {
-                CMDManager.position.RunCMD(args,player);
-            }
-            else if (args[2].equalsIgnoreCase("shopHours"))
-            {
-                CMDManager.shopHours.RunCMD(args,player);
-            }
-            else if (args[2].equalsIgnoreCase("fluctuation"))
-            {
-                CMDManager.fluctuation.RunCMD(args,player);
-            }
-            else if (args[2].equalsIgnoreCase("stockStabilizing"))
-            {
-                CMDManager.stockStabilizing.RunCMD(args,player);
-            }
-            else if (args[2].equalsIgnoreCase("account"))
-            {
-                CMDManager.account.RunCMD(args,player);
-            }
-            else if (args[2].equalsIgnoreCase("sellbuy"))
-            {
-                CMDManager.sellBuy.RunCMD(args,player);
-            }
-            else if (args[2].equalsIgnoreCase("log"))
-            {
-                CMDManager.log.RunCMD(args, player);
-            }
-            else if (args[2].equalsIgnoreCase("setToRecAll"))
-            {
-                CMDManager.setToRecAll.RunCMD(args, player);
-            }
+            CMDManager.RunCMD(args[2].toLowerCase(), args, player);
         }
     }
 }
