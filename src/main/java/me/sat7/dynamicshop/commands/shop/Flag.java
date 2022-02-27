@@ -106,7 +106,7 @@ public class Flag extends DSCMD
                 shopData.get().set("Options.flag." + args[3].toLowerCase(), null);
             }
             shopData.save();
-            player.sendMessage(DynamicShop.dsPrefix + LangUtil.ccLang.get().get("MESSAGE.CHANGES_APPLIED") + args[3] + ":" + args[4]);
+            player.sendMessage(DynamicShop.dsPrefix + LangUtil.ccLang.get().get("MESSAGE.CHANGES_APPLIED") + args[3] + " " + args[4]);
         } else
         {
             player.sendMessage(DynamicShop.dsPrefix + t("ERR.WRONG_USAGE"));

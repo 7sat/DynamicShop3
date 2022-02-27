@@ -25,6 +25,9 @@ public final class TabCompleteUtil
 
     }
 
+    public static ArrayList<String> temp = new ArrayList<>();
+    public static ArrayList<String> autoCompleteList = new ArrayList<>();
+
     public static List<String> onTabCompleteBody(DynamicShop dynamicShop, CommandSender sender, Command cmd, String[] args)
     {
         if (!(sender instanceof Player)) return null;
@@ -34,12 +37,12 @@ public final class TabCompleteUtil
 
         try
         {
-            ArrayList<String> temp = new ArrayList<>();
-            ArrayList<String> alist = new ArrayList<>();
+            temp.clear();
+            autoCompleteList.clear();
 
             if (cmd.getName().equalsIgnoreCase("shop") && args.length == 1)
             {
-                if (!dynamicShop.getConfig().getBoolean("Command.UseShopCommand")) return alist;
+                if (!dynamicShop.getConfig().getBoolean("Command.UseShopCommand")) return autoCompleteList;
 
                 for (Map.Entry<String, CustomConfig> entry : ShopUtil.shopConfigFiles.entrySet())
                 {
@@ -53,16 +56,13 @@ public final class TabCompleteUtil
 
                     String permission = options.getString("permission", "");
                     if (permission.isEmpty()
-                        || !DynamicShop.plugin.getConfig().getBoolean("Command.PermissionCheckWhenCreatingAShopList")
-                        || p.hasPermission(permission))
+                            || !DynamicShop.plugin.getConfig().getBoolean("Command.PermissionCheckWhenCreatingAShopList")
+                            || p.hasPermission(permission))
                         temp.add(entry.getKey());
                 }
 
-                for (String s : temp)
-                {
-                    if (s.startsWith(args[0]) || s.toLowerCase().startsWith(args[0])) alist.add(s);
-                }
-                return alist;
+                AddToAutoCompleteIfValid(args[0]);
+                return autoCompleteList;
             } else if (cmd.getName().equalsIgnoreCase("DynamicShop"))
             {
                 if (args.length == 1)
@@ -83,10 +83,7 @@ public final class TabCompleteUtil
                     if (sender.hasPermission(P_ADMIN_RELOAD)) temp.add("reload");
                     temp.add("cmdHelp");
 
-                    for (String s : temp)
-                    {
-                        if (s.startsWith(args[0])) alist.add(s);
-                    }
+                    AddToAutoCompleteIfValid(args[0]);
                 } else if (args.length >= 2 && args[0].equals("shop"))
                 {
                     CustomConfig data = ShopUtil.shopConfigFiles.get(args[1]);
@@ -110,15 +107,12 @@ public final class TabCompleteUtil
 
                             String permission = options.getString("permission", "");
                             if (permission.isEmpty()
-                                || !DynamicShop.plugin.getConfig().getBoolean("Command.PermissionCheckWhenCreatingAShopList")
-                                || p.hasPermission(permission))
+                                    || !DynamicShop.plugin.getConfig().getBoolean("Command.PermissionCheckWhenCreatingAShopList")
+                                    || p.hasPermission(permission))
                                 temp.add(entry.getKey());
                         }
 
-                        for (String s : temp)
-                        {
-                            if (s.startsWith(args[1]) || s.toLowerCase().startsWith(args[1])) alist.add(s);
-                        }
+                        AddToAutoCompleteIfValid(args[1]);
                     } else if (args.length >= 3 && (!ShopUtil.shopConfigFiles.containsKey(args[1]) || args[1].length() == 0))
                     {
                         return null;
@@ -145,10 +139,7 @@ public final class TabCompleteUtil
                             temp.add("log");
                         }
 
-                        for (String s : temp)
-                        {
-                            if (s.toLowerCase().startsWith(args[2].toLowerCase())) alist.add(s);
-                        }
+                        AddToAutoCompleteIfValid(args[2]);
                     } else if (args.length >= 4)
                     {
                         if (args[2].equalsIgnoreCase("enable") && sender.hasPermission(P_ADMIN_SHOP_EDIT))
@@ -161,10 +152,7 @@ public final class TabCompleteUtil
                                 temp.add("false");
                             }
 
-                            for (String s : temp)
-                            {
-                                if (s.startsWith(args[3])) alist.add(s);
-                            }
+                            AddToAutoCompleteIfValid(args[3]);
                         } else if (args[2].equalsIgnoreCase("addhand") && sender.hasPermission(P_ADMIN_SHOP_EDIT))
                         {
                             Help.showHelp("add_hand", (Player) sender, args);
@@ -179,10 +167,7 @@ public final class TabCompleteUtil
                                     temp.add(m.name());
                                 }
 
-                                for (String s : temp)
-                                {
-                                    if (s.startsWith(args[3].toUpperCase())) alist.add(s);
-                                }
+                                AddToAutoCompleteIfValid(args[3]);
                             } else if (args.length == 5)
                             {
                                 String mat = args[3].toUpperCase();
@@ -215,12 +200,7 @@ public final class TabCompleteUtil
                                     }
                                 }
 
-                                for (String s : temp)
-                                {
-                                    String upper = args[3].toUpperCase();
-
-                                    if (s.startsWith(upper)) alist.add(s);
-                                }
+                                AddToAutoCompleteIfValid(args[3]);
                             } else if (args.length == 5)
                             {
                                 String mat = args[3];
@@ -245,10 +225,7 @@ public final class TabCompleteUtil
                                 temp.add("median");
                                 temp.add("maxStock");
 
-                                for (String s : temp)
-                                {
-                                    if (s.startsWith(args[3])) alist.add(s);
-                                }
+                                AddToAutoCompleteIfValid(args[3]);
                             } else if (args.length == 5)
                             {
                                 temp.add("=");
@@ -257,10 +234,7 @@ public final class TabCompleteUtil
                                 temp.add("/");
                                 temp.add("*");
 
-                                for (String s : temp)
-                                {
-                                    if (s.startsWith(args[4])) alist.add(s);
-                                }
+                                AddToAutoCompleteIfValid(args[4]);
                             } else if (args.length == 6)
                             {
                                 if (args[4].equals("="))
@@ -272,10 +246,7 @@ public final class TabCompleteUtil
                                     temp.add("median");
                                     temp.add("maxStock");
 
-                                    for (String s : temp)
-                                    {
-                                        if (s.startsWith(args[5])) alist.add(s);
-                                    }
+                                    AddToAutoCompleteIfValid(args[5]);
                                 }
                             }
                         } else if (args[2].equalsIgnoreCase("setToRecAll") && sender.hasPermission(P_ADMIN_SHOP_EDIT))
@@ -290,10 +261,7 @@ public final class TabCompleteUtil
                                 temp.add("true");
                                 temp.add("false");
 
-                                for (String s : temp)
-                                {
-                                    if (s.startsWith(args[3])) alist.add(s);
-                                }
+                                AddToAutoCompleteIfValid(args[3]);
                             }
                         } else if (args[2].equalsIgnoreCase("maxpage") && sender.hasPermission(P_ADMIN_SHOP_EDIT))
                         {
@@ -302,30 +270,24 @@ public final class TabCompleteUtil
                         {
                             if (args.length == 4)
                             {
-                                temp.add("signshop");
-                                temp.add("localshop");
-                                temp.add("deliverycharge");
-                                temp.add("jobpoint");
-                                temp.add("showvaluechange");
-                                temp.add("hidestock");
-                                temp.add("hidepricingtype");
-                                temp.add("hideshopbalance");
-                                temp.add("showmaxstock");
-                                temp.add("hiddenincommand");
+                                temp.add("signShop");
+                                temp.add("localShop");
+                                temp.add("deliveryCharge");
+                                temp.add("jobPoint");
+                                temp.add("showValueChange");
+                                temp.add("hideStock");
+                                temp.add("hidePricingType");
+                                temp.add("hideShopBalance");
+                                temp.add("showMaxStock");
+                                temp.add("hiddenInCommand");
 
-                                for (String s : temp)
-                                {
-                                    if (s.startsWith(args[3])) alist.add(s);
-                                }
+                                AddToAutoCompleteIfValid(args[3]);
                             } else if (args.length > 4)
                             {
                                 temp.add("set");
                                 temp.add("unset");
 
-                                for (String s : temp)
-                                {
-                                    if (s.startsWith(args[4])) alist.add(s);
-                                }
+                                AddToAutoCompleteIfValid(args[4]);
                             }
 
                             Help.showHelp("flag", (Player) sender, args);
@@ -337,10 +299,7 @@ public final class TabCompleteUtil
                                 temp.add("pos2");
                                 temp.add("clear");
 
-                                for (String s : temp)
-                                {
-                                    if (s.startsWith(args[3])) alist.add(s);
-                                }
+                                AddToAutoCompleteIfValid(args[3]);
                             }
 
                             Help.showHelp("position", (Player) sender, args);
@@ -361,10 +320,7 @@ public final class TabCompleteUtil
                                 temp.add("linkto");
                                 temp.add("transfer");
 
-                                for (String s : temp)
-                                {
-                                    if (s.startsWith(args[3])) alist.add(s);
-                                }
+                                AddToAutoCompleteIfValid(args[3]);
 
                                 Help.showHelp("account", (Player) sender, args);
                             } else if (args.length == 5)
@@ -392,23 +348,17 @@ public final class TabCompleteUtil
                                         break;
                                 }
 
-                                for (String s : temp)
-                                {
-                                    if (s.startsWith(args[4])) alist.add(s);
-                                }
+                                AddToAutoCompleteIfValid(args[4]);
                             }
                         } else if (args[2].equalsIgnoreCase("sellbuy") && sender.hasPermission(P_ADMIN_SHOP_EDIT))
                         {
                             if (args.length == 4)
                             {
-                                temp.add("SellOnly");
-                                temp.add("BuyOnly");
-                                temp.add("Clear");
+                                temp.add("sellOnly");
+                                temp.add("buyOnly");
+                                temp.add("clear");
 
-                                for (String s : temp)
-                                {
-                                    if (s.startsWith(args[3])) alist.add(s);
-                                }
+                                AddToAutoCompleteIfValid(args[3]);
 
                                 Help.showHelp("sellbuy", (Player) sender, args);
                             }
@@ -420,10 +370,7 @@ public final class TabCompleteUtil
                                 temp.add("disable");
                                 temp.add("clear");
 
-                                for (String s : temp)
-                                {
-                                    if (s.startsWith(args[3])) alist.add(s);
-                                }
+                                AddToAutoCompleteIfValid(args[3]);
 
                                 Help.showHelp("log", (Player) sender, args);
                             }
@@ -436,10 +383,7 @@ public final class TabCompleteUtil
                         temp.add("true");
                         temp.add("false");
 
-                        for (String s : temp)
-                        {
-                            if (s.startsWith(args[2])) alist.add(s);
-                        }
+                        AddToAutoCompleteIfValid(args[2]);
                     }
 
                     Help.showHelp("create_shop", (Player) sender, args);
@@ -447,10 +391,7 @@ public final class TabCompleteUtil
                 {
                     temp.addAll(ShopUtil.shopConfigFiles.keySet());
 
-                    for (String s : temp)
-                    {
-                        if (s.startsWith(args[1])) alist.add(s);
-                    }
+                    AddToAutoCompleteIfValid(args[1]);
 
                     Help.showHelp("delete_shop", (Player) sender, args);
                 } else if (args[0].equalsIgnoreCase("mergeshop") && sender.hasPermission(P_ADMIN_MERGE_SHOP))
@@ -459,10 +400,7 @@ public final class TabCompleteUtil
                     {
                         temp.addAll(ShopUtil.shopConfigFiles.keySet());
 
-                        for (String s : temp)
-                        {
-                            if (s.startsWith(args[args.length - 1])) alist.add(s);
-                        }
+                        AddToAutoCompleteIfValid(args[args.length - 1]);
                     }
 
                     Help.showHelp("merge_shop", (Player) sender, args);
@@ -472,18 +410,12 @@ public final class TabCompleteUtil
                     {
                         temp.addAll(ShopUtil.shopConfigFiles.keySet());
 
-                        for (String s : temp)
-                        {
-                            if (s.startsWith(args[args.length - 1])) alist.add(s);
-                        }
+                        AddToAutoCompleteIfValid(args[args.length - 1]);
                     } else if (args.length == 3)
                     {
                         temp.addAll(Bukkit.getOnlinePlayers().stream().map(HumanEntity::getName).collect(Collectors.toList()));
 
-                        for (String s : temp)
-                        {
-                            if (s.startsWith(args[args.length - 1])) alist.add(s);
-                        }
+                        AddToAutoCompleteIfValid(args[args.length - 1]);
                     }
 
                     Help.showHelp("open_shop", (Player) sender, args);
@@ -493,10 +425,7 @@ public final class TabCompleteUtil
                     {
                         temp.addAll(ShopUtil.shopConfigFiles.keySet());
 
-                        for (String s : temp)
-                        {
-                            if (s.startsWith(args[1])) alist.add(s);
-                        }
+                        AddToAutoCompleteIfValid(args[1]);
                     }
 
                     Help.showHelp("rename_shop", (Player) sender, args);
@@ -504,8 +433,8 @@ public final class TabCompleteUtil
                 {
                     if (args.length == 2)
                     {
-                        alist.add("on");
-                        alist.add("off");
+                        autoCompleteList.add("on");
+                        autoCompleteList.add("off");
 
                         Help.showHelp("cmd_help", (Player) sender, args);
                     }
@@ -516,10 +445,7 @@ public final class TabCompleteUtil
                 {
                     temp.addAll(ShopUtil.shopConfigFiles.keySet());
 
-                    for (String s : temp)
-                    {
-                        if (s.startsWith(args[1])) alist.add(s);
-                    }
+                    AddToAutoCompleteIfValid(args[1]);
 
                     Help.showHelp("set_default_shop", (Player) sender, args);
                 } else if (args[0].equalsIgnoreCase("deleteOldUser"))
@@ -527,7 +453,7 @@ public final class TabCompleteUtil
                     Help.showHelp("delete_old_user", (Player) sender, args);
                 }
 
-                return alist;
+                return autoCompleteList;
             }
         } catch (Exception e)
         {
@@ -535,5 +461,14 @@ public final class TabCompleteUtil
         }
 
         return null;
+    }
+
+    private static void AddToAutoCompleteIfValid(String arg)
+    {
+        for (String s : temp)
+        {
+            if (s.toLowerCase().startsWith(arg.toLowerCase()))
+                autoCompleteList.add(s);
+        }
     }
 }

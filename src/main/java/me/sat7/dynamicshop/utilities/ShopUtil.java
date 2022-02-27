@@ -562,7 +562,7 @@ public final class ShopUtil
             {
                 String tradeType = data.get().getString(sameItemIdx + ".tradeType");
 
-                if (tradeType != null && tradeType.equals("BuyOnly")) continue; // 구매만 가능함
+                if (tradeType != null && tradeType.equalsIgnoreCase("BuyOnly")) continue; // 구매만 가능함
 
                 // 상점에 돈이 없음
                 if (ShopUtil.getShopBalance(entry.getKey()) != -1 && ShopUtil.getShopBalance(entry.getKey()) < Calc.calcTotalCost(entry.getKey(), String.valueOf(sameItemIdx), itemStack.getAmount()))
@@ -628,7 +628,7 @@ public final class ShopUtil
             {
                 String tradeType = data.get().getString(sameItemIdx + ".tradeType");
 
-                if (tradeType != null && tradeType.equals("SellOnly")) continue;
+                if (tradeType != null && tradeType.equalsIgnoreCase("SellOnly")) continue;
 
                 // 재고가 없음
                 int stock = data.get().getInt(sameItemIdx + ".stock");

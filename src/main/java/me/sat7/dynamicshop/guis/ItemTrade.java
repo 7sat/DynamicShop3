@@ -114,7 +114,7 @@ public final class ItemTrade extends InGameUI
                 if (player.hasPermission(P_ADMIN_SHOP_EDIT))
                 {
                     String path = tradeIdx + ".tradeType";
-                    if (sellBuyOnly == null || !sellBuyOnly.equals("SellOnly"))
+                    if (sellBuyOnly == null || !sellBuyOnly.equalsIgnoreCase("SellOnly"))
                     {
                         sellBuyOnly = "SellOnly";
                         data.get().set(path, "SellOnly");
@@ -132,7 +132,7 @@ public final class ItemTrade extends InGameUI
                 if (player.hasPermission(P_ADMIN_SHOP_EDIT))
                 {
                     String path = tradeIdx + ".tradeType";
-                    if (sellBuyOnly == null || !sellBuyOnly.equals("BuyOnly"))
+                    if (sellBuyOnly == null || !sellBuyOnly.equalsIgnoreCase("BuyOnly"))
                     {
                         sellBuyOnly = "BuyOnly";
                         data.get().set(path, "BuyOnly");
@@ -258,15 +258,15 @@ public final class ItemTrade extends InGameUI
     private void CreateSellBuyOnlyToggle()
     {
         ArrayList<String> sellLore = new ArrayList<>();
-        if (sellBuyOnly.equals("SellOnly")) sellLore.add(t("TRADE.SELL_ONLY_LORE"));
-        else if (sellBuyOnly.equals("BuyOnly")) sellLore.add(t("TRADE.BUY_ONLY_LORE"));
+        if (sellBuyOnly.equalsIgnoreCase("SellOnly")) sellLore.add(t("TRADE.SELL_ONLY_LORE"));
+        else if (sellBuyOnly.equalsIgnoreCase("BuyOnly")) sellLore.add(t("TRADE.BUY_ONLY_LORE"));
 
         if (player.hasPermission(P_ADMIN_SHOP_EDIT))
             sellLore.add(t("TRADE.TOGGLE_SELLABLE"));
 
         ArrayList<String> buyLore = new ArrayList<>();
-        if (sellBuyOnly.equals("SellOnly")) buyLore.add(t("TRADE.SELL_ONLY_LORE"));
-        else if (sellBuyOnly.equals("BuyOnly")) buyLore.add(t("TRADE.BUY_ONLY_LORE"));
+        if (sellBuyOnly.equalsIgnoreCase("SellOnly")) buyLore.add(t("TRADE.SELL_ONLY_LORE"));
+        else if (sellBuyOnly.equalsIgnoreCase("BuyOnly")) buyLore.add(t("TRADE.BUY_ONLY_LORE"));
 
         if (player.hasPermission(P_ADMIN_SHOP_EDIT))
             buyLore.add(t("TRADE.TOGGLE_BUYABLE"));
@@ -278,9 +278,9 @@ public final class ItemTrade extends InGameUI
     private void CreateTradeButtons()
     {
         String mat = shopData.getString(tradeIdx + ".mat");
-        if (!sellBuyOnly.equals("BuyOnly"))
+        if (!sellBuyOnly.equalsIgnoreCase("BuyOnly"))
             CreateTradeButtons(true);
-        if (!sellBuyOnly.equals("SellOnly"))
+        if (!sellBuyOnly.equalsIgnoreCase("SellOnly"))
             CreateTradeButtons(false);
     }
 
