@@ -20,6 +20,7 @@ import me.sat7.dynamicshop.DynamicShop;
 import me.sat7.dynamicshop.constants.Constants;
 import me.sat7.dynamicshop.files.CustomConfig;
 
+import static me.sat7.dynamicshop.constants.Constants.P_ADMIN_SHOP_EDIT;
 import static me.sat7.dynamicshop.utilities.LangUtil.t;
 
 public final class StartPage extends InGameUI
@@ -79,7 +80,7 @@ public final class StartPage extends InGameUI
                     tempList.addAll(Arrays.asList(lore));
                 }
 
-                if (player.hasPermission("dshop.admin.shopedit"))
+                if (player.hasPermission(P_ADMIN_SHOP_EDIT))
                 {
                     String cmd = cs.getString(s + ".action");
                     if (cmd != null && cmd.length() > 0)
@@ -136,7 +137,7 @@ public final class StartPage extends InGameUI
                 if (e.getCurrentItem() == null || e.getCurrentItem().getType() == Material.AIR)
                 {
                     // 새 버튼 추가
-                    if (player.hasPermission("dshop.admin.shopedit"))
+                    if (player.hasPermission(P_ADMIN_SHOP_EDIT))
                     {
                         StartPage.ccStartPage.get().set("Buttons." + e.getSlot() + ".displayName", "§3New Button");
                         StartPage.ccStartPage.get().set("Buttons." + e.getSlot() + ".lore", "§fnew button");
@@ -164,7 +165,7 @@ public final class StartPage extends InGameUI
             }
         }
         // 우클릭
-        else if (player.hasPermission("dshop.admin.shopedit"))
+        else if (player.hasPermission(P_ADMIN_SHOP_EDIT))
         {
             // 편집
             if (e.isShiftClick())

@@ -16,6 +16,7 @@ import org.bukkit.inventory.ItemStack;
 import java.text.DecimalFormat;
 import java.util.ArrayList;
 
+import static me.sat7.dynamicshop.constants.Constants.P_ADMIN_SHOP_EDIT;
 import static me.sat7.dynamicshop.utilities.LangUtil.t;
 
 public final class DynaShopAPI
@@ -41,7 +42,7 @@ public final class DynaShopAPI
     {
         if(!IsShopEnable(shopName))
         {
-            if(player.hasPermission("dshop.admin.shopedit"))
+            if(player.hasPermission(P_ADMIN_SHOP_EDIT))
             {
                 player.sendMessage(DynamicShop.dsPrefix + t("MESSAGE.SHOP_DISABLED"));
             }
@@ -73,7 +74,7 @@ public final class DynaShopAPI
     {
         if(!IsShopEnable(shopName))
         {
-            if(player.hasPermission("dshop.admin.shopedit"))
+            if(player.hasPermission(P_ADMIN_SHOP_EDIT))
             {
                 player.sendMessage(DynamicShop.dsPrefix + t("MESSAGE.SHOP_DISABLED"));
             }

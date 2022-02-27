@@ -16,6 +16,8 @@ import me.sat7.dynamicshop.DynamicShop;
 import me.sat7.dynamicshop.commands.Help;
 import me.sat7.dynamicshop.constants.Constants;
 
+import static me.sat7.dynamicshop.constants.Constants.*;
+
 public final class TabCompleteUtil
 {
     private TabCompleteUtil()
@@ -46,7 +48,7 @@ public final class TabCompleteUtil
                     if (options.contains("flag.signshop") && !sender.hasPermission(Constants.P_ADMIN_REMOTE_ACCESS))
                         continue;
 
-                    if (options.contains("flag.hiddenincommand") && !sender.hasPermission("dshop.admin.shopedit"))
+                    if (options.contains("flag.hiddenincommand") && !sender.hasPermission(P_ADMIN_SHOP_EDIT))
                         continue;
 
                     String permission = options.getString("permission", "");
@@ -69,16 +71,16 @@ public final class TabCompleteUtil
 
                     temp.add("shop");
                     temp.add("qsell");
-                    if (sender.hasPermission("dshop.admin.createshop")) temp.add("createshop");
-                    if (sender.hasPermission("dshop.admin.deleteshop")) temp.add("deleteshop");
-                    if (sender.hasPermission("dshop.admin.mergeshop")) temp.add("mergeshop");
-                    if (sender.hasPermission("dshop.admin.renameshop")) temp.add("renameshop");
-                    if (sender.hasPermission("dshop.admin.openshop")) temp.add("openshop");
-                    if (sender.hasPermission("dshop.admin.settax")) temp.add("settax");
-                    if (sender.hasPermission("dshop.admin.settax")) temp.add("settax temp");
-                    if (sender.hasPermission("dshop.admin.setdefaultshop")) temp.add("setdefaultshop");
-                    if (sender.hasPermission(Constants.P_ADMIN_DELETE_OLD_USER)) temp.add("deleteOldUser");
-                    if (sender.hasPermission("dshop.admin.reload")) temp.add("reload");
+                    if (sender.hasPermission(P_ADMIN_CREATE_SHOP)) temp.add("createshop");
+                    if (sender.hasPermission(P_ADMIN_DELETE_SHOP)) temp.add("deleteshop");
+                    if (sender.hasPermission(P_ADMIN_MERGE_SHOP)) temp.add("mergeshop");
+                    if (sender.hasPermission(P_ADMIN_RENAME_SHOP)) temp.add("renameshop");
+                    if (sender.hasPermission(P_ADMIN_OPEN_SHOP)) temp.add("openshop");
+                    if (sender.hasPermission(P_ADMIN_SET_TAX)) temp.add("settax");
+                    if (sender.hasPermission(P_ADMIN_SET_TAX)) temp.add("settax temp");
+                    if (sender.hasPermission(P_ADMIN_SET_DEFAULT_SHOP)) temp.add("setdefaultshop");
+                    if (sender.hasPermission(P_ADMIN_DELETE_OLD_USER)) temp.add("deleteOldUser");
+                    if (sender.hasPermission(P_ADMIN_RELOAD)) temp.add("reload");
                     temp.add("cmdHelp");
 
                     for (String s : temp)
@@ -103,7 +105,7 @@ public final class TabCompleteUtil
                             if (options.contains("flag") && options.getConfigurationSection("flag").contains("signshop") && !sender.hasPermission(Constants.P_ADMIN_REMOTE_ACCESS))
                                 continue;
 
-                            if (options.contains("flag.hiddenincommand") && !sender.hasPermission("dshop.admin.shopedit"))
+                            if (options.contains("flag.hiddenincommand") && !sender.hasPermission(P_ADMIN_SHOP_EDIT))
                                 continue;
 
                             String permission = options.getString("permission", "");
@@ -123,7 +125,7 @@ public final class TabCompleteUtil
                     } else if (args.length == 3)
                     {
                         //add,addhand,edit,editall,permission,maxpage,flag
-                        if (sender.hasPermission("dshop.admin.shopedit"))
+                        if (sender.hasPermission(P_ADMIN_SHOP_EDIT))
                         {
                             temp.add("enable");
                             temp.add("add");
@@ -149,7 +151,7 @@ public final class TabCompleteUtil
                         }
                     } else if (args.length >= 4)
                     {
-                        if (args[2].equalsIgnoreCase("enable") && sender.hasPermission("dshop.admin.shopedit"))
+                        if (args[2].equalsIgnoreCase("enable") && sender.hasPermission(P_ADMIN_SHOP_EDIT))
                         {
                             Help.showHelp("enable", (Player) sender, args);
 
@@ -163,10 +165,10 @@ public final class TabCompleteUtil
                             {
                                 if (s.startsWith(args[3])) alist.add(s);
                             }
-                        } else if (args[2].equalsIgnoreCase("addhand") && sender.hasPermission("dshop.admin.shopedit"))
+                        } else if (args[2].equalsIgnoreCase("addhand") && sender.hasPermission(P_ADMIN_SHOP_EDIT))
                         {
                             Help.showHelp("add_hand", (Player) sender, args);
-                        } else if (args[2].equalsIgnoreCase("add") && sender.hasPermission("dshop.admin.shopedit"))
+                        } else if (args[2].equalsIgnoreCase("add") && sender.hasPermission(P_ADMIN_SHOP_EDIT))
                         {
                             if (args.length == 4)
                             {
@@ -194,7 +196,7 @@ public final class TabCompleteUtil
                                     }
                                 }
                             }
-                        } else if (args[2].equalsIgnoreCase("edit") && sender.hasPermission("dshop.admin.shopedit"))
+                        } else if (args[2].equalsIgnoreCase("edit") && sender.hasPermission(P_ADMIN_SHOP_EDIT))
                         {
                             if (args.length == 4)
                             {
@@ -230,7 +232,7 @@ public final class TabCompleteUtil
                                     Help.showHelp("edit" + mat, (Player) sender, args);
                                 }
                             }
-                        } else if (args[2].equalsIgnoreCase("editall") && sender.hasPermission("dshop.admin.shopedit"))
+                        } else if (args[2].equalsIgnoreCase("editall") && sender.hasPermission(P_ADMIN_SHOP_EDIT))
                         {
                             Help.showHelp("edit_all", (Player) sender, args);
 
@@ -276,10 +278,10 @@ public final class TabCompleteUtil
                                     }
                                 }
                             }
-                        } else if (args[2].equalsIgnoreCase("setToRecAll") && sender.hasPermission("dshop.admin.shopedit"))
+                        } else if (args[2].equalsIgnoreCase("setToRecAll") && sender.hasPermission(P_ADMIN_SHOP_EDIT))
                         {
                             Help.showHelp("set_to_rec_all", (Player) sender, args);
-                        } else if (args[2].equalsIgnoreCase("permission") && sender.hasPermission("dshop.admin.shopedit"))
+                        } else if (args[2].equalsIgnoreCase("permission") && sender.hasPermission(P_ADMIN_SHOP_EDIT))
                         {
                             Help.showHelp("permission", (Player) sender, args);
 
@@ -293,10 +295,10 @@ public final class TabCompleteUtil
                                     if (s.startsWith(args[3])) alist.add(s);
                                 }
                             }
-                        } else if (args[2].equalsIgnoreCase("maxpage") && sender.hasPermission("dshop.admin.shopedit"))
+                        } else if (args[2].equalsIgnoreCase("maxpage") && sender.hasPermission(P_ADMIN_SHOP_EDIT))
                         {
                             Help.showHelp("max_page", (Player) sender, args);
-                        } else if (args[2].equalsIgnoreCase("flag") && sender.hasPermission("dshop.admin.shopedit"))
+                        } else if (args[2].equalsIgnoreCase("flag") && sender.hasPermission(P_ADMIN_SHOP_EDIT))
                         {
                             if (args.length == 4)
                             {
@@ -327,7 +329,7 @@ public final class TabCompleteUtil
                             }
 
                             Help.showHelp("flag", (Player) sender, args);
-                        } else if (args[2].equalsIgnoreCase("position") && sender.hasPermission("dshop.admin.shopedit"))
+                        } else if (args[2].equalsIgnoreCase("position") && sender.hasPermission(P_ADMIN_SHOP_EDIT))
                         {
                             if (args.length >= 4)
                             {
@@ -342,16 +344,16 @@ public final class TabCompleteUtil
                             }
 
                             Help.showHelp("position", (Player) sender, args);
-                        } else if (args[2].equalsIgnoreCase("shophours") && sender.hasPermission("dshop.admin.shopedit"))
+                        } else if (args[2].equalsIgnoreCase("shophours") && sender.hasPermission(P_ADMIN_SHOP_EDIT))
                         {
                             Help.showHelp("shophours", (Player) sender, args);
-                        } else if (args[2].equalsIgnoreCase("fluctuation") && sender.hasPermission("dshop.admin.shopedit"))
+                        } else if (args[2].equalsIgnoreCase("fluctuation") && sender.hasPermission(P_ADMIN_SHOP_EDIT))
                         {
                             Help.showHelp("fluctuation", (Player) sender, args);
-                        } else if (args[2].equalsIgnoreCase("stockStabilizing") && sender.hasPermission("dshop.admin.shopedit"))
+                        } else if (args[2].equalsIgnoreCase("stockStabilizing") && sender.hasPermission(P_ADMIN_SHOP_EDIT))
                         {
                             Help.showHelp("stock_stabilizing", (Player) sender, args);
-                        } else if (args[2].equalsIgnoreCase("account") && sender.hasPermission("dshop.admin.shopedit"))
+                        } else if (args[2].equalsIgnoreCase("account") && sender.hasPermission(P_ADMIN_SHOP_EDIT))
                         {
                             if (args.length == 4)
                             {
@@ -395,7 +397,7 @@ public final class TabCompleteUtil
                                     if (s.startsWith(args[4])) alist.add(s);
                                 }
                             }
-                        } else if (args[2].equalsIgnoreCase("sellbuy") && sender.hasPermission("dshop.admin.shopedit"))
+                        } else if (args[2].equalsIgnoreCase("sellbuy") && sender.hasPermission(P_ADMIN_SHOP_EDIT))
                         {
                             if (args.length == 4)
                             {
@@ -410,7 +412,7 @@ public final class TabCompleteUtil
 
                                 Help.showHelp("sellbuy", (Player) sender, args);
                             }
-                        } else if (args[2].equalsIgnoreCase("log") && sender.hasPermission("dshop.admin.shopedit"))
+                        } else if (args[2].equalsIgnoreCase("log") && sender.hasPermission(P_ADMIN_SHOP_EDIT))
                         {
                             if (args.length == 4)
                             {
@@ -427,7 +429,7 @@ public final class TabCompleteUtil
                             }
                         }
                     }
-                } else if (args[0].equalsIgnoreCase("createshop") && sender.hasPermission("dshop.admin.createshop"))
+                } else if (args[0].equalsIgnoreCase("createshop") && sender.hasPermission(P_ADMIN_CREATE_SHOP))
                 {
                     if (args.length == 3)
                     {
@@ -441,7 +443,7 @@ public final class TabCompleteUtil
                     }
 
                     Help.showHelp("create_shop", (Player) sender, args);
-                } else if (args[0].equalsIgnoreCase("deleteshop") && sender.hasPermission("dshop.admin.deleteshop"))
+                } else if (args[0].equalsIgnoreCase("deleteshop") && sender.hasPermission(P_ADMIN_DELETE_SHOP))
                 {
                     temp.addAll(ShopUtil.shopConfigFiles.keySet());
 
@@ -451,7 +453,7 @@ public final class TabCompleteUtil
                     }
 
                     Help.showHelp("delete_shop", (Player) sender, args);
-                } else if (args[0].equalsIgnoreCase("mergeshop") && sender.hasPermission("dshop.admin.mergeshop"))
+                } else if (args[0].equalsIgnoreCase("mergeshop") && sender.hasPermission(P_ADMIN_MERGE_SHOP))
                 {
                     if (args.length <= 3)
                     {
@@ -464,7 +466,7 @@ public final class TabCompleteUtil
                     }
 
                     Help.showHelp("merge_shop", (Player) sender, args);
-                } else if (args[0].equalsIgnoreCase("openshop") && sender.hasPermission("dshop.admin.openshop"))
+                } else if (args[0].equalsIgnoreCase("openshop") && sender.hasPermission(P_ADMIN_OPEN_SHOP))
                 {
                     if (args.length == 2)
                     {
@@ -485,7 +487,7 @@ public final class TabCompleteUtil
                     }
 
                     Help.showHelp("open_shop", (Player) sender, args);
-                } else if (args[0].equalsIgnoreCase("renameshop") && sender.hasPermission("dshop.admin.renameshop"))
+                } else if (args[0].equalsIgnoreCase("renameshop") && sender.hasPermission(P_ADMIN_RENAME_SHOP))
                 {
                     if (args.length == 2)
                     {

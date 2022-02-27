@@ -24,6 +24,7 @@ import me.sat7.dynamicshop.jobshook.JobsHook;
 import me.sat7.dynamicshop.transactions.Calc;
 import me.sat7.dynamicshop.utilities.ShopUtil;
 
+import static me.sat7.dynamicshop.constants.Constants.P_ADMIN_SHOP_EDIT;
 import static me.sat7.dynamicshop.utilities.LangUtil.n;
 import static me.sat7.dynamicshop.utilities.LangUtil.t;
 import static me.sat7.dynamicshop.utilities.LayoutUtil.l;
@@ -267,7 +268,7 @@ public final class Shop extends InGameUI
                     if(ChatColor.stripColor(temp).startsWith("\n"))
                         lore = lore.replaceFirst("\n","");
 
-                    if (player.hasPermission("dshop.admin.shopedit"))
+                    if (player.hasPermission(P_ADMIN_SHOP_EDIT))
                     {
                         lore += "\n" + t("SHOP.ITEM_MOVE_LORE");
                         lore += "\n" + t("SHOP.ITEM_EDIT_LORE");
@@ -276,7 +277,7 @@ public final class Shop extends InGameUI
                 // 장식용
                 else
                 {
-                    if (player.hasPermission("dshop.admin.shopedit"))
+                    if (player.hasPermission(P_ADMIN_SHOP_EDIT))
                     {
                         lore += t("SHOP.ITEM_COPY_LORE");
                         lore += "\n" + t("SHOP.DECO_DELETE_LORE");
@@ -312,7 +313,7 @@ public final class Shop extends InGameUI
     private String CreatePageButtonLore()
     {
         String pageLore = t("SHOP.PAGE_LORE_V2");
-        if (player.hasPermission("dshop.admin.shopedit"))
+        if (player.hasPermission(P_ADMIN_SHOP_EDIT))
         {
             pageLore += "\n" + t("SHOP.PAGE_EDIT_LORE");
         }
@@ -411,12 +412,12 @@ public final class Shop extends InGameUI
             shopLore = shopLore.replaceFirst("\n","");
 
         // 어드민이면----------
-        if (player.hasPermission("dshop.admin.shopedit"))
+        if (player.hasPermission(P_ADMIN_SHOP_EDIT))
             shopLore += "\n";
 
         // 플래그
         String finalFlagText = "";
-        if (player.hasPermission("dshop.admin.shopedit"))
+        if (player.hasPermission(P_ADMIN_SHOP_EDIT))
         {
             if (shopData.contains("Options.flag") && shopData.getConfigurationSection("Options.flag").getKeys(false).size() > 0)
             {
@@ -430,7 +431,7 @@ public final class Shop extends InGameUI
         }
         shopLore += finalFlagText;
 
-        if (player.hasPermission("dshop.admin.shopedit"))
+        if (player.hasPermission(P_ADMIN_SHOP_EDIT))
         {
             shopLore += t("SHOP_SETTING.SHOP_SETTINGS_LORE");
         }
@@ -468,7 +469,7 @@ public final class Shop extends InGameUI
                 targetPage -= 1;
                 if (targetPage < 1)
                     targetPage = GetShopMaxPage(shopName);
-            } else if (player.hasPermission("dshop.admin.shopedit"))
+            } else if (player.hasPermission(P_ADMIN_SHOP_EDIT))
             {
                 ShopUtil.insetShopPage(shopName, page);
             }
@@ -479,7 +480,7 @@ public final class Shop extends InGameUI
                 targetPage += 1;
                 if (targetPage > GetShopMaxPage(shopName))
                     targetPage = 1;
-            } else if (player.hasPermission("dshop.admin.shopedit"))
+            } else if (player.hasPermission(P_ADMIN_SHOP_EDIT))
             {
                 if (shopData.getInt("Options.page") > 1)
                 {
@@ -503,7 +504,7 @@ public final class Shop extends InGameUI
 
     private void OnClickShopSettingsButton()
     {
-        if(player.hasPermission("dshop.admin.shopedit"))
+        if(player.hasPermission(P_ADMIN_SHOP_EDIT))
         {
             DynaShopAPI.openShopSettingGui(player, shopName);
         }
@@ -520,7 +521,7 @@ public final class Shop extends InGameUI
                 DynaShopAPI.openItemTradeGui(player, shopName, String.valueOf(idx));
             }
             // 아이탬 이동, 수정, 또는 장식탬 삭제
-            else if (e.isRightClick() && player.hasPermission("dshop.admin.shopedit"))
+            else if (e.isRightClick() && player.hasPermission(P_ADMIN_SHOP_EDIT))
             {
                 if (e.isShiftClick())
                 {
@@ -557,7 +558,7 @@ public final class Shop extends InGameUI
                 }
             }
         }
-        else if (player.hasPermission("dshop.admin.shopedit"))
+        else if (player.hasPermission(P_ADMIN_SHOP_EDIT))
         {
             // 아이탬 이동. 또는 장식 복사
             if (e.isRightClick() && selectedSlot != -1)
@@ -621,7 +622,7 @@ public final class Shop extends InGameUI
             return false;
         }
 
-        boolean ret = DynaShopAPI.IsShopEnable(shopName) || player.hasPermission("dshop.admin.shopedit");
+        boolean ret = DynaShopAPI.IsShopEnable(shopName) || player.hasPermission(P_ADMIN_SHOP_EDIT);
 
         if(!ret)
         {

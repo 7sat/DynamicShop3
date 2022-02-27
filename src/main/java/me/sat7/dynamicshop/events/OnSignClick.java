@@ -27,6 +27,7 @@ import org.bukkit.inventory.ItemStack;
 import java.util.ArrayList;
 import java.util.List;
 
+import static me.sat7.dynamicshop.constants.Constants.*;
 import static me.sat7.dynamicshop.utilities.LangUtil.t;
 
 public class OnSignClick implements Listener
@@ -35,7 +36,7 @@ public class OnSignClick implements Listener
     @EventHandler
     public void onSignChange(SignChangeEvent e)
     {
-        if (!e.getPlayer().hasPermission("dshop.admin.createsign")) return;
+        if (!e.getPlayer().hasPermission(P_ADMIN_CREATE_SIGN)) return;
 
         //noinspection ConstantConditions
         if (e.getLine(0).equalsIgnoreCase("[dshop]")
@@ -129,7 +130,7 @@ public class OnSignClick implements Listener
                         ShopUtil.shopConfigFiles.containsKey(ChatColor.stripColor(s.getLine(1))))
                 {
                     // 재생성 시도
-                    if (e.getPlayer().hasPermission("dshop.admin.createsign"))
+                    if (e.getPlayer().hasPermission(P_ADMIN_CREATE_SIGN))
                     {
                         String shop = ChatColor.stripColor(s.getLine(1));
                         DynamicShop.ccSign.get().set(signId + ".shop", shop);
@@ -184,7 +185,7 @@ public class OnSignClick implements Listener
                         return;
                     }
 
-                    if(!p.hasPermission("dshop.admin.shopedit"))
+                    if(!p.hasPermission(P_ADMIN_SHOP_EDIT))
                         e.setCancelled(true);
                     else
                     {
@@ -240,7 +241,7 @@ public class OnSignClick implements Listener
         {
             if (s.equals(eventID))
             {
-                if (!e.getPlayer().hasPermission("dshop.admin.destroysign"))
+                if (!e.getPlayer().hasPermission(P_ADMIN_DESTROY_SIGN))
                 {
                     e.setCancelled(true);
                 } else
@@ -253,7 +254,7 @@ public class OnSignClick implements Listener
 
             if (eventID.equals(DynamicShop.ccSign.get().getString(s + ".attached")))
             {
-                if (!e.getPlayer().hasPermission("dshop.admin.destroysign"))
+                if (!e.getPlayer().hasPermission(P_ADMIN_DESTROY_SIGN))
                 {
                     e.setCancelled(true);
                 } else

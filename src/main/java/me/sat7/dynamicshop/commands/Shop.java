@@ -9,6 +9,7 @@ import me.sat7.dynamicshop.DynamicShop;
 import me.sat7.dynamicshop.constants.Constants;
 import me.sat7.dynamicshop.utilities.ShopUtil;
 
+import static me.sat7.dynamicshop.constants.Constants.P_ADMIN_SHOP_EDIT;
 import static me.sat7.dynamicshop.utilities.LangUtil.n;
 import static me.sat7.dynamicshop.utilities.LangUtil.t;
 
@@ -114,7 +115,7 @@ public final class Shop
                     return;
                 }
             }
-            if (shopConf.contains("shophours") && !player.hasPermission("dshop.admin.shopedit"))
+            if (shopConf.contains("shophours") && !player.hasPermission(P_ADMIN_SHOP_EDIT))
             {
                 int curTime = (int) (player.getWorld().getTime()) / 1000 + 6;
                 if (curTime > 24) curTime -= 24;

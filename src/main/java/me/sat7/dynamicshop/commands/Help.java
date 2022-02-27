@@ -10,6 +10,7 @@ import me.sat7.dynamicshop.utilities.ShopUtil;
 
 import java.util.UUID;
 
+import static me.sat7.dynamicshop.constants.Constants.*;
 import static me.sat7.dynamicshop.utilities.LangUtil.t;
 
 public final class Help
@@ -37,11 +38,11 @@ public final class Help
             player.sendMessage(" - shop: " + t("HELP.SHOP"));
             player.sendMessage(" - qsell: " + t("HELP.QSELL"));
             player.sendMessage(" - cmdHelp: " + t("HELP.CMD"));
-            if (player.hasPermission("dshop.admin.createshop"))
+            if (player.hasPermission(P_ADMIN_CREATE_SHOP))
                 player.sendMessage("§e - createshop: " + t("HELP.CREATE_SHOP"));
-            if (player.hasPermission("dshop.admin.deleteshop"))
+            if (player.hasPermission(P_ADMIN_DELETE_SHOP))
                 player.sendMessage("§e - deleteshop: " + t("HELP.DELETE_SHOP"));
-            if (player.hasPermission("dshop.admin.reload"))
+            if (player.hasPermission(P_ADMIN_RELOAD))
                 player.sendMessage("§e - reload: " + t("HELP.RELOAD"));
             player.sendMessage("");
         } else if (helpcode.equals("shop"))
@@ -49,13 +50,13 @@ public final class Help
             player.sendMessage(DynamicShop.dsPrefix + t("HELP.TITLE").replace("{command}", "shop"));
 
             player.sendMessage(" - " + t("HELP.USAGE") + ": /ds shop [<shopname>]");
-            if (player.hasPermission("dshop.admin.shopedit") || player.hasPermission("dshop.admin.shopedit") || player.hasPermission("dshop.admin.editall"))
+            if (player.hasPermission(P_ADMIN_SHOP_EDIT) || player.hasPermission(P_ADMIN_EDIT_ALL))
             {
                 player.sendMessage(" - " + t("HELP.USAGE")
                         + ": /ds shop <shopname> <enable | addhand | add | edit | editall | setToRecAll | sellbuy | permission | maxpage | flag | position | shophours | fluctuation | stockStabilizing | account | log>");
             }
 
-            if (player.hasPermission("dshop.admin.shopedit"))
+            if (player.hasPermission(P_ADMIN_SHOP_EDIT))
             {
                 player.sendMessage("§e - enable: " + t("HELP.SHOP_ENABLE"));
                 player.sendMessage("§e - addhand: " + t("HELP.SHOP_ADD_HAND"));
@@ -63,9 +64,9 @@ public final class Help
                 player.sendMessage("§e - edit: " + t("HELP.SHOP_EDIT"));
             }
 
-            if (player.hasPermission("dshop.admin.editall"))
+            if (player.hasPermission(P_ADMIN_EDIT_ALL))
                 player.sendMessage("§e - editall: " + t("HELP.EDIT_ALL"));
-            if (player.hasPermission("dshop.admin.shopedit"))
+            if (player.hasPermission(P_ADMIN_SHOP_EDIT))
                 player.sendMessage("§e - setToRecAll: " + t("HELP.SET_TO_REC_ALL"));
             player.sendMessage("");
         } else if (helpcode.equals("open_shop"))
@@ -74,7 +75,7 @@ public final class Help
         } else if (helpcode.equals("enable"))
         {
             CMDManager.enable.SendHelpMessage(player);
-        } else if (helpcode.equals("add_hand") && player.hasPermission("dshop.admin.shopedit"))
+        } else if (helpcode.equals("add_hand") && player.hasPermission(P_ADMIN_SHOP_EDIT))
         {
             CMDManager.addHand.SendHelpMessage(player);
 
@@ -94,7 +95,7 @@ public final class Help
             }
 
             player.sendMessage("");
-        } else if (helpcode.startsWith("add") && player.hasPermission("dshop.admin.shopedit"))
+        } else if (helpcode.startsWith("add") && player.hasPermission(P_ADMIN_SHOP_EDIT))
         {
             if (helpcode.length() > "add".length())
             {
@@ -115,7 +116,7 @@ public final class Help
             {
                 CMDManager.add.SendHelpMessage(player);
             }
-        } else if (helpcode.contains("edit") && !helpcode.equals("edit_all") && player.hasPermission("dshop.admin.shopedit"))
+        } else if (helpcode.contains("edit") && !helpcode.equals("edit_all") && player.hasPermission(P_ADMIN_SHOP_EDIT))
         {
             if (helpcode.length() > "edit".length())
             {

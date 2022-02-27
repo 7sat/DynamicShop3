@@ -24,6 +24,7 @@ import me.sat7.dynamicshop.jobshook.JobsHook;
 import me.sat7.dynamicshop.transactions.Calc;
 import me.sat7.dynamicshop.utilities.ShopUtil;
 
+import static me.sat7.dynamicshop.constants.Constants.P_ADMIN_SHOP_EDIT;
 import static me.sat7.dynamicshop.utilities.LangUtil.n;
 import static me.sat7.dynamicshop.utilities.LangUtil.t;
 import static me.sat7.dynamicshop.utilities.LayoutUtil.l;
@@ -110,7 +111,7 @@ public final class ItemTrade extends InGameUI
                 }
             } else if (e.getSlot() == SELL_ONLY_TOGGLE)
             {
-                if (player.hasPermission("dshop.admin.shopedit"))
+                if (player.hasPermission(P_ADMIN_SHOP_EDIT))
                 {
                     String path = tradeIdx + ".tradeType";
                     if (sellBuyOnly == null || !sellBuyOnly.equals("SellOnly"))
@@ -128,7 +129,7 @@ public final class ItemTrade extends InGameUI
                 }
             } else if (e.getSlot() == BUY_ONLY_TOGGLE)
             {
-                if (player.hasPermission("dshop.admin.shopedit"))
+                if (player.hasPermission(P_ADMIN_SHOP_EDIT))
                 {
                     String path = tradeIdx + ".tradeType";
                     if (sellBuyOnly == null || !sellBuyOnly.equals("BuyOnly"))
@@ -260,14 +261,14 @@ public final class ItemTrade extends InGameUI
         if (sellBuyOnly.equals("SellOnly")) sellLore.add(t("TRADE.SELL_ONLY_LORE"));
         else if (sellBuyOnly.equals("BuyOnly")) sellLore.add(t("TRADE.BUY_ONLY_LORE"));
 
-        if (player.hasPermission("dshop.admin.shopedit"))
+        if (player.hasPermission(P_ADMIN_SHOP_EDIT))
             sellLore.add(t("TRADE.TOGGLE_SELLABLE"));
 
         ArrayList<String> buyLore = new ArrayList<>();
         if (sellBuyOnly.equals("SellOnly")) buyLore.add(t("TRADE.SELL_ONLY_LORE"));
         else if (sellBuyOnly.equals("BuyOnly")) buyLore.add(t("TRADE.BUY_ONLY_LORE"));
 
-        if (player.hasPermission("dshop.admin.shopedit"))
+        if (player.hasPermission(P_ADMIN_SHOP_EDIT))
             buyLore.add(t("TRADE.TOGGLE_BUYABLE"));
 
         CreateButton(SELL_ONLY_TOGGLE, Material.GREEN_STAINED_GLASS, t("TRADE.SELL"), sellLore);
@@ -459,7 +460,7 @@ public final class ItemTrade extends InGameUI
             return false;
         }
 
-        boolean ret = DynaShopAPI.IsShopEnable(shopName) || player.hasPermission("dshop.admin.shopedit");
+        boolean ret = DynaShopAPI.IsShopEnable(shopName) || player.hasPermission(P_ADMIN_SHOP_EDIT);
 
         if(!ret)
         {

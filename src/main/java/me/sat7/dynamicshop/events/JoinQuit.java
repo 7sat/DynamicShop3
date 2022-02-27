@@ -12,6 +12,9 @@ import org.bukkit.event.Listener;
 import org.bukkit.event.player.PlayerJoinEvent;
 import org.bukkit.event.player.PlayerQuitEvent;
 
+import static me.sat7.dynamicshop.constants.Constants.P_ADMIN_RELOAD;
+import static me.sat7.dynamicshop.constants.Constants.P_ADMIN_SHOP_EDIT;
+
 public class JoinQuit implements Listener
 {
 
@@ -27,7 +30,7 @@ public class JoinQuit implements Listener
 
         if (DynamicShop.updateAvailable)
         {
-            if (e.getPlayer().hasPermission("dshop.admin.shopedit") || e.getPlayer().hasPermission("dshop.admin.reload"))
+            if (e.getPlayer().hasPermission(P_ADMIN_SHOP_EDIT) || e.getPlayer().hasPermission(P_ADMIN_RELOAD))
             {
                 TextComponent text = new TextComponent("");
                 text.addExtra(DynamicShop.CreateLink("DShop3", false, ChatColor.DARK_AQUA, UpdateChecker.getResourceUrl()));
