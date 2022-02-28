@@ -571,6 +571,7 @@ public final class Shop extends InGameUI
                 shopData.set(idx + ".valueMax", shopData.get(selectedSlot + ".valueMax"));
                 shopData.set(idx + ".median", shopData.get(selectedSlot + ".median"));
                 shopData.set(idx + ".stock", shopData.get(selectedSlot + ".stock"));
+                shopData.set(idx + ".maxstock", shopData.get(selectedSlot + ".maxstock"));
                 shopData.set(idx + ".tradeType", shopData.get(selectedSlot + ".tradeType"));
 
                 if (shopData.contains(selectedSlot + ".value"))
