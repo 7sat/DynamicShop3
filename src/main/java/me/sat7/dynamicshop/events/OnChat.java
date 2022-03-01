@@ -69,6 +69,10 @@ public class OnChat implements Listener
     {
         Player p = e.getPlayer();
         UUID uuid = p.getUniqueId();
+
+        if(!DynamicShop.userTempData.containsKey(uuid))
+            return;
+
         String userData = DynamicShop.userTempData.get(uuid);
 
         if (userData.equals("waitforPalette"))
