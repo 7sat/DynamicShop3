@@ -563,16 +563,7 @@ public final class Shop extends InGameUI
             // 아이탬 이동. 또는 장식 복사
             if (e.isRightClick() && selectedSlot != -1)
             {
-                shopData.set(idx + ".mat", shopData.get(selectedSlot + ".mat"));
-                shopData.set(idx + ".itemStack", shopData.get(selectedSlot + ".itemStack"));
-                shopData.set(idx + ".value", shopData.get(selectedSlot + ".value"));
-                shopData.set(idx + ".value2", shopData.get(selectedSlot + ".value2"));
-                shopData.set(idx + ".valueMin", shopData.get(selectedSlot + ".valueMin"));
-                shopData.set(idx + ".valueMax", shopData.get(selectedSlot + ".valueMax"));
-                shopData.set(idx + ".median", shopData.get(selectedSlot + ".median"));
-                shopData.set(idx + ".stock", shopData.get(selectedSlot + ".stock"));
-                shopData.set(idx + ".maxstock", shopData.get(selectedSlot + ".maxstock"));
-                shopData.set(idx + ".tradeType", shopData.get(selectedSlot + ".tradeType"));
+                shopData.set(String.valueOf(idx), shopData.get(String.valueOf(selectedSlot)));
 
                 if (shopData.contains(selectedSlot + ".value"))
                 {

@@ -218,7 +218,8 @@ public final class TabCompleteUtil
 
                             if (args.length == 4)
                             {
-                                temp.add("value");
+                                temp.add("purchaseValue");
+                                temp.add("salesValue");
                                 temp.add("valueMin");
                                 temp.add("valueMax");
                                 temp.add("stock");
@@ -239,7 +240,8 @@ public final class TabCompleteUtil
                             {
                                 if (args[4].equals("="))
                                 {
-                                    temp.add("value");
+                                    temp.add("purchaseValue");
+                                    temp.add("salesValue");
                                     temp.add("valueMin");
                                     temp.add("valueMax");
                                     temp.add("stock");

@@ -22,7 +22,7 @@ public class EditAll extends DSCMD
     public void SendHelpMessage(Player player)
     {
         player.sendMessage(DynamicShop.dsPrefix + t("HELP.TITLE").replace("{command}", "editall"));
-        player.sendMessage(" - " + t("HELP.USAGE") + ": /ds shop <shopname> editall <value | median | stock | max stock> <= | + | - | * | /> <amount>");
+        player.sendMessage(" - " + t("HELP.USAGE") + ": /ds shop <shopname> editall <purchaseValue | salesValue | valueMin | valueMax | median | stock | max stock> <= | + | - | * | /> <amount>");
         player.sendMessage(" - " + t("HELP.EDIT_ALL"));
         player.sendMessage(" - " + t("HELP.EDIT_ALL_2"));
 
@@ -45,11 +45,16 @@ public class EditAll extends DSCMD
         try
         {
             dataType = args[3];
-            if (!dataType.equals("stock") && !dataType.equals("median") && !dataType.equals("value") && !dataType.equals("valueMin") && !dataType.equals("valueMax") && !dataType.equals("maxStock"))
+            if (!dataType.equals("stock") && !dataType.equals("median") && !dataType.equals("purchaseValue") && !dataType.equals("salesValue") && !dataType.equals("valueMin") && !dataType.equals("valueMax") && !dataType.equals("maxStock"))
             {
                 player.sendMessage(DynamicShop.dsPrefix + t("ERR.WRONG_DATATYPE"));
                 return;
             }
+
+            if (dataType.equals("purchaseValue"))
+                dataType = "value";
+            if (dataType.equals("salesValue"))
+                dataType = "value2";
 
             mod = args[4];
             if (!mod.equals("=") &&
@@ -60,7 +65,7 @@ public class EditAll extends DSCMD
                 return;
             }
 
-            if (!args[5].equals("stock") && !args[5].equals("median") && !args[5].equals("value") && !args[5].equals("valueMin") && !args[5].equals("valueMax") && !args[5].equals("maxStock"))
+            if (!args[5].equals("stock") && !args[5].equals("median") && !args[5].equals("purchaseValue") && !args[5].equals("salesValue") && !args[5].equals("valueMin") && !args[5].equals("valueMax") && !args[5].equals("maxStock"))
                 value = Float.parseFloat(args[5]);
         } catch (Exception e)
         {
@@ -88,8 +93,11 @@ public class EditAll extends DSCMD
                 case "median":
                     value = shopData.get().getInt(s + ".median");
                     break;
-                case "value":
+                case "purchaseValue":
                     value = shopData.get().getInt(s + ".value");
+                    break;
+                case "salesValue":
+                    value = shopData.get().getInt(s + ".value2");
                     break;
                 case "valueMin":
                     value = shopData.get().getInt(s + ".valueMin");
