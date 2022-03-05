@@ -54,6 +54,8 @@ public final class LangUtil
             ccLang.get().addDefault("START_PAGE.SHOP_LIST.PAGE_TITLE", "§f{curPage}/{maxPage} 페이지");
             ccLang.get().addDefault("START_PAGE.SHOP_LIST.PAGE_LORE", "§e좌클릭: 이전 페이지\n§e우클릭: 다음 페이지");
 
+            ccLang.get().addDefault("COLOR_PICKER_TITLE", "§3색상 선택");
+
             ccLang.get().addDefault("SHOP.TRADE_LORE", "§f§n클릭: 거래");
             ccLang.get().addDefault("SHOP.BUY_PRICE", "§f구매: {num}");
             ccLang.get().addDefault("SHOP.SELL_PRICE", "§f판매: {num}");
@@ -372,6 +374,8 @@ public final class LangUtil
             ccLang.get().addDefault("START_PAGE.SHOP_LIST_TITLE", "§3Shop List");
             ccLang.get().addDefault("START_PAGE.SHOP_LIST.PAGE_TITLE", "§f{curPage}/{maxPage} Page");
             ccLang.get().addDefault("START_PAGE.SHOP_LIST.PAGE_LORE", "§eLMB: Previous page\n§eRMB: Next page");
+
+            ccLang.get().addDefault("COLOR_PICKER_TITLE", "§3Color Picker");
 
             ccLang.get().addDefault("SHOP.TRADE_LORE", "§f§nClick: Trade");
             ccLang.get().addDefault("SHOP.BUY_PRICE", "§fBuy: {num}");
@@ -701,6 +705,8 @@ public final class LangUtil
     public static String t(String key, boolean hexConver)
     {
         String temp = ccLang.get().getString(key);
+        if(temp == null || temp.isEmpty())
+            return key;
 
         if (hexConver)
         {

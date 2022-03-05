@@ -110,31 +110,6 @@ public class OnChat implements Listener
                 case "btnAction":
                     StartPage.ccStartPage.get().set("Buttons." + temp[1] + ".action", ChatColor.stripColor(e.getMessage()));
                     break;
-                case "shopname":
-                    if (!ShopUtil.shopConfigFiles.containsKey(e.getMessage()))
-                    {
-                        p.sendMessage(DynamicShop.dsPrefix + t("ERR.SHOP_NOT_FOUND"));
-                        return;
-                    }
-
-                    StartPage.ccStartPage.get().set("Buttons." + temp[1] + ".displayName", "§3" + e.getMessage());
-                    StartPage.ccStartPage.get().set("Buttons." + temp[1] + ".lore", t("START_PAGE.DEFAULT_SHOP_LORE"));
-                    StartPage.ccStartPage.get().set("Buttons." + temp[1] + ".action", "ds shop " + e.getMessage());
-                    break;
-                case "deco":
-                    try
-                    {
-                        //Material.RED_STAINED_GLASS_PANE;
-                        Material mat = Material.valueOf(e.getMessage().toUpperCase() + "_STAINED_GLASS_PANE");
-                        StartPage.ccStartPage.get().set("Buttons." + temp[1] + ".displayName", null);
-                        StartPage.ccStartPage.get().set("Buttons." + temp[1] + ".lore", null);
-                        StartPage.ccStartPage.get().set("Buttons." + temp[1] + ".icon", mat.name());
-                        StartPage.ccStartPage.get().set("Buttons." + temp[1] + ".action", "");
-                    } catch (Exception exception)
-                    {
-                        p.sendMessage(DynamicShop.dsPrefix + t("ERR.WRONG_USAGE"));
-                    }
-                    break;
             }
 
             StartPage.ccStartPage.save();

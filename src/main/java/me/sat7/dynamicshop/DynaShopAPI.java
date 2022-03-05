@@ -113,7 +113,7 @@ public final class DynaShopAPI
         UIManager.Open(player, inventory, uiClass);
     }
 
-    // 스타트 페이지 생성 및 열기
+    // 스타트 페이지
     public static void openStartPage(Player player)
     {
         StartPage uiClass = new StartPage();
@@ -121,11 +121,19 @@ public final class DynaShopAPI
         UIManager.Open(player, inventory, uiClass);
     }
 
-    // 상점 목록창 열기
+    // 상점 목록창
     public static void openShopListUI(Player player, int page, int slotIndex)
     {
         ShopList uiClass = new ShopList();
         Inventory inventory = uiClass.getGui(player, page, slotIndex);
+        UIManager.Open(player, inventory, uiClass);
+    }
+
+    // 컬러 픽커
+    public static void openColorPicker(Player player, int slotIndex)
+    {
+        ColorPicker uiClass = new ColorPicker();
+        Inventory inventory = uiClass.getGui(player, slotIndex);
         UIManager.Open(player, inventory, uiClass);
     }
 
