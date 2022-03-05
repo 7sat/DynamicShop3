@@ -2,7 +2,6 @@ package me.sat7.dynamicshop.guis;
 
 import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.Collections;
 import java.util.Comparator;
 
 import me.sat7.dynamicshop.DynaShopAPI;

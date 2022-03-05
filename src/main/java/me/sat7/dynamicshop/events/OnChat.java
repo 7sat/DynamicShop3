@@ -19,7 +19,6 @@ import java.util.Map;
 import java.util.UUID;
 
 import static me.sat7.dynamicshop.utilities.LangUtil.t;
-import static me.sat7.dynamicshop.utilities.MathUtil.Clamp;
 
 public class OnChat implements Listener
 {

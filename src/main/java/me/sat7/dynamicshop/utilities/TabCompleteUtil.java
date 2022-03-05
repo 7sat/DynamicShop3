@@ -25,8 +25,8 @@ public final class TabCompleteUtil
 
     }
 
-    public static ArrayList<String> temp = new ArrayList<>();
-    public static ArrayList<String> autoCompleteList = new ArrayList<>();
+    public static final ArrayList<String> temp = new ArrayList<>();
+    public static final ArrayList<String> autoCompleteList = new ArrayList<>();
 
     public static List<String> onTabCompleteBody(DynamicShop dynamicShop, CommandSender sender, Command cmd, String[] args)
     {

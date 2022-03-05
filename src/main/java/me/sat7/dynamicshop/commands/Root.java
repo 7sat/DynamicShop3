@@ -22,12 +22,11 @@ public class Root implements CommandExecutor
             if (!args[0].equalsIgnoreCase("openshop"))
             {
                 DynamicShop.console.sendMessage(Constants.DYNAMIC_SHOP_PREFIX + " You can't run this command in console");
-                return true;
             } else
             {
                 CMDManager.openShop.RunCMD(args, (Player) sender);
-                return true;
             }
+            return true;
         }
 
         Player player = (Player) sender;
