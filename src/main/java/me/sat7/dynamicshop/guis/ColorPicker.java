@@ -47,6 +47,7 @@ public class ColorPicker extends InGameUI
             StartPage.ccStartPage.get().set("Buttons." + slotIndex + ".lore", null);
             StartPage.ccStartPage.get().set("Buttons." + slotIndex + ".icon", e.getCurrentItem().getType());
             StartPage.ccStartPage.get().set("Buttons." + slotIndex + ".action", "");
+            StartPage.ccStartPage.save();
 
             DynaShopAPI.openStartPage(player);
         }

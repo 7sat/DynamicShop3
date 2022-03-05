@@ -71,6 +71,7 @@ public class ShopList extends InGameUI
             StartPage.ccStartPage.get().set("Buttons." + slotIndex + ".displayName", "§3" + shopName);
             StartPage.ccStartPage.get().set("Buttons." + slotIndex + ".lore", t("START_PAGE.DEFAULT_SHOP_LORE"));
             StartPage.ccStartPage.get().set("Buttons." + slotIndex + ".action", "ds shop " + shopName);
+            StartPage.ccStartPage.save();
 
             DynaShopAPI.openStartPage(player);
         }
