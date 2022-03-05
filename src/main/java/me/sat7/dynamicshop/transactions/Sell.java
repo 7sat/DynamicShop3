@@ -119,19 +119,20 @@ public final class Sell
             //로그 기록
             LogUtil.addLog(shopName, tempIS.getType().toString(), -tradeAmount, priceSum, "vault", player.getName());
 
-            String message = DynamicShop.dsPrefix + t("MESSAGE.SELL_SUCCESS")
+            boolean useLocalizedName = DynamicShop.plugin.getConfig().getBoolean("UI.LocalizedItemName");
+            String message = DynamicShop.dsPrefix + t("MESSAGE.SELL_SUCCESS", !useLocalizedName)
                     .replace("{amount}", Integer.toString(tradeAmount))
                     .replace("{price}", n(r.amount))
                     .replace("{bal}", n(econ.getBalance((player))));
 
-            if (DynamicShop.localeManager == null || !DynamicShop.plugin.getConfig().getBoolean("UI.LocalizedItemName"))
+            if (useLocalizedName)
+            {
+                message = message.replace("{item}", "<item>");
+                LangUtil.sendMessageWithLocalizedItemName(player, message, tempIS.getType());
+            } else
             {
                 message = message.replace("{item}", ItemsUtil.getBeautifiedName(tempIS.getType()));
                 player.sendMessage(message);
-            } else
-            {
-                message = message.replace("{item}", "<item>");
-                DynamicShop.localeManager.sendMessage(player, message, tempIS.getType(), (short) 0, null);
             }
 
             player.playSound(player.getLocation(), Sound.valueOf("ENTITY_EXPERIENCE_ORB_PICKUP"), 1, 1);
@@ -207,25 +208,26 @@ public final class Sell
         String currencyString = currency == ItemTrade.CURRENCY.VAULT ? "vault" : "jobpoint";
         LogUtil.addLog(shopName, tempIS.getType().toString(), -actualAmount, priceSum, currencyString, player.getName());
 
+        boolean useLocalizedName = DynamicShop.plugin.getConfig().getBoolean("UI.LocalizedItemName");
         String message = "";
         if (currency == ItemTrade.CURRENCY.VAULT)
         {
-            message = DynamicShop.dsPrefix + t("MESSAGE.SELL_SUCCESS")
+            message = DynamicShop.dsPrefix + t("MESSAGE.SELL_SUCCESS", !useLocalizedName)
                     .replace("{amount}", Integer.toString(actualAmount))
                     .replace("{price}", n(r.amount))
                     .replace("{bal}", n(econ.getBalance((player))));
         } else if (currency == ItemTrade.CURRENCY.JOB_POINT)
         {
-            message = DynamicShop.dsPrefix + t("MESSAGE.SELL_SUCCESS_JP")
+            message = DynamicShop.dsPrefix + t("MESSAGE.SELL_SUCCESS_JP", !useLocalizedName)
                     .replace("{amount}", Integer.toString(actualAmount))
                     .replace("{price}", n(priceSum))
                     .replace("{bal}", n(JobsHook.getCurJobPoints(player)));
         }
 
-        if (DynamicShop.plugin.getConfig().getBoolean("UI.LocalizedItemName"))
+        if (useLocalizedName)
         {
             message = message.replace("{item}", "<item>");
-            DynamicShop.localeManager.sendMessage(player, message, tempIS.getType(), (short) 0, null);
+            LangUtil.sendMessageWithLocalizedItemName(player, message, tempIS.getType());
         } else
         {
             message = message.replace("{item}", ItemsUtil.getBeautifiedName(tempIS.getType()));

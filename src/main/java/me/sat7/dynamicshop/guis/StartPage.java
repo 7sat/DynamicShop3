@@ -5,6 +5,7 @@ import java.util.Arrays;
 
 import me.sat7.dynamicshop.DynaShopAPI;
 import me.sat7.dynamicshop.utilities.ItemsUtil;
+import me.sat7.dynamicshop.utilities.LangUtil;
 import me.sat7.dynamicshop.utilities.ShopUtil;
 import org.bukkit.Bukkit;
 import org.bukkit.Material;
@@ -242,25 +243,26 @@ public final class StartPage extends InGameUI
 
         DynaShopAPI.openShopGui(player, ret[0], Integer.parseInt(ret[1]) / 45 + 1);
 
-        String message = "";
+        boolean useLocalizedName = DynamicShop.plugin.getConfig().getBoolean("UI.LocalizedItemName");
+        String message;
         if(isSell)
         {
-            message = DynamicShop.dsPrefix + t("MESSAGE.MOVE_TO_BEST_SHOP_SELL");
+            message = DynamicShop.dsPrefix + t("MESSAGE.MOVE_TO_BEST_SHOP_SELL", !useLocalizedName);
         }
         else
         {
-            message = DynamicShop.dsPrefix + t("MESSAGE.MOVE_TO_BEST_SHOP_BUY");
+            message = DynamicShop.dsPrefix + t("MESSAGE.MOVE_TO_BEST_SHOP_BUY", !useLocalizedName);
         }
 
-        if (DynamicShop.localeManager == null || !DynamicShop.plugin.getConfig().getBoolean("UI.LocalizedItemName"))
+        if (useLocalizedName)
+        {
+            message = message.replace("{item}", "<item>");
+            LangUtil.sendMessageWithLocalizedItemName(player, message, e.getCurrentItem().getType());
+        }
+        else
         {
             String itemName = ItemsUtil.getBeautifiedName(e.getCurrentItem().getType());
             player.sendMessage(message.replace("{item}", itemName));
-        }
-        else
-        {
-            message = message.replace("{item}", "<item>");
-            DynamicShop.localeManager.sendMessage(player, message, e.getCurrentItem().getType(), (short) 0, null);
         }
     }
 }

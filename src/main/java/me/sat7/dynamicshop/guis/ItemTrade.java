@@ -49,6 +49,7 @@ public final class ItemTrade extends InGameUI
     private FileConfiguration shopData;
     private String sellBuyOnly;
     private String material;
+    private ItemMeta itemMeta;
 
     public enum CURRENCY
     {VAULT, JOB_POINT}
@@ -62,6 +63,7 @@ public final class ItemTrade extends InGameUI
         this.shopData = ShopUtil.shopConfigFiles.get(shopName).get();
         this.sellBuyOnly = shopData.getString(this.tradeIdx + ".tradeType", "");
         this.material = shopData.getString(tradeIdx + ".mat");
+        this.itemMeta = (ItemMeta) shopData.get(tradeIdx + ".itemStack");
 
         DynamicShop.userInteractItem.put(player.getUniqueId(), shopName + "/" + tradeIdx);
 
@@ -80,7 +82,7 @@ public final class ItemTrade extends InGameUI
     @Override
     public void OnClickUpperInventory(InventoryClickEvent e)
     {
-        Player player = (Player) e.getWhoClicked();
+        player = (Player) e.getWhoClicked();
 
         if(!CheckShopIsEnable())
             return;
@@ -277,7 +279,6 @@ public final class ItemTrade extends InGameUI
 
     private void CreateTradeButtons()
     {
-        String mat = shopData.getString(tradeIdx + ".mat");
         if (!sellBuyOnly.equalsIgnoreCase("BuyOnly"))
             CreateTradeButtons(true);
         if (!sellBuyOnly.equalsIgnoreCase("SellOnly"))
@@ -383,7 +384,15 @@ public final class ItemTrade extends InGameUI
             inventory.setItem(idx, itemStack);
 
             idx++;
-            amount = amount * 2;
+
+            if(itemStack.getMaxStackSize() <= 1)
+            {
+                amount++;
+            }
+            else
+            {
+                amount = amount * 2;
+            }
         }
     }
 
@@ -451,13 +460,17 @@ public final class ItemTrade extends InGameUI
     public boolean CheckShopIsEnable()
     {
         if (!ShopUtil.shopConfigFiles.containsKey(shopName)
-                || shopData == null
-                || !shopData.contains(tradeIdx)
-                || !shopData.getString(tradeIdx + ".mat").equals(material))
+            || shopData == null
+            || !shopData.contains(tradeIdx)
+            || !shopData.getString(tradeIdx + ".mat").equals(material))
         {
-            player.sendMessage(DynamicShop.dsPrefix + t("ERR.INVALID_TRANSACTION"));
-            player.closeInventory();
-            return false;
+            ItemMeta otherMeta = (ItemMeta) shopData.get(tradeIdx + ".itemStack");
+            if(itemMeta == null || !itemMeta.equals(otherMeta))
+            {
+                player.sendMessage(DynamicShop.dsPrefix + t("ERR.INVALID_TRANSACTION"));
+                player.closeInventory();
+                return false;
+            }
         }
 
         boolean ret = DynaShopAPI.IsShopEnable(shopName) || player.hasPermission(P_ADMIN_SHOP_EDIT);

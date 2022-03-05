@@ -5,6 +5,7 @@ import java.util.HashMap;
 import me.sat7.dynamicshop.events.ShopBuySellEvent;
 import me.sat7.dynamicshop.files.CustomConfig;
 import me.sat7.dynamicshop.guis.ItemTrade;
+import me.sat7.dynamicshop.utilities.*;
 import org.bukkit.Bukkit;
 import org.bukkit.Location;
 import org.bukkit.entity.Player;
@@ -14,15 +15,10 @@ import org.bukkit.inventory.meta.ItemMeta;
 import me.sat7.dynamicshop.DynaShopAPI;
 import me.sat7.dynamicshop.DynamicShop;
 import me.sat7.dynamicshop.jobshook.JobsHook;
-import me.sat7.dynamicshop.utilities.ItemsUtil;
-import me.sat7.dynamicshop.utilities.LogUtil;
-import me.sat7.dynamicshop.utilities.ShopUtil;
-import me.sat7.dynamicshop.utilities.SoundUtil;
 import net.milkbowl.vault.economy.Economy;
 import net.milkbowl.vault.economy.EconomyResponse;
 
-import static me.sat7.dynamicshop.utilities.LangUtil.n;
-import static me.sat7.dynamicshop.utilities.LangUtil.t;
+import static me.sat7.dynamicshop.utilities.LangUtil.*;
 
 public final class Buy
 {
@@ -151,24 +147,25 @@ public final class Buy
         LogUtil.addLog(shopName, tempIS.getType().toString(), actualAmount, priceSum, currencyString, player.getName());
 
         String message = "";
+        boolean useLocalizedName = DynamicShop.plugin.getConfig().getBoolean("UI.LocalizedItemName");
         if (currency == ItemTrade.CURRENCY.VAULT)
         {
-            message = DynamicShop.dsPrefix + t("MESSAGE.BUY_SUCCESS")
+            message = DynamicShop.dsPrefix + t("MESSAGE.BUY_SUCCESS", !useLocalizedName)
                     .replace("{amount}", Integer.toString(actualAmount))
                     .replace("{price}", n(r.amount))
                     .replace("{bal}", n(econ.getBalance((player))));
         } else if (currency == ItemTrade.CURRENCY.JOB_POINT)
         {
-            message = DynamicShop.dsPrefix + t("MESSAGE.BUY_SUCCESS_JP")
+            message = DynamicShop.dsPrefix + t("MESSAGE.BUY_SUCCESS_JP", !useLocalizedName)
                     .replace("{amount}", Integer.toString(actualAmount))
                     .replace("{price}", n(priceSum))
                     .replace("{bal}", n(JobsHook.getCurJobPoints((player))));
         }
 
-        if (DynamicShop.plugin.getConfig().getBoolean("UI.LocalizedItemName"))
+        if (useLocalizedName)
         {
             message = message.replace("{item}", "<item>");
-            DynamicShop.localeManager.sendMessage(player, message, tempIS.getType(), (short) 0, null);
+            LangUtil.sendMessageWithLocalizedItemName(player, message, tempIS.getType());
         } else
         {
             message = message.replace("{item}", ItemsUtil.getBeautifiedName(tempIS.getType()));

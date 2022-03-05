@@ -24,7 +24,7 @@ public final class ItemsUtil
 
         ItemMeta meta = _meta;
         if (_meta == null) meta = istack.getItemMeta();
-        if (!name.equals("")) meta.setDisplayName(name);
+        if (name != null && !name.equals("")) meta.setDisplayName(name);
         meta.setLore(lore);
         istack.setItemMeta(meta);
         return istack;

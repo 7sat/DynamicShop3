@@ -1,12 +1,19 @@
 package me.sat7.dynamicshop.utilities;
 
+import net.md_5.bungee.api.ChatColor;
+import org.bukkit.Bukkit;
+import org.bukkit.Material;
 import org.bukkit.configuration.ConfigurationSection;
 
 import me.sat7.dynamicshop.DynamicShop;
 import me.sat7.dynamicshop.constants.Constants;
 import me.sat7.dynamicshop.files.CustomConfig;
+import org.bukkit.entity.Player;
+import org.bukkit.inventory.meta.ItemMeta;
 
 import java.text.DecimalFormat;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 public final class LangUtil
 {
@@ -72,6 +79,8 @@ public final class LangUtil
             ccLang.get().addDefault("SHOP.SHOP_LOCATION_B", "§f상점 위치: ");
             ccLang.get().addDefault("SHOP.SHOP_INFO_DASH", "§7 - ");
             ccLang.get().addDefault("SHOP.DISABLED", "§c비활성§8|§f");
+            ccLang.get().addDefault("SHOP.INCOMPLETE_DATA", "불완전한 데이터");
+            ccLang.get().addDefault("SHOP.INCOMPLETE_DATA_Lore", "이 아이템은 어드민이 아닌\n유저에게는 보이지 않습니다.\nIndex: ");
 
             ccLang.get().addDefault("SHOP_SETTING_TITLE", "§3상점 설정");
             ccLang.get().addDefault("SHOP_SETTING.LOG_TOGGLE_LORE", "§e우클릭: 로그 뷰어");
@@ -387,6 +396,8 @@ public final class LangUtil
             ccLang.get().addDefault("SHOP.SHOP_LOCATION_B", "§fShop location: ");
             ccLang.get().addDefault("SHOP.SHOP_INFO_DASH", "§7 - ");
             ccLang.get().addDefault("SHOP.DISABLED", "§cDisabled§8|§f");
+            ccLang.get().addDefault("SHOP.INCOMPLETE_DATA", "INCOMPLETE DATA");
+            ccLang.get().addDefault("SHOP.INCOMPLETE_DATA_Lore", "This item is not visible\nto non-op users.\nIndex: ");
 
             ccLang.get().addDefault("SHOP_SETTING_TITLE", "§3Shop Settings");
             ccLang.get().addDefault("SHOP_SETTING.LOG_TOGGLE_LORE", "§eRMB: Log Viewer");
@@ -676,9 +687,102 @@ public final class LangUtil
         ReloadNumberFormat();
     }
 
+    public static final Pattern HEX_PATTERN = Pattern.compile("(#[A-Fa-f0-9]{6})");
+
     public static String t(String key)
     {
-        return ccLang.get().getString(key);
+        return t(key, true);
+    }
+
+    public static String t(String key, boolean hexConver)
+    {
+        String temp = ccLang.get().getString(key);
+
+        if (hexConver)
+        {
+            Matcher matcher = HEX_PATTERN.matcher(temp);
+            while (matcher.find())
+            {
+                temp = temp.replace(matcher.group(), "" + ChatColor.of(matcher.group()));
+            }
+        }
+
+        return temp;
+    }
+
+    public static boolean sendMessageWithLocalizedItemName(Player player, String message, Material material) {
+        if (material != null) {
+            String matKey;
+            try {
+                matKey = DynamicShop.localeManager.queryMaterial(material, (short)0, (ItemMeta)null);
+            } catch (Exception var8) {
+                Bukkit.getLogger().severe("[LocaleLib] Unable to query Material: " + material.name());
+                return false;
+            }
+
+            String splitByRegex[] = HEX_PATTERN.split(message);
+            if(splitByRegex.length > 1)
+            {
+                String finalString;
+                if(splitByRegex[0].contains("<item>"))
+                {
+                    String[] splitByItem = splitByRegex[0].split("<item>");
+                    finalString = ("{\"text\":\"" + splitByItem[0] + "\"},");
+                    finalString += ("{\"translate\":\"" + matKey + "\"},");
+                    finalString += ("{\"text\":\"" + splitByItem[1] + "\"},");
+                }
+                else
+                {
+                    finalString = "{\"text\":\"" + splitByRegex[0] + "\"},";
+                }
+
+                int idx = 0;
+
+                Matcher matcher = HEX_PATTERN.matcher(message);
+
+                while (matcher.find())
+                {
+                    if(splitByRegex[idx+1].contains("<item>"))
+                    {
+                        String[] splitByItem = splitByRegex[idx+1].split("<item>");
+                        finalString += ("{\"text\":\"" + splitByItem[0] + "\", \"color\":\"" + matcher.group() + "\"},");
+                        finalString += ("{\"translate\":\"" + matKey + "\", \"color\":\"" + matcher.group() + "\"},");
+                        finalString += ("{\"text\":\"" + splitByItem[1] + "\", \"color\":\"" + matcher.group() + "\"}");
+                    }
+                    else
+                    {
+                        finalString += ("{\"text\":\"" + splitByRegex[idx+1] + "\", \"color\":\"" + matcher.group() + "\"}");
+                    }
+
+                    idx++;
+                    if(idx < splitByRegex.length - 1)
+                        finalString += ",";
+                }
+
+                Bukkit.dispatchCommand(Bukkit.getConsoleSender(), "tellraw " + player.getName() + " [" + finalString + "]");
+            }
+            else
+            {
+                String replacement = "\",{\"translate\":\"" + matKey + "\"";
+
+                String text = message.split("<item>")[0];
+                if (text.contains("§")) {
+                    String colorCode = org.bukkit.ChatColor.getLastColors(text).replace("§", "");
+                    if (org.bukkit.ChatColor.getByChar(colorCode) != null) {
+                        String colorName = org.bukkit.ChatColor.getByChar(colorCode).name();
+                        replacement = replacement + ", \"color\":\"" + colorName.toLowerCase() + "\"";
+                    }
+                }
+                replacement = replacement + "},\"";
+
+                String msg = message.replace("<item>", replacement);
+                Bukkit.dispatchCommand(Bukkit.getConsoleSender(), "tellraw " + player.getName() + " [\"" + msg + "\"]");
+            }
+
+            return true;
+        } else {
+            return false;
+        }
     }
 
     private static void ReloadNumberFormat()

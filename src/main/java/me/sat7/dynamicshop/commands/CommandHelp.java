@@ -50,7 +50,5 @@ public final class CommandHelp extends DSCMD
         {
             player.sendMessage(DynamicShop.dsPrefix + t("ERR.WRONG_USAGE"));
         }
-
-        return;
     }
 }

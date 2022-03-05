@@ -19,7 +19,6 @@ import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.ItemMeta;
 
 import me.sat7.dynamicshop.DynamicShop;
-import me.sat7.dynamicshop.constants.Constants;
 import me.sat7.dynamicshop.jobshook.JobsHook;
 import me.sat7.dynamicshop.transactions.Calc;
 import me.sat7.dynamicshop.utilities.ShopUtil;
@@ -67,16 +66,16 @@ public final class Shop extends InGameUI
         this.selectedSlot = -1;
 
         maxPage = GetShopMaxPage(shopName);
-        page = Clamp(page,1,maxPage);
+        this.page = Clamp(page,1,maxPage);
 
-        DynamicShop.userInteractItem.put(player.getUniqueId(), shopName + "/" + page);
+        DynamicShop.userInteractItem.put(player.getUniqueId(), shopName + "/" + this.page);
 
         String uiName = shopData.getBoolean("Options.enable", true) ? "" : t("SHOP.DISABLED");
         uiName += "§3" + shopData.getString("Options.title", shopName);
         inventory = Bukkit.createInventory(player, 54, uiName);
 
         CreateCloseButton(CLOSE);
-        CreateButton(PAGE, InGameUI.GetPageButtonIconMat(), CreatePageButtonName(), CreatePageButtonLore(), page);
+        CreateButton(PAGE, InGameUI.GetPageButtonIconMat(), CreatePageButtonName(), CreatePageButtonLore(), this.page);
         CreateButton(SHOP_INFO, InGameUI.GetShopInfoButtonIconMat(), "§3" + shopName, CreateShopInfoText());
 
         ShowItems();
@@ -126,7 +125,7 @@ public final class Shop extends InGameUI
 
     private void ShowItems()
     {
-        int idx = 0;
+        int idx = -1;
         for (String s : shopData.getKeys(false))
         {
             try
@@ -294,9 +293,9 @@ public final class Shop extends InGameUI
                 inventory.setItem(idx, itemStack);
             } catch (Exception e)
             {
-                if (!s.equalsIgnoreCase("Options"))
+                if (!s.equalsIgnoreCase("Options") && player.hasPermission(P_ADMIN_SHOP_EDIT) && idx != -1)
                 {
-                    DynamicShop.console.sendMessage(Constants.DYNAMIC_SHOP_PREFIX + "ERR.Shop.getGUI/Failed to create itemstack. yml file is corrupt. shop name: " + shopName + ", page: " + page + ", itemIndex: " + idx);
+                    CreateButton(idx, Material.BARRIER, t("SHOP.INCOMPLETE_DATA"), t("SHOP.INCOMPLETE_DATA_Lore") + idx);
                 }
             }
         }
@@ -514,6 +513,12 @@ public final class Shop extends InGameUI
     {
         if (e.getCurrentItem() != null && e.getCurrentItem().getType() != Material.AIR)
         {
+            if (e.getCurrentItem().getItemMeta() != null &&
+                    e.getCurrentItem().getItemMeta().getDisplayName().equals(t("SHOP.INCOMPLETE_DATA")))
+            {
+                return;
+            }
+
             // 거래화면 열기
             if (e.isLeftClick() && shopData.contains(idx + ".value"))
             {

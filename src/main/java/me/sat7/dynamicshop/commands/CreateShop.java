@@ -77,7 +77,5 @@ public final class CreateShop extends DSCMD
         {
             player.sendMessage(DynamicShop.dsPrefix + t("ERR.SHOP_EXIST"));
         }
-
-        return;
     }
 }

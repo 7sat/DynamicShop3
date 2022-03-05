@@ -50,6 +50,15 @@ public final class MathUtil
         return value;
     }
 
+    public static long Clamp (long value, long min, long max)
+    {
+        if (value < min)
+            return min;
+        else if (value > max)
+            return max;
+        return value;
+    }
+
     public static int SafeAdd(int a, int b)
     {
         int temp = a + b;
