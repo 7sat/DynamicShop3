@@ -121,6 +121,14 @@ public final class DynaShopAPI
         UIManager.Open(player, inventory, uiClass);
     }
 
+    // 상점 목록창 열기
+    public static void openShopListUI(Player player, int page, int slotIndex)
+    {
+        ShopList uiClass = new ShopList();
+        Inventory inventory = uiClass.getGui(player, page, slotIndex);
+        UIManager.Open(player, inventory, uiClass);
+    }
+
     // 퀵셀 창
     public static void openQuickSellGUI(Player player)
     {

@@ -111,19 +111,7 @@ public final class StartPageSettings extends InGameUI
         // 상점 숏컷
         else if (e.getSlot() == SHOP_SHORTCUT)
         {
-            player.sendMessage(DynamicShop.dsPrefix + t("START_PAGE.ENTER_SHOP_NAME"));
-            ShopUtil.closeInventoryWithDelay(player);
-            DynamicShop.userTempData.put(uuid,"waitforInput" + "shopname");
-
-            StringBuilder shopList = new StringBuilder(t("START_PAGE.SHOP_LIST") + ": ");
-            for (String s : ShopUtil.shopConfigFiles.keySet())
-            {
-                shopList.append(s).append(", ");
-            }
-            shopList = new StringBuilder(shopList.substring(0, shopList.length() - 2));
-            player.sendMessage(DynamicShop.dsPrefix + shopList);
-
-            OnChat.WaitForInput(player);
+            DynaShopAPI.openShopListUI(player, 1, slotIndex);
         }
         // 장식
         else if (e.getSlot() == DECO)

@@ -45,12 +45,14 @@ public final class LangUtil
             ccLang.get().addDefault("START_PAGE.ITEM_EDIT_LORE", "§eShift우클릭: 편집");
             ccLang.get().addDefault("START_PAGE.REMOVE", "§f제거");
             ccLang.get().addDefault("START_PAGE.REMOVE_LORE", "§f이 버튼을 시작페이지에서 제거합니다.");
-            ccLang.get().addDefault("START_PAGE.SHOP_LIST", "§f상점 목록");
             ccLang.get().addDefault("START_PAGE.ENTER_NAME", "버튼의 새 이름을 입력하세요.");
             ccLang.get().addDefault("START_PAGE.ENTER_LORE", "버튼의 새 설명을 입력하세요.");
             ccLang.get().addDefault("START_PAGE.ENTER_ICON", "버튼의 아이콘으로 사용할 아이탬 이름을 입력하세요. (영문. 대소문자 구분없음)");
             ccLang.get().addDefault("START_PAGE.ENTER_ACTION", "명령어를 '/' 제외하고 입력하세요. 버튼을 눌렀을때 이 명령어가 실행됩니다.");
             ccLang.get().addDefault("START_PAGE.ENTER_COLOR", "장식 버튼의 색상을 입력하세요. (영문)");
+            ccLang.get().addDefault("START_PAGE.SHOP_LIST_TITLE", "§3상점 목록");
+            ccLang.get().addDefault("START_PAGE.SHOP_LIST.PAGE_TITLE", "§f{curPage}/{maxPage} 페이지");
+            ccLang.get().addDefault("START_PAGE.SHOP_LIST.PAGE_LORE", "§e좌클릭: 이전 페이지\n§e우클릭: 다음 페이지");
 
             ccLang.get().addDefault("SHOP.TRADE_LORE", "§f§n클릭: 거래");
             ccLang.get().addDefault("SHOP.BUY_PRICE", "§f구매: {num}");
@@ -362,12 +364,14 @@ public final class LangUtil
             ccLang.get().addDefault("START_PAGE.ITEM_EDIT_LORE", "§eShift RMB: Edit");
             ccLang.get().addDefault("START_PAGE.REMOVE", "§fRemove");
             ccLang.get().addDefault("START_PAGE.REMOVE_LORE", "§fRemove this button from the start page.");
-            ccLang.get().addDefault("START_PAGE.SHOP_LIST", "§fShop List");
             ccLang.get().addDefault("START_PAGE.ENTER_NAME", "Enter a new name for the button.");
             ccLang.get().addDefault("START_PAGE.ENTER_LORE", "Enter a new description for the button.");
             ccLang.get().addDefault("START_PAGE.ENTER_ICON", "Enter the name of the item to be used as the icon for the button. (English, case insensitive)");
             ccLang.get().addDefault("START_PAGE.ENTER_ACTION", "Enter the command without '/'. This command is executed when the button is pressed.");
             ccLang.get().addDefault("START_PAGE.ENTER_COLOR", "Enter a color for the decorative button. (English)");
+            ccLang.get().addDefault("START_PAGE.SHOP_LIST_TITLE", "§3Shop List");
+            ccLang.get().addDefault("START_PAGE.SHOP_LIST.PAGE_TITLE", "§f{curPage}/{maxPage} Page");
+            ccLang.get().addDefault("START_PAGE.SHOP_LIST.PAGE_LORE", "§eLMB: Previous page\n§eRMB: Next page");
 
             ccLang.get().addDefault("SHOP.TRADE_LORE", "§f§nClick: Trade");
             ccLang.get().addDefault("SHOP.BUY_PRICE", "§fBuy: {num}");
