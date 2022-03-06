@@ -3,6 +3,7 @@ package me.sat7.dynamicshop.commands.shop;
 import me.sat7.dynamicshop.DynamicShop;
 import me.sat7.dynamicshop.commands.DSCMD;
 import me.sat7.dynamicshop.utilities.*;
+import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
 
 import static me.sat7.dynamicshop.constants.Constants.P_ADMIN_SHOP_EDIT;
@@ -27,10 +28,12 @@ public final class SetToRecAll extends DSCMD
     }
 
     @Override
-    public void RunCMD(String[] args, Player player)
+    public void RunCMD(String[] args, CommandSender sender)
     {
-        if(!CheckValid(args, player))
+        if(!CheckValid(args, sender))
             return;
+
+        Player player = (Player) sender;
 
         ShopUtil.SetToRecommendedValueAll(args[1], player);
         player.sendMessage(DynamicShop.dsPrefix + t("MESSAGE.ITEM_UPDATED"));

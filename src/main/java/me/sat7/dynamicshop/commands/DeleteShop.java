@@ -1,6 +1,7 @@
 package me.sat7.dynamicshop.commands;
 
 import me.sat7.dynamicshop.files.CustomConfig;
+import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
 
 import me.sat7.dynamicshop.DynamicShop;
@@ -27,10 +28,12 @@ public final class DeleteShop extends DSCMD
     }
 
     @Override
-    public void RunCMD(String[] args, Player player)
+    public void RunCMD(String[] args, CommandSender sender)
     {
-        if(!CheckValid(args, player))
+        if(!CheckValid(args, sender))
             return;
+
+        Player player = (Player) sender;
 
         if (ShopUtil.shopConfigFiles.containsKey(args[1]))
         {

@@ -6,6 +6,7 @@ import me.sat7.dynamicshop.commands.Shop;
 import me.sat7.dynamicshop.utilities.ItemsUtil;
 import me.sat7.dynamicshop.utilities.ShopUtil;
 import org.bukkit.Material;
+import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
 
@@ -35,10 +36,12 @@ public class Add extends DSCMD
     }
 
     @Override
-    public void RunCMD(String[] args, Player player)
+    public void RunCMD(String[] args, CommandSender sender)
     {
-        if(!CheckValid(args, player))
+        if(!CheckValid(args, sender))
             return;
+
+        Player player = (Player) sender;
 
         String shopName = Shop.GetShopName(args);
 

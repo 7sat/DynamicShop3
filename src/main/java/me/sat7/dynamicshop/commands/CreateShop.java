@@ -1,6 +1,7 @@
 package me.sat7.dynamicshop.commands;
 
 import me.sat7.dynamicshop.files.CustomConfig;
+import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
 
 import me.sat7.dynamicshop.DynaShopAPI;
@@ -30,10 +31,12 @@ public final class CreateShop extends DSCMD
     }
 
     @Override
-    public void RunCMD(String[] args, Player player)
+    public void RunCMD(String[] args, CommandSender sender)
     {
-        if(!CheckValid(args, player))
+        if(!CheckValid(args, sender))
             return;
+
+        Player player = (Player) sender;
 
         String shopname = args[1].replace("/", "");
 

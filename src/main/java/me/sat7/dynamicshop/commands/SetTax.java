@@ -1,6 +1,7 @@
 package me.sat7.dynamicshop.commands;
 
 import me.sat7.dynamicshop.utilities.ConfigUtil;
+import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
 
 import me.sat7.dynamicshop.DynamicShop;
@@ -16,6 +17,7 @@ public final class SetTax extends DSCMD
 
     public SetTax()
     {
+        inGameUseOnly = false;
         permission = P_ADMIN_SET_TAX;
         validArgCount.add(2);
         validArgCount.add(4);
@@ -34,9 +36,9 @@ public final class SetTax extends DSCMD
     }
 
     @Override
-    public void RunCMD(String[] args, Player player)
+    public void RunCMD(String[] args, CommandSender sender)
     {
-        if(!CheckValid(args, player))
+        if(!CheckValid(args, sender))
             return;
 
         if (args.length == 2)
@@ -50,10 +52,10 @@ public final class SetTax extends DSCMD
 
                 ConfigUtil.setCurrentTax(newValue);
 
-                player.sendMessage(DynamicShop.dsPrefix + t("MESSAGE.CHANGES_APPLIED") + newValue);
+                sender.sendMessage(DynamicShop.dsPrefix + t("MESSAGE.CHANGES_APPLIED") + newValue);
             } catch (Exception e)
             {
-                player.sendMessage(DynamicShop.dsPrefix + t("ERR.WRONG_DATATYPE"));
+                sender.sendMessage(DynamicShop.dsPrefix + t("ERR.WRONG_DATATYPE"));
             }
         } else if (args.length == 4 && args[1].equals("temp"))
         {
@@ -83,15 +85,15 @@ public final class SetTax extends DSCMD
                 resetTaxTask = new ResetTaxTask();
                 resetTaxTask.runTaskLater(DynamicShop.plugin, 20L * 60L * tempTaxDurationMinutes);
 
-                player.sendMessage(DynamicShop.dsPrefix + t("MESSAGE.CHANGES_APPLIED") + newValue);
+                sender.sendMessage(DynamicShop.dsPrefix + t("MESSAGE.CHANGES_APPLIED") + newValue);
             } catch (Exception e)
             {
-                player.sendMessage(DynamicShop.dsPrefix + t("ERR.WRONG_DATATYPE"));
+                sender.sendMessage(DynamicShop.dsPrefix + t("ERR.WRONG_DATATYPE"));
             }
         }
         else
         {
-            player.sendMessage(DynamicShop.dsPrefix + t("ERR.WRONG_USAGE"));
+            sender.sendMessage(DynamicShop.dsPrefix + t("ERR.WRONG_USAGE"));
         }
     }
 }

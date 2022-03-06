@@ -1,6 +1,7 @@
 package me.sat7.dynamicshop.commands;
 
 import me.sat7.dynamicshop.commands.shop.*;
+import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
 
 import java.util.HashMap;
@@ -100,11 +101,11 @@ public class CMDManager
         CMDHashMap.put("stockstabilizing", stockStabilizing);
     }
 
-    public static void RunCMD(String key, String[] args, Player player)
+    public static void RunCMD(String key, String[] args, CommandSender sender)
     {
         if(CMDHashMap.containsKey(key))
         {
-            CMDHashMap.get(key).RunCMD(args, player);
+            CMDHashMap.get(key).RunCMD(args, sender);
         }
     }
 }

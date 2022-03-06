@@ -2,6 +2,7 @@ package me.sat7.dynamicshop.commands;
 
 import me.sat7.dynamicshop.guis.QuickSell;
 import me.sat7.dynamicshop.utilities.*;
+import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
 
 import me.sat7.dynamicshop.DynamicShop;
@@ -15,6 +16,7 @@ public final class Reload extends DSCMD
 {
     public Reload()
     {
+        inGameUseOnly = false;
         permission = P_ADMIN_RELOAD;
         validArgCount.add(1);
     }
@@ -29,9 +31,9 @@ public final class Reload extends DSCMD
     }
 
     @Override
-    public void RunCMD(String[] args, Player player)
+    public void RunCMD(String[] args, CommandSender sender)
     {
-        if(!CheckValid(args, player))
+        if(!CheckValid(args, sender))
             return;
 
         LangUtil.ccLang.reload();
@@ -62,6 +64,6 @@ public final class Reload extends DSCMD
 
         DynamicShop.plugin.getConfig().set("Version", configVersion);
 
-        player.sendMessage(DynamicShop.dsPrefix + t("HELP.RELOADED"));
+        sender.sendMessage(DynamicShop.dsPrefix + t("HELP.RELOADED"));
     }
 }

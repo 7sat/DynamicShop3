@@ -10,6 +10,7 @@ import me.sat7.dynamicshop.utilities.ShopUtil;
 import net.milkbowl.vault.economy.Economy;
 import net.milkbowl.vault.economy.EconomyResponse;
 import org.bukkit.Bukkit;
+import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
 
 import static me.sat7.dynamicshop.constants.Constants.P_ADMIN_SHOP_EDIT;
@@ -38,10 +39,12 @@ public class Account extends DSCMD
     }
 
     @Override
-    public void RunCMD(String[] args, Player player)
+    public void RunCMD(String[] args, CommandSender sender)
     {
-        if(!CheckValid(args, player))
+        if(!CheckValid(args, sender))
             return;
+
+        Player player = (Player) sender;
 
         String shopName = Shop.GetShopName(args);
         CustomConfig shopData = ShopUtil.shopConfigFiles.get(shopName);
