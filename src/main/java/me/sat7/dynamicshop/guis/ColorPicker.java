@@ -57,11 +57,11 @@ public class ColorPicker extends InGameUI
     private void CreateColorButtons()
     {
         CreateButton(0, Material.BLACK_STAINED_GLASS_PANE, "§fBLACK", "");
-        CreateButton(1, Material.GRAY_STAINED_GLASS_PANE, "§fGRA", "");
-        CreateButton(2, Material.LIGHT_GRAY_STAINED_GLASS_PANE, "§fLIGHT", "");
+        CreateButton(1, Material.GRAY_STAINED_GLASS_PANE, "§fGRAY", "");
+        CreateButton(2, Material.LIGHT_GRAY_STAINED_GLASS_PANE, "§fLIGHT_GRAY", "");
         CreateButton(3, Material.WHITE_STAINED_GLASS_PANE, "§fWHITE", "");
         CreateButton(4, Material.CYAN_STAINED_GLASS_PANE, "§fCYAN", "");
-        CreateButton(5, Material.LIGHT_BLUE_STAINED_GLASS_PANE, "§fLIGHT", "");
+        CreateButton(5, Material.LIGHT_BLUE_STAINED_GLASS_PANE, "§fLIGHT_BLUE", "");
         CreateButton(6, Material.BLUE_STAINED_GLASS_PANE, "§fBLUE", "");
         CreateButton(7, Material.BROWN_STAINED_GLASS_PANE, "§fBROWN", "");
         CreateButton(8, Material.GREEN_STAINED_GLASS_PANE, "§fGREEN", "");
