@@ -46,7 +46,7 @@ public class ColorPicker extends InGameUI
         {
             StartPage.ccStartPage.get().set("Buttons." + slotIndex + ".displayName", null);
             StartPage.ccStartPage.get().set("Buttons." + slotIndex + ".lore", null);
-            StartPage.ccStartPage.get().set("Buttons." + slotIndex + ".icon", ChatColor.stripColor(e.getCurrentItem().getItemMeta().getDisplayName()));
+            StartPage.ccStartPage.get().set("Buttons." + slotIndex + ".icon", ChatColor.stripColor(e.getCurrentItem().getItemMeta().getDisplayName()) + "_STAINED_GLASS_PANE");
             StartPage.ccStartPage.get().set("Buttons." + slotIndex + ".action", "");
             StartPage.ccStartPage.save();
 
@@ -56,21 +56,21 @@ public class ColorPicker extends InGameUI
 
     private void CreateColorButtons()
     {
-        CreateButton(0, Material.BLACK_STAINED_GLASS_PANE, "§fBLACK_STAINED_GLASS_PANE", "");
-        CreateButton(1, Material.GRAY_STAINED_GLASS_PANE, "§fGRAY_STAINED_GLASS_PANE", "");
-        CreateButton(2, Material.LIGHT_GRAY_STAINED_GLASS_PANE, "§fLIGHT_GRAY_STAINED_GLASS_PANE", "");
-        CreateButton(3, Material.WHITE_STAINED_GLASS_PANE, "§fWHITE_STAINED_GLASS_PANE", "");
-        CreateButton(4, Material.CYAN_STAINED_GLASS_PANE, "§fCYAN_STAINED_GLASS_PANE", "");
-        CreateButton(5, Material.LIGHT_BLUE_STAINED_GLASS_PANE, "§fLIGHT_BLUE_STAINED_GLASS_PANE", "");
-        CreateButton(6, Material.BLUE_STAINED_GLASS_PANE, "§fBLUE_STAINED_GLASS_PANE", "");
-        CreateButton(7, Material.BROWN_STAINED_GLASS_PANE, "§fBROWN_STAINED_GLASS_PANE", "");
-        CreateButton(8, Material.GREEN_STAINED_GLASS_PANE, "§fGREEN_STAINED_GLASS_PANE", "");
-        CreateButton(9, Material.LIME_STAINED_GLASS_PANE, "§fLIME_STAINED_GLASS_PANE", "");
-        CreateButton(10, Material.YELLOW_STAINED_GLASS_PANE, "§fYELLOW_STAINED_GLASS_PANE", "");
-        CreateButton(11, Material.ORANGE_STAINED_GLASS_PANE, "§fORANGE_STAINED_GLASS_PANE", "");
-        CreateButton(12, Material.PINK_STAINED_GLASS_PANE, "§fPINK_STAINED_GLASS_PANE", "");
-        CreateButton(13, Material.MAGENTA_STAINED_GLASS_PANE, "§fMAGENTA_STAINED_GLASS_PANE", "");
-        CreateButton(14, Material.PURPLE_STAINED_GLASS_PANE, "§fPURPLE_STAINED_GLASS_PANE", "");
-        CreateButton(15, Material.RED_STAINED_GLASS_PANE, "§fRED_STAINED_GLASS_PANE", "");
+        CreateButton(0, Material.BLACK_STAINED_GLASS_PANE, "§fBLACK", "");
+        CreateButton(1, Material.GRAY_STAINED_GLASS_PANE, "§fGRA", "");
+        CreateButton(2, Material.LIGHT_GRAY_STAINED_GLASS_PANE, "§fLIGHT", "");
+        CreateButton(3, Material.WHITE_STAINED_GLASS_PANE, "§fWHITE", "");
+        CreateButton(4, Material.CYAN_STAINED_GLASS_PANE, "§fCYAN", "");
+        CreateButton(5, Material.LIGHT_BLUE_STAINED_GLASS_PANE, "§fLIGHT", "");
+        CreateButton(6, Material.BLUE_STAINED_GLASS_PANE, "§fBLUE", "");
+        CreateButton(7, Material.BROWN_STAINED_GLASS_PANE, "§fBROWN", "");
+        CreateButton(8, Material.GREEN_STAINED_GLASS_PANE, "§fGREEN", "");
+        CreateButton(9, Material.LIME_STAINED_GLASS_PANE, "§fLIME", "");
+        CreateButton(10, Material.YELLOW_STAINED_GLASS_PANE, "§fYELLOW", "");
+        CreateButton(11, Material.ORANGE_STAINED_GLASS_PANE, "§fORANGE", "");
+        CreateButton(12, Material.PINK_STAINED_GLASS_PANE, "§fPINK", "");
+        CreateButton(13, Material.MAGENTA_STAINED_GLASS_PANE, "§fMAGENTA", "");
+        CreateButton(14, Material.PURPLE_STAINED_GLASS_PANE, "§fPURPLE", "");
+        CreateButton(15, Material.RED_STAINED_GLASS_PANE, "§fRED", "");
     }
 }
