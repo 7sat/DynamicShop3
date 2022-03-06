@@ -263,7 +263,7 @@ public final class ShopUtil
         if (data == null)
             return;
 
-        data.get().set(String.valueOf(idx), null); // todo 이게 안전한가?
+        data.get().set(String.valueOf(idx), null);
         data.save();
     }
 

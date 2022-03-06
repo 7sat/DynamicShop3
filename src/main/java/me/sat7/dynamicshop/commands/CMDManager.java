@@ -2,7 +2,6 @@ package me.sat7.dynamicshop.commands;
 
 import me.sat7.dynamicshop.commands.shop.*;
 import org.bukkit.command.CommandSender;
-import org.bukkit.entity.Player;
 
 import java.util.HashMap;
 

@@ -724,26 +724,26 @@ public final class LangUtil
         if (material != null) {
             String matKey;
             try {
-                matKey = DynamicShop.localeManager.queryMaterial(material, (short)0, (ItemMeta)null);
+                matKey = DynamicShop.localeManager.queryMaterial(material, (short)0, null);
             } catch (Exception var8) {
                 Bukkit.getLogger().severe("[LocaleLib] Unable to query Material: " + material.name());
                 return false;
             }
 
-            String splitByRegex[] = HEX_PATTERN.split(message);
+            String[] splitByRegex = HEX_PATTERN.split(message);
             if(splitByRegex.length > 1)
             {
-                String finalString;
+                StringBuilder finalString;
                 if(splitByRegex[0].contains("<item>"))
                 {
                     String[] splitByItem = splitByRegex[0].split("<item>");
-                    finalString = ("{\"text\":\"" + splitByItem[0] + "\"},");
-                    finalString += ("{\"translate\":\"" + matKey + "\"},");
-                    finalString += ("{\"text\":\"" + splitByItem[1] + "\"},");
+                    finalString = new StringBuilder(("{\"text\":\"" + splitByItem[0] + "\"},"));
+                    finalString.append("{\"translate\":\"").append(matKey).append("\"},");
+                    finalString.append("{\"text\":\"").append(splitByItem[1]).append("\"},");
                 }
                 else
                 {
-                    finalString = "{\"text\":\"" + splitByRegex[0] + "\"},";
+                    finalString = new StringBuilder("{\"text\":\"" + splitByRegex[0] + "\"},");
                 }
 
                 int idx = 0;
@@ -755,18 +755,18 @@ public final class LangUtil
                     if(splitByRegex[idx+1].contains("<item>"))
                     {
                         String[] splitByItem = splitByRegex[idx+1].split("<item>");
-                        finalString += ("{\"text\":\"" + splitByItem[0] + "\", \"color\":\"" + matcher.group() + "\"},");
-                        finalString += ("{\"translate\":\"" + matKey + "\", \"color\":\"" + matcher.group() + "\"},");
-                        finalString += ("{\"text\":\"" + splitByItem[1] + "\", \"color\":\"" + matcher.group() + "\"}");
+                        finalString.append("{\"text\":\"").append(splitByItem[0]).append("\", \"color\":\"").append(matcher.group()).append("\"},");
+                        finalString.append("{\"translate\":\"").append(matKey).append("\", \"color\":\"").append(matcher.group()).append("\"},");
+                        finalString.append("{\"text\":\"").append(splitByItem[1]).append("\", \"color\":\"").append(matcher.group()).append("\"}");
                     }
                     else
                     {
-                        finalString += ("{\"text\":\"" + splitByRegex[idx+1] + "\", \"color\":\"" + matcher.group() + "\"}");
+                        finalString.append("{\"text\":\"").append(splitByRegex[idx + 1]).append("\", \"color\":\"").append(matcher.group()).append("\"}");
                     }
 
                     idx++;
                     if(idx < splitByRegex.length - 1)
-                        finalString += ",";
+                        finalString.append(",");
                 }
 
                 Bukkit.dispatchCommand(Bukkit.getConsoleSender(), "tellraw " + player.getName() + " [" + finalString + "]");
