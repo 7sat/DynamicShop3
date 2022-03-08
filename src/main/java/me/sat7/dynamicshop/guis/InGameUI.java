@@ -3,6 +3,7 @@ package me.sat7.dynamicshop.guis;
 import me.sat7.dynamicshop.DynamicShop;
 import me.sat7.dynamicshop.utilities.ItemsUtil;
 import org.bukkit.Material;
+import org.bukkit.entity.Player;
 import org.bukkit.event.inventory.InventoryClickEvent;
 import org.bukkit.inventory.Inventory;
 import org.bukkit.inventory.ItemStack;
@@ -107,9 +108,9 @@ public class InGameUI
     }
 
     @SuppressWarnings("SameParameterValue")
-    protected void CreateCloseButton(int slotIndex)
+    protected void CreateCloseButton(Player player, int slotIndex)
     {
-        CreateButton(slotIndex, InGameUI.GetCloseButtonIconMat(), t("CLOSE"), t("CLOSE_LORE"));
+        CreateButton(slotIndex, InGameUI.GetCloseButtonIconMat(), t(player, "CLOSE"), t(player, "CLOSE_LORE"));
     }
 
     public static Material GetCloseButtonIconMat()

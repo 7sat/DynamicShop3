@@ -75,10 +75,10 @@ public final class Buy
             String message = "";
             if (currency == ItemTrade.CURRENCY.VAULT)
             {
-                message = DynamicShop.dsPrefix + t("MESSAGE.NOT_ENOUGH_MONEY").replace("{bal}", n(econ.getBalance(player)));
+                message = DynamicShop.dsPrefix(player) + t(player, "MESSAGE.NOT_ENOUGH_MONEY").replace("{bal}", n(econ.getBalance(player)));
             } else if (currency == ItemTrade.CURRENCY.JOB_POINT)
             {
-                message = DynamicShop.dsPrefix + t("MESSAGE.NOT_ENOUGH_POINT").replace("{bal}", n(JobsHook.getCurJobPoints(player)));
+                message = DynamicShop.dsPrefix(player) + t(player, "MESSAGE.NOT_ENOUGH_POINT").replace("{bal}", n(JobsHook.getCurJobPoints(player)));
             }
 
             player.sendMessage(message);
@@ -89,7 +89,7 @@ public final class Buy
         // 상점 재고 부족
         if (!infiniteStock && stockOld <= actualAmount)
         {
-            player.sendMessage(DynamicShop.dsPrefix + t("MESSAGE.OUT_OF_STOCK"));
+            player.sendMessage(DynamicShop.dsPrefix(player) + t(player, "MESSAGE.OUT_OF_STOCK"));
             data.get().set(tradeIdx + ".stock", stockOld);
             return;
         }
@@ -99,7 +99,7 @@ public final class Buy
         {
             if (econ.getBalance(player) < priceSum)
             {
-                player.sendMessage(DynamicShop.dsPrefix + t("MESSAGE.NOT_ENOUGH_MONEY").replace("{bal}", n(econ.getBalance(player))));
+                player.sendMessage(DynamicShop.dsPrefix(player) + t(player, "MESSAGE.NOT_ENOUGH_MONEY").replace("{bal}", n(econ.getBalance(player))));
                 return;
             }
 
@@ -130,7 +130,7 @@ public final class Buy
             HashMap<Integer, ItemStack> leftOver = player.getInventory().addItem(iStack);
             if (leftOver.size() != 0)
             {
-                player.sendMessage(DynamicShop.dsPrefix + t("MESSAGE.INVENTORY_FULL"));
+                player.sendMessage(DynamicShop.dsPrefix(player) + t(player, "MESSAGE.INVENTORY_FULL"));
                 Location loc = player.getLocation();
 
                 ItemStack leftStack = new ItemStack(tempIS.getType(), leftOver.get(0).getAmount());
@@ -150,13 +150,13 @@ public final class Buy
         boolean useLocalizedName = DynamicShop.plugin.getConfig().getBoolean("UI.LocalizedItemName");
         if (currency == ItemTrade.CURRENCY.VAULT)
         {
-            message = DynamicShop.dsPrefix + t("MESSAGE.BUY_SUCCESS", !useLocalizedName)
+            message = DynamicShop.dsPrefix(player) + t(player, "MESSAGE.BUY_SUCCESS", !useLocalizedName)
                     .replace("{amount}", Integer.toString(actualAmount))
                     .replace("{price}", n(r.amount))
                     .replace("{bal}", n(econ.getBalance((player))));
         } else if (currency == ItemTrade.CURRENCY.JOB_POINT)
         {
-            message = DynamicShop.dsPrefix + t("MESSAGE.BUY_SUCCESS_JP", !useLocalizedName)
+            message = DynamicShop.dsPrefix(player) + t(player, "MESSAGE.BUY_SUCCESS_JP", !useLocalizedName)
                     .replace("{amount}", Integer.toString(actualAmount))
                     .replace("{price}", n(priceSum))
                     .replace("{bal}", n(JobsHook.getCurJobPoints((player))));

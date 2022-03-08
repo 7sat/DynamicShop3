@@ -20,8 +20,8 @@ public final class RenameShop extends DSCMD
     @Override
     public void SendHelpMessage(Player player)
     {
-        player.sendMessage(DynamicShop.dsPrefix + t("HELP.TITLE").replace("{command}", "renameshop"));
-        player.sendMessage(" - " + t("HELP.USAGE") + ": /ds renameshop <old name> <new name>");
+        player.sendMessage(DynamicShop.dsPrefix(player) + t(player, "HELP.TITLE").replace("{command}", "renameshop"));
+        player.sendMessage(" - " + t(player, "HELP.USAGE") + ": /ds renameshop <old name> <new name>");
 
         player.sendMessage("");
     }
@@ -38,10 +38,10 @@ public final class RenameShop extends DSCMD
         {
             String newName = args[2].replace("/", "");
             ShopUtil.renameShop(args[1], newName);
-            player.sendMessage(DynamicShop.dsPrefix + t("MESSAGE.CHANGES_APPLIED") + newName);
+            player.sendMessage(DynamicShop.dsPrefix(player) + t(player, "MESSAGE.CHANGES_APPLIED") + newName);
         } else
         {
-            player.sendMessage(DynamicShop.dsPrefix + t("ERR.SHOP_NOT_FOUND"));
+            player.sendMessage(DynamicShop.dsPrefix(player) + t(player, "ERR.SHOP_NOT_FOUND"));
         }
     }
 }

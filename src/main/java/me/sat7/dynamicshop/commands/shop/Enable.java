@@ -23,8 +23,8 @@ public class Enable extends DSCMD
     @Override
     public void SendHelpMessage(Player player)
     {
-        player.sendMessage(DynamicShop.dsPrefix + t("HELP.TITLE").replace("{command}", "enable"));
-        player.sendMessage(" - " + t("HELP.USAGE") + ": /ds shop <shopname> <true|false>");
+        player.sendMessage(DynamicShop.dsPrefix(player) + t(player, "HELP.TITLE").replace("{command}", "enable"));
+        player.sendMessage(" - " + t(player, "HELP.USAGE") + ": /ds shop <shopname> <true|false>");
         player.sendMessage("");
     }
 
@@ -42,14 +42,14 @@ public class Enable extends DSCMD
         if (args[3].equalsIgnoreCase("true"))
         {
             shopData.get().set("Options.enable", true);
-            player.sendMessage(DynamicShop.dsPrefix + LangUtil.ccLang.get().get("MESSAGE.CHANGES_APPLIED") + t("SHOP_SETTING.STATE") + ":" + args[3]);
+            player.sendMessage(DynamicShop.dsPrefix(player) + LangUtil.ccLang.get().get("MESSAGE.CHANGES_APPLIED") + t(player, "SHOP_SETTING.STATE") + ":" + args[3]);
         } else if (args[3].equalsIgnoreCase("false"))
         {
             shopData.get().set("Options.enable", false);
-            player.sendMessage(DynamicShop.dsPrefix + LangUtil.ccLang.get().get("MESSAGE.CHANGES_APPLIED") + t("SHOP_SETTING.STATE") + ":" + args[3]);
+            player.sendMessage(DynamicShop.dsPrefix(player) + LangUtil.ccLang.get().get("MESSAGE.CHANGES_APPLIED") + t(player, "SHOP_SETTING.STATE") + ":" + args[3]);
         } else
         {
-            player.sendMessage(DynamicShop.dsPrefix + t("ERR.WRONG_USAGE"));
+            player.sendMessage(DynamicShop.dsPrefix(player) + t(player, "ERR.WRONG_USAGE"));
             return;
         }
 

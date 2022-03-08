@@ -23,8 +23,8 @@ public class Flag extends DSCMD
     @Override
     public void SendHelpMessage(Player player)
     {
-        player.sendMessage(DynamicShop.dsPrefix + t("HELP.TITLE").replace("{command}", "flag"));
-        player.sendMessage(" - " + t("HELP.USAGE") + ": /ds shop <shopname> flag <flag> <set | unset>");
+        player.sendMessage(DynamicShop.dsPrefix(player) + t(player, "HELP.TITLE").replace("{command}", "flag"));
+        player.sendMessage(" - " + t(player, "HELP.USAGE") + ": /ds shop <shopname> flag <flag> <set | unset>");
 
         player.sendMessage("");
     }
@@ -49,7 +49,7 @@ public class Flag extends DSCMD
             set = false;
         } else
         {
-            player.sendMessage(DynamicShop.dsPrefix + t("ERR.WRONG_USAGE"));
+            player.sendMessage(DynamicShop.dsPrefix(player) + t(player, "ERR.WRONG_USAGE"));
             return;
         }
 
@@ -109,10 +109,10 @@ public class Flag extends DSCMD
                 shopData.get().set("Options.flag." + args[3].toLowerCase(), null);
             }
             shopData.save();
-            player.sendMessage(DynamicShop.dsPrefix + LangUtil.ccLang.get().get("MESSAGE.CHANGES_APPLIED") + args[3] + " " + args[4]);
+            player.sendMessage(DynamicShop.dsPrefix(player) + t(player, "MESSAGE.CHANGES_APPLIED") + args[3] + " " + args[4]);
         } else
         {
-            player.sendMessage(DynamicShop.dsPrefix + t("ERR.WRONG_USAGE"));
+            player.sendMessage(DynamicShop.dsPrefix(player) + t(player, "ERR.WRONG_USAGE"));
         }
     }
 }

@@ -24,8 +24,8 @@ public class ShopHours extends DSCMD
     @Override
     public void SendHelpMessage(Player player)
     {
-        player.sendMessage(DynamicShop.dsPrefix + t("HELP.TITLE").replace("{command}", "shophours"));
-        player.sendMessage(" - " + t("HELP.USAGE") + ": /ds shop <shopname> shophours <open> <close>");
+        player.sendMessage(DynamicShop.dsPrefix(player) + t(player, "HELP.TITLE").replace("{command}", "shophours"));
+        player.sendMessage(" - " + t(player, "HELP.USAGE") + ": /ds shop <shopname> shophours <open> <close>");
 
         player.sendMessage("");
     }
@@ -51,17 +51,17 @@ public class ShopHours extends DSCMD
                 shopData.get().set("Options.shophours", null);
                 shopData.save();
 
-                player.sendMessage(DynamicShop.dsPrefix + LangUtil.ccLang.get().get("MESSAGE.CHANGES_APPLIED") + "Open 24 hours");
+                player.sendMessage(DynamicShop.dsPrefix(player) + t(player, "MESSAGE.CHANGES_APPLIED") + "Open 24 hours");
             } else
             {
                 shopData.get().set("Options.shophours", start + "~" + end);
                 shopData.save();
 
-                player.sendMessage(DynamicShop.dsPrefix + LangUtil.ccLang.get().get("MESSAGE.CHANGES_APPLIED") + start + "~" + end);
+                player.sendMessage(DynamicShop.dsPrefix(player) + t(player, "MESSAGE.CHANGES_APPLIED") + start + "~" + end);
             }
         } catch (Exception e)
         {
-            player.sendMessage(DynamicShop.dsPrefix + t("ERR.WRONG_DATATYPE"));
+            player.sendMessage(DynamicShop.dsPrefix(player) + t(player, "ERR.WRONG_DATATYPE"));
         }
     }
 }

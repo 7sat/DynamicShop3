@@ -41,7 +41,7 @@ public class OnClick implements Listener
             {
                 if (!DynaShopAPI.recreateUserData(player))
                 {
-                    player.sendMessage(DynamicShop.dsPrefix + t("ERR.NO_USER_ID"));
+                    player.sendMessage(DynamicShop.dsPrefix(player) + t(player, "ERR.NO_USER_ID"));
                     e.setCancelled(true);
                     return;
                 }

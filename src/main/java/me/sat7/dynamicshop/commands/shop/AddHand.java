@@ -24,12 +24,12 @@ public class AddHand extends DSCMD
     @Override
     public void SendHelpMessage(Player player)
     {
-        player.sendMessage(DynamicShop.dsPrefix + t("HELP.TITLE").replace("{command}", "addhand"));
-        player.sendMessage(" - " + t("HELP.USAGE") + ": /ds shop <shopname> addhand <value> <median> <stock>");
-        player.sendMessage(" - " + t("HELP.USAGE") + ": /ds shop <shopname> addhand <value> <min value> <max value> <median> <stock>");
-        player.sendMessage(" - " + t("HELP.SHOP_ADD_HAND"));
-        player.sendMessage(" - " + t("HELP.PRICE"));
-        player.sendMessage(" - " + t("HELP.INF_STATIC"));
+        player.sendMessage(DynamicShop.dsPrefix(player) + t(player, "HELP.TITLE").replace("{command}", "addhand"));
+        player.sendMessage(" - " + t(player, "HELP.USAGE") + ": /ds shop <shopname> addhand <value> <median> <stock>");
+        player.sendMessage(" - " + t(player, "HELP.USAGE") + ": /ds shop <shopname> addhand <value> <min value> <max value> <median> <stock>");
+        player.sendMessage(" - " + t(player, "HELP.SHOP_ADD_HAND"));
+        player.sendMessage(" - " + t(player, "HELP.PRICE"));
+        player.sendMessage(" - " + t(player, "HELP.INF_STATIC"));
     }
 
     @Override
@@ -65,43 +65,43 @@ public class AddHand extends DSCMD
                 // 유효성 검사
                 if (valueMax > 0 && valueMin > 0 && valueMin >= valueMax)
                 {
-                    player.sendMessage(DynamicShop.dsPrefix + t("ERR.MAX_LOWER_THAN_MIN"));
+                    player.sendMessage(DynamicShop.dsPrefix(player) + t(player, "ERR.MAX_LOWER_THAN_MIN"));
                     return;
                 }
                 if (valueMax > 0 && buyValue > valueMax)
                 {
-                    player.sendMessage(DynamicShop.dsPrefix + t("ERR.DEFAULT_VALUE_OUT_OF_RANGE"));
+                    player.sendMessage(DynamicShop.dsPrefix(player) + t(player, "ERR.DEFAULT_VALUE_OUT_OF_RANGE"));
                     return;
                 }
                 if (valueMin > 0 && buyValue < valueMin)
                 {
-                    player.sendMessage(DynamicShop.dsPrefix + t("ERR.DEFAULT_VALUE_OUT_OF_RANGE"));
+                    player.sendMessage(DynamicShop.dsPrefix(player) + t(player, "ERR.DEFAULT_VALUE_OUT_OF_RANGE"));
                     return;
                 }
             }
 
             if (buyValue < 0.01 || median == 0 || stock == 0)
             {
-                player.sendMessage(DynamicShop.dsPrefix + t("ERR.VALUE_ZERO"));
+                player.sendMessage(DynamicShop.dsPrefix(player) + t(player, "ERR.VALUE_ZERO"));
                 return;
             }
         } catch (Exception e)
         {
-            player.sendMessage(DynamicShop.dsPrefix + t("ERR.WRONG_DATATYPE"));
+            player.sendMessage(DynamicShop.dsPrefix(player) + t(player, "ERR.WRONG_DATATYPE"));
             return;
         }
 
         // 손에 뭔가 들고있는지 확인
         if (player.getInventory().getItemInMainHand() == null || player.getInventory().getItemInMainHand().getType() == Material.AIR)
         {
-            player.sendMessage(DynamicShop.dsPrefix + t("ERR.HAND_EMPTY"));
+            player.sendMessage(DynamicShop.dsPrefix(player) + t(player, "ERR.HAND_EMPTY"));
             return;
         }
 
         // 금지품목
         if (Material.getMaterial(player.getInventory().getItemInMainHand().getType().toString()) == Material.AIR)
         {
-            player.sendMessage(DynamicShop.dsPrefix + t("ERR.ITEM_FORBIDDEN"));
+            player.sendMessage(DynamicShop.dsPrefix(player) + t(player, "ERR.ITEM_FORBIDDEN"));
             return;
         }
 
@@ -113,10 +113,10 @@ public class AddHand extends DSCMD
             idx = ShopUtil.findEmptyShopSlot(shopName, 1, true);
             if (idx == -1)
             {
-                player.sendMessage(DynamicShop.dsPrefix + t("ERR.NO_EMPTY_SLOT"));
+                player.sendMessage(DynamicShop.dsPrefix(player) + t(player, "ERR.NO_EMPTY_SLOT"));
             } else if (ShopUtil.addItemToShop(shopName, idx, player.getInventory().getItemInMainHand(), buyValue, buyValue, valueMin, valueMax, median, stock)) // 아이탬 추가
             {
-                player.sendMessage(DynamicShop.dsPrefix + t("MESSAGE.ITEM_ADDED"));
+                player.sendMessage(DynamicShop.dsPrefix(player) + t(player, "MESSAGE.ITEM_ADDED"));
                 ItemsUtil.sendItemInfo(player, shopName, idx, "HELP.ITEM_INFO");
             }
         }
@@ -124,7 +124,7 @@ public class AddHand extends DSCMD
         else
         {
             ShopUtil.editShopItem(shopName, idx, buyValue, buyValue, valueMin, valueMax, median, stock);
-            player.sendMessage(DynamicShop.dsPrefix + t("MESSAGE.ITEM_UPDATED"));
+            player.sendMessage(DynamicShop.dsPrefix(player) + t(player, "MESSAGE.ITEM_UPDATED"));
             ItemsUtil.sendItemInfo(player, shopName, idx, "HELP.ITEM_INFO");
         }
     }

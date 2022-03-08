@@ -33,7 +33,12 @@ public final class ItemsUtil
     // 아이탬 이름 정돈
     public static String getBeautifiedName(Material mat)
     {
-        String temp = mat.toString().replace("_", " ").toLowerCase();
+        return getBeautifiedName(mat.toString());
+    }
+
+    public static String getBeautifiedName(String matName)
+    {
+        String temp = matName.replace("_", " ").toLowerCase();
         String[] temparr = temp.split(" ");
 
         StringBuilder finalStr = new StringBuilder();
@@ -62,7 +67,7 @@ public final class ItemsUtil
         info += " median:" + data.get().getInt(idx + ".median");
         info += " stock:" + data.get().getInt(idx + ".stock");
 
-        player.sendMessage(" - " + t(msgType).
+        player.sendMessage(" - " + t(player, msgType).
                 replace("{item}", data.get().getString(idx + ".mat")).
                 replace("{info}", info)
         );

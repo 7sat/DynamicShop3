@@ -50,7 +50,7 @@ public final class Shop
         // 그런 이름을 가진 상점이 있는지 확인
         if (!ShopUtil.shopConfigFiles.containsKey(shopName))
         {
-            player.sendMessage(DynamicShop.dsPrefix + t("ERR.SHOP_NOT_FOUND"));
+            player.sendMessage(DynamicShop.dsPrefix(player) + t(player, "ERR.SHOP_NOT_FOUND"));
             return;
         }
 
@@ -65,7 +65,7 @@ public final class Shop
             {
                 if (!player.hasPermission(s) && !player.hasPermission(s + ".buy") && !player.hasPermission(s + ".sell"))
                 {
-                    player.sendMessage(DynamicShop.dsPrefix + t("ERR.NO_PERMISSION"));
+                    player.sendMessage(DynamicShop.dsPrefix(player) + t(player, "ERR.NO_PERMISSION"));
                     return;
                 }
             }
@@ -76,7 +76,7 @@ public final class Shop
             {
                 if (!player.hasPermission(Constants.P_ADMIN_REMOTE_ACCESS))
                 {
-                    player.sendMessage(DynamicShop.dsPrefix + t("ERR.SIGN_SHOP_REMOTE_ACCESS"));
+                    player.sendMessage(DynamicShop.dsPrefix(player) + t(player, "ERR.SIGN_SHOP_REMOTE_ACCESS"));
                     return;
                 }
             }
@@ -105,13 +105,13 @@ public final class Shop
 
                 if (outside && !player.hasPermission(Constants.P_ADMIN_REMOTE_ACCESS))
                 {
-                    player.sendMessage(DynamicShop.dsPrefix + t("ERR.LOCAL_SHOP_REMOTE_ACCESS"));
+                    player.sendMessage(DynamicShop.dsPrefix(player) + t(player, "ERR.LOCAL_SHOP_REMOTE_ACCESS"));
 
-                    String posString = t("SHOP.SHOP_LOCATION");
+                    String posString = t(player, "SHOP.SHOP_LOCATION");
                     posString = posString.replace("{x}", n(x1));
                     posString = posString.replace("{y}", n(y1));
                     posString = posString.replace("{z}", n(z1));
-                    player.sendMessage(DynamicShop.dsPrefix + posString);
+                    player.sendMessage(DynamicShop.dsPrefix(player) + posString);
                     return;
                 }
             }
@@ -129,7 +129,7 @@ public final class Shop
                 {
                     if (!(open <= curTime && curTime < close))
                     {
-                        player.sendMessage(DynamicShop.dsPrefix + t("TIME.SHOP_IS_CLOSED").
+                        player.sendMessage(DynamicShop.dsPrefix(player) + t(player, "TIME.SHOP_IS_CLOSED").
                                 replace("{time}", open + "").replace("{curTime}", curTime + ""));
                         return;
                     }
@@ -137,7 +137,7 @@ public final class Shop
                 {
                     if (!(open <= curTime || curTime < close))
                     {
-                        player.sendMessage(DynamicShop.dsPrefix + t("TIME.SHOP_IS_CLOSED").
+                        player.sendMessage(DynamicShop.dsPrefix(player) + t(player, "TIME.SHOP_IS_CLOSED").
                                 replace("{time}", open + "").replace("{curTime}", curTime + ""));
                         return;
                     }

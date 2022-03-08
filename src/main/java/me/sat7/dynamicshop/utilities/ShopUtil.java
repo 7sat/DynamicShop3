@@ -431,7 +431,7 @@ public final class ShopUtil
             {
                 DynamicShop.console.sendMessage(Constants.DYNAMIC_SHOP_PREFIX +
                         shopName + ", " + linkedShop + "/ " +
-                        t("ERR.SHOP_LINK_TARGET_ERR"));
+                        t(null, "ERR.SHOP_LINK_TARGET_ERR"));
 
                 data.get().set("Options.Balance", null);
                 data.save();
@@ -517,7 +517,7 @@ public final class ShopUtil
                 } else
                 {
                     if (player != null)
-                        player.sendMessage(DynamicShop.dsPrefix + t("ERR.NO_RECOMMEND_DATA") + " : " + itemName);
+                        player.sendMessage(DynamicShop.dsPrefix(player) + t(player, "ERR.NO_RECOMMEND_DATA") + " : " + itemName);
                 }
             } catch (Exception ignored)
             {

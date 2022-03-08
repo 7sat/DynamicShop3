@@ -40,15 +40,15 @@ public class OnChat implements Listener
             if (userData.equals("waitforPalette"))
             {
                 DynamicShop.userTempData.put(uuid, "");
-                player.sendMessage(DynamicShop.dsPrefix + t("MESSAGE.SEARCH_CANCELED"));
+                player.sendMessage(DynamicShop.dsPrefix(player) + t(player, "MESSAGE.SEARCH_CANCELED"));
             } else if (userData.contains("waitforInput"))
             {
                 DynamicShop.userTempData.put(uuid, "");
-                player.sendMessage(DynamicShop.dsPrefix + t("MESSAGE.INPUT_CANCELED"));
+                player.sendMessage(DynamicShop.dsPrefix(player) + t(player, "MESSAGE.INPUT_CANCELED"));
             } else if (userData.equals("waitforPageDelete"))
             {
                 DynamicShop.userTempData.put(uuid, "");
-                player.sendMessage(DynamicShop.dsPrefix + t("MESSAGE.INPUT_CANCELED"));
+                player.sendMessage(DynamicShop.dsPrefix(player) + t(player, "MESSAGE.INPUT_CANCELED"));
             }
 
         }, 400);
@@ -104,7 +104,7 @@ public class OnChat implements Listener
                         StartPage.ccStartPage.get().set("Buttons." + temp[1] + ".icon", tempMat.name());
                     } catch (Exception exception)
                     {
-                        p.sendMessage(DynamicShop.dsPrefix + t("ERR.WRONG_ITEM_NAME"));
+                        p.sendMessage(DynamicShop.dsPrefix(p) + t(p, "ERR.WRONG_ITEM_NAME"));
                     }
                     break;
                 case "btnAction":
@@ -128,7 +128,7 @@ public class OnChat implements Listener
                 DynaShopAPI.openShopGui(p, temp[0], 1);
             } else
             {
-                p.sendMessage(DynamicShop.dsPrefix + t("MESSAGE.INPUT_CANCELED"));
+                p.sendMessage(DynamicShop.dsPrefix(p) + t(p, "MESSAGE.INPUT_CANCELED"));
             }
 
             DynamicShop.userTempData.put(uuid, "");

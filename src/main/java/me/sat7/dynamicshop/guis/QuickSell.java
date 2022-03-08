@@ -25,7 +25,7 @@ public final class QuickSell extends InGameUI
 
     public Inventory getGui(Player player)
     {
-        inventory = Bukkit.createInventory(player, quickSellGui.get().getInt("UiSlotCount"), t("QUICK_SELL_TITLE"));
+        inventory = Bukkit.createInventory(player, quickSellGui.get().getInt("UiSlotCount"), t(player, "QUICK_SELL_TITLE"));
 
         ConfigurationSection confSec = quickSellGui.get().getConfigurationSection("Buttons");
         for(String s : confSec.getKeys(false))
@@ -39,7 +39,7 @@ public final class QuickSell extends InGameUI
                 if(mat == null)
                     mat = Material.GREEN_STAINED_GLASS_PANE;
 
-                CreateButton(i, mat, t("QUICK_SELL.GUIDE_TITLE"), t("QUICK_SELL.GUIDE_LORE"));
+                CreateButton(i, mat, t(player, "QUICK_SELL.GUIDE_TITLE"), t(player, "QUICK_SELL.GUIDE_LORE"));
             }catch (Exception ignore){}
         }
         return inventory;
@@ -88,7 +88,7 @@ public final class QuickSell extends InGameUI
             }
         } else
         {
-            player.sendMessage(DynamicShop.dsPrefix + t("MESSAGE.QSELL_NA") + topShopName);
+            player.sendMessage(DynamicShop.dsPrefix(player) + t(player, "MESSAGE.QSELL_NA") + topShopName);
         }
     }
 }

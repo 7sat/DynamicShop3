@@ -33,14 +33,14 @@ public class DSCMD
         {
             if (validArgCount.size() != 0 && Collections.max(validArgCount) >= args.length)
             {
-                sender.sendMessage(DynamicShop.dsPrefix + t("ERR.WRONG_USAGE"));
+                sender.sendMessage(DynamicShop.dsPrefix(sender) + t(sender, "ERR.WRONG_USAGE"));
                 return false;
             }
         }
 
         if (permission != null && !permission.isEmpty() && !sender.hasPermission(permission))
         {
-            sender.sendMessage(DynamicShop.dsPrefix + t("ERR.NO_PERMISSION"));
+            sender.sendMessage(DynamicShop.dsPrefix(sender) + t(sender, "ERR.NO_PERMISSION"));
             return false;
         }
 

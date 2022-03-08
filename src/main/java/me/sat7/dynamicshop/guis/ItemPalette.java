@@ -49,7 +49,7 @@ public final class ItemPalette extends InGameUI
         this.shopSlotIndex = targetSlot;
         this.search = search;
 
-        inventory = Bukkit.createInventory(player, 54, t("PALETTE_TITLE") + "§7 | §8" + shopName);
+        inventory = Bukkit.createInventory(player, 54, t(player, "PALETTE_TITLE") + "§7 | §8" + shopName);
         paletteList.clear();
         paletteList = CreatePaletteList();
         maxPage = paletteList.size() / 45 + 1;
@@ -59,22 +59,22 @@ public final class ItemPalette extends InGameUI
         ShowItems();
 
         // Close Button
-        CreateCloseButton(CLOSE);
+        CreateCloseButton(player, CLOSE);
 
         // Page Button
-        String pageString = t("PALETTE.PAGE_TITLE")
+        String pageString = t(player, "PALETTE.PAGE_TITLE")
                 .replace("{curPage}", Integer.toString(page))
                 .replace("{maxPage}", Integer.toString(maxPage));
-        CreateButton(PAGE, InGameUI.GetPageButtonIconMat(), pageString, t("PALETTE.PAGE_LORE"), page);
+        CreateButton(PAGE, InGameUI.GetPageButtonIconMat(), pageString, t(player, "PALETTE.PAGE_LORE"), page);
 
         // Add all Button
         if(!paletteList.isEmpty())
-            CreateButton(ADD_ALL, Material.YELLOW_STAINED_GLASS_PANE, t("PALETTE.ADD_ALL"), "");
+            CreateButton(ADD_ALL, Material.YELLOW_STAINED_GLASS_PANE, t(player, "PALETTE.ADD_ALL"), "");
 
         // Search Button
-        String filterString = search.isEmpty() ? "" : t("PALETTE.FILTER_APPLIED") + search;
-        filterString += "\n" + t("PALETTE.FILTER_LORE");
-        CreateButton(SEARCH, Material.COMPASS, t("PALETTE.SEARCH"), filterString);
+        String filterString = search.isEmpty() ? "" : t(player, "PALETTE.FILTER_APPLIED") + search;
+        filterString += "\n" + t(player, "PALETTE.FILTER_LORE");
+        CreateButton(SEARCH, Material.COMPASS, t(player, "PALETTE.SEARCH"), filterString);
 
         return inventory;
     }
@@ -172,7 +172,7 @@ public final class ItemPalette extends InGameUI
 
                 if (btnMeta != null)
                 {
-                    String[] lore = t("PALETTE.LORE").replace("{item}", lastName.replace("_", "")).split("\n");
+                    String[] lore = t(player, "PALETTE.LORE").replace("{item}", lastName.replace("_", "")).split("\n");
                     btnMeta.setLore(new ArrayList<>(Arrays.asList(lore)));
                     btn.setItemMeta(btnMeta);
                 }
@@ -324,7 +324,7 @@ public final class ItemPalette extends InGameUI
             DynamicShop.userTempData.put(player.getUniqueId(), "waitforPalette");
             OnChat.WaitForInput(player);
 
-            player.sendMessage(DynamicShop.dsPrefix + t("MESSAGE.SEARCH_ITEM"));
+            player.sendMessage(DynamicShop.dsPrefix(player) + t(player, "MESSAGE.SEARCH_ITEM"));
         } else if (isRight)
         {
             if(!search.isEmpty())

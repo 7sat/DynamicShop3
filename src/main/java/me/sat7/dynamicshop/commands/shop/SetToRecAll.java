@@ -20,9 +20,9 @@ public final class SetToRecAll extends DSCMD
     @Override
     public void SendHelpMessage(Player player)
     {
-        player.sendMessage(DynamicShop.dsPrefix + t("HELP.TITLE").replace("{command}", "SetToRecAll"));
-        player.sendMessage(" - " + t("HELP.USAGE") + ": /ds shop <shopname> SetToRecAll");
-        player.sendMessage(" - " + t("HELP.SET_TO_REC_ALL"));
+        player.sendMessage(DynamicShop.dsPrefix(player) + t(player, "HELP.TITLE").replace("{command}", "SetToRecAll"));
+        player.sendMessage(" - " + t(player, "HELP.USAGE") + ": /ds shop <shopname> SetToRecAll");
+        player.sendMessage(" - " + t(player, "HELP.SET_TO_REC_ALL"));
 
         player.sendMessage("");
     }
@@ -36,6 +36,6 @@ public final class SetToRecAll extends DSCMD
         Player player = (Player) sender;
 
         ShopUtil.SetToRecommendedValueAll(args[1], player);
-        player.sendMessage(DynamicShop.dsPrefix + t("MESSAGE.ITEM_UPDATED"));
+        player.sendMessage(DynamicShop.dsPrefix(player) + t(player, "MESSAGE.ITEM_UPDATED"));
     }
 }

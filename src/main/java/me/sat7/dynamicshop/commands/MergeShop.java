@@ -20,8 +20,8 @@ public final class MergeShop extends DSCMD
     @Override
     public void SendHelpMessage(Player player)
     {
-        player.sendMessage(DynamicShop.dsPrefix + t("HELP.TITLE").replace("{command}", "mergeshop"));
-        player.sendMessage(" - " + t("HELP.USAGE") + ": /ds mergeshop <shop1> <shop2>");
+        player.sendMessage(DynamicShop.dsPrefix(player) + t(player, "HELP.TITLE").replace("{command}", "mergeshop"));
+        player.sendMessage(" - " + t(player, "HELP.USAGE") + ": /ds mergeshop <shop1> <shop2>");
 
         player.sendMessage("");
     }
@@ -36,18 +36,18 @@ public final class MergeShop extends DSCMD
 
         if (args[1].equals(args[2]))
         {
-            player.sendMessage(DynamicShop.dsPrefix + t("ERR.WRONG_USAGE"));
+            player.sendMessage(DynamicShop.dsPrefix(player) + t(player, "ERR.WRONG_USAGE"));
             return;
         }
 
         if (ShopUtil.shopConfigFiles.containsKey(args[1]) && ShopUtil.shopConfigFiles.containsKey(args[2]))
         {
             ShopUtil.mergeShop(args[1], args[2]);
-            player.sendMessage(DynamicShop.dsPrefix + t("MESSAGE.CHANGES_APPLIED") + args[1]);
+            player.sendMessage(DynamicShop.dsPrefix(player) + t(player, "MESSAGE.CHANGES_APPLIED") + args[1]);
         }
         else
         {
-            player.sendMessage(DynamicShop.dsPrefix + t("ERR.SHOP_NOT_FOUND"));
+            player.sendMessage(DynamicShop.dsPrefix(player) + t(player, "ERR.SHOP_NOT_FOUND"));
         }
     }
 }

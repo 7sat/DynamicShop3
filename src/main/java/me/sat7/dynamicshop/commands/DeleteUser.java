@@ -23,10 +23,10 @@ public final class DeleteUser extends DSCMD
     @Override
     public void SendHelpMessage(Player player)
     {
-        player.sendMessage(DynamicShop.dsPrefix + t("HELP.TITLE").replace("{command}", "§c§ldeleteOldUser§f§r"));
-        player.sendMessage(" - " + t("HELP.USAGE") + ": /ds deleteOldUser <days>");
-        player.sendMessage(" - " + t("HELP.DELETE_OLD_USER"));
-        player.sendMessage(" - " + t("MESSAGE.IRREVERSIBLE"));
+        player.sendMessage(DynamicShop.dsPrefix(player) + t(player, "HELP.TITLE").replace("{command}", "§c§ldeleteOldUser§f§r"));
+        player.sendMessage(" - " + t(player, "HELP.USAGE") + ": /ds deleteOldUser <days>");
+        player.sendMessage(" - " + t(player, "HELP.DELETE_OLD_USER"));
+        player.sendMessage(" - " + t(player, "MESSAGE.IRREVERSIBLE"));
 
         player.sendMessage("");
     }
@@ -44,13 +44,13 @@ public final class DeleteUser extends DSCMD
             day = Long.parseLong(args[1]);
         } catch (Exception e)
         {
-            sender.sendMessage(DynamicShop.dsPrefix + t("ERR.WRONG_DATATYPE"));
+            sender.sendMessage(DynamicShop.dsPrefix(sender) + t(sender, "ERR.WRONG_DATATYPE"));
             return;
         }
 
         if (day <= 0)
         {
-            sender.sendMessage(DynamicShop.dsPrefix + t("ERR.VALUE_ZERO"));
+            sender.sendMessage(DynamicShop.dsPrefix(sender) + t(sender, "ERR.VALUE_ZERO"));
             return;
         }
 
@@ -66,18 +66,18 @@ public final class DeleteUser extends DSCMD
                 // 마지막으로 접속한지 입력한 일보다 더 지남.
                 if (dayPassed > day)
                 {
-                    sender.sendMessage(DynamicShop.dsPrefix + Bukkit.getOfflinePlayer(UUID.fromString(s)).getName() + " Deleted");
+                    sender.sendMessage(DynamicShop.dsPrefix(sender) + Bukkit.getOfflinePlayer(UUID.fromString(s)).getName() + " Deleted");
                     DynamicShop.ccUser.get().set(s, null);
                     count += 1;
                 }
             } catch (Exception e)
             {
-                sender.sendMessage(DynamicShop.dsPrefix + e + "/" + s);
+                sender.sendMessage(DynamicShop.dsPrefix(sender) + e + "/" + s);
             }
 
             DynamicShop.ccUser.save();
         }
 
-        sender.sendMessage(DynamicShop.dsPrefix + count + " Items Removed");
+        sender.sendMessage(DynamicShop.dsPrefix(sender) + count + " Items Removed");
     }
 }

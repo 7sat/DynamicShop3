@@ -23,8 +23,8 @@ public class MaxPage extends DSCMD
     @Override
     public void SendHelpMessage(Player player)
     {
-        player.sendMessage(DynamicShop.dsPrefix + t("HELP.TITLE").replace("{command}", "maxpage"));
-        player.sendMessage(" - " + t("HELP.USAGE") + ": /ds shop <shopname> maxpage <number>");
+        player.sendMessage(DynamicShop.dsPrefix(player) + t(player, "HELP.TITLE").replace("{command}", "maxpage"));
+        player.sendMessage(" - " + t(player, "HELP.USAGE") + ": /ds shop <shopname> maxpage <number>");
 
         player.sendMessage("");
     }
@@ -46,17 +46,17 @@ public class MaxPage extends DSCMD
             newValue = Integer.parseInt(args[3]);
         } catch (Exception e)
         {
-            player.sendMessage(DynamicShop.dsPrefix + t("ERR.WRONG_DATATYPE"));
+            player.sendMessage(DynamicShop.dsPrefix(player) + t(player, "ERR.WRONG_DATATYPE"));
             return;
         }
 
         if (newValue <= 0)
         {
-            player.sendMessage(DynamicShop.dsPrefix + t("ERR.VALUE_ZERO"));
+            player.sendMessage(DynamicShop.dsPrefix(player) + t(player, "ERR.VALUE_ZERO"));
         } else
         {
             shopData.get().set("Options.page", newValue);
-            player.sendMessage(DynamicShop.dsPrefix + LangUtil.ccLang.get().get("MESSAGE.CHANGES_APPLIED") + args[3]);
+            player.sendMessage(DynamicShop.dsPrefix(player) + t(player, "MESSAGE.CHANGES_APPLIED") + args[3]);
             shopData.save();
         }
     }

@@ -28,7 +28,8 @@ public class JoinQuit implements Listener
         DynamicShop.ccUser.get().addDefault(player.getUniqueId() + ".cmdHelp", true);
         DynamicShop.ccUser.save();
 
-        if (DynamicShop.updateAvailable)
+        boolean isSnapshot = DynamicShop.yourVersion.contains("snapshot");
+        if (DynamicShop.updateAvailable || isSnapshot)
         {
             if (e.getPlayer().hasPermission(P_ADMIN_SHOP_EDIT) || e.getPlayer().hasPermission(P_ADMIN_RELOAD))
             {
@@ -43,7 +44,16 @@ public class JoinQuit implements Listener
 
                 e.getPlayer().sendMessage("");
                 e.getPlayer().spigot().sendMessage(text);
-                e.getPlayer().sendMessage("New Update available");
+
+                if(isSnapshot)
+                {
+                    e.getPlayer().sendMessage("§cYou are currently using a snapshot build.");
+                }
+                else
+                {
+                    e.getPlayer().sendMessage("New Update available");
+                }
+
                 e.getPlayer().sendMessage("§7Latest version: §f" + DynamicShop.lastVersion);
                 e.getPlayer().sendMessage("§7Your version: §f" + DynamicShop.yourVersion);
                 e.getPlayer().sendMessage("");

@@ -74,4 +74,14 @@ public final class MathUtil
 
         return temp;
     }
+
+    public static long TickToMilliSeconds(long tick)
+    {
+        return tick * 50;
+    }
+
+    public static long MilliSecondsToTick(long ms)
+    {
+        return ms / 50;
+    }
 }

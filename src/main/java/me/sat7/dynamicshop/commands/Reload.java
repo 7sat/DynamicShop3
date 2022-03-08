@@ -24,8 +24,8 @@ public final class Reload extends DSCMD
     @Override
     public void SendHelpMessage(Player player)
     {
-        player.sendMessage(DynamicShop.dsPrefix + t("HELP.TITLE").replace("{command}", "reload"));
-        player.sendMessage(" - " + t("HELP.USAGE") + ": /ds reload");
+        player.sendMessage(DynamicShop.dsPrefix(player) + t(player, "HELP.TITLE").replace("{command}", "reload"));
+        player.sendMessage(" - " + t(player, "HELP.USAGE") + ": /ds reload");
 
         player.sendMessage("");
     }
@@ -64,6 +64,6 @@ public final class Reload extends DSCMD
 
         DynamicShop.plugin.getConfig().set("Version", configVersion);
 
-        sender.sendMessage(DynamicShop.dsPrefix + t("HELP.RELOADED"));
+        sender.sendMessage(DynamicShop.dsPrefix(sender) + t(sender, "HELP.RELOADED"));
     }
 }

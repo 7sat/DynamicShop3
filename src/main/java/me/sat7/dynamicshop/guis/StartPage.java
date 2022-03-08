@@ -86,13 +86,13 @@ public final class StartPage extends InGameUI
                     String cmd = cs.getString(s + ".action");
                     if (cmd != null && cmd.length() > 0)
                     {
-                        tempList.add(t("START_PAGE.ITEM_MOVE_LORE"));
+                        tempList.add(t(player, "START_PAGE.ITEM_MOVE_LORE"));
                     } else
                     {
-                        tempList.add(t("START_PAGE.ITEM_REMOVE_LORE"));
-                        tempList.add(t("START_PAGE.ITEM_COPY_LORE"));
+                        tempList.add(t(player, "START_PAGE.ITEM_REMOVE_LORE"));
+                        tempList.add(t(player, "START_PAGE.ITEM_COPY_LORE"));
                     }
-                    tempList.add(t("START_PAGE.ITEM_EDIT_LORE"));
+                    tempList.add(t(player, "START_PAGE.ITEM_EDIT_LORE"));
                 }
 
                 ItemStack btn = new ItemStack(Material.getMaterial(cs.getConfigurationSection(s).getString("icon")));
@@ -184,7 +184,7 @@ public final class StartPage extends InGameUI
                     if (e.getCurrentItem() == null || e.getCurrentItem().getType() == Material.AIR) return;
 
                     selectedIndex = e.getSlot();
-                    player.sendMessage(DynamicShop.dsPrefix + t("SHOP.ITEM_MOVE_SELECTED"));
+                    player.sendMessage(DynamicShop.dsPrefix(player) + t(player, "SHOP.ITEM_MOVE_SELECTED"));
                 } else
                 {
                     if (e.getCurrentItem() != null && e.getCurrentItem().getType() != Material.AIR) return;
@@ -218,7 +218,7 @@ public final class StartPage extends InGameUI
 
         if(itemStack == null || itemStack.getType().isAir())
         {
-            player.sendMessage(DynamicShop.dsPrefix + t("MESSAGE.CLICK_YOUR_ITEM_START_PAGE"));
+            player.sendMessage(DynamicShop.dsPrefix(player) + t(player, "MESSAGE.CLICK_YOUR_ITEM_START_PAGE"));
             return;
         }
 
@@ -247,11 +247,11 @@ public final class StartPage extends InGameUI
         String message;
         if(isSell)
         {
-            message = DynamicShop.dsPrefix + t("MESSAGE.MOVE_TO_BEST_SHOP_SELL", !useLocalizedName);
+            message = DynamicShop.dsPrefix(player) + t(player, "MESSAGE.MOVE_TO_BEST_SHOP_SELL", !useLocalizedName);
         }
         else
         {
-            message = DynamicShop.dsPrefix + t("MESSAGE.MOVE_TO_BEST_SHOP_BUY", !useLocalizedName);
+            message = DynamicShop.dsPrefix(player) + t(player, "MESSAGE.MOVE_TO_BEST_SHOP_BUY", !useLocalizedName);
         }
 
         if (useLocalizedName)

@@ -25,9 +25,9 @@ public class StockStabilizing extends DSCMD
     @Override
     public void SendHelpMessage(Player player)
     {
-        player.sendMessage(DynamicShop.dsPrefix + t("HELP.TITLE").replace("{command}", "stockStabilizing"));
-        player.sendMessage(" - " + t("HELP.USAGE") + ": /ds shop <shopname> stockStabilizing <interval> <strength>");
-        player.sendMessage(" - " + t("HELP.USAGE") + ": /ds shop <shopname> stockStabilizing off");
+        player.sendMessage(DynamicShop.dsPrefix(player) + t(player, "HELP.TITLE").replace("{command}", "stockStabilizing"));
+        player.sendMessage(" - " + t(player, "HELP.USAGE") + ": /ds shop <shopname> stockStabilizing <interval> <strength>");
+        player.sendMessage(" - " + t(player, "HELP.USAGE") + ": /ds shop <shopname> stockStabilizing off");
 
         player.sendMessage("");
     }
@@ -49,10 +49,10 @@ public class StockStabilizing extends DSCMD
             {
                 shopData.get().set("Options.stockStabilizing", null);
                 shopData.save();
-                player.sendMessage(DynamicShop.dsPrefix + LangUtil.ccLang.get().get("MESSAGE.CHANGES_APPLIED") + "stockStabilizing Off");
+                player.sendMessage(DynamicShop.dsPrefix(player) + t(player, "MESSAGE.CHANGES_APPLIED") + "stockStabilizing Off");
             } else
             {
-                player.sendMessage(DynamicShop.dsPrefix + t("ERR.WRONG_USAGE"));
+                player.sendMessage(DynamicShop.dsPrefix(player) + t(player, "ERR.WRONG_USAGE"));
             }
         } else if (args.length >= 5)
         {
@@ -62,7 +62,7 @@ public class StockStabilizing extends DSCMD
                 interval = Clamp(Integer.parseInt(args[3]), 1, 999);
             } catch (Exception e)
             {
-                player.sendMessage(DynamicShop.dsPrefix + t("ERR.WRONG_DATATYPE"));
+                player.sendMessage(DynamicShop.dsPrefix(player) + t(player, "ERR.WRONG_DATATYPE"));
                 return;
             }
 
@@ -73,10 +73,10 @@ public class StockStabilizing extends DSCMD
                 shopData.get().set("Options.stockStabilizing.strength", strength);
                 shopData.save();
 
-                player.sendMessage(DynamicShop.dsPrefix + LangUtil.ccLang.get().get("MESSAGE.CHANGES_APPLIED") + "Interval " + interval + ", strength " + strength);
+                player.sendMessage(DynamicShop.dsPrefix(player) + t(player, "MESSAGE.CHANGES_APPLIED") + "Interval " + interval + ", strength " + strength);
             } catch (Exception e)
             {
-                player.sendMessage(DynamicShop.dsPrefix + t("ERR.WRONG_DATATYPE"));
+                player.sendMessage(DynamicShop.dsPrefix(player) + t(player, "ERR.WRONG_DATATYPE"));
             }
         }
     }

@@ -21,8 +21,8 @@ public final class DeleteShop extends DSCMD
     @Override
     public void SendHelpMessage(Player player)
     {
-        player.sendMessage(DynamicShop.dsPrefix + t("HELP.TITLE").replace("{command}", "§c§ldeleteshop§f§r"));
-        player.sendMessage(" - " + t("HELP.USAGE") + ": /ds deleteshop <shopname>");
+        player.sendMessage(DynamicShop.dsPrefix(player) + t(player, "HELP.TITLE").replace("{command}", "§c§ldeleteshop§f§r"));
+        player.sendMessage(" - " + t(player, "HELP.USAGE") + ": /ds deleteshop <shopname>");
 
         player.sendMessage("");
     }
@@ -41,11 +41,10 @@ public final class DeleteShop extends DSCMD
             data.delete();
 
             ShopUtil.shopConfigFiles.remove(args[1]);
-
-            player.sendMessage(DynamicShop.dsPrefix + t("MESSAGE.SHOP_DELETED"));
+            player.sendMessage(DynamicShop.dsPrefix(player) + t(player, "MESSAGE.SHOP_DELETED"));
         } else
         {
-            player.sendMessage(DynamicShop.dsPrefix + t("ERR.SHOP_NOT_FOUND"));
+            player.sendMessage(DynamicShop.dsPrefix(player) + t(player, "ERR.SHOP_NOT_FOUND"));
         }
     }
 }

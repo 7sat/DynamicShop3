@@ -24,8 +24,8 @@ public class Permission extends DSCMD
     @Override
     public void SendHelpMessage(Player player)
     {
-        player.sendMessage(DynamicShop.dsPrefix + t("HELP.TITLE").replace("{command}", "permission"));
-        player.sendMessage(" - " + t("HELP.USAGE") + ": /ds shop <shopname> permission [<true | false | custom >]");
+        player.sendMessage(DynamicShop.dsPrefix(player) + t(player, "HELP.TITLE").replace("{command}", "permission"));
+        player.sendMessage(" - " + t(player, "HELP.USAGE") + ": /ds shop <shopname> permission [<true | false | custom >]");
 
         player.sendMessage("");
     }
@@ -44,22 +44,22 @@ public class Permission extends DSCMD
         if (args.length == 3)
         {
             String s = shopData.get().getConfigurationSection("Options").getString("permission");
-            if (s == null || s.length() == 0) s = t("NULL(OPEN)");
-            player.sendMessage(DynamicShop.dsPrefix + s);
+            if (s == null || s.length() == 0) s = t(player, "NULL(OPEN)");
+            player.sendMessage(DynamicShop.dsPrefix(player) + s);
         } else if (args.length >= 4)
         {
             if (args[3].equalsIgnoreCase("true"))
             {
                 shopData.get().set("Options.permission", "dshop.user.shop." + args[1]);
-                player.sendMessage(DynamicShop.dsPrefix + LangUtil.ccLang.get().get("MESSAGE.CHANGES_APPLIED") + "dshop.user.shop." + args[1]);
+                player.sendMessage(DynamicShop.dsPrefix(player) + t(player, "MESSAGE.CHANGES_APPLIED") + "dshop.user.shop." + args[1]);
             } else if (args[3].equalsIgnoreCase("false"))
             {
                 shopData.get().set("Options.permission", "");
-                player.sendMessage(DynamicShop.dsPrefix + LangUtil.ccLang.get().get("MESSAGE.CHANGES_APPLIED") + t("NULL(OPEN)"));
+                player.sendMessage(DynamicShop.dsPrefix(player) + t(player, "MESSAGE.CHANGES_APPLIED") + t(player, "NULL(OPEN)"));
             } else
             {
                 shopData.get().set("Options.permission", args[3]);
-                player.sendMessage(DynamicShop.dsPrefix + LangUtil.ccLang.get().get("MESSAGE.CHANGES_APPLIED") + args[3]);
+                player.sendMessage(DynamicShop.dsPrefix(player) + t(player, "MESSAGE.CHANGES_APPLIED") + args[3]);
             }
             shopData.save();
         }

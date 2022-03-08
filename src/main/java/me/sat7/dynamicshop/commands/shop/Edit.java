@@ -26,12 +26,12 @@ public class Edit extends DSCMD
     @Override
     public void SendHelpMessage(Player player)
     {
-        player.sendMessage(DynamicShop.dsPrefix + t("HELP.TITLE").replace("{command}", "edit"));
-        player.sendMessage(" - " + t("HELP.USAGE") + ": /ds shop <shopname> edit <item> <value> <median> <stock>");
-        player.sendMessage(" - " + t("HELP.USAGE") + ": /ds shop <shopname> edit <item> <value> <min value> <max value> <median> <stock> [<max stock>]");
-        player.sendMessage(" - " + t("HELP.SHOP_EDIT"));
-        player.sendMessage(" - " + t("HELP.PRICE"));
-        player.sendMessage(" - " + t("HELP.INF_STATIC"));
+        player.sendMessage(DynamicShop.dsPrefix(player) + t(player, "HELP.TITLE").replace("{command}", "edit"));
+        player.sendMessage(" - " + t(player, "HELP.USAGE") + ": /ds shop <shopname> edit <item> <value> <median> <stock>");
+        player.sendMessage(" - " + t(player, "HELP.USAGE") + ": /ds shop <shopname> edit <item> <value> <min value> <max value> <median> <stock> [<max stock>]");
+        player.sendMessage(" - " + t(player, "HELP.SHOP_EDIT"));
+        player.sendMessage(" - " + t(player, "HELP.PRICE"));
+        player.sendMessage(" - " + t(player, "HELP.INF_STATIC"));
 
         player.sendMessage("");
     }
@@ -61,7 +61,7 @@ public class Edit extends DSCMD
             idx = Integer.parseInt(temp[0]);
             if (!shopData.get().contains(temp[0]))
             {
-                player.sendMessage(DynamicShop.dsPrefix + t("ERR.WRONG_ITEM_NAME"));
+                player.sendMessage(DynamicShop.dsPrefix(player) + t(player, "ERR.WRONG_ITEM_NAME"));
                 return;
             }
             buyValue = Double.parseDouble(args[4]);
@@ -70,7 +70,7 @@ public class Edit extends DSCMD
             if (buyValue <= 0)
             {
                 ShopUtil.removeItemFromShop(shopName, idx);
-                player.sendMessage(DynamicShop.dsPrefix + t("MESSAGE.ITEM_DELETED"));
+                player.sendMessage(DynamicShop.dsPrefix(player) + t(player, "MESSAGE.ITEM_DELETED"));
                 return;
             } else
             {
@@ -93,30 +93,30 @@ public class Edit extends DSCMD
                     // 유효성 검사
                     if (valueMax > 0 && valueMin > 0 && valueMin >= valueMax)
                     {
-                        player.sendMessage(DynamicShop.dsPrefix + t("ERR.MAX_LOWER_THAN_MIN"));
+                        player.sendMessage(DynamicShop.dsPrefix(player) + t(player, "ERR.MAX_LOWER_THAN_MIN"));
                         return;
                     }
                     if (valueMax > 0 && buyValue > valueMax)
                     {
-                        player.sendMessage(DynamicShop.dsPrefix + t("ERR.DEFAULT_VALUE_OUT_OF_RANGE"));
+                        player.sendMessage(DynamicShop.dsPrefix(player) + t(player, "ERR.DEFAULT_VALUE_OUT_OF_RANGE"));
                         return;
                     }
                     if (valueMin > 0 && buyValue < valueMin)
                     {
-                        player.sendMessage(DynamicShop.dsPrefix + t("ERR.DEFAULT_VALUE_OUT_OF_RANGE"));
+                        player.sendMessage(DynamicShop.dsPrefix(player) + t(player, "ERR.DEFAULT_VALUE_OUT_OF_RANGE"));
                         return;
                     }
                 }
             }
         } catch (Exception e)
         {
-            player.sendMessage(DynamicShop.dsPrefix + t("ERR.WRONG_DATATYPE"));
+            player.sendMessage(DynamicShop.dsPrefix(player) + t(player, "ERR.WRONG_DATATYPE"));
             return;
         }
 
         // 수정
         ShopUtil.editShopItem(shopName, idx, buyValue, buyValue, valueMin, valueMax, median, stock, maxStock);
-        player.sendMessage(DynamicShop.dsPrefix + t("MESSAGE.ITEM_UPDATED"));
+        player.sendMessage(DynamicShop.dsPrefix(player) + t(player, "MESSAGE.ITEM_UPDATED"));
         ItemsUtil.sendItemInfo(player, shopName, idx, "HELP.ITEM_INFO");
     }
 }

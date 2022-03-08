@@ -1,5 +1,6 @@
 package me.sat7.dynamicshop;
 
+import me.clip.placeholderapi.PlaceholderAPI;
 import me.pikamug.localelib.LocaleManager;
 import me.sat7.dynamicshop.commands.CMDManager;
 import me.sat7.dynamicshop.commands.Optional;
@@ -20,6 +21,7 @@ import net.md_5.bungee.api.chat.TextComponent;
 import net.milkbowl.vault.economy.Economy;
 
 import org.bstats.bukkit.Metrics;
+import org.bukkit.entity.Player;
 import org.bukkit.plugin.java.JavaPlugin;
 
 import org.bukkit.Bukkit;
@@ -31,10 +33,7 @@ import org.bukkit.plugin.RegisteredServiceProvider;
 import org.bukkit.scheduler.BukkitTask;
 
 import java.io.File;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Random;
-import java.util.UUID;
+import java.util.*;
 
 import static me.sat7.dynamicshop.utilities.ConfigUtil.configVersion;
 
@@ -48,7 +47,20 @@ public final class DynamicShop extends JavaPlugin implements Listener
 
     public static DynamicShop plugin;
     public static ConsoleCommandSender console;
-    public static String dsPrefix = "§3DShop3 §7| §f";
+
+    public static String dsPrefix(CommandSender commandSender)
+    {
+        return dsPrefix((Player) commandSender);
+    }
+
+    public static String dsPrefix(Player player)
+    {
+        if(isPapiExist && player != null)
+            return PlaceholderAPI.setPlaceholders(player, dsPrefix_);
+        return dsPrefix_;
+    }
+
+    public static String dsPrefix_ = "§3DShop3 §7| §f";
 
     public static CustomConfig ccUser;
     public static CustomConfig ccSign;
@@ -65,6 +77,7 @@ public final class DynamicShop extends JavaPlugin implements Listener
     public static final HashMap<UUID, String> userInteractItem = new HashMap<>();
 
     public static final LocaleManager localeManager = new LocaleManager();
+    public static boolean isPapiExist;
 
     @Override
     public void onEnable()
@@ -75,6 +88,29 @@ public final class DynamicShop extends JavaPlugin implements Listener
         SetupVault();
     }
 
+    private void Init()
+    {
+        CMDManager.Init();
+
+        registerEvents();
+        initCommands();
+
+        makeFolders();
+        InitConfig();
+
+        PeriodicRepetitiveTask();
+        startCullLogsTask();
+        hookIntoJobs();
+        InitPapi();
+
+        // 완료
+        console.sendMessage(Constants.DYNAMIC_SHOP_PREFIX + " Enabled! :)");
+
+        CheckUpdate();
+        InitBstats();
+    }
+
+    // 볼트 이코노미 초기화
     private void SetupVault()
     {
         if (getServer().getPluginManager().getPlugin("Vault") == null)
@@ -117,30 +153,9 @@ public final class DynamicShop extends JavaPlugin implements Listener
         }
     }
 
-    private void Init()
-    {
-        CMDManager.Init();
-
-        registerEvents();
-        initCommands();
-
-        makeFolders();
-        InitConfig();
-
-        PeriodicRepetitiveTask();
-        startCullLogsTask();
-        hookIntoJobs();
-
-        // 완료
-        console.sendMessage(Constants.DYNAMIC_SHOP_PREFIX + " Enabled! :)");
-
-        CheckUpdate();
-        InitBstats();
-    }
-
     private int ConvertVersionStringToNumber(String string)
     {
-        String[] temp = string.split("\\.");
+        String[] temp = string.replace("-snapshot","").split("\\.");
         if(temp.length != 3)
             return 1;
 
@@ -206,6 +221,19 @@ public final class DynamicShop extends JavaPlugin implements Listener
         } catch (Exception e)
         {
             DynamicShop.console.sendMessage(Constants.DYNAMIC_SHOP_PREFIX + "Failed to Init bstats : " + e);
+        }
+    }
+
+    private void InitPapi()
+    {
+        isPapiExist = Bukkit.getPluginManager().getPlugin("PlaceholderAPI") != null;
+        if(isPapiExist)
+        {
+            console.sendMessage(Constants.DYNAMIC_SHOP_PREFIX + " PlaceholderAPI Found");
+        }
+        else
+        {
+            console.sendMessage(Constants.DYNAMIC_SHOP_PREFIX + " PlaceholderAPI Not Found");
         }
     }
 

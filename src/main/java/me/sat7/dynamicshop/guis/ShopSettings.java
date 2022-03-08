@@ -64,22 +64,22 @@ public final class ShopSettings extends InGameUI
     {
         this.shopName = shopName;
 
-        inventory = Bukkit.createInventory(player, 36, t("SHOP_SETTING_TITLE") + "§7 | §8" + shopName);
+        inventory = Bukkit.createInventory(player, 36, t(player, "SHOP_SETTING_TITLE") + "§7 | §8" + shopName);
 
         CustomConfig data = ShopUtil.shopConfigFiles.get(shopName);
         ConfigurationSection confSec_Options = data.get().getConfigurationSection("Options");
 
         // 닫기 버튼
-        CreateCloseButton(CLOSE);
+        CreateCloseButton(player, CLOSE);
 
         // 활성화 버튼
         boolean isShopEnable = confSec_Options.getBoolean("enable", true);
         Material enableToggleMat = isShopEnable ? Material.GREEN_STAINED_GLASS : Material.RED_STAINED_GLASS;
-        String current = isShopEnable ? t("SHOP_SETTING.STATE_ENABLE") : t("SHOP_SETTING.STATE_DISABLE");
-        String set = isShopEnable ? t("SHOP_SETTING.STATE_DISABLE") : t("SHOP_SETTING.STATE_ENABLE");
-        String enableToggleLore = "§9" + t("CUR_STATE") + ": " + current;
-        enableToggleLore += "\n§e" + t("CLICK") + ": " + set;
-        CreateButton(ENABLE_TOGGLE, enableToggleMat, t("SHOP_SETTING.STATE"), enableToggleLore);
+        String current = isShopEnable ? t(player, "SHOP_SETTING.STATE_ENABLE") : t(player, "SHOP_SETTING.STATE_DISABLE");
+        String set = isShopEnable ? t(player, "SHOP_SETTING.STATE_DISABLE") : t(player, "SHOP_SETTING.STATE_ENABLE");
+        String enableToggleLore = "§9" + t(player, "CUR_STATE") + ": " + current;
+        enableToggleLore += "\n§e" + t(player, "CLICK") + ": " + set;
+        CreateButton(ENABLE_TOGGLE, enableToggleMat, t(player, "SHOP_SETTING.STATE"), enableToggleLore);
 
         // 권한 버튼
         String permStr = confSec_Options.getString("permission");
@@ -87,26 +87,26 @@ public final class ShopSettings extends InGameUI
         Material permIcon;
         if (permStr == null || permStr.isEmpty())
         {
-            permStr = t("NULL(OPEN)");
+            permStr = t(player, "NULL(OPEN)");
             permIcon = Material.IRON_BLOCK;
         } else
         {
-            permNew = t("NULL(OPEN)");
+            permNew = t(player, "NULL(OPEN)");
             permIcon = Material.GOLD_BLOCK;
         }
 
         ArrayList<String> permLore = new ArrayList<>();
-        permLore.add("§9" + t("CUR_STATE") + ": " + permStr);
-        if (!permStr.equalsIgnoreCase(t("NULL(OPEN)")))
+        permLore.add("§9" + t(player, "CUR_STATE") + ": " + permStr);
+        if (!permStr.equalsIgnoreCase(t(player, "NULL(OPEN)")))
         {
             permLore.add("§9 - " + permStr + ".buy");
             permLore.add("§9 - " + permStr + ".sell");
         }
-        permLore.add("§e" + t("CLICK") + ": " + permNew);
-        CreateButton(PERMISSION, permIcon, t("SHOP_SETTING.PERMISSION"), permLore);
+        permLore.add("§e" + t(player, "CLICK") + ": " + permNew);
+        CreateButton(PERMISSION, permIcon, t(player, "SHOP_SETTING.PERMISSION"), permLore);
 
         //최대 페이지 버튼
-        CreateButton(MAX_PAGE, InGameUI.GetPageButtonIconMat(), t("SHOP_SETTING.MAX_PAGE"), new ArrayList<>(Arrays.asList(t("SHOP_SETTING.MAX_PAGE_LORE"), t("SHOP_SETTING.L_R_SHIFT"))), data.get().getInt("Options.page"));
+        CreateButton(MAX_PAGE, InGameUI.GetPageButtonIconMat(), t(player, "SHOP_SETTING.MAX_PAGE"), new ArrayList<>(Arrays.asList(t(player, "SHOP_SETTING.MAX_PAGE_LORE"), t(player, "SHOP_SETTING.L_R_SHIFT"))), data.get().getInt("Options.page"));
 
         // 영업시간 버튼
         int curTime = (int) (player.getWorld().getTime()) / 1000 + 6;
@@ -118,21 +118,21 @@ public final class ShopSettings extends InGameUI
             int close = Integer.parseInt(temp[1]);
 
             ArrayList<String> shopHourLore = new ArrayList<>(Arrays.asList(
-                    t("TIME.CUR").replace("{time}", curTime + ""),
-                    "§9" + t("CUR_STATE") + ": ",
-                    "§9 - " + t("TIME.OPEN") + ": " + open,
-                    "§9 - " + t("TIME.CLOSE") + ": " + close,
-                    "§e" + t("CLICK") + ": " + t("TIME.OPEN24")));
-            CreateButton(SHOP_HOUR, Material.CLOCK, t("TIME.SHOPHOURS"), shopHourLore);
-            CreateButton(SHOP_HOUR_OPEN, Material.CLOCK, "§f" + t("TIME.OPEN"), new ArrayList<>(Arrays.asList(t("TIME.OPEN_LORE"), t("SHOP_SETTING.L_R_SHIFT"))), open);
-            CreateButton(SHOP_HOUR_CLOSE, Material.CLOCK, "§f" + t("TIME.CLOSE"), new ArrayList<>(Arrays.asList(t("TIME.CLOSE_LORE"), t("SHOP_SETTING.L_R_SHIFT"))), close);
+                    t(player, "TIME.CUR").replace("{time}", curTime + ""),
+                    "§9" + t(player, "CUR_STATE") + ": ",
+                    "§9 - " + t(player, "TIME.OPEN") + ": " + open,
+                    "§9 - " + t(player, "TIME.CLOSE") + ": " + close,
+                    "§e" + t(player, "CLICK") + ": " + t(player, "TIME.OPEN24")));
+            CreateButton(SHOP_HOUR, Material.CLOCK, t(player, "TIME.SHOPHOURS"), shopHourLore);
+            CreateButton(SHOP_HOUR_OPEN, Material.CLOCK, "§f" + t(player, "TIME.OPEN"), new ArrayList<>(Arrays.asList(t(player, "TIME.OPEN_LORE"), t(player, "SHOP_SETTING.L_R_SHIFT"))), open);
+            CreateButton(SHOP_HOUR_CLOSE, Material.CLOCK, "§f" + t(player, "TIME.CLOSE"), new ArrayList<>(Arrays.asList(t(player, "TIME.CLOSE_LORE"), t(player, "SHOP_SETTING.L_R_SHIFT"))), close);
         } else
         {
             ArrayList<String> shopHourLore = new ArrayList<>(Arrays.asList(
-                    t("TIME.CUR").replace("{time}", curTime + ""),
-                    "§9" + t("CUR_STATE") + ": " + t("TIME.OPEN24"),
-                    "§e" + t("CLICK") + ": " + t("TIME.SET_SHOPHOURS")));
-            CreateButton(SHOP_HOUR, Material.CLOCK, t("TIME.SHOPHOURS"), shopHourLore);
+                    t(player, "TIME.CUR").replace("{time}", curTime + ""),
+                    "§9" + t(player, "CUR_STATE") + ": " + t(player, "TIME.OPEN24"),
+                    "§e" + t(player, "CLICK") + ": " + t(player, "TIME.SET_SHOPHOURS")));
+            CreateButton(SHOP_HOUR, Material.CLOCK, t(player, "TIME.SHOPHOURS"), shopHourLore);
         }
 
         // 랜덤스톡 버튼
@@ -140,29 +140,29 @@ public final class ShopSettings extends InGameUI
         if (flucConf != null)
         {
             ArrayList<String> fluctuationLore = new ArrayList<>(Arrays.asList(
-                    "§9" + t("CUR_STATE") + ": " + t("ON"),
-                    "§e" + t("LMB") + ": " + t("OFF")
+                    "§9" + t(player, "CUR_STATE") + ": " + t(player, "ON"),
+                    "§e" + t(player, "LMB") + ": " + t(player, "OFF")
                     ));
-            CreateButton(FLUC, Material.COMPARATOR, t("FLUCTUATION.FLUCTUATION"), fluctuationLore);
+            CreateButton(FLUC, Material.COMPARATOR, t(player, "FLUCTUATION.FLUCTUATION"), fluctuationLore);
 
             ArrayList<String> fluctuation_interval_lore = new ArrayList<>(Arrays.asList(
-                    t("FLUCTUATION.INTERVAL_LORE"),
-                    "§9" + t("CUR_STATE") + ": " + flucConf.getInt("interval") / 2.0 + "h",
-                    "§e" + t("CLICK") + ": " + t("SHOP_SETTING.L_R_SHIFT")));
-            CreateButton(FLUC_INTERVAL, Material.COMPARATOR, t("FLUCTUATION.INTERVAL"), fluctuation_interval_lore, Clamp(flucConf.getInt("interval") / 2, 1, 64));
+                    t(player, "FLUCTUATION.INTERVAL_LORE"),
+                    "§9" + t(player, "CUR_STATE") + ": " + flucConf.getInt("interval") / 2.0 + "h",
+                    "§e" + t(player, "CLICK") + ": " + t(player, "SHOP_SETTING.L_R_SHIFT")));
+            CreateButton(FLUC_INTERVAL, Material.COMPARATOR, t(player, "FLUCTUATION.INTERVAL"), fluctuation_interval_lore, Clamp(flucConf.getInt("interval") / 2, 1, 64));
 
             ArrayList<String> fluctuation_strength_lore = new ArrayList<>(Arrays.asList(
-                    t("FLUCTUATION.STRENGTH_LORE"),
-                    "§9" + t("CUR_STATE") + ": ~" + flucConf.get("strength") + "%",
-                    "§e" + t("CLICK") + ": " + t("STOCK_STABILIZING.L_R_SHIFT")));
-            CreateButton(FLUC_STRENGTH, Material.COMPARATOR, t("FLUCTUATION.STRENGTH"), fluctuation_strength_lore, Clamp((int) (flucConf.getDouble("strength") * 10), 1, 64));
+                    t(player, "FLUCTUATION.STRENGTH_LORE"),
+                    "§9" + t(player, "CUR_STATE") + ": ~" + flucConf.get("strength") + "%",
+                    "§e" + t(player, "CLICK") + ": " + t(player, "STOCK_STABILIZING.L_R_SHIFT")));
+            CreateButton(FLUC_STRENGTH, Material.COMPARATOR, t(player, "FLUCTUATION.STRENGTH"), fluctuation_strength_lore, Clamp((int) (flucConf.getDouble("strength") * 10), 1, 64));
         } else
         {
             ItemStack flucToggleBtn = ItemsUtil.createItemStack(Material.COMPARATOR, null,
-                    t("FLUCTUATION.FLUCTUATION"),
+                    t(player, "FLUCTUATION.FLUCTUATION"),
                     new ArrayList<>(Arrays.asList(
-                            "§9" + t("CUR_STATE") + ": " + t("OFF"),
-                            "§e" + t("LMB") + ": " + t("ON")
+                            "§9" + t(player, "CUR_STATE") + ": " + t(player, "OFF"),
+                            "§e" + t(player, "LMB") + ": " + t(player, "ON")
                             )),
                     1);
             inventory.setItem(FLUC, flucToggleBtn);
@@ -173,29 +173,29 @@ public final class ShopSettings extends InGameUI
         if (stockStableConf != null)
         {
             ArrayList<String> stableLore = new ArrayList<>(Arrays.asList(
-                    "§9" + t("CUR_STATE") + ": " + t("ON"),
-                    "§e" + t("LMB") + ": " + t("OFF")
+                    "§9" + t(player, "CUR_STATE") + ": " + t(player, "ON"),
+                    "§e" + t(player, "LMB") + ": " + t(player, "OFF")
             ));
-            CreateButton(STABLE, Material.COMPARATOR, t("STOCK_STABILIZING.SS"), stableLore);
+            CreateButton(STABLE, Material.COMPARATOR, t(player, "STOCK_STABILIZING.SS"), stableLore);
 
             ArrayList<String> stable_interval_Lore = new ArrayList<>(Arrays.asList(
-                    t("FLUCTUATION.INTERVAL_LORE"),
-                    "§9" + t("CUR_STATE") + ": " + stockStableConf.getInt("interval") / 2.0 + "h",
-                    "§e" + t("CLICK") + ": " + t("SHOP_SETTING.L_R_SHIFT")));
-            CreateButton(STABLE_INTERVAL, Material.COMPARATOR, t("FLUCTUATION.INTERVAL"), stable_interval_Lore, Clamp(stockStableConf.getInt("interval") / 2, 1, 64));
+                    t(player, "FLUCTUATION.INTERVAL_LORE"),
+                    "§9" + t(player, "CUR_STATE") + ": " + stockStableConf.getInt("interval") / 2.0 + "h",
+                    "§e" + t(player, "CLICK") + ": " + t(player, "SHOP_SETTING.L_R_SHIFT")));
+            CreateButton(STABLE_INTERVAL, Material.COMPARATOR, t(player, "FLUCTUATION.INTERVAL"), stable_interval_Lore, Clamp(stockStableConf.getInt("interval") / 2, 1, 64));
 
             ArrayList<String> stable_strength_Lore = new ArrayList<>(Arrays.asList(
-                    DynamicShop.plugin.getConfig().getBoolean("Shop.UseLegacyStockStabilization") ? t("STOCK_STABILIZING.STRENGTH_LORE_A") : t("STOCK_STABILIZING.STRENGTH_LORE_B"),
-                    "§9" + t("CUR_STATE") + ": ~" + stockStableConf.get("strength") + "%",
-                    "§e" + t("CLICK") + ": " + t("STOCK_STABILIZING.L_R_SHIFT")));
-            CreateButton(STABLE_STRENGTH, Material.COMPARATOR, t("FLUCTUATION.STRENGTH"), stable_strength_Lore, Clamp((int) (stockStableConf.getDouble("strength") * 10), 1, 64));
+                    DynamicShop.plugin.getConfig().getBoolean("Shop.UseLegacyStockStabilization") ? t(player, "STOCK_STABILIZING.STRENGTH_LORE_A") : t(player, "STOCK_STABILIZING.STRENGTH_LORE_B"),
+                    "§9" + t(player, "CUR_STATE") + ": ~" + stockStableConf.get("strength") + "%",
+                    "§e" + t(player, "CLICK") + ": " + t(player, "STOCK_STABILIZING.L_R_SHIFT")));
+            CreateButton(STABLE_STRENGTH, Material.COMPARATOR, t(player, "FLUCTUATION.STRENGTH"), stable_strength_Lore, Clamp((int) (stockStableConf.getDouble("strength") * 10), 1, 64));
         } else
         {
             ArrayList<String> stableLore = new ArrayList<>(Arrays.asList(
-                    "§9" + t("CUR_STATE") + ": " + t("OFF"),
-                    "§e" + t("LMB") + ": " + t("ON")
+                    "§9" + t(player, "CUR_STATE") + ": " + t(player, "OFF"),
+                    "§e" + t(player, "LMB") + ": " + t(player, "ON")
                     ));
-            CreateButton(STABLE, Material.COMPARATOR, t("STOCK_STABILIZING.SS"), stableLore);
+            CreateButton(STABLE, Material.COMPARATOR, t(player, "STOCK_STABILIZING.SS"), stableLore);
         }
 
         // 세금
@@ -203,54 +203,53 @@ public final class ShopSettings extends InGameUI
         if (data.get().contains("Options.SalesTax"))
         {
             ArrayList<String> taxLore = new ArrayList<>(Arrays.asList(
-                    "§9" + t("CUR_STATE") + ": " + t("TAX.USE_LOCAL"),
-                    "§e" + t("CLICK") + ": " +
-                            t("TAX.USE_GLOBAL").replace("{tax}", globalTax + "")));
-            CreateButton(TAX_TOGGLE, Material.IRON_INGOT, t("TAX.SALES_TAX"), taxLore);
+                    "§9" + t(player, "CUR_STATE") + ": " + t(player, "TAX.USE_LOCAL"),
+                    "§e" + t(player, "CLICK") + ": " +
+                            t(player, "TAX.USE_GLOBAL").replace("{tax}", globalTax + "")));
+            CreateButton(TAX_TOGGLE, Material.IRON_INGOT, t(player, "TAX.SALES_TAX"), taxLore);
 
             ArrayList<String> taxLore2 = new ArrayList<>(Arrays.asList(
-                    "§9" + t("CUR_STATE") + ": " + data.get().getInt("Options.SalesTax") + "%",
-                    t("SHOP_SETTING.L_R_SHIFT")));
-            CreateButton(TAX_AMOUNT, Material.IRON_INGOT, t("TAX.SALES_TAX"), taxLore2, Clamp(data.get().getInt("Options.SalesTax"), 1, 64));
+                    "§9" + t(player, "CUR_STATE") + ": " + data.get().getInt("Options.SalesTax") + "%",
+                    t(player, "SHOP_SETTING.L_R_SHIFT")));
+            CreateButton(TAX_AMOUNT, Material.IRON_INGOT, t(player, "TAX.SALES_TAX"), taxLore2, Clamp(data.get().getInt("Options.SalesTax"), 1, 64));
         } else
         {
             ArrayList<String> taxLore = new ArrayList<>(Arrays.asList(
-                    "§9" + t("CUR_STATE") + ": " +
-                            t("TAX.USE_GLOBAL").replace("{tax}", globalTax + ""),
-                    "§e" + t("CLICK") + ": " + t("TAX.USE_LOCAL")));
-            CreateButton(TAX_TOGGLE, Material.IRON_INGOT, t("TAX.SALES_TAX"), taxLore);
+                    "§9" + t(player, "CUR_STATE") + ": " +
+                            t(player, "TAX.USE_GLOBAL").replace("{tax}", globalTax + ""),
+                    "§e" + t(player, "CLICK") + ": " + t(player, "TAX.USE_LOCAL")));
+            CreateButton(TAX_TOGGLE, Material.IRON_INGOT, t(player, "TAX.SALES_TAX"), taxLore);
         }
 
         // 플래그 버튼들
-        CreateFlagButton(FLAG1, confSec_Options.contains("flag.signshop"), "signShop", t("SHOP_SETTING.SIGN_SHOP_LORE"));
-        CreateFlagButton(FLAG2, confSec_Options.contains("flag.localshop"), "localShop", t("SHOP_SETTING.LOCAL_SHOP_LORE"));
-        CreateFlagButton(FLAG3, confSec_Options.contains("flag.deliverycharge"), "deliveryCharge", t("SHOP_SETTING.DELIVERY_CHARGE_LORE"));
-        CreateFlagButton(FLAG4, confSec_Options.contains("flag.jobpoint"), "jobPoint", t("SHOP_SETTING.JOB_POINT_LORE"));
-        CreateFlagButton(FLAG5, confSec_Options.contains("flag.showvaluechange"), "showValueChange", t("SHOP_SETTING.SHOW_VALUE_CHANGE_LORE"));
-        CreateFlagButton(FLAG6, confSec_Options.contains("flag.hidestock"), "hideStock", t("SHOP_SETTING.HIDE_STOCK"));
-        CreateFlagButton(FLAG7, confSec_Options.contains("flag.hidepricingtype"), "hidePricingType", t("SHOP_SETTING.HIDE_PRICING_TYPE"));
-        CreateFlagButton(FLAG8, confSec_Options.contains("flag.hideshopbalance"), "hideShopBalance", t("SHOP_SETTING.HIDE_SHOP_BALANCE"));
-        CreateFlagButton(FLAG9, confSec_Options.contains("flag.showmaxstock"), "showMaxStock", t("SHOP_SETTING.SHOW_MAX_STOCK"));
-        CreateFlagButton(FLAG10, confSec_Options.contains("flag.hiddenincommand"), "hiddenInCommand", t("SHOP_SETTING.HIDDEN_IN_COMMAND"));
+        CreateFlagButton(FLAG1, confSec_Options.contains("flag.signshop"), "signShop", t(player, "SHOP_SETTING.SIGN_SHOP_LORE"));
+        CreateFlagButton(FLAG2, confSec_Options.contains("flag.localshop"), "localShop", t(player, "SHOP_SETTING.LOCAL_SHOP_LORE"));
+        CreateFlagButton(FLAG3, confSec_Options.contains("flag.deliverycharge"), "deliveryCharge", t(player, "SHOP_SETTING.DELIVERY_CHARGE_LORE"));
+        CreateFlagButton(FLAG4, confSec_Options.contains("flag.jobpoint"), "jobPoint", t(player, "SHOP_SETTING.JOB_POINT_LORE"));
+        CreateFlagButton(FLAG5, confSec_Options.contains("flag.showvaluechange"), "showValueChange", t(player, "SHOP_SETTING.SHOW_VALUE_CHANGE_LORE"));
+        CreateFlagButton(FLAG6, confSec_Options.contains("flag.hidestock"), "hideStock", t(player, "SHOP_SETTING.HIDE_STOCK"));
+        CreateFlagButton(FLAG7, confSec_Options.contains("flag.hidepricingtype"), "hidePricingType", t(player, "SHOP_SETTING.HIDE_PRICING_TYPE"));
+        CreateFlagButton(FLAG8, confSec_Options.contains("flag.hideshopbalance"), "hideShopBalance", t(player, "SHOP_SETTING.HIDE_SHOP_BALANCE"));
+        CreateFlagButton(FLAG9, confSec_Options.contains("flag.showmaxstock"), "showMaxStock", t(player, "SHOP_SETTING.SHOW_MAX_STOCK"));
+        CreateFlagButton(FLAG10, confSec_Options.contains("flag.hiddenincommand"), "hiddenInCommand", t(player, "SHOP_SETTING.HIDDEN_IN_COMMAND"));
 
         // 로그 버튼
         String log_cur;
         String log_set;
         if (confSec_Options.contains("log"))
         {
-            log_cur = t("ON");
-            log_set = t("OFF");
+            log_cur = t(player, "ON");
+            log_set = t(player, "OFF");
         } else
         {
-            log_cur = t("OFF");
-            log_set = t("ON");
+            log_cur = t(player, "OFF");
+            log_set = t(player, "ON");
         }
         ArrayList<String> logLore = new ArrayList<>();
-        logLore.add("§9" + t("CUR_STATE") + ": " + log_cur);
-        logLore.add("§e" + t("LMB") + ": " + log_set);
-        //logLore.add(t("SHOP_SETTING.LOG_TOGGLE_LORE"));
-        CreateButton(LOG_TOGGLE, Material.BOOK, t("LOG.LOG"), logLore);
-        CreateButton(LOG_DELETE, Material.RED_STAINED_GLASS_PANE, t("LOG.DELETE"), "");
+        logLore.add("§9" + t(player, "CUR_STATE") + ": " + log_cur);
+        logLore.add("§e" + t(player, "LMB") + ": " + log_set);
+        CreateButton(LOG_TOGGLE, Material.BOOK, t(player, "LOG.LOG"), logLore);
+        CreateButton(LOG_DELETE, Material.RED_STAINED_GLASS_PANE, t(player, "LOG.DELETE"), "");
         return inventory;
     }
 
@@ -538,7 +537,7 @@ public final class ShopSettings extends InGameUI
             {
                 if (!JobsHook.jobsRebornActive)
                 {
-                    player.sendMessage(DynamicShop.dsPrefix + t("ERR.JOBS_REBORN_NOT_FOUND"));
+                    player.sendMessage(DynamicShop.dsPrefix(player) + t(player, "ERR.JOBS_REBORN_NOT_FOUND"));
                     return;
                 }
 
@@ -646,13 +645,13 @@ public final class ShopSettings extends InGameUI
         if (isEnable)
         {
             icon = Material.GREEN_STAINED_GLASS_PANE;
-            current = t("SET");
-            set = t("UNSET");
+            current = t(null, "SET");
+            set = t(null, "UNSET");
         } else
         {
             icon = Material.BLACK_STAINED_GLASS_PANE;
-            current = t("UNSET");
-            set = t("SET");
+            current = t(null, "UNSET");
+            set = t(null, "SET");
         }
 
         ArrayList<String> loreArray = new ArrayList<>();
@@ -665,8 +664,8 @@ public final class ShopSettings extends InGameUI
         {
             loreArray.add(lore);
         }
-        loreArray.add("§9" + t("CUR_STATE") + ": " + current);
-        loreArray.add("§e" + t("CLICK") + ": " + set);
-        CreateButton(buttonPosition, icon, t("SHOP_SETTING.FLAG") + ": " + title, loreArray);
+        loreArray.add("§9" + t(null, "CUR_STATE") + ": " + current);
+        loreArray.add("§e" + t(null, "CLICK") + ": " + set);
+        CreateButton(buttonPosition, icon, t(null, "SHOP_SETTING.FLAG") + ": " + title, loreArray);
     }
 }

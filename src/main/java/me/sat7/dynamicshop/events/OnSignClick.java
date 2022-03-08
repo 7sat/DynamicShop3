@@ -181,7 +181,7 @@ public class OnSignClick implements Listener
                 {
                     if (p.getGameMode() == GameMode.CREATIVE && !p.hasPermission(Constants.P_ADMIN_CREATIVE))
                     {
-                        p.sendMessage(DynamicShop.dsPrefix + t("ERR.CREATIVE"));
+                        p.sendMessage(DynamicShop.dsPrefix(p) + t(p, "ERR.CREATIVE"));
                         return;
                     }
 
@@ -201,7 +201,7 @@ public class OnSignClick implements Listener
                     {
                         if (!p.hasPermission(permission) && !p.hasPermission(permission + ".buy") && !p.hasPermission(permission + ".sell"))
                         {
-                            p.sendMessage(DynamicShop.dsPrefix + t("ERR.NO_PERMISSION"));
+                            p.sendMessage(DynamicShop.dsPrefix(p) + t(p, "ERR.NO_PERMISSION"));
                             return;
                         }
                     }

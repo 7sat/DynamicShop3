@@ -22,8 +22,8 @@ public class SellBuy extends DSCMD
     @Override
     public void SendHelpMessage(Player player)
     {
-        player.sendMessage(DynamicShop.dsPrefix + t("HELP.TITLE").replace("{command}", "sellbuy"));
-        player.sendMessage(" - " + t("HELP.USAGE") + ": /ds shop <shop name> sellbuy < sellonly | buyonly | clear >");
+        player.sendMessage(DynamicShop.dsPrefix(player) + t(player, "HELP.TITLE").replace("{command}", "sellbuy"));
+        player.sendMessage(" - " + t(player, "HELP.USAGE") + ": /ds shop <shop name> sellbuy < sellonly | buyonly | clear >");
 
         player.sendMessage("");
     }
@@ -73,6 +73,6 @@ public class SellBuy extends DSCMD
         }
 
         shopData.save();
-        player.sendMessage(DynamicShop.dsPrefix + t("MESSAGE.CHANGES_APPLIED") + temp);
+        player.sendMessage(DynamicShop.dsPrefix(player) + t(player, "MESSAGE.CHANGES_APPLIED") + temp);
     }
 }

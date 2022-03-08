@@ -96,7 +96,7 @@ public final class Sell
         // 판매할 아이탬이 없음
         if (tradeAmount == 0)
         {
-            player.sendMessage(DynamicShop.dsPrefix + t("MESSAGE.NO_ITEM_TO_SELL"));
+            player.sendMessage(DynamicShop.dsPrefix(player) + t(player, "MESSAGE.NO_ITEM_TO_SELL"));
             return 0;
         }
 
@@ -120,7 +120,7 @@ public final class Sell
             LogUtil.addLog(shopName, tempIS.getType().toString(), -tradeAmount, priceSum, "vault", player.getName());
 
             boolean useLocalizedName = DynamicShop.plugin.getConfig().getBoolean("UI.LocalizedItemName");
-            String message = DynamicShop.dsPrefix + t("MESSAGE.SELL_SUCCESS", !useLocalizedName)
+            String message = DynamicShop.dsPrefix(player) + t(player, "MESSAGE.SELL_SUCCESS", !useLocalizedName)
                     .replace("{amount}", Integer.toString(tradeAmount))
                     .replace("{price}", n(r.amount))
                     .replace("{bal}", n(econ.getBalance((player))));
@@ -162,7 +162,7 @@ public final class Sell
         // 상점에 돈이 없음
         if (ShopUtil.getShopBalance(shopName) != -1 && ShopUtil.getShopBalance(shopName) < Calc.calcTotalCost(shopName, tradeIdx, tempIS.getAmount()))
         {
-            player.sendMessage(DynamicShop.dsPrefix + t("MESSAGE.SHOP_BAL_LOW"));
+            player.sendMessage(DynamicShop.dsPrefix(player) + t(player, "MESSAGE.SHOP_BAL_LOW"));
             return;
         }
 
@@ -178,7 +178,7 @@ public final class Sell
         // 판매할 아이탬이 없음
         if (actualAmount == 0)
         {
-            player.sendMessage(DynamicShop.dsPrefix + t("MESSAGE.NO_ITEM_TO_SELL"));
+            player.sendMessage(DynamicShop.dsPrefix(player) + t(player, "MESSAGE.NO_ITEM_TO_SELL"));
             return;
         }
 
@@ -212,13 +212,13 @@ public final class Sell
         String message = "";
         if (currency == ItemTrade.CURRENCY.VAULT)
         {
-            message = DynamicShop.dsPrefix + t("MESSAGE.SELL_SUCCESS", !useLocalizedName)
+            message = DynamicShop.dsPrefix(player) + t(player, "MESSAGE.SELL_SUCCESS", !useLocalizedName)
                     .replace("{amount}", Integer.toString(actualAmount))
                     .replace("{price}", n(r.amount))
                     .replace("{bal}", n(econ.getBalance((player))));
         } else if (currency == ItemTrade.CURRENCY.JOB_POINT)
         {
-            message = DynamicShop.dsPrefix + t("MESSAGE.SELL_SUCCESS_JP", !useLocalizedName)
+            message = DynamicShop.dsPrefix(player) + t(player, "MESSAGE.SELL_SUCCESS_JP", !useLocalizedName)
                     .replace("{amount}", Integer.toString(actualAmount))
                     .replace("{price}", n(priceSum))
                     .replace("{bal}", n(JobsHook.getCurJobPoints(player)));

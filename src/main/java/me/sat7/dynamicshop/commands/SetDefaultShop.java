@@ -21,8 +21,8 @@ public final class SetDefaultShop extends DSCMD
     @Override
     public void SendHelpMessage(Player player)
     {
-        player.sendMessage(DynamicShop.dsPrefix + t("HELP.TITLE").replace("{command}", "setdefaultshop"));
-        player.sendMessage(" - " + t("HELP.USAGE") + ": /ds setdefaultshop <shop name>");
+        player.sendMessage(DynamicShop.dsPrefix(player) + t(player, "HELP.TITLE").replace("{command}", "setdefaultshop"));
+        player.sendMessage(" - " + t(player, "HELP.USAGE") + ": /ds setdefaultshop <shop name>");
 
         player.sendMessage("");
     }
@@ -38,10 +38,10 @@ public final class SetDefaultShop extends DSCMD
             DynamicShop.plugin.getConfig().set("Command.DefaultShopName", args[1]);
             DynamicShop.plugin.saveConfig();
 
-            sender.sendMessage(DynamicShop.dsPrefix + t("MESSAGE.CHANGES_APPLIED") + args[1]);
+            sender.sendMessage(DynamicShop.dsPrefix(sender) + t(sender, "MESSAGE.CHANGES_APPLIED") + args[1]);
         } else
         {
-            sender.sendMessage(DynamicShop.dsPrefix + t("ERR.SHOP_NOT_FOUND"));
+            sender.sendMessage(DynamicShop.dsPrefix(sender) + t(sender, "ERR.SHOP_NOT_FOUND"));
         }
     }
 }

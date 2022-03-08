@@ -22,8 +22,8 @@ public class Position extends DSCMD
     @Override
     public void SendHelpMessage(Player player)
     {
-        player.sendMessage(DynamicShop.dsPrefix + t("HELP.TITLE").replace("{command}", "position"));
-        player.sendMessage(" - " + t("HELP.USAGE") + ": /ds shop <shopname> position <pos1 | pos2 | clear>");
+        player.sendMessage(DynamicShop.dsPrefix(player) + t(player, "HELP.TITLE").replace("{command}", "position"));
+        player.sendMessage(" - " + t(player, "HELP.USAGE") + ": /ds shop <shopname> position <pos1 | pos2 | clear>");
 
         player.sendMessage("");
     }
@@ -44,23 +44,23 @@ public class Position extends DSCMD
             shopData.get().set("Options.world", player.getWorld().getName());
             shopData.get().set("Options.pos1", player.getLocation().getBlockX() + "_" + player.getLocation().getBlockY() + "_" + player.getLocation().getBlockZ());
             shopData.save();
-            player.sendMessage(DynamicShop.dsPrefix + "p1");
+            player.sendMessage(DynamicShop.dsPrefix(player) + "p1");
         } else if (args[3].equalsIgnoreCase("pos2"))
         {
             shopData.get().set("Options.world", player.getWorld().getName());
             shopData.get().set("Options.pos2", player.getLocation().getBlockX() + "_" + player.getLocation().getBlockY() + "_" + player.getLocation().getBlockZ());
             shopData.save();
-            player.sendMessage(DynamicShop.dsPrefix + "p2");
+            player.sendMessage(DynamicShop.dsPrefix(player) + "p2");
         } else if (args[3].equalsIgnoreCase("clear"))
         {
             shopData.get().set("Options.world", null);
             shopData.get().set("Options.pos1", null);
             shopData.get().set("Options.pos2", null);
             shopData.save();
-            player.sendMessage(DynamicShop.dsPrefix + "clear");
+            player.sendMessage(DynamicShop.dsPrefix(player) + "clear");
         } else
         {
-            player.sendMessage(DynamicShop.dsPrefix + t("ERR.WRONG_USAGE"));
+            player.sendMessage(DynamicShop.dsPrefix(player) + t(player, "ERR.WRONG_USAGE"));
         }
     }
 }

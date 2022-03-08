@@ -1,8 +1,10 @@
 package me.sat7.dynamicshop.utilities;
 
+import me.clip.placeholderapi.PlaceholderAPI;
 import net.md_5.bungee.api.ChatColor;
 import org.bukkit.Bukkit;
 import org.bukkit.Material;
+import org.bukkit.command.CommandSender;
 import org.bukkit.configuration.ConfigurationSection;
 
 import me.sat7.dynamicshop.DynamicShop;
@@ -171,13 +173,12 @@ public final class LangUtil
             ccLang.get().addDefault("PAGE_EDITOR.EMPTY", "§8(비어있음)");
 
             ccLang.get().addDefault("LOG_VIEWER_TITLE", "§3로그 뷰어");
-            ccLang.get().addDefault("LOG_VIEWER.USER", "§f유저: ");
-            ccLang.get().addDefault("LOG_VIEWER.ITEM", "§f아이템: ");
-            ccLang.get().addDefault("LOG_VIEWER.AMOUNT", "§f수량: ");
             ccLang.get().addDefault("LOG_VIEWER.DATE", "§f날짜: ");
             ccLang.get().addDefault("LOG_VIEWER.TIME", "§f시간: ");
             ccLang.get().addDefault("LOG_VIEWER.CURRENCY", "§f화폐 유형: ");
             ccLang.get().addDefault("LOG_VIEWER.PRICE", "§f가격: ");
+            ccLang.get().addDefault("LOG_VIEWER.EXPAND", "§f펼치기");
+            ccLang.get().addDefault("LOG_VIEWER.COLLAPSE", "§f접기");
 
             ccLang.get().addDefault("LOG.LOG", "§f로그");
             ccLang.get().addDefault("LOG.CLEAR", "§f로그 삭제됨");
@@ -492,13 +493,12 @@ public final class LangUtil
             ccLang.get().addDefault("PAGE_EDITOR.EMPTY", "§8(empty)");
 
             ccLang.get().addDefault("LOG_VIEWER_TITLE", "§3Log Viewer");
-            ccLang.get().addDefault("LOG_VIEWER.USER", "§fUser: ");
-            ccLang.get().addDefault("LOG_VIEWER.ITEM", "§fItem: ");
-            ccLang.get().addDefault("LOG_VIEWER.AMOUNT", "§fQuantity: ");
             ccLang.get().addDefault("LOG_VIEWER.DATE", "§fDate: ");
             ccLang.get().addDefault("LOG_VIEWER.TIME", "§fTime: ");
             ccLang.get().addDefault("LOG_VIEWER.CURRENCY", "§fCurrency: ");
             ccLang.get().addDefault("LOG_VIEWER.PRICE", "§fPrice: ");
+            ccLang.get().addDefault("LOG_VIEWER.EXPAND", "§fExpand");
+            ccLang.get().addDefault("LOG_VIEWER.COLLAPSE", "§fCollapse");
 
             ccLang.get().addDefault("LOG.LOG", "§fLog");
             ccLang.get().addDefault("LOG.CLEAR", "§fLog deleted");
@@ -697,18 +697,24 @@ public final class LangUtil
 
     public static final Pattern HEX_PATTERN = Pattern.compile("(#[A-Fa-f0-9]{6})");
 
-    public static String t(String key)
+    public static String t(Player player, String key)
     {
-        return t(key, true);
+        return t(player, key, true);
     }
 
-    public static String t(String key, boolean hexConver)
+    public static String t(CommandSender sender, String key)
+    {
+        Player player = (Player)sender;
+        return t(player, key, true);
+    }
+
+    public static String t(Player player, String key, boolean hexConvert)
     {
         String temp = ccLang.get().getString(key);
         if(temp == null || temp.isEmpty())
             return key;
 
-        if (hexConver)
+        if (hexConvert)
         {
             Matcher matcher = HEX_PATTERN.matcher(temp);
             while (matcher.find())
@@ -717,7 +723,10 @@ public final class LangUtil
             }
         }
 
-        return temp;
+        if(player != null && DynamicShop.isPapiExist)
+            return PlaceholderAPI.setPlaceholders(player, temp);
+        else
+            return temp;
     }
 
     public static boolean sendMessageWithLocalizedItemName(Player player, String message, Material material) {

@@ -72,7 +72,7 @@ public final class ConfigUtil
             config.set(s, config.get(s));
         }
 
-        DynamicShop.dsPrefix = config.getString("Prefix");
+        DynamicShop.dsPrefix_ = config.getString("Prefix");
 
         double salesTax = Clamp(config.getDouble("Shop.SalesTax"), 0, 99);
         config.set("Shop.SalesTax", salesTax);

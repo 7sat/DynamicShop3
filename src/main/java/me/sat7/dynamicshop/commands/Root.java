@@ -24,20 +24,20 @@ public class Root implements CommandExecutor
 
             if (!player.hasPermission(Constants.P_USE))
             {
-                player.sendMessage(DynamicShop.dsPrefix + t("ERR.NO_PERMISSION"));
+                player.sendMessage(DynamicShop.dsPrefix(player) + t(player, "ERR.NO_PERMISSION"));
                 return true;
             }
 
             if (player.getGameMode() == GameMode.CREATIVE && !player.hasPermission(Constants.P_ADMIN_CREATIVE))
             {
-                player.sendMessage(DynamicShop.dsPrefix + t("ERR.CREATIVE"));
+                player.sendMessage(DynamicShop.dsPrefix(player) + t(player, "ERR.CREATIVE"));
                 return true;
             }
 
             // user.yml 에 player가 없으면 재생성 시도. 실패시 리턴.
             if (!DynaShopAPI.recreateUserData(player))
             {
-                player.sendMessage(DynamicShop.dsPrefix + t("ERR.NO_USER_ID"));
+                player.sendMessage(DynamicShop.dsPrefix(player) + t(player, "ERR.NO_USER_ID"));
                 return true;
             }
 

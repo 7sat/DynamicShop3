@@ -20,9 +20,9 @@ public final class CommandHelp extends DSCMD
     @Override
     public void SendHelpMessage(Player player)
     {
-        player.sendMessage(DynamicShop.dsPrefix + t("HELP.TITLE").replace("{command}", "cmdHelp"));
-        player.sendMessage(" - " + t("HELP.USAGE") + ": /ds cmdHelp <on | off>");
-        player.sendMessage(" - " + t("HELP.CMD"));
+        player.sendMessage(DynamicShop.dsPrefix(player) + t(player, "HELP.TITLE").replace("{command}", "cmdHelp"));
+        player.sendMessage(" - " + t(player, "HELP.USAGE") + ": /ds cmdHelp <on | off>");
+        player.sendMessage(" - " + t(player, "HELP.CMD"));
 
         player.sendMessage("");
     }
@@ -39,19 +39,19 @@ public final class CommandHelp extends DSCMD
 
         if (args[1].equalsIgnoreCase("on"))
         {
-            player.sendMessage(DynamicShop.dsPrefix + "켜짐");
+            player.sendMessage(DynamicShop.dsPrefix(player) + "켜짐");
             DynamicShop.userTempData.put(uuid, "");
             DynamicShop.ccUser.get().set(player.getUniqueId() + ".cmdHelp", true);
             DynamicShop.ccUser.save();
         } else if (args[1].equalsIgnoreCase("off"))
         {
-            player.sendMessage(DynamicShop.dsPrefix + "꺼짐");
+            player.sendMessage(DynamicShop.dsPrefix(player) + "꺼짐");
             DynamicShop.userTempData.put(uuid, "");
             DynamicShop.ccUser.get().set(player.getUniqueId() + ".cmdHelp", false);
             DynamicShop.ccUser.save();
         } else
         {
-            player.sendMessage(DynamicShop.dsPrefix + t("ERR.WRONG_USAGE"));
+            player.sendMessage(DynamicShop.dsPrefix(player) + t(player, "ERR.WRONG_USAGE"));
         }
     }
 }

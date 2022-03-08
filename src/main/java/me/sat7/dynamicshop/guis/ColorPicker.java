@@ -23,12 +23,12 @@ public class ColorPicker extends InGameUI
 
     public Inventory getGui(Player player, int slotIndex)
     {
-        inventory = Bukkit.createInventory(player, 27, t("COLOR_PICKER_TITLE"));
+        inventory = Bukkit.createInventory(player, 27, t(player, "COLOR_PICKER_TITLE"));
 
         this.slotIndex = slotIndex;
 
         CreateColorButtons();
-        CreateCloseButton(CLOSE);
+        CreateCloseButton(player, CLOSE);
 
         return inventory;
     }

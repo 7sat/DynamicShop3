@@ -41,11 +41,11 @@ public final class DynaShopAPI
         {
             if(player.hasPermission(P_ADMIN_SHOP_EDIT))
             {
-                player.sendMessage(DynamicShop.dsPrefix + t("MESSAGE.SHOP_DISABLED"));
+                player.sendMessage(DynamicShop.dsPrefix(player) + t(player, "MESSAGE.SHOP_DISABLED"));
             }
             else
             {
-                player.sendMessage(DynamicShop.dsPrefix + t("MESSAGE.SHOP_IS_CLOSED_BY_ADMIN"));
+                player.sendMessage(DynamicShop.dsPrefix(player) + t(player, "MESSAGE.SHOP_IS_CLOSED_BY_ADMIN"));
                 return;
             }
         }
@@ -73,11 +73,11 @@ public final class DynaShopAPI
         {
             if(player.hasPermission(P_ADMIN_SHOP_EDIT))
             {
-                player.sendMessage(DynamicShop.dsPrefix + t("MESSAGE.SHOP_DISABLED"));
+                player.sendMessage(DynamicShop.dsPrefix(player) + t(player, "MESSAGE.SHOP_DISABLED"));
             }
             else
             {
-                player.sendMessage(DynamicShop.dsPrefix + t("MESSAGE.SHOP_IS_CLOSED_BY_ADMIN"));
+                player.sendMessage(DynamicShop.dsPrefix(player) + t(player, "MESSAGE.SHOP_IS_CLOSED_BY_ADMIN"));
                 return;
             }
         }

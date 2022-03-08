@@ -26,11 +26,11 @@ public final class SetTax extends DSCMD
     @Override
     public void SendHelpMessage(Player player)
     {
-        player.sendMessage(DynamicShop.dsPrefix + t("HELP.TITLE").replace("{command}", "settax"));
-        player.sendMessage(" - " + t("HELP.USAGE") + ": /ds settax <value>");
+        player.sendMessage(DynamicShop.dsPrefix(player) + t(player, "HELP.TITLE").replace("{command}", "settax"));
+        player.sendMessage(" - " + t(player, "HELP.USAGE") + ": /ds settax <value>");
 
-        player.sendMessage(DynamicShop.dsPrefix + t("HELP.TITLE").replace("{command}", "settax temp"));
-        player.sendMessage(" - " + t("HELP.USAGE") + ": /ds settax temp <tax_value> <minutes_until_reset>");
+        player.sendMessage(DynamicShop.dsPrefix(player) + t(player, "HELP.TITLE").replace("{command}", "settax temp"));
+        player.sendMessage(" - " + t(player, "HELP.USAGE") + ": /ds settax temp <tax_value> <minutes_until_reset>");
 
         player.sendMessage("");
     }
@@ -52,10 +52,10 @@ public final class SetTax extends DSCMD
 
                 ConfigUtil.setCurrentTax(newValue);
 
-                sender.sendMessage(DynamicShop.dsPrefix + t("MESSAGE.CHANGES_APPLIED") + newValue);
+                sender.sendMessage(DynamicShop.dsPrefix(sender) + t(sender, "MESSAGE.CHANGES_APPLIED") + newValue);
             } catch (Exception e)
             {
-                sender.sendMessage(DynamicShop.dsPrefix + t("ERR.WRONG_DATATYPE"));
+                sender.sendMessage(DynamicShop.dsPrefix(sender) + t(sender, "ERR.WRONG_DATATYPE"));
             }
         } else if (args.length == 4 && args[1].equals("temp"))
         {
@@ -85,15 +85,15 @@ public final class SetTax extends DSCMD
                 resetTaxTask = new ResetTaxTask();
                 resetTaxTask.runTaskLater(DynamicShop.plugin, 20L * 60L * tempTaxDurationMinutes);
 
-                sender.sendMessage(DynamicShop.dsPrefix + t("MESSAGE.CHANGES_APPLIED") + newValue);
+                sender.sendMessage(DynamicShop.dsPrefix(sender) + t(sender, "MESSAGE.CHANGES_APPLIED") + newValue);
             } catch (Exception e)
             {
-                sender.sendMessage(DynamicShop.dsPrefix + t("ERR.WRONG_DATATYPE"));
+                sender.sendMessage(DynamicShop.dsPrefix(sender) + t(sender, "ERR.WRONG_DATATYPE"));
             }
         }
         else
         {
-            sender.sendMessage(DynamicShop.dsPrefix + t("ERR.WRONG_USAGE"));
+            sender.sendMessage(DynamicShop.dsPrefix(sender) + t(sender, "ERR.WRONG_USAGE"));
         }
     }
 }

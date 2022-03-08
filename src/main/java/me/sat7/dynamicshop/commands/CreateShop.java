@@ -23,9 +23,9 @@ public final class CreateShop extends DSCMD
     @Override
     public void SendHelpMessage(Player player)
     {
-        player.sendMessage(DynamicShop.dsPrefix + t("HELP.TITLE").replace("{command}", "createshop"));
-        player.sendMessage(" - " + t("HELP.USAGE") + ": /ds create <shopname> [<permission>]");
-        player.sendMessage(" - " + t("HELP.CREATE_SHOP_2"));
+        player.sendMessage(DynamicShop.dsPrefix(player) + t(player, "HELP.TITLE").replace("{command}", "createshop"));
+        player.sendMessage(" - " + t(player, "HELP.USAGE") + ": /ds create <shopname> [<permission>]");
+        player.sendMessage(" - " + t(player, "HELP.CREATE_SHOP_2"));
 
         player.sendMessage("");
     }
@@ -73,12 +73,12 @@ public final class CreateShop extends DSCMD
 
             ShopUtil.shopConfigFiles.put(shopname, data);
 
-            player.sendMessage(DynamicShop.dsPrefix + t("MESSAGE.SHOP_CREATED"));
+            player.sendMessage(DynamicShop.dsPrefix(player) + t(player, "MESSAGE.SHOP_CREATED"));
             DynaShopAPI.openShopGui(player, shopname, 1);
         }
         else
         {
-            player.sendMessage(DynamicShop.dsPrefix + t("ERR.SHOP_EXIST"));
+            player.sendMessage(DynamicShop.dsPrefix(player) + t(player, "ERR.SHOP_EXIST"));
         }
     }
 }

@@ -25,13 +25,13 @@ public class Optional implements CommandExecutor
 
             if (!player.hasPermission(Constants.P_USE))
             {
-                player.sendMessage(DynamicShop.dsPrefix + t("ERR.NO_PERMISSION"));
+                player.sendMessage(DynamicShop.dsPrefix(player) + t(player, "ERR.NO_PERMISSION"));
                 return true;
             }
 
             if (player.getGameMode() == GameMode.CREATIVE && !player.hasPermission(Constants.P_ADMIN_CREATIVE))
             {
-                player.sendMessage(DynamicShop.dsPrefix + t("ERR.CREATIVE"));
+                player.sendMessage(DynamicShop.dsPrefix(player) + t(player, "ERR.CREATIVE"));
                 return true;
             }
 

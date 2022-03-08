@@ -24,8 +24,8 @@ public class Log extends DSCMD
     @Override
     public void SendHelpMessage(Player player)
     {
-        player.sendMessage(DynamicShop.dsPrefix + t("HELP.TITLE").replace("{command}", "log"));
-        player.sendMessage(" - " + t("HELP.USAGE") + ": /ds shop <shop name> log < enable | disable | clear >");
+        player.sendMessage(DynamicShop.dsPrefix(player) + t(player, "HELP.TITLE").replace("{command}", "log"));
+        player.sendMessage(" - " + t(player, "HELP.USAGE") + ": /ds shop <shop name> log < enable | disable | clear >");
 
         player.sendMessage("");
     }
@@ -44,19 +44,19 @@ public class Log extends DSCMD
         if (args[3].equalsIgnoreCase("enable"))
         {
             shopData.get().set("Options.log", true);
-            player.sendMessage(DynamicShop.dsPrefix + shopName + "/" + t("LOG.LOG") + ": " + args[3]);
+            player.sendMessage(DynamicShop.dsPrefix(player) + shopName + "/" + t(player, "LOG.LOG") + ": " + args[3]);
         } else if (args[3].equalsIgnoreCase("disable"))
         {
             shopData.get().set("Options.log", null);
-            player.sendMessage(DynamicShop.dsPrefix + shopName + "/" + t("LOG.LOG") + ": " + args[3]);
+            player.sendMessage(DynamicShop.dsPrefix(player) + shopName + "/" + t(player, "LOG.LOG") + ": " + args[3]);
         } else if (args[3].equalsIgnoreCase("clear"))
         {
             LogUtil.ccLog.get().set(shopName, null);
             LogUtil.ccLog.save();
-            player.sendMessage(DynamicShop.dsPrefix + shopName + "/" + LangUtil.ccLang.get().getString("LOG.CLEAR"));
+            player.sendMessage(DynamicShop.dsPrefix(player) + shopName + "/" + t(player, "LOG.CLEAR"));
         } else
         {
-            player.sendMessage(DynamicShop.dsPrefix + t("ERR.WRONG_USAGE"));
+            player.sendMessage(DynamicShop.dsPrefix(player) + t(player, "ERR.WRONG_USAGE"));
             return;
         }
 

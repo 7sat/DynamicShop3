@@ -29,11 +29,11 @@ public class Account extends DSCMD
     @Override
     public void SendHelpMessage(Player player)
     {
-        player.sendMessage(DynamicShop.dsPrefix + t("HELP.TITLE").replace("{command}", "account"));
-        player.sendMessage(" - " + t("HELP.USAGE") + ": /ds shop <shopname> account set <amount>");
-        player.sendMessage(" - " + t("HELP.USAGE") + ": /ds shop <shopname> account linkto <shopname>");
-        player.sendMessage(" - " + t("HELP.USAGE") + ": /ds shop <shopname> account transfer <target> <amount>");
-        player.sendMessage(" - " + t("HELP.ACCOUNT"));
+        player.sendMessage(DynamicShop.dsPrefix(player) + t(player, "HELP.TITLE").replace("{command}", "account"));
+        player.sendMessage(" - " + t(player, "HELP.USAGE") + ": /ds shop <shopname> account set <amount>");
+        player.sendMessage(" - " + t(player, "HELP.USAGE") + ": /ds shop <shopname> account linkto <shopname>");
+        player.sendMessage(" - " + t(player, "HELP.USAGE") + ": /ds shop <shopname> account transfer <target> <amount>");
+        player.sendMessage(" - " + t(player, "HELP.ACCOUNT"));
 
         player.sendMessage("");
     }
@@ -58,16 +58,16 @@ public class Account extends DSCMD
                     if (Double.parseDouble(args[4]) < 0)
                     {
                         shopData.get().set("Options.Balance", null);
-                        player.sendMessage(DynamicShop.dsPrefix + LangUtil.ccLang.get().get("MESSAGE.CHANGES_APPLIED") + t("SHOP.SHOP_BAL_INF"));
+                        player.sendMessage(DynamicShop.dsPrefix(player) + t(player, "MESSAGE.CHANGES_APPLIED") + t(player, "SHOP.SHOP_BAL_INF"));
                     } else
                     {
                         shopData.get().set("Options.Balance", Double.parseDouble(args[4]));
-                        player.sendMessage(DynamicShop.dsPrefix + LangUtil.ccLang.get().get("MESSAGE.CHANGES_APPLIED") + args[4]);
+                        player.sendMessage(DynamicShop.dsPrefix(player) + LangUtil.ccLang.get().get("MESSAGE.CHANGES_APPLIED") + args[4]);
                     }
                     shopData.save();
                 } catch (Exception e)
                 {
-                    player.sendMessage(DynamicShop.dsPrefix + t("ERR.WRONG_DATATYPE"));
+                    player.sendMessage(DynamicShop.dsPrefix(player) + t(player, "ERR.WRONG_DATATYPE"));
                     return;
                 }
                 break;
@@ -75,7 +75,7 @@ public class Account extends DSCMD
                 // 그런 상점(타깃) 없음
                 if (!ShopUtil.shopConfigFiles.containsKey(args[4]))
                 {
-                    player.sendMessage(DynamicShop.dsPrefix + t("ERR.SHOP_NOT_FOUND"));
+                    player.sendMessage(DynamicShop.dsPrefix(player) + t(player, "ERR.SHOP_NOT_FOUND"));
                     return;
                 }
 
@@ -88,7 +88,7 @@ public class Account extends DSCMD
                         Double temp = Double.parseDouble(targetShopData.get().getString("Options.Balance"));
                     } catch (Exception e)
                     {
-                        player.sendMessage(DynamicShop.dsPrefix + t("ERR.SHOP_LINK_TARGET_ERR"));
+                        player.sendMessage(DynamicShop.dsPrefix(player) + t(player, "ERR.SHOP_LINK_TARGET_ERR"));
                         return;
                     }
                 }
@@ -101,38 +101,38 @@ public class Account extends DSCMD
                     {
                         if (temp != null && temp.equals(args[1]))
                         {
-                            player.sendMessage(DynamicShop.dsPrefix + t("ERR.NESTED_STRUCTURE"));
+                            player.sendMessage(DynamicShop.dsPrefix(player) + t(player, "ERR.NESTED_STRUCTURE"));
                             return;
                         }
                     } catch (Exception e)
                     {
-                        DynamicShop.console.sendMessage(DynamicShop.dsPrefix + e);
+                        DynamicShop.console.sendMessage(DynamicShop.dsPrefix(player) + e);
                     }
                 }
 
                 // 출발 상점과 도착 상점이 같음
                 if (args[1].equals(args[4]))
                 {
-                    player.sendMessage(DynamicShop.dsPrefix + t("ERR.WRONG_USAGE"));
+                    player.sendMessage(DynamicShop.dsPrefix(player) + t(player, "ERR.WRONG_USAGE"));
                     return;
                 }
 
                 // 출발 상점과 도착 상점의 통화 유형이 다름
                 if (shopData.get().contains("Options.flag.jobpoint") != targetShopData.get().contains("Options.flag.jobpoint"))
                 {
-                    player.sendMessage(DynamicShop.dsPrefix + t("ERR.SHOP_DIFF_CURRENCY"));
+                    player.sendMessage(DynamicShop.dsPrefix(player) + t(player, "ERR.SHOP_DIFF_CURRENCY"));
                     return;
                 }
 
                 shopData.get().set("Options.Balance", args[4]);
                 shopData.save();
-                player.sendMessage(DynamicShop.dsPrefix + t("MESSAGE.CHANGES_APPLIED") + args[4]);
+                player.sendMessage(DynamicShop.dsPrefix(player) + t(player, "MESSAGE.CHANGES_APPLIED") + args[4]);
                 break;
             case "transfer":
                 //[4] 대상 [5] 금액
                 if (args.length < 6)
                 {
-                    player.sendMessage(DynamicShop.dsPrefix + t("ERR.WRONG_USAGE"));
+                    player.sendMessage(DynamicShop.dsPrefix(player) + t(player, "ERR.WRONG_USAGE"));
                     return;
                 }
 
@@ -143,14 +143,14 @@ public class Account extends DSCMD
                     amount = Double.parseDouble(args[5]);
                 } catch (Exception e)
                 {
-                    player.sendMessage(DynamicShop.dsPrefix + t("ERR.WRONG_DATATYPE"));
+                    player.sendMessage(DynamicShop.dsPrefix(player) + t(player, "ERR.WRONG_DATATYPE"));
                     return;
                 }
 
                 // 출발 상점이 무한계좌임
                 if (!shopData.get().contains("Options.Balance"))
                 {
-                    player.sendMessage(DynamicShop.dsPrefix + t("ERR.SHOP_HAS_INF_BAL").replace("{shop}", args[1]));
+                    player.sendMessage(DynamicShop.dsPrefix(player) + t(player, "ERR.SHOP_HAS_INF_BAL").replace("{shop}", args[1]));
                     return;
                 }
 
@@ -159,11 +159,11 @@ public class Account extends DSCMD
                 {
                     if (shopData.get().contains("Options.flag.jobpoint"))
                     {
-                        player.sendMessage(DynamicShop.dsPrefix + t("MESSAGE.NOT_ENOUGH_POINT").
+                        player.sendMessage(DynamicShop.dsPrefix(player) + t(player, "MESSAGE.NOT_ENOUGH_POINT").
                                 replace("{bal}", n(ShopUtil.getShopBalance(args[1]))));
                     } else
                     {
-                        player.sendMessage(DynamicShop.dsPrefix + t("MESSAGE.NOT_ENOUGH_MONEY").
+                        player.sendMessage(DynamicShop.dsPrefix(player) + t(player, "MESSAGE.NOT_ENOUGH_MONEY").
                                 replace("{bal}", n(ShopUtil.getShopBalance(args[1]))));
                     }
                     return;
@@ -175,21 +175,21 @@ public class Account extends DSCMD
                     // 도착 상점이 무한계좌임
                     if (!targetShopData.get().contains("Options.Balance"))
                     {
-                        player.sendMessage(DynamicShop.dsPrefix + t("ERR.SHOP_HAS_INF_BAL").replace("{shop}", args[4]));
+                        player.sendMessage(DynamicShop.dsPrefix(player) + t(player, "ERR.SHOP_HAS_INF_BAL").replace("{shop}", args[4]));
                         return;
                     }
 
                     // 출발 상점과 도착 상점이 같음
                     if (args[1].equals(args[4]))
                     {
-                        player.sendMessage(DynamicShop.dsPrefix + t("ERR.WRONG_USAGE"));
+                        player.sendMessage(DynamicShop.dsPrefix(player) + t(player, "ERR.WRONG_USAGE"));
                         return;
                     }
 
                     // 출발 상점과 도착 상점의 통화 유형이 다름
                     if (shopData.get().contains("Options.flag.jobpoint") != targetShopData.get().contains("Options.flag.jobpoint"))
                     {
-                        player.sendMessage(DynamicShop.dsPrefix + t("ERR.SHOP_DIFF_CURRENCY"));
+                        player.sendMessage(DynamicShop.dsPrefix(player) + t(player, "ERR.SHOP_DIFF_CURRENCY"));
                         return;
                     }
 
@@ -200,7 +200,7 @@ public class Account extends DSCMD
                     shopData.save();
                     targetShopData.save();
 
-                    player.sendMessage(DynamicShop.dsPrefix + t("MESSAGE.TRANSFER_SUCCESS"));
+                    player.sendMessage(DynamicShop.dsPrefix(player) + t(player, "MESSAGE.TRANSFER_SUCCESS"));
                 }
                 // 플레이어에게 송금
                 else
@@ -211,7 +211,7 @@ public class Account extends DSCMD
 
                         if (target == null)
                         {
-                            player.sendMessage(DynamicShop.dsPrefix + t("ERR.PLAYER_NOT_EXIST"));
+                            player.sendMessage(DynamicShop.dsPrefix(player) + t(player, "ERR.PLAYER_NOT_EXIST"));
                             return;
                         }
 
@@ -221,7 +221,7 @@ public class Account extends DSCMD
                             ShopUtil.addShopBalance(args[1], amount * -1);
                             shopData.save();
 
-                            player.sendMessage(DynamicShop.dsPrefix + t("MESSAGE.TRANSFER_SUCCESS"));
+                            player.sendMessage(DynamicShop.dsPrefix(player) + t(player, "MESSAGE.TRANSFER_SUCCESS"));
                         } else
                         {
                             Economy econ = DynamicShop.getEconomy();
@@ -232,15 +232,15 @@ public class Account extends DSCMD
                                 ShopUtil.addShopBalance(args[1], amount * -1);
                                 shopData.save();
 
-                                player.sendMessage(DynamicShop.dsPrefix + t("MESSAGE.TRANSFER_SUCCESS"));
+                                player.sendMessage(DynamicShop.dsPrefix(player) + t(player, "MESSAGE.TRANSFER_SUCCESS"));
                             } else
                             {
-                                player.sendMessage(DynamicShop.dsPrefix + "Transfer failed");
+                                player.sendMessage(DynamicShop.dsPrefix(player) + "Transfer failed");
                             }
                         }
                     } catch (Exception e)
                     {
-                        player.sendMessage(DynamicShop.dsPrefix + "Transfer failed. /" + e);
+                        player.sendMessage(DynamicShop.dsPrefix(player) + "Transfer failed. /" + e);
                     }
                 }
                 break;

@@ -22,10 +22,10 @@ public class EditAll extends DSCMD
     @Override
     public void SendHelpMessage(Player player)
     {
-        player.sendMessage(DynamicShop.dsPrefix + t("HELP.TITLE").replace("{command}", "editall"));
-        player.sendMessage(" - " + t("HELP.USAGE") + ": /ds shop <shopname> editall <purchaseValue | salesValue | valueMin | valueMax | median | stock | max stock> <= | + | - | * | /> <amount>");
-        player.sendMessage(" - " + t("HELP.EDIT_ALL"));
-        player.sendMessage(" - " + t("HELP.EDIT_ALL_2"));
+        player.sendMessage(DynamicShop.dsPrefix(player) + t(player, "HELP.TITLE").replace("{command}", "editall"));
+        player.sendMessage(" - " + t(player, "HELP.USAGE") + ": /ds shop <shopname> editall <purchaseValue | salesValue | valueMin | valueMax | median | stock | max stock> <= | + | - | * | /> <amount>");
+        player.sendMessage(" - " + t(player, "HELP.EDIT_ALL"));
+        player.sendMessage(" - " + t(player, "HELP.EDIT_ALL_2"));
 
         player.sendMessage("");
     }
@@ -50,7 +50,7 @@ public class EditAll extends DSCMD
             dataType = args[3];
             if (!dataType.equals("stock") && !dataType.equals("median") && !dataType.equals("purchaseValue") && !dataType.equals("salesValue") && !dataType.equals("valueMin") && !dataType.equals("valueMax") && !dataType.equals("maxStock"))
             {
-                player.sendMessage(DynamicShop.dsPrefix + t("ERR.WRONG_DATATYPE"));
+                player.sendMessage(DynamicShop.dsPrefix(player) + t(player, "ERR.WRONG_DATATYPE"));
                 return;
             }
 
@@ -64,7 +64,7 @@ public class EditAll extends DSCMD
                     !mod.equals("+") && !mod.equals("-") &&
                     !mod.equals("*") && !mod.equals("/"))
             {
-                player.sendMessage(DynamicShop.dsPrefix + t("ERR.WRONG_DATATYPE"));
+                player.sendMessage(DynamicShop.dsPrefix(player) + t(player, "ERR.WRONG_DATATYPE"));
                 return;
             }
 
@@ -72,7 +72,7 @@ public class EditAll extends DSCMD
                 value = Float.parseFloat(args[5]);
         } catch (Exception e)
         {
-            player.sendMessage(DynamicShop.dsPrefix + t("ERR.WRONG_DATATYPE"));
+            player.sendMessage(DynamicShop.dsPrefix(player) + t(player, "ERR.WRONG_DATATYPE"));
             return;
         }
 
@@ -158,6 +158,6 @@ public class EditAll extends DSCMD
             }
         }
         shopData.save();
-        player.sendMessage(DynamicShop.dsPrefix + t("MESSAGE.ITEM_UPDATED"));
+        player.sendMessage(DynamicShop.dsPrefix(player) + t(player, "MESSAGE.ITEM_UPDATED"));
     }
 }

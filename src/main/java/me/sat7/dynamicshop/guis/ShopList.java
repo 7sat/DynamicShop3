@@ -27,17 +27,17 @@ public class ShopList extends InGameUI
 
     public Inventory getGui(Player player, int page, int slotIndex)
     {
-        inventory = Bukkit.createInventory(player, 54, t("START_PAGE.SHOP_LIST_TITLE"));
+        inventory = Bukkit.createInventory(player, 54, t(player, "START_PAGE.SHOP_LIST_TITLE"));
 
         this.maxPage = ShopUtil.shopConfigFiles.size() / 45 + 1;
         this.page = MathUtil.Clamp(page, 1, maxPage);
         this.slotIndex = slotIndex;
 
         CreateShopButtons();
-        CreateCloseButton(CLOSE);
+        CreateCloseButton(player, CLOSE);
         CreateButton(PAGE, GetPageButtonIconMat(),
-                t("START_PAGE.SHOP_LIST.PAGE_TITLE").replace("{curPage}", String.valueOf(this.page)).replace("{maxPage}", String.valueOf(this.maxPage)),
-                t("START_PAGE.SHOP_LIST.PAGE_LORE"));
+                t(player, "START_PAGE.SHOP_LIST.PAGE_TITLE").replace("{curPage}", String.valueOf(this.page)).replace("{maxPage}", String.valueOf(this.maxPage)),
+                t(player, "START_PAGE.SHOP_LIST.PAGE_LORE"));
 
         return inventory;
     }
@@ -69,7 +69,7 @@ public class ShopList extends InGameUI
         {
             String shopName = e.getCurrentItem().getItemMeta().getDisplayName();
             StartPage.ccStartPage.get().set("Buttons." + slotIndex + ".displayName", "§3" + shopName);
-            StartPage.ccStartPage.get().set("Buttons." + slotIndex + ".lore", t("START_PAGE.DEFAULT_SHOP_LORE"));
+            StartPage.ccStartPage.get().set("Buttons." + slotIndex + ".lore", t(player, "START_PAGE.DEFAULT_SHOP_LORE"));
             StartPage.ccStartPage.get().set("Buttons." + slotIndex + ".action", "ds shop " + shopName);
             StartPage.ccStartPage.save();
 
