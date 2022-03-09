@@ -14,6 +14,7 @@ public final class DeleteShop extends DSCMD
 {
     public DeleteShop()
     {
+        inGameUseOnly = false;
         permission = P_ADMIN_DELETE_SHOP;
         validArgCount.add(2);
     }
@@ -33,18 +34,16 @@ public final class DeleteShop extends DSCMD
         if(!CheckValid(args, sender))
             return;
 
-        Player player = (Player) sender;
-
         if (ShopUtil.shopConfigFiles.containsKey(args[1]))
         {
             CustomConfig data = ShopUtil.shopConfigFiles.get(args[1]);
             data.delete();
 
             ShopUtil.shopConfigFiles.remove(args[1]);
-            player.sendMessage(DynamicShop.dsPrefix(player) + t(player, "MESSAGE.SHOP_DELETED"));
+            sender.sendMessage(DynamicShop.dsPrefix(sender) + t(sender, "MESSAGE.SHOP_DELETED"));
         } else
         {
-            player.sendMessage(DynamicShop.dsPrefix(player) + t(player, "ERR.SHOP_NOT_FOUND"));
+            sender.sendMessage(DynamicShop.dsPrefix(sender) + t(sender, "ERR.SHOP_NOT_FOUND"));
         }
     }
 }

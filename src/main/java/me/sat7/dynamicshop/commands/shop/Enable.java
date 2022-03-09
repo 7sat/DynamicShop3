@@ -16,6 +16,7 @@ public class Enable extends DSCMD
 {
     public Enable()
     {
+        inGameUseOnly = false;
         permission = P_ADMIN_SHOP_EDIT;
         validArgCount.add(4);
     }
@@ -34,22 +35,20 @@ public class Enable extends DSCMD
         if(!CheckValid(args, sender))
             return;
 
-        Player player = (Player) sender;
-
         String shopName = Shop.GetShopName(args);
         CustomConfig shopData = ShopUtil.shopConfigFiles.get(shopName);
 
         if (args[3].equalsIgnoreCase("true"))
         {
             shopData.get().set("Options.enable", true);
-            player.sendMessage(DynamicShop.dsPrefix(player) + LangUtil.ccLang.get().get("MESSAGE.CHANGES_APPLIED") + t(player, "SHOP_SETTING.STATE") + ":" + args[3]);
+            sender.sendMessage(DynamicShop.dsPrefix(sender) + t(sender, "MESSAGE.CHANGES_APPLIED") + t(sender, "SHOP_SETTING.STATE") + ":" + args[3]);
         } else if (args[3].equalsIgnoreCase("false"))
         {
             shopData.get().set("Options.enable", false);
-            player.sendMessage(DynamicShop.dsPrefix(player) + LangUtil.ccLang.get().get("MESSAGE.CHANGES_APPLIED") + t(player, "SHOP_SETTING.STATE") + ":" + args[3]);
+            sender.sendMessage(DynamicShop.dsPrefix(sender) + t(sender, "MESSAGE.CHANGES_APPLIED") + t(sender, "SHOP_SETTING.STATE") + ":" + args[3]);
         } else
         {
-            player.sendMessage(DynamicShop.dsPrefix(player) + t(player, "ERR.WRONG_USAGE"));
+            sender.sendMessage(DynamicShop.dsPrefix(sender) + t(sender, "ERR.WRONG_USAGE"));
             return;
         }
 

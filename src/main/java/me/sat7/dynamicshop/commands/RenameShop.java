@@ -13,6 +13,7 @@ public final class RenameShop extends DSCMD
 {
     public RenameShop()
     {
+        inGameUseOnly = false;
         permission = P_ADMIN_RENAME_SHOP;
         validArgCount.add(3);
     }
@@ -32,16 +33,14 @@ public final class RenameShop extends DSCMD
         if(!CheckValid(args, sender))
             return;
 
-        Player player = (Player) sender;
-
         if (ShopUtil.shopConfigFiles.containsKey(args[1]))
         {
             String newName = args[2].replace("/", "");
             ShopUtil.renameShop(args[1], newName);
-            player.sendMessage(DynamicShop.dsPrefix(player) + t(player, "MESSAGE.CHANGES_APPLIED") + newName);
+            sender.sendMessage(DynamicShop.dsPrefix(sender) + t(sender, "MESSAGE.CHANGES_APPLIED") + newName);
         } else
         {
-            player.sendMessage(DynamicShop.dsPrefix(player) + t(player, "ERR.SHOP_NOT_FOUND"));
+            sender.sendMessage(DynamicShop.dsPrefix(sender) + t(sender, "ERR.SHOP_NOT_FOUND"));
         }
     }
 }

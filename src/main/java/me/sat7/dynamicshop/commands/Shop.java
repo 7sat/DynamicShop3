@@ -1,6 +1,7 @@
 package me.sat7.dynamicshop.commands;
 
 import me.sat7.dynamicshop.files.CustomConfig;
+import org.bukkit.command.CommandSender;
 import org.bukkit.configuration.ConfigurationSection;
 import org.bukkit.entity.Player;
 
@@ -37,9 +38,13 @@ public final class Shop
     }
 
 
-    static void shopCommand(String[] args, Player player)
+    static void shopCommand(String[] args, CommandSender sender)
     {
-        if (args.length == 1 && DynamicShop.plugin.getConfig().getBoolean("Command.OpenStartPageInsteadOfDefaultShop"))
+        Player player = null;
+        if(sender instanceof Player)
+            player = (Player) sender;
+
+        if (player != null && args.length == 1 && DynamicShop.plugin.getConfig().getBoolean("Command.OpenStartPageInsteadOfDefaultShop"))
         {
             DynaShopAPI.openStartPage(player);
             return;
@@ -48,7 +53,7 @@ public final class Shop
         String shopName = GetShopName(args);
 
         // 그런 이름을 가진 상점이 있는지 확인
-        if (!ShopUtil.shopConfigFiles.containsKey(shopName))
+        if (player != null && !ShopUtil.shopConfigFiles.containsKey(shopName))
         {
             player.sendMessage(DynamicShop.dsPrefix(player) + t(player, "ERR.SHOP_NOT_FOUND"));
             return;
@@ -57,7 +62,7 @@ public final class Shop
         CustomConfig shopData = ShopUtil.shopConfigFiles.get(shopName);
 
         // 상점 UI 열기
-        if (args.length <= 2)
+        if (player != null && args.length <= 2)
         {
             //권한 확인
             String s = shopData.get().getString("Options.permission");
@@ -146,10 +151,10 @@ public final class Shop
 
             DynaShopAPI.openShopGui(player, shopName, 1);
         }
-        // ds shop shopName <add | addhand | ...>
+        // 그외 각종 상점관련 명령어
         else if (args.length >= 3)
         {
-            CMDManager.RunCMD(args[2].toLowerCase(), args, player);
+            CMDManager.RunCMD(args[2].toLowerCase(), args, sender);
         }
     }
 }

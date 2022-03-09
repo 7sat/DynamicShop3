@@ -17,6 +17,7 @@ public class ShopHours extends DSCMD
 {
     public ShopHours()
     {
+        inGameUseOnly = false;
         permission = P_ADMIN_SHOP_EDIT;
         validArgCount.add(5);
     }
@@ -36,8 +37,6 @@ public class ShopHours extends DSCMD
         if(!CheckValid(args, sender))
             return;
 
-        Player player = (Player) sender;
-
         String shopName = Shop.GetShopName(args);
         CustomConfig shopData = ShopUtil.shopConfigFiles.get(shopName);
 
@@ -51,17 +50,17 @@ public class ShopHours extends DSCMD
                 shopData.get().set("Options.shophours", null);
                 shopData.save();
 
-                player.sendMessage(DynamicShop.dsPrefix(player) + t(player, "MESSAGE.CHANGES_APPLIED") + "Open 24 hours");
+                sender.sendMessage(DynamicShop.dsPrefix(sender) + t(sender, "MESSAGE.CHANGES_APPLIED") + "Open 24 hours");
             } else
             {
                 shopData.get().set("Options.shophours", start + "~" + end);
                 shopData.save();
 
-                player.sendMessage(DynamicShop.dsPrefix(player) + t(player, "MESSAGE.CHANGES_APPLIED") + start + "~" + end);
+                sender.sendMessage(DynamicShop.dsPrefix(sender) + t(sender, "MESSAGE.CHANGES_APPLIED") + start + "~" + end);
             }
         } catch (Exception e)
         {
-            player.sendMessage(DynamicShop.dsPrefix(player) + t(player, "ERR.WRONG_DATATYPE"));
+            sender.sendMessage(DynamicShop.dsPrefix(sender) + t(sender, "ERR.WRONG_DATATYPE"));
         }
     }
 }

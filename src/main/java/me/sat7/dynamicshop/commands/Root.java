@@ -52,7 +52,6 @@ public class Root implements CommandExecutor
                 player.closeInventory();
                 return true;
             }
-            // ds shop [<shopName>]
             else if (args[0].equalsIgnoreCase("shop"))
             {
                 Shop.shopCommand(args, player);
@@ -67,11 +66,17 @@ public class Root implements CommandExecutor
                 }
             }
         }
+        // 콘솔에서 실행했음.
         else
         {
             if (args.length > 0)
             {
-                if (args[0].equalsIgnoreCase("shop") || args[0].equalsIgnoreCase("qsell"))
+                if (args[0].equalsIgnoreCase("shop"))
+                {
+                    Shop.shopCommand(args, sender);
+                    return true;
+                }
+                else if (args[0].equalsIgnoreCase("qsell"))
                 {
                     sender.sendMessage(Constants.DYNAMIC_SHOP_PREFIX + " You can't run this command in console");
                     return true;

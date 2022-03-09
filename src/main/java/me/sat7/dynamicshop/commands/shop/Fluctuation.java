@@ -17,6 +17,7 @@ public class Fluctuation extends DSCMD
 {
     public Fluctuation()
     {
+        inGameUseOnly = false;
         permission = P_ADMIN_SHOP_EDIT;
         validArgCount.add(4);
         validArgCount.add(5);
@@ -38,8 +39,6 @@ public class Fluctuation extends DSCMD
         if(!CheckValid(args, sender))
             return;
 
-        Player player = (Player) sender;
-
         String shopName = Shop.GetShopName(args);
         CustomConfig shopData = ShopUtil.shopConfigFiles.get(shopName);
 
@@ -49,10 +48,10 @@ public class Fluctuation extends DSCMD
             {
                 shopData.get().set("Options.fluctuation", null);
                 shopData.save();
-                player.sendMessage(DynamicShop.dsPrefix(player) + t(player, "MESSAGE.CHANGES_APPLIED") + "Fluctuation Off");
+                sender.sendMessage(DynamicShop.dsPrefix(sender) + t(sender, "MESSAGE.CHANGES_APPLIED") + "Fluctuation Off");
             } else
             {
-                player.sendMessage(DynamicShop.dsPrefix(player) + t(player, "ERR.WRONG_USAGE"));
+                sender.sendMessage(DynamicShop.dsPrefix(sender) + t(sender, "ERR.WRONG_USAGE"));
             }
         } else if (args.length >= 5)
         {
@@ -62,7 +61,7 @@ public class Fluctuation extends DSCMD
                 interval = Clamp(Integer.parseInt(args[3]), 1, 999);
             } catch (Exception e)
             {
-                player.sendMessage(DynamicShop.dsPrefix(player) + t(player, "ERR.WRONG_DATATYPE"));
+                sender.sendMessage(DynamicShop.dsPrefix(sender) + t(sender, "ERR.WRONG_DATATYPE"));
                 return;
             }
 
@@ -73,10 +72,10 @@ public class Fluctuation extends DSCMD
                 shopData.get().set("Options.fluctuation.strength", strength);
                 shopData.save();
 
-                player.sendMessage(DynamicShop.dsPrefix(player) + t(player, "MESSAGE.CHANGES_APPLIED") + "Interval " + interval + ", strength " + strength);
+                sender.sendMessage(DynamicShop.dsPrefix(sender) + t(sender, "MESSAGE.CHANGES_APPLIED") + "Interval " + interval + ", strength " + strength);
             } catch (Exception e)
             {
-                player.sendMessage(DynamicShop.dsPrefix(player) + t(player, "ERR.WRONG_DATATYPE"));
+                sender.sendMessage(DynamicShop.dsPrefix(sender) + t(sender, "ERR.WRONG_DATATYPE"));
             }
         }
     }

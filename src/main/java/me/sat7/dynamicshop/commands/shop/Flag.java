@@ -3,6 +3,7 @@ package me.sat7.dynamicshop.commands.shop;
 import me.sat7.dynamicshop.DynamicShop;
 import me.sat7.dynamicshop.commands.DSCMD;
 import me.sat7.dynamicshop.commands.Shop;
+import me.sat7.dynamicshop.constants.Constants;
 import me.sat7.dynamicshop.files.CustomConfig;
 import me.sat7.dynamicshop.utilities.LangUtil;
 import me.sat7.dynamicshop.utilities.ShopUtil;
@@ -16,6 +17,7 @@ public class Flag extends DSCMD
 {
     public Flag()
     {
+        inGameUseOnly = false;
         permission = P_ADMIN_SHOP_EDIT;
         validArgCount.add(5);
     }
@@ -35,7 +37,9 @@ public class Flag extends DSCMD
         if(!CheckValid(args, sender))
             return;
 
-        Player player = (Player) sender;
+        Player player = null;
+        if (sender instanceof Player)
+            player = (Player) sender;
 
         String shopName = Shop.GetShopName(args);
         CustomConfig shopData = ShopUtil.shopConfigFiles.get(shopName);
@@ -49,7 +53,7 @@ public class Flag extends DSCMD
             set = false;
         } else
         {
-            player.sendMessage(DynamicShop.dsPrefix(player) + t(player, "ERR.WRONG_USAGE"));
+            sender.sendMessage(DynamicShop.dsPrefix(sender) + t(sender, "ERR.WRONG_USAGE"));
             return;
         }
 
@@ -74,25 +78,39 @@ public class Flag extends DSCMD
                 }
                 if (args[3].equalsIgnoreCase("localshop"))
                 {
-                    shopData.get().set("Options.flag.signshop", null);
-
-                    if(!shopData.get().contains("Options.pos1") || !shopData.get().contains("Options.pos2") || !shopData.get().contains("Options.world"))
+                    if (player != null)
                     {
-                        shopData.get().set("Options.pos1", (player.getLocation().getBlockX() - 2) + "_" + (player.getLocation().getBlockY() - 1) + "_" + (player.getLocation().getBlockZ() - 2));
-                        shopData.get().set("Options.pos2", (player.getLocation().getBlockX() + 2) + "_" + (player.getLocation().getBlockY() + 1) + "_" + (player.getLocation().getBlockZ() + 2));
-                        shopData.get().set("Options.world", player.getWorld().getName());
+                        shopData.get().set("Options.flag.signshop", null);
+
+                        if (!shopData.get().contains("Options.pos1") || !shopData.get().contains("Options.pos2") || !shopData.get().contains("Options.world"))
+                        {
+                            shopData.get().set("Options.pos1", (player.getLocation().getBlockX() - 2) + "_" + (player.getLocation().getBlockY() - 1) + "_" + (player.getLocation().getBlockZ() - 2));
+                            shopData.get().set("Options.pos2", (player.getLocation().getBlockX() + 2) + "_" + (player.getLocation().getBlockY() + 1) + "_" + (player.getLocation().getBlockZ() + 2));
+                            shopData.get().set("Options.world", player.getWorld().getName());
+                        }
+                    }
+                    else
+                    {
+                        sender.sendMessage(Constants.DYNAMIC_SHOP_PREFIX + " You can't run this command in console");
                     }
                 }
                 if (args[3].equalsIgnoreCase("deliverycharge"))
                 {
-                    shopData.get().set("Options.flag.signshop", null);
-
-                    shopData.get().set("Options.flag.localshop", "");
-                    if(!shopData.get().contains("Options.pos1") || !shopData.get().contains("Options.pos2") || !shopData.get().contains("Options.world"))
+                    if (player != null)
                     {
-                        shopData.get().set("Options.pos1", (player.getLocation().getBlockX() - 2) + "_" + (player.getLocation().getBlockY() - 1) + "_" + (player.getLocation().getBlockZ() - 2));
-                        shopData.get().set("Options.pos2", (player.getLocation().getBlockX() + 2) + "_" + (player.getLocation().getBlockY() + 1) + "_" + (player.getLocation().getBlockZ() + 2));
-                        shopData.get().set("Options.world", player.getWorld().getName());
+                        shopData.get().set("Options.flag.signshop", null);
+
+                        shopData.get().set("Options.flag.localshop", "");
+                        if (!shopData.get().contains("Options.pos1") || !shopData.get().contains("Options.pos2") || !shopData.get().contains("Options.world"))
+                        {
+                            shopData.get().set("Options.pos1", (player.getLocation().getBlockX() - 2) + "_" + (player.getLocation().getBlockY() - 1) + "_" + (player.getLocation().getBlockZ() - 2));
+                            shopData.get().set("Options.pos2", (player.getLocation().getBlockX() + 2) + "_" + (player.getLocation().getBlockY() + 1) + "_" + (player.getLocation().getBlockZ() + 2));
+                            shopData.get().set("Options.world", player.getWorld().getName());
+                        }
+                    }
+                    else
+                    {
+                        sender.sendMessage(Constants.DYNAMIC_SHOP_PREFIX + " You can't run this command in console");
                     }
                 }
 
@@ -109,10 +127,10 @@ public class Flag extends DSCMD
                 shopData.get().set("Options.flag." + args[3].toLowerCase(), null);
             }
             shopData.save();
-            player.sendMessage(DynamicShop.dsPrefix(player) + t(player, "MESSAGE.CHANGES_APPLIED") + args[3] + " " + args[4]);
+            sender.sendMessage(DynamicShop.dsPrefix(sender) + t(sender, "MESSAGE.CHANGES_APPLIED") + args[3] + " " + args[4]);
         } else
         {
-            player.sendMessage(DynamicShop.dsPrefix(player) + t(player, "ERR.WRONG_USAGE"));
+            sender.sendMessage(DynamicShop.dsPrefix(sender) + t(sender, "ERR.WRONG_USAGE"));
         }
     }
 }

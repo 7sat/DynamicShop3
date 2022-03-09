@@ -15,6 +15,7 @@ public class SellBuy extends DSCMD
 {
     public SellBuy()
     {
+        inGameUseOnly = false;
         permission = P_ADMIN_SHOP_EDIT;
         validArgCount.add(4);
     }
@@ -33,8 +34,6 @@ public class SellBuy extends DSCMD
     {
         if(!CheckValid(args, sender))
             return;
-
-        Player player = (Player) sender;
 
         String shopName = Shop.GetShopName(args);
         CustomConfig shopData = ShopUtil.shopConfigFiles.get(shopName);
@@ -73,6 +72,6 @@ public class SellBuy extends DSCMD
         }
 
         shopData.save();
-        player.sendMessage(DynamicShop.dsPrefix(player) + t(player, "MESSAGE.CHANGES_APPLIED") + temp);
+        sender.sendMessage(DynamicShop.dsPrefix(sender) + t(sender, "MESSAGE.CHANGES_APPLIED") + temp);
     }
 }

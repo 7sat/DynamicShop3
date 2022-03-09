@@ -16,8 +16,9 @@ public class Edit extends DSCMD
 {
     public Edit()
     {
+        inGameUseOnly = false;
         permission = P_ADMIN_SHOP_EDIT;
-        validArgCount.add(4);
+        validArgCount.add(5);
         validArgCount.add(7);
         validArgCount.add(9);
         validArgCount.add(10);
@@ -42,8 +43,6 @@ public class Edit extends DSCMD
         if(!CheckValid(args, sender))
             return;
 
-        Player player = (Player) sender;
-
         String shopName = Shop.GetShopName(args);
         CustomConfig shopData = ShopUtil.shopConfigFiles.get(shopName);
 
@@ -61,7 +60,7 @@ public class Edit extends DSCMD
             idx = Integer.parseInt(temp[0]);
             if (!shopData.get().contains(temp[0]))
             {
-                player.sendMessage(DynamicShop.dsPrefix(player) + t(player, "ERR.WRONG_ITEM_NAME"));
+                sender.sendMessage(DynamicShop.dsPrefix(sender) + t(sender, "ERR.WRONG_ITEM_NAME"));
                 return;
             }
             buyValue = Double.parseDouble(args[4]);
@@ -70,7 +69,7 @@ public class Edit extends DSCMD
             if (buyValue <= 0)
             {
                 ShopUtil.removeItemFromShop(shopName, idx);
-                player.sendMessage(DynamicShop.dsPrefix(player) + t(player, "MESSAGE.ITEM_DELETED"));
+                sender.sendMessage(DynamicShop.dsPrefix(sender) + t(sender, "MESSAGE.ITEM_DELETED"));
                 return;
             } else
             {
@@ -93,30 +92,30 @@ public class Edit extends DSCMD
                     // 유효성 검사
                     if (valueMax > 0 && valueMin > 0 && valueMin >= valueMax)
                     {
-                        player.sendMessage(DynamicShop.dsPrefix(player) + t(player, "ERR.MAX_LOWER_THAN_MIN"));
+                        sender.sendMessage(DynamicShop.dsPrefix(sender) + t(sender, "ERR.MAX_LOWER_THAN_MIN"));
                         return;
                     }
                     if (valueMax > 0 && buyValue > valueMax)
                     {
-                        player.sendMessage(DynamicShop.dsPrefix(player) + t(player, "ERR.DEFAULT_VALUE_OUT_OF_RANGE"));
+                        sender.sendMessage(DynamicShop.dsPrefix(sender) + t(sender, "ERR.DEFAULT_VALUE_OUT_OF_RANGE"));
                         return;
                     }
                     if (valueMin > 0 && buyValue < valueMin)
                     {
-                        player.sendMessage(DynamicShop.dsPrefix(player) + t(player, "ERR.DEFAULT_VALUE_OUT_OF_RANGE"));
+                        sender.sendMessage(DynamicShop.dsPrefix(sender) + t(sender, "ERR.DEFAULT_VALUE_OUT_OF_RANGE"));
                         return;
                     }
                 }
             }
         } catch (Exception e)
         {
-            player.sendMessage(DynamicShop.dsPrefix(player) + t(player, "ERR.WRONG_DATATYPE"));
+            sender.sendMessage(DynamicShop.dsPrefix(sender) + t(sender, "ERR.WRONG_DATATYPE"));
             return;
         }
 
         // 수정
         ShopUtil.editShopItem(shopName, idx, buyValue, buyValue, valueMin, valueMax, median, stock, maxStock);
-        player.sendMessage(DynamicShop.dsPrefix(player) + t(player, "MESSAGE.ITEM_UPDATED"));
-        ItemsUtil.sendItemInfo(player, shopName, idx, "HELP.ITEM_INFO");
+        sender.sendMessage(DynamicShop.dsPrefix(sender) + t(sender, "MESSAGE.ITEM_UPDATED"));
+        ItemsUtil.sendItemInfo(sender, shopName, idx, "HELP.ITEM_INFO");
     }
 }

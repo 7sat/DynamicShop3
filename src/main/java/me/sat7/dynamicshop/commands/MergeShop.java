@@ -13,6 +13,7 @@ public final class MergeShop extends DSCMD
 {
     public MergeShop()
     {
+        inGameUseOnly = false;
         permission = P_ADMIN_MERGE_SHOP;
         validArgCount.add(3);
     }
@@ -32,22 +33,20 @@ public final class MergeShop extends DSCMD
         if(!CheckValid(args, sender))
             return;
 
-        Player player = (Player) sender;
-
         if (args[1].equals(args[2]))
         {
-            player.sendMessage(DynamicShop.dsPrefix(player) + t(player, "ERR.WRONG_USAGE"));
+            sender.sendMessage(DynamicShop.dsPrefix(sender) + t(sender, "ERR.WRONG_USAGE"));
             return;
         }
 
         if (ShopUtil.shopConfigFiles.containsKey(args[1]) && ShopUtil.shopConfigFiles.containsKey(args[2]))
         {
             ShopUtil.mergeShop(args[1], args[2]);
-            player.sendMessage(DynamicShop.dsPrefix(player) + t(player, "MESSAGE.CHANGES_APPLIED") + args[1]);
+            sender.sendMessage(DynamicShop.dsPrefix(sender) + t(sender, "MESSAGE.CHANGES_APPLIED") + args[1]);
         }
         else
         {
-            player.sendMessage(DynamicShop.dsPrefix(player) + t(player, "ERR.SHOP_NOT_FOUND"));
+            sender.sendMessage(DynamicShop.dsPrefix(sender) + t(sender, "ERR.SHOP_NOT_FOUND"));
         }
     }
 }

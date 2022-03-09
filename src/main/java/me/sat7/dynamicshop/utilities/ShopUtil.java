@@ -5,6 +5,7 @@ import java.util.*;
 
 import me.sat7.dynamicshop.transactions.Calc;
 import org.bukkit.Bukkit;
+import org.bukkit.command.CommandSender;
 import org.bukkit.configuration.ConfigurationSection;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
@@ -481,7 +482,7 @@ public final class ShopUtil
         Bukkit.getScheduler().runTaskLater(DynamicShop.plugin, player::closeInventory, 2);
     }
 
-    public static void SetToRecommendedValueAll(String shop, Player player)
+    public static void SetToRecommendedValueAll(String shop, CommandSender sender)
     {
         CustomConfig data = ShopUtil.shopConfigFiles.get(shop);
         if (data == null)
@@ -516,8 +517,8 @@ public final class ShopUtil
                     ShopUtil.editShopItem(shop, i, worth, worth, 0.01f, -1, sugMid, sugMid);
                 } else
                 {
-                    if (player != null)
-                        player.sendMessage(DynamicShop.dsPrefix(player) + t(player, "ERR.NO_RECOMMEND_DATA") + " : " + itemName);
+                    if (sender != null)
+                        sender.sendMessage(DynamicShop.dsPrefix(sender) + t(sender, "ERR.NO_RECOMMEND_DATA") + " : " + itemName);
                 }
             } catch (Exception ignored)
             {
@@ -789,7 +790,7 @@ public final class ShopUtil
             data.save();
         }
     }
-    
+
     // Shop.yml 한덩어리로 되있는 데이터를 새 버전 방식으로 변환함
     public static void ConvertOldShopData()
     {

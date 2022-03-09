@@ -4,6 +4,7 @@ import java.util.ArrayList;
 
 import me.sat7.dynamicshop.files.CustomConfig;
 import org.bukkit.Material;
+import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.ItemMeta;
@@ -53,6 +54,12 @@ public final class ItemsUtil
     }
 
     // 아이탬 정보 출력
+    public static void sendItemInfo(CommandSender sender, String shopName, int idx, String msgType)
+    {
+        if(sender instanceof Player)
+            sendItemInfo((Player) sender, shopName, idx, msgType);
+    }
+
     public static void sendItemInfo(Player player, String shopName, int idx, String msgType)
     {
         CustomConfig data = ShopUtil.shopConfigFiles.get(shopName);

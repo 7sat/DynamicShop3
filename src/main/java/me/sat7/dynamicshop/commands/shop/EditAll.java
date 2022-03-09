@@ -15,6 +15,7 @@ public class EditAll extends DSCMD
 {
     public EditAll()
     {
+        inGameUseOnly = false;
         permission = P_ADMIN_SHOP_EDIT;
         validArgCount.add(6);
     }
@@ -36,8 +37,6 @@ public class EditAll extends DSCMD
         if(!CheckValid(args, sender))
             return;
 
-        Player player = (Player) sender;
-
         String shopName = Shop.GetShopName(args);
         CustomConfig shopData = ShopUtil.shopConfigFiles.get(shopName);
 
@@ -50,7 +49,7 @@ public class EditAll extends DSCMD
             dataType = args[3];
             if (!dataType.equals("stock") && !dataType.equals("median") && !dataType.equals("purchaseValue") && !dataType.equals("salesValue") && !dataType.equals("valueMin") && !dataType.equals("valueMax") && !dataType.equals("maxStock"))
             {
-                player.sendMessage(DynamicShop.dsPrefix(player) + t(player, "ERR.WRONG_DATATYPE"));
+                sender.sendMessage(DynamicShop.dsPrefix(sender) + t(sender, "ERR.WRONG_DATATYPE"));
                 return;
             }
 
@@ -64,7 +63,7 @@ public class EditAll extends DSCMD
                     !mod.equals("+") && !mod.equals("-") &&
                     !mod.equals("*") && !mod.equals("/"))
             {
-                player.sendMessage(DynamicShop.dsPrefix(player) + t(player, "ERR.WRONG_DATATYPE"));
+                sender.sendMessage(DynamicShop.dsPrefix(sender) + t(sender, "ERR.WRONG_DATATYPE"));
                 return;
             }
 
@@ -72,7 +71,7 @@ public class EditAll extends DSCMD
                 value = Float.parseFloat(args[5]);
         } catch (Exception e)
         {
-            player.sendMessage(DynamicShop.dsPrefix(player) + t(player, "ERR.WRONG_DATATYPE"));
+            sender.sendMessage(DynamicShop.dsPrefix(sender) + t(sender, "ERR.WRONG_DATATYPE"));
             return;
         }
 
@@ -158,6 +157,6 @@ public class EditAll extends DSCMD
             }
         }
         shopData.save();
-        player.sendMessage(DynamicShop.dsPrefix(player) + t(player, "MESSAGE.ITEM_UPDATED"));
+        sender.sendMessage(DynamicShop.dsPrefix(sender) + t(sender, "MESSAGE.ITEM_UPDATED"));
     }
 }

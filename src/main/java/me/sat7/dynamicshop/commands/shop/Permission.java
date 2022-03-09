@@ -16,6 +16,7 @@ public class Permission extends DSCMD
 {
     public Permission()
     {
+        inGameUseOnly = false;
         permission = P_ADMIN_SHOP_EDIT;
         validArgCount.add(3);
         validArgCount.add(4);
@@ -36,30 +37,28 @@ public class Permission extends DSCMD
         if(!CheckValid(args, sender))
             return;
 
-        Player player = (Player) sender;
-
         String shopName = Shop.GetShopName(args);
         CustomConfig shopData = ShopUtil.shopConfigFiles.get(shopName);
 
         if (args.length == 3)
         {
             String s = shopData.get().getConfigurationSection("Options").getString("permission");
-            if (s == null || s.length() == 0) s = t(player, "NULL(OPEN)");
-            player.sendMessage(DynamicShop.dsPrefix(player) + s);
+            if (s == null || s.length() == 0) s = t(sender, "NULL(OPEN)");
+            sender.sendMessage(DynamicShop.dsPrefix(sender) + s);
         } else if (args.length >= 4)
         {
             if (args[3].equalsIgnoreCase("true"))
             {
                 shopData.get().set("Options.permission", "dshop.user.shop." + args[1]);
-                player.sendMessage(DynamicShop.dsPrefix(player) + t(player, "MESSAGE.CHANGES_APPLIED") + "dshop.user.shop." + args[1]);
+                sender.sendMessage(DynamicShop.dsPrefix(sender) + t(sender, "MESSAGE.CHANGES_APPLIED") + "dshop.user.shop." + args[1]);
             } else if (args[3].equalsIgnoreCase("false"))
             {
                 shopData.get().set("Options.permission", "");
-                player.sendMessage(DynamicShop.dsPrefix(player) + t(player, "MESSAGE.CHANGES_APPLIED") + t(player, "NULL(OPEN)"));
+                sender.sendMessage(DynamicShop.dsPrefix(sender) + t(sender, "MESSAGE.CHANGES_APPLIED") + t(sender, "NULL(OPEN)"));
             } else
             {
                 shopData.get().set("Options.permission", args[3]);
-                player.sendMessage(DynamicShop.dsPrefix(player) + t(player, "MESSAGE.CHANGES_APPLIED") + args[3]);
+                sender.sendMessage(DynamicShop.dsPrefix(sender) + t(sender, "MESSAGE.CHANGES_APPLIED") + args[3]);
             }
             shopData.save();
         }

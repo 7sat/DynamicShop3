@@ -17,6 +17,7 @@ public class Add extends DSCMD
 {
     public Add()
     {
+        inGameUseOnly = false;
         permission = P_ADMIN_SHOP_EDIT;
         validArgCount.add(7);
         validArgCount.add(9);
@@ -40,8 +41,6 @@ public class Add extends DSCMD
     {
         if(!CheckValid(args, sender))
             return;
-
-        Player player = (Player) sender;
 
         String shopName = Shop.GetShopName(args);
 
@@ -72,36 +71,36 @@ public class Add extends DSCMD
                 // 유효성 검사
                 if (valueMax > 0 && valueMin > 0 && valueMin >= valueMax)
                 {
-                    player.sendMessage(DynamicShop.dsPrefix(player) + t(player, "ERR.MAX_LOWER_THAN_MIN"));
+                    sender.sendMessage(DynamicShop.dsPrefix(sender) + t(sender, "ERR.MAX_LOWER_THAN_MIN"));
                     return;
                 }
                 if (valueMax > 0 && buyValue > valueMax)
                 {
-                    player.sendMessage(DynamicShop.dsPrefix(player) + t(player, "ERR.DEFAULT_VALUE_OUT_OF_RANGE"));
+                    sender.sendMessage(DynamicShop.dsPrefix(sender) + t(sender, "ERR.DEFAULT_VALUE_OUT_OF_RANGE"));
                     return;
                 }
                 if (valueMin > 0 && buyValue < valueMin)
                 {
-                    player.sendMessage(DynamicShop.dsPrefix(player) + t(player, "ERR.DEFAULT_VALUE_OUT_OF_RANGE"));
+                    sender.sendMessage(DynamicShop.dsPrefix(sender) + t(sender, "ERR.DEFAULT_VALUE_OUT_OF_RANGE"));
                     return;
                 }
             }
 
             if (buyValue < 0.01 || median == 0 || stock == 0)
             {
-                player.sendMessage(DynamicShop.dsPrefix(player) + t(player, "ERR.VALUE_ZERO"));
+                sender.sendMessage(DynamicShop.dsPrefix(sender) + t(sender, "ERR.VALUE_ZERO"));
                 return;
             }
         } catch (Exception e)
         {
-            player.sendMessage(DynamicShop.dsPrefix(player) + t(player, "ERR.WRONG_DATATYPE"));
+            sender.sendMessage(DynamicShop.dsPrefix(sender) + t(sender, "ERR.WRONG_DATATYPE"));
             return;
         }
 
         // 금지품목
         if (Material.getMaterial(args[3]) == Material.AIR)
         {
-            player.sendMessage(DynamicShop.dsPrefix(player) + t(player, "ERR.ITEM_FORBIDDEN"));
+            sender.sendMessage(DynamicShop.dsPrefix(sender) + t(sender, "ERR.ITEM_FORBIDDEN"));
             return;
         }
 
@@ -112,7 +111,7 @@ public class Add extends DSCMD
             itemStack = new ItemStack(mat);
         } catch (Exception e)
         {
-            player.sendMessage(DynamicShop.dsPrefix(player) + t(player, "ERR.WRONG_ITEM_NAME"));
+            sender.sendMessage(DynamicShop.dsPrefix(sender) + t(sender, "ERR.WRONG_ITEM_NAME"));
             return;
         }
 
@@ -123,19 +122,19 @@ public class Add extends DSCMD
             idx = ShopUtil.findEmptyShopSlot(shopName, 1, true);
             if (idx == -1)
             {
-                player.sendMessage(DynamicShop.dsPrefix(player) + t(player, "ERR.NO_EMPTY_SLOT"));
+                sender.sendMessage(DynamicShop.dsPrefix(sender) + t(sender, "ERR.NO_EMPTY_SLOT"));
             } else if (ShopUtil.addItemToShop(shopName, idx, itemStack, buyValue, buyValue, valueMin, valueMax, median, stock)) // 아이탬 추가
             {
-                player.sendMessage(DynamicShop.dsPrefix(player) + t(player, "MESSAGE.ITEM_ADDED"));
-                ItemsUtil.sendItemInfo(player, shopName, idx, "HELP.ITEM_INFO");
+                sender.sendMessage(DynamicShop.dsPrefix(sender) + t(sender, "MESSAGE.ITEM_ADDED"));
+                ItemsUtil.sendItemInfo(sender, shopName, idx, "HELP.ITEM_INFO");
             }
         }
         // 기존 아이탬 수정
         else
         {
             ShopUtil.editShopItem(shopName, idx, buyValue, buyValue, valueMin, valueMax, median, stock);
-            player.sendMessage(DynamicShop.dsPrefix(player) + t(player, "MESSAGE.ITEM_UPDATED"));
-            ItemsUtil.sendItemInfo(player, shopName, idx, "HELP.ITEM_INFO");
+            sender.sendMessage(DynamicShop.dsPrefix(sender) + t(sender, "MESSAGE.ITEM_UPDATED"));
+            ItemsUtil.sendItemInfo(sender, shopName, idx, "HELP.ITEM_INFO");
         }
     }
 }

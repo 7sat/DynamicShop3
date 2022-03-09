@@ -15,6 +15,7 @@ public final class CreateShop extends DSCMD
 {
     public CreateShop()
     {
+        inGameUseOnly = false;
         permission = P_ADMIN_CREATE_SHOP;
         validArgCount.add(2);
         validArgCount.add(3);
@@ -36,7 +37,9 @@ public final class CreateShop extends DSCMD
         if(!CheckValid(args, sender))
             return;
 
-        Player player = (Player) sender;
+        Player player = null;
+        if(sender instanceof Player)
+            player = (Player) sender;
 
         String shopname = args[1].replace("/", "");
 
@@ -73,12 +76,14 @@ public final class CreateShop extends DSCMD
 
             ShopUtil.shopConfigFiles.put(shopname, data);
 
-            player.sendMessage(DynamicShop.dsPrefix(player) + t(player, "MESSAGE.SHOP_CREATED"));
-            DynaShopAPI.openShopGui(player, shopname, 1);
+            sender.sendMessage(DynamicShop.dsPrefix(sender) + t(sender, "MESSAGE.SHOP_CREATED"));
+
+            if(player != null)
+                DynaShopAPI.openShopGui(player, shopname, 1);
         }
         else
         {
-            player.sendMessage(DynamicShop.dsPrefix(player) + t(player, "ERR.SHOP_EXIST"));
+            sender.sendMessage(DynamicShop.dsPrefix(sender) + t(sender, "ERR.SHOP_EXIST"));
         }
     }
 }

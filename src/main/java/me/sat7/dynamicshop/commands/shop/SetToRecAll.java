@@ -13,6 +13,7 @@ public final class SetToRecAll extends DSCMD
 {
     public SetToRecAll()
     {
+        inGameUseOnly = false;
         permission = P_ADMIN_SHOP_EDIT;
         validArgCount.add(2);
     }
@@ -33,9 +34,7 @@ public final class SetToRecAll extends DSCMD
         if(!CheckValid(args, sender))
             return;
 
-        Player player = (Player) sender;
-
-        ShopUtil.SetToRecommendedValueAll(args[1], player);
-        player.sendMessage(DynamicShop.dsPrefix(player) + t(player, "MESSAGE.ITEM_UPDATED"));
+        ShopUtil.SetToRecommendedValueAll(args[1], sender);
+        sender.sendMessage(DynamicShop.dsPrefix(sender) + t(sender, "MESSAGE.ITEM_UPDATED"));
     }
 }
