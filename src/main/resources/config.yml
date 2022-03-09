@@ -21,6 +21,8 @@ UI.ShopInfoButtonIcon : OAK_SIGN
 UI.IntFormat: '###,###'
 UI.DoubleFormat: '###,##0.00'
 UI.LocalizedItemName: true
+UI.UsePlaceholderAPI : true
+UI.UseHexColorCode : true
 UI.EnableInventoryClickSearch.StartPage: true
 UI.EnableInventoryClickSearch.Shop: true
 

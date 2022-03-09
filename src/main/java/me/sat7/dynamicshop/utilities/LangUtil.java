@@ -704,7 +704,10 @@ public final class LangUtil
 
     public static String t(CommandSender sender, String key)
     {
-        Player player = (Player)sender;
+        Player player = null;
+        if(sender instanceof Player)
+            player = (Player) sender;
+
         return t(player, key, true);
     }
 
@@ -714,7 +717,7 @@ public final class LangUtil
         if(temp == null || temp.isEmpty())
             return key;
 
-        if (hexConvert)
+        if (hexConvert && DynamicShop.plugin.getConfig().getBoolean("UI.UseHexColorCode"))
         {
             Matcher matcher = HEX_PATTERN.matcher(temp);
             while (matcher.find())
@@ -723,10 +726,20 @@ public final class LangUtil
             }
         }
 
-        if(player != null && DynamicShop.isPapiExist)
+        if(player != null && DynamicShop.isPapiExist && DynamicShop.plugin.getConfig().getBoolean("UI.UsePlaceholderAPI"))
             return PlaceholderAPI.setPlaceholders(player, temp);
         else
             return temp;
+    }
+
+    public static String TranslateHexColor(String message)
+    {
+        Matcher matcher = HEX_PATTERN.matcher(message);
+        while (matcher.find())
+        {
+            message = message.replace(matcher.group(), "" + ChatColor.of(matcher.group()));
+        }
+        return message;
     }
 
     public static boolean sendMessageWithLocalizedItemName(Player player, String message, Material material) {
@@ -739,8 +752,11 @@ public final class LangUtil
                 return false;
             }
 
-            String[] splitByRegex = HEX_PATTERN.split(message);
-            if(splitByRegex.length > 1)
+            String[] splitByRegex = null;
+            if(DynamicShop.plugin.getConfig().getBoolean("UI.UseHexColorCode"))
+                splitByRegex = HEX_PATTERN.split(message);
+
+            if(splitByRegex != null && splitByRegex.length > 1)
             {
                 StringBuilder finalString;
                 if(splitByRegex[0].contains("<item>"))

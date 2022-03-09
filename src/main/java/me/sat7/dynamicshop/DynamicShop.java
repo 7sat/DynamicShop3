@@ -50,14 +50,24 @@ public final class DynamicShop extends JavaPlugin implements Listener
 
     public static String dsPrefix(CommandSender commandSender)
     {
-        return dsPrefix((Player) commandSender);
+        Player player = null;
+        if(commandSender instanceof Player)
+            player = (Player) commandSender;
+
+        return dsPrefix(player);
     }
 
     public static String dsPrefix(Player player)
     {
-        if(isPapiExist && player != null)
-            return PlaceholderAPI.setPlaceholders(player, dsPrefix_);
-        return dsPrefix_;
+        String temp = dsPrefix_;
+
+        if(plugin.getConfig().getBoolean("UI.UseHexColorCode"))
+            temp = LangUtil.TranslateHexColor(temp);
+
+        if(isPapiExist && player != null && plugin.getConfig().getBoolean("UI.UsePlaceholderAPI"))
+            return PlaceholderAPI.setPlaceholders(player, temp);
+
+        return temp;
     }
 
     public static String dsPrefix_ = "§3DShop3 §7| §f";

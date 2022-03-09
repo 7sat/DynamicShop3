@@ -37,6 +37,8 @@ public final class ConfigUtil
                     "UI.IntFormat",
                     "UI.DoubleFormat",
                     "UI.LocalizedItemName",
+                    "UI.UsePlaceholderAPI",
+                    "UI.UseHexColorCode",
                     "UI.EnableInventoryClickSearch.StartPage",
                     "UI.EnableInventoryClickSearch.Shop",
                     "Log.SaveLogs",
