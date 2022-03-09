@@ -598,6 +598,7 @@ public final class Shop extends InGameUI
 
         ItemStack pageButton = inventory.getItem(PAGE);
         ItemMeta pageButtonMeta = pageButton.getItemMeta();
+        maxPage = GetShopMaxPage(shopName);
         pageButtonMeta.setDisplayName(CreatePageButtonName());
         pageButton.setItemMeta(pageButtonMeta);
         pageButton.setAmount(page);
