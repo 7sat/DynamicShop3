@@ -113,7 +113,7 @@ public final class ConfigUtil
                         int oldMedian = ShopUtil.ccShop.get().getInt(shop + "." + item + ".median");
                         if (oldMedian < 1) continue; // 고정가 상품에 대해서는 스킵
 
-                        double amount = oldMedian * (confSec2.getDouble("strength") / 100.0);
+                        double amount = oldStock * (confSec2.getDouble("strength") / 100.0);
                         if (oldStock < oldMedian)
                         {
                             oldStock += (int) (amount);
