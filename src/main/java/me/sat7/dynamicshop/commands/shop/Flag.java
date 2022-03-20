@@ -66,7 +66,8 @@ public class Flag extends DSCMD
                 args[3].equalsIgnoreCase("hidepricingtype") ||
                 args[3].equalsIgnoreCase("hideshopbalance") ||
                 args[3].equalsIgnoreCase("showmaxstock") ||
-                args[3].equalsIgnoreCase("hiddenincommand")
+                args[3].equalsIgnoreCase("hiddenincommand") ||
+                args[3].equalsIgnoreCase("integeronly")
         )
         {
             if (set)

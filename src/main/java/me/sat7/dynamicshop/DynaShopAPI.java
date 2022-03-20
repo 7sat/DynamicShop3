@@ -73,7 +73,7 @@ public final class DynaShopAPI
         {
             if(player.hasPermission(P_ADMIN_SHOP_EDIT))
             {
-                player.sendMessage(DynamicShop.dsPrefix(player) + t(player, "MESSAGE.SHOP_DISABLED"));
+                //player.sendMessage(DynamicShop.dsPrefix(player) + t(player, "MESSAGE.SHOP_DISABLED"));
             }
             else
             {

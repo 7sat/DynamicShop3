@@ -49,7 +49,7 @@ public final class Buy
                 break;
             }
 
-            double price = Calc.getCurrentPrice(shopName, tradeIdx, true);
+            double price = Calc.getCurrentPrice(shopName, tradeIdx, true, true);
 
             if (currency == ItemTrade.CURRENCY.VAULT)
             {
@@ -92,6 +92,11 @@ public final class Buy
             player.sendMessage(DynamicShop.dsPrefix(player) + t(player, "MESSAGE.OUT_OF_STOCK"));
             data.get().set(tradeIdx + ".stock", stockOld);
             return;
+        }
+
+        if (data.get().contains("Options.flag.integeronly"))
+        {
+            priceSum = Math.ceil(priceSum);
         }
 
         EconomyResponse r = null;

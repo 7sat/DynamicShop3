@@ -42,8 +42,7 @@ public final class ShopSettings extends InGameUI
     private final int STABLE = 24;
     private final int STABLE_INTERVAL = 25;
     private final int STABLE_STRENGTH = 26;
-    private final int TAX_TOGGLE = 33;
-    private final int TAX_AMOUNT = 34;
+
     private final int FLAG1 = 9;
     private final int FLAG2 = 10;
     private final int FLAG3 = 11;
@@ -54,9 +53,13 @@ public final class ShopSettings extends InGameUI
     private final int FLAG8 = 21;
     private final int FLAG9 = 22;
     private final int FLAG10 = 13;
-    private final int LOG_TOGGLE = 30;
-    private final int LOG_DELETE = 31;
-    private final int CLOSE = 27;
+    private final int FLAG11 = 27;
+
+    private final int CLOSE = 36;
+    private final int LOG_TOGGLE = 39;
+    private final int LOG_DELETE = 40;
+    private final int TAX_TOGGLE = 42;
+    private final int TAX_AMOUNT = 43;
 
     private String shopName;
 
@@ -64,7 +67,7 @@ public final class ShopSettings extends InGameUI
     {
         this.shopName = shopName;
 
-        inventory = Bukkit.createInventory(player, 36, t(player, "SHOP_SETTING_TITLE") + "§7 | §8" + shopName);
+        inventory = Bukkit.createInventory(player, 45, t(player, "SHOP_SETTING_TITLE") + "§7 | §8" + shopName);
 
         CustomConfig data = ShopUtil.shopConfigFiles.get(shopName);
         ConfigurationSection confSec_Options = data.get().getConfigurationSection("Options");
@@ -232,6 +235,7 @@ public final class ShopSettings extends InGameUI
         CreateFlagButton(FLAG8, confSec_Options.contains("flag.hideshopbalance"), "hideShopBalance", t(player, "SHOP_SETTING.HIDE_SHOP_BALANCE"));
         CreateFlagButton(FLAG9, confSec_Options.contains("flag.showmaxstock"), "showMaxStock", t(player, "SHOP_SETTING.SHOW_MAX_STOCK"));
         CreateFlagButton(FLAG10, confSec_Options.contains("flag.hiddenincommand"), "hiddenInCommand", t(player, "SHOP_SETTING.HIDDEN_IN_COMMAND"));
+        CreateFlagButton(FLAG11, confSec_Options.contains("flag.integeronly"), "integerOnly", t(player, "SHOP_SETTING.INTEGER_ONLY"));
 
         // 로그 버튼
         String log_cur;
@@ -614,6 +618,18 @@ public final class ShopSettings extends InGameUI
             } else
             {
                 Bukkit.dispatchCommand(player, "DynamicShop shop " + shopName + " flag hiddenInCommand set");
+            }
+            DynaShopAPI.openShopSettingGui(player, shopName);
+        }
+        // INTEGER_ONLY
+        else if (e.getSlot() == FLAG11)
+        {
+            if (data.get().contains("Options.flag.integeronly"))
+            {
+                Bukkit.dispatchCommand(player, "DynamicShop shop " + shopName + " flag integerOnly unset");
+            } else
+            {
+                Bukkit.dispatchCommand(player, "DynamicShop shop " + shopName + " flag integerOnly set");
             }
             DynaShopAPI.openShopSettingGui(player, shopName);
         }

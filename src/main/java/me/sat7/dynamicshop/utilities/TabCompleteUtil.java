@@ -282,6 +282,7 @@ public final class TabCompleteUtil
                                 temp.add("hideShopBalance");
                                 temp.add("showMaxStock");
                                 temp.add("hiddenInCommand");
+                                temp.add("integerOnly");
 
                                 AddToAutoCompleteIfValid(args[3]);
                             } else if (args.length > 4)

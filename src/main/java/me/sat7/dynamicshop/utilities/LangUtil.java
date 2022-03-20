@@ -105,6 +105,7 @@ public final class LangUtil
             ccLang.get().addDefault("SHOP_SETTING.HIDE_SHOP_BALANCE", "§f상점 계좌 잔액을 숨깁니다.");
             ccLang.get().addDefault("SHOP_SETTING.SHOW_MAX_STOCK", "§f재고 상한을 표시합니다.");
             ccLang.get().addDefault("SHOP_SETTING.HIDDEN_IN_COMMAND", "§f명령어 자동완성시 이 상점을 표시하지 않습니다.");
+            ccLang.get().addDefault("SHOP_SETTING.INTEGER_ONLY", "§f가격이 올림 처리됩니다.");
             ccLang.get().addDefault("SHOP_SETTING.PERMISSION", "§f퍼미션");
             ccLang.get().addDefault("SHOP_SETTING.STATE", "§f상태");
             ccLang.get().addDefault("SHOP_SETTING.STATE_ENABLE", "§a활성");
@@ -425,6 +426,7 @@ public final class LangUtil
             ccLang.get().addDefault("SHOP_SETTING.HIDE_SHOP_BALANCE", "§fHide shop account balance.");
             ccLang.get().addDefault("SHOP_SETTING.SHOW_MAX_STOCK", "§fShow max stock.");
             ccLang.get().addDefault("SHOP_SETTING.HIDDEN_IN_COMMAND", "§fDon't show this store\n§fin command autocomplete.");
+            ccLang.get().addDefault("SHOP_SETTING.INTEGER_ONLY", "§fThe price is rounded up.");
             ccLang.get().addDefault("SHOP_SETTING.PERMISSION", "§fPermission");
             ccLang.get().addDefault("SHOP_SETTING.STATE", "§fState");
             ccLang.get().addDefault("SHOP_SETTING.STATE_ENABLE", "§aEnable");

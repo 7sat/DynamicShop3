@@ -201,10 +201,6 @@ public final class Shop extends InGameUI
                         valueChanged_Sell = "";
                     }
 
-                    double buyValue = shopData.getDouble(s + ".value");
-                    if (buyValue == shopData.getDouble(s + ".value2", buyValue))
-                        sellPrice = sellPrice - ((sellPrice / 100) * Calc.getTaxRate(shopName));
-
                     String tradeType = "default";
                     if (shopData.contains(s + ".tradeType"))
                         tradeType = shopData.getString(s + ".tradeType");

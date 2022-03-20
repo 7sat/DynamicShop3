@@ -578,14 +578,7 @@ public final class ShopUtil
                     continue;
 
                 double value = Calc.getCurrentPrice(entry.getKey(), String.valueOf(sameItemIdx), false);
-
-                int tax = ConfigUtil.getCurrentTax();
-                if (data.get().contains("Options.SalesTax"))
-                {
-                    tax = data.get().getInt("Options.SalesTax");
-                }
-
-                if (bestPrice < value - ((value / 100) * tax))
+                if (bestPrice < value)
                 {
                     topShopName = entry.getKey();
                     bestPrice = value;

@@ -12,8 +12,13 @@ public final class Calc
 
     }
 
-    // 특정 아이탬의 현재 가치를 계산 (다이나믹 or 고정가)
+    // 특정 아이탬의 현재 가치를 계산 (다이나믹 or 고정가) (세금 반영)
     public static double getCurrentPrice(String shopName, String idx, boolean buy)
+    {
+        return getCurrentPrice(shopName, idx, buy, false);
+    }
+
+    public static double getCurrentPrice(String shopName, String idx, boolean buy, boolean raw)
     {
         FileConfiguration data = ShopUtil.shopConfigFiles.get(shopName).get();
 
@@ -52,7 +57,25 @@ public final class Calc
             price = max;
         }
 
-        return price;
+        // 판매세 계산 (임의 지정된 판매가치가 없는 경우에만)
+        if (!buy && !data.contains(idx + ".value2"))
+        {
+            double tax = ((price / 100) * getTaxRate(shopName));
+
+            if (data.contains("Options.flag.integeronly"))
+                tax = Math.max(tax, 1);
+
+            price = Math.max(0, price - tax);
+        }
+
+        if (!raw && data.contains("Options.flag.integeronly"))
+        {
+            return Math.ceil(price);
+        }
+        else
+        {
+            return Math.round(price * 100) / 100.0;
+        }
     }
 
     // 특정 아이탬의 앞으로 n개의 가치합을 계산 (다이나믹 or 고정가) (세금 반영)
@@ -113,10 +136,22 @@ public final class Calc
         // 세금 적용 (판매가 별도지정시 세금계산 안함)
         if (amount < 0 && !data.contains(idx + ".value2"))
         {
-            total = total - ((total / 100) * getTaxRate(shopName));
+            double tax = ((total / 100) * getTaxRate(shopName));
+
+            if (data.contains("Options.flag.integeronly"))
+                tax = Math.max(tax, 1);
+
+            total = Math.max(0, total - tax);
         }
 
-        return (Math.round(total * 100) / 100.0);
+        if (data.contains("Options.flag.integeronly"))
+        {
+            return Math.ceil(total);
+        }
+        else
+        {
+            return (Math.round(total * 100) / 100.0);
+        }
     }
 
     // 상점의 세율 반환
