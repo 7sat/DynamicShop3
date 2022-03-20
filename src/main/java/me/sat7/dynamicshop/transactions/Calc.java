@@ -61,16 +61,15 @@ public final class Calc
         if (!buy && !data.contains(idx + ".value2"))
         {
             double tax = ((price / 100) * getTaxRate(shopName));
-
-            if (data.contains("Options.flag.integeronly"))
-                tax = Math.max(tax, 1);
-
-            price = Math.max(0, price - tax);
+            price -= tax;
         }
 
         if (!raw && data.contains("Options.flag.integeronly"))
         {
-            return Math.ceil(price);
+            if(buy)
+                return Math.ceil(price);
+            else
+                return Math.floor(price);
         }
         else
         {
@@ -137,16 +136,15 @@ public final class Calc
         if (amount < 0 && !data.contains(idx + ".value2"))
         {
             double tax = ((total / 100) * getTaxRate(shopName));
-
-            if (data.contains("Options.flag.integeronly"))
-                tax = Math.max(tax, 1);
-
-            total = Math.max(0, total - tax);
+            total -= tax;
         }
 
         if (data.contains("Options.flag.integeronly"))
         {
-            return Math.ceil(total);
+            if(amount > 0)
+                return Math.ceil(total);
+            else
+                return Math.floor(total);
         }
         else
         {
