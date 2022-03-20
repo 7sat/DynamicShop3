@@ -55,11 +55,12 @@ public final class ShopSettings extends InGameUI
     private final int FLAG10 = 13;
     private final int FLAG11 = 27;
 
+    private final int TAX_TOGGLE = 33;
+    private final int TAX_AMOUNT = 34;
+    private final int LOG_TOGGLE = 42;
+    private final int LOG_DELETE = 43;
+
     private final int CLOSE = 36;
-    private final int LOG_TOGGLE = 39;
-    private final int LOG_DELETE = 40;
-    private final int TAX_TOGGLE = 42;
-    private final int TAX_AMOUNT = 43;
 
     private String shopName;
 

@@ -181,6 +181,11 @@ public final class Shop extends InGameUI
                     double sellPrice = Calc.getCurrentPrice(shopName, s, false);
 
                     double buyPrice2 = shopData.getDouble(s + ".value");
+                    if (shopData.contains("Options.flag.integeronly"))
+                    {
+                        buyPrice2 = Math.ceil(buyPrice2);
+                    }
+
                     double priceSave1 = (buyPrice / buyPrice2) - 1;
                     double priceSave2 = 1 - (buyPrice / buyPrice2);
 

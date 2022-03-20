@@ -74,7 +74,7 @@ public final class Calc
         }
         else
         {
-            return Math.round(price * 100) / 100.0;
+            return price;
         }
     }
 
