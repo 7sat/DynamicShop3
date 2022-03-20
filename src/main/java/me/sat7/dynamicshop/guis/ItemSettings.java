@@ -291,7 +291,7 @@ public final class ItemSettings extends InGameUI
 
         oldSbSame = sellValue == buyValue;
 
-        if (e.getSlot() == CLOSE) DynaShopAPI.openItemPalette(player, shopName, shopSlotIndex, 1, "");
+        if (e.getSlot() == CLOSE) DynaShopAPI.openShopGui(player, shopName, shopSlotIndex / 45 + 1);
         else if (e.getSlot() == REMOVE) RemoveItem();
         else if (e.getSlot() == RECOMMEND) SetToRecommend();
         else if (e.getSlot() >= TAB_START && e.getSlot() <= TAB_END) ChangeTab(e.getSlot());
