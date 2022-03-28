@@ -248,7 +248,15 @@ public final class Shop extends InGameUI
                     if (t(player, "SHOP.TRADE_LORE").length() > 0)
                         tradeLoreText = t(player, "SHOP.TRADE_LORE");
 
-                    String itemMetaLoreText = (meta != null && meta.hasLore()) ? meta.getLore().toString() : "";
+                    String itemMetaLoreText = "";
+                    if(meta != null && meta.hasLore())
+                    {
+                        for(String tempLore : meta.getLore())
+                        {
+                            itemMetaLoreText += tempLore + "\n";
+                        }
+                        itemMetaLoreText = itemMetaLoreText.substring(0, itemMetaLoreText.length() - 2);
+                    }
 
                     lore = lore.replace("{\\nBuy}", buyText.isEmpty() ? "" : "\n" + buyText);
                     lore = lore.replace("{\\nSell}", sellText.isEmpty() ? "" : "\n" + sellText);
