@@ -14,6 +14,7 @@ public final class WorthUtil
     public static void setupWorthFile()
     {
         ccWorth.setup("Worth_V2", null);
+        ccWorth.get().options().header("This data is only used to calculate recommendations.\nIt does not affect the value of items in the store.");
         ccWorth.get().addDefault("acaciaboat", 15.16);
         ccWorth.get().addDefault("acaciabutton", 3.03);
         ccWorth.get().addDefault("acaciadoor", 6.06);

@@ -2,7 +2,7 @@ name: DynamicShop
 version: ${project.version}
 main: me.sat7.dynamicshop.DynamicShop
 depend: [Vault]
-softdepend: [PlaceholderAPI, Jobs]
+softdepend: [PlaceholderAPI, Jobs, LocaleLib]
 api-version: 1.13
 authors: [sat7]
 description: Full GUI shop with dynamic prices

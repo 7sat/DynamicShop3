@@ -1,10 +1,9 @@
 package me.sat7.dynamicshop.utilities;
 
-import java.util.ArrayList;
-import java.util.List;
-import java.util.UUID;
+import java.util.*;
 import java.util.stream.Collectors;
 
+import me.sat7.dynamicshop.files.CustomConfig;
 import org.bukkit.Bukkit;
 import org.bukkit.Material;
 import org.bukkit.command.Command;
@@ -17,6 +16,8 @@ import me.sat7.dynamicshop.DynamicShop;
 import me.sat7.dynamicshop.commands.Help;
 import me.sat7.dynamicshop.constants.Constants;
 
+import static me.sat7.dynamicshop.constants.Constants.*;
+
 public final class TabCompleteUtil
 {
     private TabCompleteUtil()
@@ -24,97 +25,103 @@ public final class TabCompleteUtil
 
     }
 
+    public static final ArrayList<String> temp = new ArrayList<>();
+    public static final ArrayList<String> autoCompleteList = new ArrayList<>();
+
     public static List<String> onTabCompleteBody(DynamicShop dynamicShop, CommandSender sender, Command cmd, String[] args)
     {
         if (!(sender instanceof Player)) return null;
 
-        UUID uuid = ((Player) sender).getUniqueId();
+        Player p = (Player) sender;
+        UUID uuid = p.getUniqueId();
 
         try
         {
-            ArrayList<String> temp = new ArrayList<>();
-            ArrayList<String> alist = new ArrayList<>();
+            temp.clear();
+            autoCompleteList.clear();
 
             if (cmd.getName().equalsIgnoreCase("shop") && args.length == 1)
             {
-                if (!dynamicShop.getConfig().getBoolean("UseShopCommand")) return alist;
+                if (!dynamicShop.getConfig().getBoolean("Command.UseShopCommand")) return autoCompleteList;
 
-                for (String s : ShopUtil.ccShop.get().getKeys(false))
+                for (Map.Entry<String, CustomConfig> entry : ShopUtil.shopConfigFiles.entrySet())
                 {
-                    ConfigurationSection options = ShopUtil.ccShop.get().getConfigurationSection(s).getConfigurationSection("Options");
+                    ConfigurationSection options = entry.getValue().get().getConfigurationSection("Options");
 
-                    if (options.contains("flag.signshop") && !sender.hasPermission(Constants.REMOTE_ACCESS_PERMISSION))
+                    if (options.contains("flag.signshop") && !sender.hasPermission(Constants.P_ADMIN_REMOTE_ACCESS))
                         continue;
 
-                    temp.add(s);
+                    if (options.contains("flag.hiddenincommand") && !sender.hasPermission(P_ADMIN_SHOP_EDIT))
+                        continue;
+
+                    String permission = options.getString("permission", "");
+                    if (permission.isEmpty()
+                            || !DynamicShop.plugin.getConfig().getBoolean("Command.PermissionCheckWhenCreatingAShopList")
+                            || p.hasPermission(permission))
+                        temp.add(entry.getKey());
                 }
 
-                for (String s : temp)
-                {
-                    if (s.startsWith(args[0]) || s.toLowerCase().startsWith(args[0])) alist.add(s);
-                }
-                return alist;
+                AddToAutoCompleteIfValid(args[0]);
+                return autoCompleteList;
             } else if (cmd.getName().equalsIgnoreCase("DynamicShop"))
             {
                 if (args.length == 1)
                 {
-                    if (!DynamicShop.userTempData.get(uuid).equals("main"))
-                    {
-                        DynamicShop.userTempData.put(uuid,"main");
-                        Help.showHelp("main", (Player) sender, args);
-                    }
+                    Help.showHelp("main", (Player) sender, args);
 
                     temp.add("shop");
                     temp.add("qsell");
-                    if (sender.hasPermission("dshop.admin.createshop")) temp.add("createshop");
-                    if (sender.hasPermission("dshop.admin.deleteshop")) temp.add("deleteshop");
-                    if (sender.hasPermission("dshop.admin.mergeshop")) temp.add("mergeshop");
-                    if (sender.hasPermission("dshop.admin.renameshop")) temp.add("renameshop");
-                    if (sender.hasPermission("dshop.admin.openshop")) temp.add("openshop");
-                    if (sender.hasPermission("dshop.admin.settax")) temp.add("settax");
-                    if (sender.hasPermission("dshop.admin.settax")) temp.add("settax temp");
-                    if (sender.hasPermission("dshop.admin.setdefaultshop")) temp.add("setdefaultshop");
-                    if (sender.hasPermission(Constants.DELETE_USER_PERMISSION)) temp.add("deleteOldUser");
-                    if (sender.hasPermission("dshop.admin.convert")) temp.add("convert");
-                    if (sender.hasPermission("dshop.admin.reload")) temp.add("reload");
+                    if (sender.hasPermission(P_ADMIN_CREATE_SHOP)) temp.add("createshop");
+                    if (sender.hasPermission(P_ADMIN_DELETE_SHOP)) temp.add("deleteshop");
+                    if (sender.hasPermission(P_ADMIN_MERGE_SHOP)) temp.add("mergeshop");
+                    if (sender.hasPermission(P_ADMIN_RENAME_SHOP)) temp.add("renameshop");
+                    if (sender.hasPermission(P_ADMIN_OPEN_SHOP)) temp.add("openshop");
+                    if (sender.hasPermission(P_ADMIN_SET_TAX)) temp.add("settax");
+                    if (sender.hasPermission(P_ADMIN_SET_TAX)) temp.add("settax temp");
+                    if (sender.hasPermission(P_ADMIN_SET_DEFAULT_SHOP)) temp.add("setdefaultshop");
+                    if (sender.hasPermission(P_ADMIN_DELETE_OLD_USER)) temp.add("deleteOldUser");
+                    if (sender.hasPermission(P_ADMIN_RELOAD)) temp.add("reload");
                     temp.add("cmdHelp");
 
-                    for (String s : temp)
-                    {
-                        if (s.startsWith(args[0])) alist.add(s);
-                    }
+                    AddToAutoCompleteIfValid(args[0]);
                 } else if (args.length >= 2 && args[0].equals("shop"))
                 {
+                    CustomConfig data = ShopUtil.shopConfigFiles.get(args[1]);
+
                     if (args.length == 2)
                     {
-                        if (!DynamicShop.userTempData.get(uuid).equals("shop"))
-                        {
-                            DynamicShop.userTempData.put(uuid,"shop");
-                            Help.showHelp("shop", (Player) sender, args);
-                        }
+                        Help.showHelp("shop", (Player) sender, args);
 
-                        for (String s : ShopUtil.ccShop.get().getKeys(false))
+                        for (Map.Entry<String, CustomConfig> entry : ShopUtil.shopConfigFiles.entrySet())
                         {
-                            ConfigurationSection options = ShopUtil.ccShop.get().getConfigurationSection(s).getConfigurationSection("Options");
+                            ConfigurationSection options = entry.getValue().get().getConfigurationSection("Options");
 
-                            if (options.contains("flag") && options.getConfigurationSection("flag").contains("signshop") && !sender.hasPermission(Constants.REMOTE_ACCESS_PERMISSION))
+                            if (options == null)
                                 continue;
 
-                            temp.add(s);
+                            if (options.contains("flag") && options.getConfigurationSection("flag").contains("signshop") && !sender.hasPermission(Constants.P_ADMIN_REMOTE_ACCESS))
+                                continue;
+
+                            if (options.contains("flag.hiddenincommand") && !sender.hasPermission(P_ADMIN_SHOP_EDIT))
+                                continue;
+
+                            String permission = options.getString("permission", "");
+                            if (permission.isEmpty()
+                                    || !DynamicShop.plugin.getConfig().getBoolean("Command.PermissionCheckWhenCreatingAShopList")
+                                    || p.hasPermission(permission))
+                                temp.add(entry.getKey());
                         }
 
-                        for (String s : temp)
-                        {
-                            if (s.startsWith(args[1]) || s.toLowerCase().startsWith(args[1])) alist.add(s);
-                        }
-                    } else if (args.length >= 3 && (!ShopUtil.ccShop.get().contains(args[1]) || args[1].length() == 0))
+                        AddToAutoCompleteIfValid(args[1]);
+                    } else if (args.length >= 3 && (!ShopUtil.shopConfigFiles.containsKey(args[1]) || args[1].length() == 0))
                     {
                         return null;
                     } else if (args.length == 3)
                     {
                         //add,addhand,edit,editall,permission,maxpage,flag
-                        if (sender.hasPermission("dshop.admin.shopedit"))
+                        if (sender.hasPermission(P_ADMIN_SHOP_EDIT))
                         {
+                            temp.add("enable");
                             temp.add("add");
                             temp.add("addhand");
                             temp.add("edit");
@@ -128,44 +135,39 @@ public final class TabCompleteUtil
                             temp.add("fluctuation");
                             temp.add("stockStabilizing");
                             temp.add("account");
-                            temp.add("hideStock");
-                            temp.add("hidePricingType");
                             temp.add("sellbuy");
                             temp.add("log");
                         }
 
-                        for (String s : temp)
-                        {
-                            if (s.toLowerCase().startsWith(args[2].toLowerCase())) alist.add(s);
-                        }
+                        AddToAutoCompleteIfValid(args[2]);
                     } else if (args.length >= 4)
                     {
-                        if (args[2].equalsIgnoreCase("addhand") && sender.hasPermission("dshop.admin.shopedit"))
+                        if (args[2].equalsIgnoreCase("enable") && sender.hasPermission(P_ADMIN_SHOP_EDIT))
                         {
-                            if (!DynamicShop.userTempData.get(uuid).equals("addhand"))
+                            Help.showHelp("enable", (Player) sender, args);
+
+                            if (args.length == 4)
                             {
-                                DynamicShop.userTempData.put(uuid,"addhand");
-                                Help.showHelp("add_hand", (Player) sender, args);
+                                temp.add("true");
+                                temp.add("false");
                             }
-                        } else if (args[2].equalsIgnoreCase("add") && sender.hasPermission("dshop.admin.shopedit"))
+
+                            AddToAutoCompleteIfValid(args[3]);
+                        } else if (args[2].equalsIgnoreCase("addhand") && sender.hasPermission(P_ADMIN_SHOP_EDIT))
+                        {
+                            Help.showHelp("add_hand", (Player) sender, args);
+                        } else if (args[2].equalsIgnoreCase("add") && sender.hasPermission(P_ADMIN_SHOP_EDIT))
                         {
                             if (args.length == 4)
                             {
-                                if (!DynamicShop.userTempData.get(uuid).equals("add"))
-                                {
-                                    DynamicShop.userTempData.put(uuid,"add");
-                                    Help.showHelp("add", (Player) sender, args);
-                                }
+                                Help.showHelp("add", (Player) sender, args);
 
                                 for (Material m : Material.values())
                                 {
                                     temp.add(m.name());
                                 }
 
-                                for (String s : temp)
-                                {
-                                    if (s.startsWith(args[3].toUpperCase())) alist.add(s);
-                                }
+                                AddToAutoCompleteIfValid(args[3]);
                             } else if (args.length == 5)
                             {
                                 String mat = args[3].toUpperCase();
@@ -175,76 +177,56 @@ public final class TabCompleteUtil
                                 {
                                     if (Material.matchMaterial(mat) != null)
                                     {
-                                        DynamicShop.userTempData.put(uuid,"add" + args[3]);
                                         Help.showHelp("add" + args[3], (Player) sender, args);
                                     }
                                 }
                             }
-                        } else if (args[2].equalsIgnoreCase("edit") && sender.hasPermission("dshop.admin.shopedit"))
+                        } else if (args[2].equalsIgnoreCase("edit") && sender.hasPermission(P_ADMIN_SHOP_EDIT))
                         {
                             if (args.length == 4)
                             {
-                                if (!DynamicShop.userTempData.get(uuid).equals("edit"))
-                                {
-                                    DynamicShop.userTempData.put(uuid,"edit");
-                                    Help.showHelp("edit", (Player) sender, args);
-                                }
+                                Help.showHelp("edit", (Player) sender, args);
 
-                                String shopName = args[1];
-
-                                for (String s : ShopUtil.ccShop.get().getConfigurationSection(shopName).getKeys(false))
+                                for (String s : data.get().getKeys(false))
                                 {
                                     try
                                     {
                                         int i = Integer.parseInt(s);
-                                        if (!ShopUtil.ccShop.get().contains(shopName + "." + s + ".value"))
+                                        if (!data.get().contains(s + ".value"))
                                             continue; // 장식용임
-                                        temp.add(ShopUtil.ccShop.get().getConfigurationSection(shopName + "." + s).getName() + "/" + ShopUtil.ccShop.get().getString(shopName + "." + s + ".mat"));
+                                        temp.add(s + "/" + data.get().getString(s + ".mat"));
                                     } catch (Exception ignored)
                                     {
                                     }
                                 }
 
-                                for (String s : temp)
-                                {
-                                    String upper = args[3].toUpperCase();
-
-                                    if (s.startsWith(upper)) alist.add(s);
-                                }
+                                AddToAutoCompleteIfValid(args[3]);
                             } else if (args.length == 5)
                             {
                                 String mat = args[3];
                                 mat = mat.substring(mat.indexOf("/") + 1);
                                 mat = mat.toUpperCase();
 
-                                if (!(DynamicShop.userTempData.get(uuid).equals("edit" + mat)))
+                                if (Material.matchMaterial(mat) != null)
                                 {
-                                    if (Material.matchMaterial(mat) != null)
-                                    {
-                                        DynamicShop.userTempData.put(uuid,"edit" + mat);
-                                        Help.showHelp("edit" + mat, (Player) sender, args);
-                                    }
+                                    Help.showHelp("edit" + mat, (Player) sender, args);
                                 }
                             }
-                        } else if (args[2].equalsIgnoreCase("editall") && sender.hasPermission("dshop.admin.shopedit"))
+                        } else if (args[2].equalsIgnoreCase("editall") && sender.hasPermission(P_ADMIN_SHOP_EDIT))
                         {
-                            if (!DynamicShop.userTempData.get(uuid).equals("editall"))
-                            {
-                                DynamicShop.userTempData.put(uuid,"editall");
-                                Help.showHelp("edit_all", (Player) sender, args);
-                            }
+                            Help.showHelp("edit_all", (Player) sender, args);
+
                             if (args.length == 4)
                             {
-                                temp.add("value");
+                                temp.add("purchaseValue");
+                                temp.add("salesValue");
                                 temp.add("valueMin");
                                 temp.add("valueMax");
                                 temp.add("stock");
                                 temp.add("median");
+                                temp.add("maxStock");
 
-                                for (String s : temp)
-                                {
-                                    if (s.startsWith(args[3])) alist.add(s);
-                                }
+                                AddToAutoCompleteIfValid(args[3]);
                             } else if (args.length == 5)
                             {
                                 temp.add("=");
@@ -253,88 +235,66 @@ public final class TabCompleteUtil
                                 temp.add("/");
                                 temp.add("*");
 
-                                for (String s : temp)
-                                {
-                                    if (s.startsWith(args[4])) alist.add(s);
-                                }
+                                AddToAutoCompleteIfValid(args[4]);
                             } else if (args.length == 6)
                             {
                                 if (args[4].equals("="))
                                 {
-                                    temp.add("value");
+                                    temp.add("purchaseValue");
+                                    temp.add("salesValue");
                                     temp.add("valueMin");
                                     temp.add("valueMax");
                                     temp.add("stock");
                                     temp.add("median");
+                                    temp.add("maxStock");
 
-                                    for (String s : temp)
-                                    {
-                                        if (s.startsWith(args[5])) alist.add(s);
-                                    }
+                                    AddToAutoCompleteIfValid(args[5]);
                                 }
                             }
-                        } else if (args[2].equalsIgnoreCase("setToRecAll") && sender.hasPermission("dshop.admin.shopedit"))
+                        } else if (args[2].equalsIgnoreCase("setToRecAll") && sender.hasPermission(P_ADMIN_SHOP_EDIT))
                         {
-                            if (!DynamicShop.userTempData.get(uuid).equalsIgnoreCase("setToRecAll"))
-                            {
-                                DynamicShop.userTempData.put(uuid,"edit");
-                                Help.showHelp("set_to_rec_all", (Player) sender, args);
-                            }
-                        } else if (args[2].equalsIgnoreCase("permission") && sender.hasPermission("dshop.admin.shopedit"))
+                            Help.showHelp("set_to_rec_all", (Player) sender, args);
+                        } else if (args[2].equalsIgnoreCase("permission") && sender.hasPermission(P_ADMIN_SHOP_EDIT))
                         {
-                            if (!DynamicShop.userTempData.get(uuid).equals("permission"))
-                            {
-                                DynamicShop.userTempData.put(uuid,"permission");
-                                Help.showHelp("permission", (Player) sender, args);
-                            }
+                            Help.showHelp("permission", (Player) sender, args);
+
                             if (args.length >= 4)
                             {
                                 temp.add("true");
                                 temp.add("false");
 
-                                for (String s : temp)
-                                {
-                                    if (s.startsWith(args[3])) alist.add(s);
-                                }
+                                AddToAutoCompleteIfValid(args[3]);
                             }
-                        } else if (args[2].equalsIgnoreCase("maxpage") && sender.hasPermission("dshop.admin.shopedit"))
+                        } else if (args[2].equalsIgnoreCase("maxpage") && sender.hasPermission(P_ADMIN_SHOP_EDIT))
                         {
-                            if (!DynamicShop.userTempData.get(uuid).equals("maxpage"))
-                            {
-                                DynamicShop.userTempData.put(uuid,"maxpage");
-                                Help.showHelp("max_page", (Player) sender, args);
-                            }
-                        } else if (args[2].equalsIgnoreCase("flag") && sender.hasPermission("dshop.admin.shopedit"))
+                            Help.showHelp("max_page", (Player) sender, args);
+                        } else if (args[2].equalsIgnoreCase("flag") && sender.hasPermission(P_ADMIN_SHOP_EDIT))
                         {
                             if (args.length == 4)
                             {
-                                temp.add("signshop");
-                                temp.add("localshop");
-                                temp.add("deliverycharge");
-                                temp.add("jobpoint");
-                                temp.add("showvaluechange");
+                                temp.add("signShop");
+                                temp.add("localShop");
+                                temp.add("deliveryCharge");
+                                temp.add("jobPoint");
+                                temp.add("showValueChange");
+                                temp.add("hideStock");
+                                temp.add("hidePricingType");
+                                temp.add("hideShopBalance");
+                                temp.add("showMaxStock");
+                                temp.add("hiddenInCommand");
+                                temp.add("integerOnly");
 
-                                for (String s : temp)
-                                {
-                                    if (s.startsWith(args[3])) alist.add(s);
-                                }
+                                AddToAutoCompleteIfValid(args[3]);
                             } else if (args.length > 4)
                             {
                                 temp.add("set");
                                 temp.add("unset");
 
-                                for (String s : temp)
-                                {
-                                    if (s.startsWith(args[4])) alist.add(s);
-                                }
+                                AddToAutoCompleteIfValid(args[4]);
                             }
 
-                            if (!DynamicShop.userTempData.get(uuid).equals("flag"))
-                            {
-                                DynamicShop.userTempData.put(uuid,"flag");
-                                Help.showHelp("flag", (Player) sender, args);
-                            }
-                        } else if (args[2].equalsIgnoreCase("position") && sender.hasPermission("dshop.admin.shopedit"))
+                            Help.showHelp("flag", (Player) sender, args);
+                        } else if (args[2].equalsIgnoreCase("position") && sender.hasPermission(P_ADMIN_SHOP_EDIT))
                         {
                             if (args.length >= 4)
                             {
@@ -342,39 +302,20 @@ public final class TabCompleteUtil
                                 temp.add("pos2");
                                 temp.add("clear");
 
-                                for (String s : temp)
-                                {
-                                    if (s.startsWith(args[3])) alist.add(s);
-                                }
+                                AddToAutoCompleteIfValid(args[3]);
                             }
 
-                            if (!DynamicShop.userTempData.get(uuid).equals("position"))
-                            {
-                                DynamicShop.userTempData.put(uuid,"position");
-                                Help.showHelp("position", (Player) sender, args);
-                            }
-                        } else if (args[2].equalsIgnoreCase("shophours") && sender.hasPermission("dshop.admin.shopedit"))
+                            Help.showHelp("position", (Player) sender, args);
+                        } else if (args[2].equalsIgnoreCase("shophours") && sender.hasPermission(P_ADMIN_SHOP_EDIT))
                         {
-                            if (!DynamicShop.userTempData.get(uuid).equals("shophours"))
-                            {
-                                DynamicShop.userTempData.put(uuid,"shophours");
-                                Help.showHelp("shophours", (Player) sender, args);
-                            }
-                        } else if (args[2].equalsIgnoreCase("fluctuation") && sender.hasPermission("dshop.admin.shopedit"))
+                            Help.showHelp("shophours", (Player) sender, args);
+                        } else if (args[2].equalsIgnoreCase("fluctuation") && sender.hasPermission(P_ADMIN_SHOP_EDIT))
                         {
-                            if (!DynamicShop.userTempData.get(uuid).equals("fluctuation"))
-                            {
-                                DynamicShop.userTempData.put(uuid,"fluctuation");
-                                Help.showHelp("fluctuation", (Player) sender, args);
-                            }
-                        } else if (args[2].equalsIgnoreCase("stockStabilizing") && sender.hasPermission("dshop.admin.shopedit"))
+                            Help.showHelp("fluctuation", (Player) sender, args);
+                        } else if (args[2].equalsIgnoreCase("stockStabilizing") && sender.hasPermission(P_ADMIN_SHOP_EDIT))
                         {
-                            if (!DynamicShop.userTempData.get(uuid).equals("stockStabilizing"))
-                            {
-                                DynamicShop.userTempData.put(uuid,"stockStabilizing");
-                                Help.showHelp("stock_stabilizing", (Player) sender, args);
-                            }
-                        } else if (args[2].equalsIgnoreCase("account") && sender.hasPermission("dshop.admin.shopedit"))
+                            Help.showHelp("stock_stabilizing", (Player) sender, args);
+                        } else if (args[2].equalsIgnoreCase("account") && sender.hasPermission(P_ADMIN_SHOP_EDIT))
                         {
                             if (args.length == 4)
                             {
@@ -382,114 +323,49 @@ public final class TabCompleteUtil
                                 temp.add("linkto");
                                 temp.add("transfer");
 
-                                for (String s : temp)
-                                {
-                                    if (s.startsWith(args[3])) alist.add(s);
-                                }
+                                AddToAutoCompleteIfValid(args[3]);
 
-                                if (!DynamicShop.userTempData.get(uuid).equals("account"))
-                                {
-                                    DynamicShop.userTempData.put(uuid,"account");
-                                    Help.showHelp("account", (Player) sender, args);
-                                }
+                                Help.showHelp("account", (Player) sender, args);
                             } else if (args.length == 5)
                             {
                                 if (args[3].equals("linkto") || args[3].equals("transfer"))
                                 {
-                                    temp.addAll(ShopUtil.ccShop.get().getKeys(false));
+                                    temp.addAll(ShopUtil.shopConfigFiles.keySet());
                                 }
 
                                 switch (args[3])
                                 {
                                     case "set":
-                                        if (!DynamicShop.userTempData.get(uuid).equals("accountSet"))
-                                        {
-                                            DynamicShop.userTempData.put(uuid, "accountSet");
-                                            Help.showHelp("account_set", (Player) sender, args);
-                                        }
+                                        Help.showHelp("account_set", (Player) sender, args);
                                         break;
                                     case "transfer":
-                                        if (!DynamicShop.userTempData.get(uuid).equals("accountTransfer"))
-                                        {
-                                            DynamicShop.userTempData.put(uuid, "accountTransfer");
-                                            Help.showHelp("account_transfer", (Player) sender, args);
-                                        }
+                                        Help.showHelp("account_transfer", (Player) sender, args);
 
-                                        for (Player p : Bukkit.getServer().getOnlinePlayers())
+                                        for (Player onlinePlayer : Bukkit.getServer().getOnlinePlayers())
                                         {
-                                            temp.add(p.getName());
+                                            temp.add(onlinePlayer.getName());
                                         }
                                         break;
                                     case "linkto":
-                                        if (!DynamicShop.userTempData.get(uuid).equals("accountLinkto"))
-                                        {
-                                            DynamicShop.userTempData.put(uuid, "accountLinkto");
-                                            Help.showHelp("account_link_to", (Player) sender, args);
-                                        }
+                                        Help.showHelp("account_link_to", (Player) sender, args);
                                         break;
                                 }
 
-                                for (String s : temp)
-                                {
-                                    if (s.startsWith(args[4])) alist.add(s);
-                                }
+                                AddToAutoCompleteIfValid(args[4]);
                             }
-                        } else if (args[2].equalsIgnoreCase("hideStock") && sender.hasPermission("dshop.admin.shopedit"))
+                        } else if (args[2].equalsIgnoreCase("sellbuy") && sender.hasPermission(P_ADMIN_SHOP_EDIT))
                         {
                             if (args.length == 4)
                             {
-                                temp.add("true");
-                                temp.add("false");
+                                temp.add("sellOnly");
+                                temp.add("buyOnly");
+                                temp.add("clear");
 
-                                for (String s : temp)
-                                {
-                                    if (s.startsWith(args[3])) alist.add(s);
-                                }
+                                AddToAutoCompleteIfValid(args[3]);
 
-                                if (!DynamicShop.userTempData.get(uuid).equals("hideStock"))
-                                {
-                                    DynamicShop.userTempData.put(uuid,"hideStock");
-                                    Help.showHelp("hide_stock", (Player) sender, args);
-                                }
+                                Help.showHelp("sellbuy", (Player) sender, args);
                             }
-                        } else if (args[2].equalsIgnoreCase("hidePricingType") && sender.hasPermission("dshop.admin.shopedit"))
-                        {
-                            if (args.length == 4)
-                            {
-                                temp.add("true");
-                                temp.add("false");
-
-                                for (String s : temp)
-                                {
-                                    if (s.startsWith(args[3])) alist.add(s);
-                                }
-
-                                if (!DynamicShop.userTempData.get(uuid).equals("hidePricingType"))
-                                {
-                                    DynamicShop.userTempData.put(uuid,"hidePricingType");
-                                    Help.showHelp("hide_pricing_type", (Player) sender, args);
-                                }
-                            }
-                        } else if (args[2].equalsIgnoreCase("sellbuy") && sender.hasPermission("dshop.admin.shopedit"))
-                        {
-                            if (args.length == 4)
-                            {
-                                temp.add("SellOnly");
-                                temp.add("BuyOnly");
-                                temp.add("Clear");
-
-                                for (String s : temp)
-                                {
-                                    if (s.startsWith(args[3])) alist.add(s);
-                                }
-
-                                if (!DynamicShop.userTempData.get(uuid).equals("sellbuy"))
-                                {
-                                    DynamicShop.userTempData.put(uuid,"sellbuy");
-                                    Help.showHelp("sellbuy", (Player) sender, args);
-                                }
-                            }
-                        } else if (args[2].equalsIgnoreCase("log") && sender.hasPermission("dshop.admin.shopedit"))
+                        } else if (args[2].equalsIgnoreCase("log") && sender.hasPermission(P_ADMIN_SHOP_EDIT))
                         {
                             if (args.length == 4)
                             {
@@ -497,173 +373,90 @@ public final class TabCompleteUtil
                                 temp.add("disable");
                                 temp.add("clear");
 
-                                for (String s : temp)
-                                {
-                                    if (s.startsWith(args[3])) alist.add(s);
-                                }
+                                AddToAutoCompleteIfValid(args[3]);
 
-                                if (!DynamicShop.userTempData.get(uuid).equals("log"))
-                                {
-                                    DynamicShop.userTempData.put(uuid,"log");
-                                    Help.showHelp("log", (Player) sender, args);
-                                }
+                                Help.showHelp("log", (Player) sender, args);
                             }
                         }
                     }
-                } else if (args[0].equalsIgnoreCase("createshop") && sender.hasPermission("dshop.admin.createshop"))
+                } else if (args[0].equalsIgnoreCase("createshop") && sender.hasPermission(P_ADMIN_CREATE_SHOP))
                 {
                     if (args.length == 3)
                     {
                         temp.add("true");
                         temp.add("false");
 
-                        for (String s : temp)
-                        {
-                            if (s.startsWith(args[2])) alist.add(s);
-                        }
+                        AddToAutoCompleteIfValid(args[2]);
                     }
 
-                    if (!DynamicShop.userTempData.get(uuid).equals("createshop"))
-                    {
-                        DynamicShop.userTempData.put(uuid,"createshop");
-                        Help.showHelp("create_shop", (Player) sender, args);
-                    }
-                } else if (args[0].equalsIgnoreCase("deleteshop") && sender.hasPermission("dshop.admin.deleteshop"))
+                    Help.showHelp("create_shop", (Player) sender, args);
+                } else if (args[0].equalsIgnoreCase("deleteshop") && sender.hasPermission(P_ADMIN_DELETE_SHOP))
                 {
-                    temp.addAll(ShopUtil.ccShop.get().getKeys(false));
+                    temp.addAll(ShopUtil.shopConfigFiles.keySet());
 
-                    for (String s : temp)
-                    {
-                        if (s.startsWith(args[1])) alist.add(s);
-                    }
+                    AddToAutoCompleteIfValid(args[1]);
 
-                    if (!DynamicShop.userTempData.get(uuid).equals("deleteshop"))
-                    {
-                        DynamicShop.userTempData.put(uuid,"deleteshop");
-                        Help.showHelp("delete_shop", (Player) sender, args);
-                    }
-                } else if (args[0].equalsIgnoreCase("mergeshop") && sender.hasPermission("dshop.admin.mergeshop"))
+                    Help.showHelp("delete_shop", (Player) sender, args);
+                } else if (args[0].equalsIgnoreCase("mergeshop") && sender.hasPermission(P_ADMIN_MERGE_SHOP))
                 {
                     if (args.length <= 3)
                     {
-                        temp.addAll(ShopUtil.ccShop.get().getKeys(false));
+                        temp.addAll(ShopUtil.shopConfigFiles.keySet());
 
-                        for (String s : temp)
-                        {
-                            if (s.startsWith(args[args.length - 1])) alist.add(s);
-                        }
+                        AddToAutoCompleteIfValid(args[args.length - 1]);
                     }
 
-                    if (!DynamicShop.userTempData.get(uuid).equals("mergeshop"))
-                    {
-                        DynamicShop.userTempData.put(uuid,"mergeshop");
-                        Help.showHelp("merge_shop", (Player) sender, args);
-                    }
-                } else if (args[0].equalsIgnoreCase("open_shop") && sender.hasPermission("dshop.admin.openshop"))
+                    Help.showHelp("merge_shop", (Player) sender, args);
+                } else if (args[0].equalsIgnoreCase("openshop") && sender.hasPermission(P_ADMIN_OPEN_SHOP))
                 {
                     if (args.length == 2)
                     {
-                        temp.addAll(ShopUtil.ccShop.get().getKeys(false));
+                        temp.addAll(ShopUtil.shopConfigFiles.keySet());
 
-                        for (String s : temp)
-                        {
-                            if (s.startsWith(args[args.length - 1])) alist.add(s);
-                        }
+                        AddToAutoCompleteIfValid(args[args.length - 1]);
                     } else if (args.length == 3)
                     {
                         temp.addAll(Bukkit.getOnlinePlayers().stream().map(HumanEntity::getName).collect(Collectors.toList()));
 
-                        for (String s : temp)
-                        {
-                            if (s.startsWith(args[args.length - 1])) alist.add(s);
-                        }
+                        AddToAutoCompleteIfValid(args[args.length - 1]);
                     }
 
-                    if (!DynamicShop.userTempData.get(uuid).equals("openshop"))
-                    {
-                        DynamicShop.userTempData.put(uuid,"openshop");
-                        Help.showHelp("open_shop", (Player) sender, args);
-                    }
-                } else if (args[0].equalsIgnoreCase("renameshop") && sender.hasPermission("dshop.admin.renameshop"))
+                    Help.showHelp("open_shop", (Player) sender, args);
+                } else if (args[0].equalsIgnoreCase("renameshop") && sender.hasPermission(P_ADMIN_RENAME_SHOP))
                 {
                     if (args.length == 2)
                     {
-                        temp.addAll(ShopUtil.ccShop.get().getKeys(false));
+                        temp.addAll(ShopUtil.shopConfigFiles.keySet());
 
-                        for (String s : temp)
-                        {
-                            if (s.startsWith(args[1])) alist.add(s);
-                        }
+                        AddToAutoCompleteIfValid(args[1]);
                     }
 
-                    if (!DynamicShop.userTempData.get(uuid).equals("renameshop"))
-                    {
-                        DynamicShop.userTempData.put(uuid,"renameshop");
-                        Help.showHelp("rename_shop", (Player) sender, args);
-                    }
+                    Help.showHelp("rename_shop", (Player) sender, args);
                 } else if (args[0].equalsIgnoreCase("cmdHelp"))
                 {
                     if (args.length == 2)
                     {
-                        alist.add("on");
-                        alist.add("off");
+                        autoCompleteList.add("on");
+                        autoCompleteList.add("off");
 
-                        if (!DynamicShop.userTempData.get(uuid).equals("cmdHelp"))
-                        {
-                            DynamicShop.userTempData.put(uuid,"cmdHelp");
-                            Help.showHelp("cmd_help", (Player) sender, args);
-                        }
+                        Help.showHelp("cmd_help", (Player) sender, args);
                     }
                 } else if (args[0].equalsIgnoreCase("settax"))
                 {
-                    if (!DynamicShop.userTempData.get(uuid).equals("settax"))
-                    {
-                        DynamicShop.userTempData.put(uuid,"settax");
-                        Help.showHelp("set_tax", (Player) sender, args);
-                    }
+                    Help.showHelp("set_tax", (Player) sender, args);
                 } else if (args[0].equalsIgnoreCase("setdefaultshop"))
                 {
-                    temp.addAll(ShopUtil.ccShop.get().getKeys(false));
+                    temp.addAll(ShopUtil.shopConfigFiles.keySet());
 
-                    for (String s : temp)
-                    {
-                        if (s.startsWith(args[1])) alist.add(s);
-                    }
+                    AddToAutoCompleteIfValid(args[1]);
 
-                    if (!DynamicShop.userTempData.get(uuid).equals("setdefaultshop"))
-                    {
-                        DynamicShop.userTempData.put(uuid,"setdefaultshop");
-                        Help.showHelp("set_default_shop", (Player) sender, args);
-                    }
+                    Help.showHelp("set_default_shop", (Player) sender, args);
                 } else if (args[0].equalsIgnoreCase("deleteOldUser"))
                 {
-                    if (!DynamicShop.userTempData.get(uuid).equals("deleteOldUser"))
-                    {
-                        DynamicShop.userTempData.put(uuid,"deleteOldUser");
-                        Help.showHelp("delete_old_user", (Player) sender, args);
-                    }
-                } else if (args[0].equalsIgnoreCase("convert"))
-                {
-                    if (!sender.hasPermission("dshop.admin.convert")) return null;
-
-                    if (args.length == 2)
-                    {
-                        temp.add("Shop");
-                    }
-
-                    for (String s : temp)
-                    {
-                        if (s.startsWith(args[1])) alist.add(s);
-                    }
-
-                    if (!DynamicShop.userTempData.get(uuid).equals("convert"))
-                    {
-                        DynamicShop.userTempData.put(uuid,"convert");
-                        Help.showHelp("convert", (Player) sender, args);
-                    }
+                    Help.showHelp("delete_old_user", (Player) sender, args);
                 }
 
-                return alist;
+                return autoCompleteList;
             }
         } catch (Exception e)
         {
@@ -671,5 +464,14 @@ public final class TabCompleteUtil
         }
 
         return null;
+    }
+
+    private static void AddToAutoCompleteIfValid(String arg)
+    {
+        for (String s : temp)
+        {
+            if (s.toLowerCase().startsWith(arg.toLowerCase()))
+                autoCompleteList.add(s);
+        }
     }
 }

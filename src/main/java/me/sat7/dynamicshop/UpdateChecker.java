@@ -9,7 +9,6 @@ import java.net.URL;
 import java.util.Scanner;
 import java.util.function.Consumer;
 
-// From: https://www.spigotmc.org/wiki/creating-an-update-checker-that-checks-for-updates
 public class UpdateChecker
 {
     public static final int PROJECT_ID = 65603;

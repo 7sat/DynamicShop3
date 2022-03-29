@@ -18,7 +18,7 @@ public final class LogUtil
 
     public static void setupLogFile()
     {
-        if (DynamicShop.plugin.getConfig().getBoolean("SaveLogs"))
+        if (DynamicShop.plugin.getConfig().getBoolean("Log.SaveLogs"))
         {
             SimpleDateFormat sdf = new SimpleDateFormat("MM-dd-yyyy-HH-mm-ss");
             String timeStr = sdf.format(System.currentTimeMillis());
@@ -31,9 +31,10 @@ public final class LogUtil
     // 거래 로그 기록
     public static void addLog(String shopName, String itemName, int amount, double value, String curr, String player)
     {
-        if (DynamicShop.plugin.getConfig().getBoolean("SaveLogs"))
+        if (DynamicShop.plugin.getConfig().getBoolean("Log.SaveLogs"))
         {
-            if (ShopUtil.ccShop.get().contains(shopName + ".Options.log") && ShopUtil.ccShop.get().getBoolean(shopName + ".Options.log"))
+            CustomConfig data = ShopUtil.shopConfigFiles.get(shopName);
+            if (data.get().contains("Options.log") && data.get().getBoolean("Options.log"))
             {
                 SimpleDateFormat sdf = new SimpleDateFormat("MM-dd-yyyy-HH-mm-ss");
                 String timeStr = sdf.format(System.currentTimeMillis());
@@ -46,7 +47,7 @@ public final class LogUtil
                 ccLog.save();
             }
 
-            if (ccLog.get().getKeys(true).size() > 500)
+            if (ccLog.get().getKeys(true).size() > 1000)
             {
                 setupLogFile();
             }
@@ -56,13 +57,16 @@ public final class LogUtil
     public static void cullLogs()
     {
         File[] logs = new File(DynamicShop.plugin.getDataFolder() + "/Log").listFiles();
+        if(logs == null)
+            return;
+
         if (logs.length > 0)
         {
             int deleted = 0;
             for (File l : logs)
             {
                 int ageMins = (int) (System.currentTimeMillis() - l.lastModified()) / 60000;
-                if (ageMins > DynamicShop.plugin.getConfig().getInt("LogCullAgeMinutes"))
+                if (ageMins > DynamicShop.plugin.getConfig().getInt("Log.LogCullAgeMinutes"))
                 {
                     l.delete();
                     deleted++;
@@ -71,8 +75,8 @@ public final class LogUtil
             if (deleted > 0)
             {
                 DynamicShop.console.sendMessage(Constants.DYNAMIC_SHOP_PREFIX +
-                        " Found and deleted " + deleted + " log file(s) older than " + DynamicShop.plugin.getConfig().getInt("LogCullAgeMinutes") +
-                        " minutes. Checking again in " + DynamicShop.plugin.getConfig().getInt("LogCullTimeMinutes") + " minutes.");
+                        " Found and deleted " + deleted + " log file(s) older than " + DynamicShop.plugin.getConfig().getInt("Log.LogCullAgeMinutes") +
+                        " minutes. Checking again in " + DynamicShop.plugin.getConfig().getInt("Log.LogCullTimeMinutes") + " minutes.");
             }
         }
     }

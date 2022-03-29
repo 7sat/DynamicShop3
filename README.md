@@ -1,8 +1,8 @@
+Free version https://www.spigotmc.org/resources/65603/
+
+**Premium version** https://www.spigotmc.org/resources/100058/
+
 **Donation** https://www.paypal.com/paypalme/7sat
-
-
-
-Spigot https://www.spigotmc.org/resources/65603/
 
 Discord https://discord.gg/5HQjBqU
 

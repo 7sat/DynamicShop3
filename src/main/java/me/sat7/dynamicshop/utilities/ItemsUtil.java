@@ -2,10 +2,14 @@ package me.sat7.dynamicshop.utilities;
 
 import java.util.ArrayList;
 
+import me.sat7.dynamicshop.files.CustomConfig;
 import org.bukkit.Material;
+import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.ItemMeta;
+
+import static me.sat7.dynamicshop.utilities.LangUtil.t;
 
 public final class ItemsUtil
 {
@@ -21,7 +25,7 @@ public final class ItemsUtil
 
         ItemMeta meta = _meta;
         if (_meta == null) meta = istack.getItemMeta();
-        if (!name.equals("")) meta.setDisplayName(name);
+        if (name != null && !name.equals("")) meta.setDisplayName(name);
         meta.setLore(lore);
         istack.setItemMeta(meta);
         return istack;
@@ -30,7 +34,12 @@ public final class ItemsUtil
     // 아이탬 이름 정돈
     public static String getBeautifiedName(Material mat)
     {
-        String temp = mat.toString().replace("_", " ").toLowerCase();
+        return getBeautifiedName(mat.toString());
+    }
+
+    public static String getBeautifiedName(String matName)
+    {
+        String temp = matName.replace("_", " ").toLowerCase();
         String[] temparr = temp.split(" ");
 
         StringBuilder finalStr = new StringBuilder();
@@ -45,20 +54,28 @@ public final class ItemsUtil
     }
 
     // 아이탬 정보 출력
+    public static void sendItemInfo(CommandSender sender, String shopName, int idx, String msgType)
+    {
+        if(sender instanceof Player)
+            sendItemInfo((Player) sender, shopName, idx, msgType);
+    }
+
     public static void sendItemInfo(Player player, String shopName, int idx, String msgType)
     {
-        String info = " value:" + ShopUtil.ccShop.get().getDouble(shopName + "." + idx + ".value");
+        CustomConfig data = ShopUtil.shopConfigFiles.get(shopName);
 
-        double valueMin = ShopUtil.ccShop.get().getDouble(shopName + "." + idx + ".valueMin");
+        String info = " value:" + data.get().getDouble(idx + ".value");
+
+        double valueMin = data.get().getDouble(idx + ".valueMin");
         if (valueMin > 0.01) info += " min:" + valueMin;
-        double valueMax = ShopUtil.ccShop.get().getDouble(shopName + "." + idx + ".valueMax");
+        double valueMax = data.get().getDouble(idx + ".valueMax");
         if (valueMax > 0) info += " max:" + valueMax;
 
-        info += " median:" + ShopUtil.ccShop.get().getInt(shopName + "." + idx + ".median");
-        info += " stock:" + ShopUtil.ccShop.get().getInt(shopName + "." + idx + ".stock");
+        info += " median:" + data.get().getInt(idx + ".median");
+        info += " stock:" + data.get().getInt(idx + ".stock");
 
-        player.sendMessage(" - " + LangUtil.ccLang.get().getString(msgType).
-                replace("{item}", ShopUtil.ccShop.get().getString(shopName + "." + idx + ".mat")).
+        player.sendMessage(" - " + t(player, msgType).
+                replace("{item}", data.get().getString(idx + ".mat")).
                 replace("{info}", info)
         );
     }

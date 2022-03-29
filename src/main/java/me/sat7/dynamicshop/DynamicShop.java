@@ -1,17 +1,27 @@
 package me.sat7.dynamicshop;
 
+import me.clip.placeholderapi.PlaceholderAPI;
+import me.pikamug.localelib.LocaleManager;
+import me.sat7.dynamicshop.commands.CMDManager;
 import me.sat7.dynamicshop.commands.Optional;
 import me.sat7.dynamicshop.commands.Root;
 import me.sat7.dynamicshop.constants.Constants;
 import me.sat7.dynamicshop.events.*;
 import me.sat7.dynamicshop.files.CustomConfig;
+import me.sat7.dynamicshop.guis.QuickSell;
 import me.sat7.dynamicshop.guis.StartPage;
 import me.sat7.dynamicshop.guis.UIManager;
 import me.sat7.dynamicshop.jobshook.JobsHook;
 import me.sat7.dynamicshop.utilities.*;
+import net.md_5.bungee.api.ChatColor;
+import net.md_5.bungee.api.chat.ClickEvent;
+import net.md_5.bungee.api.chat.ComponentBuilder;
+import net.md_5.bungee.api.chat.HoverEvent;
+import net.md_5.bungee.api.chat.TextComponent;
 import net.milkbowl.vault.economy.Economy;
 
 import org.bstats.bukkit.Metrics;
+import org.bukkit.entity.Player;
 import org.bukkit.plugin.java.JavaPlugin;
 
 import org.bukkit.Bukkit;
@@ -23,12 +33,8 @@ import org.bukkit.plugin.RegisteredServiceProvider;
 import org.bukkit.scheduler.BukkitTask;
 
 import java.io.File;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Random;
-import java.util.UUID;
+import java.util.*;
 
-import static me.sat7.dynamicshop.UpdateChecker.getResourceUrl;
 import static me.sat7.dynamicshop.utilities.ConfigUtil.configVersion;
 
 public final class DynamicShop extends JavaPlugin implements Listener
@@ -41,42 +47,71 @@ public final class DynamicShop extends JavaPlugin implements Listener
 
     public static DynamicShop plugin;
     public static ConsoleCommandSender console;
-    public static String dsPrefix = "§3§l[dShop] §f";
+
+    public static String dsPrefix(CommandSender commandSender)
+    {
+        Player player = null;
+        if(commandSender instanceof Player)
+            player = (Player) commandSender;
+
+        return dsPrefix(player);
+    }
+
+    public static String dsPrefix(Player player)
+    {
+        String temp = dsPrefix_;
+
+        if(plugin.getConfig().getBoolean("UI.UseHexColorCode"))
+            temp = LangUtil.TranslateHexColor(temp);
+
+        if(isPapiExist && player != null && plugin.getConfig().getBoolean("UI.UsePlaceholderAPI"))
+            return PlaceholderAPI.setPlaceholders(player, temp);
+
+        return temp;
+    }
+
+    public static String dsPrefix_ = "§3DShop3 §7| §f";
 
     public static CustomConfig ccUser;
     public static CustomConfig ccSign;
 
-    private BukkitTask randomChangeTask;
+    private BukkitTask periodicRepetitiveTask;
     private BukkitTask cullLogsTask;
 
     public static boolean updateAvailable = false;
+    public static String lastVersion = "";
+    public static String yourVersion = "";
 
     public static UIManager uiManager;
     public static final HashMap<UUID, String> userTempData = new HashMap<>();
     public static final HashMap<UUID, String> userInteractItem = new HashMap<>();
+
+    public static final LocaleManager localeManager = new LocaleManager();
+    public static boolean isPapiExist;
 
     @Override
     public void onEnable()
     {
         plugin = this;
         console = plugin.getServer().getConsoleSender();
-        initCustomConfigs();
 
-        if (!setupEconomy())
-        {
-            getServer().getPluginManager().disablePlugin(this);
-            return;
-        }
+        SetupVault();
+    }
+
+    private void Init()
+    {
+        CMDManager.Init();
 
         registerEvents();
         initCommands();
-        setupConfigs();
-        startRandomChangeTask();
 
         makeFolders();
-        hookIntoJobs();
+        InitConfig();
 
+        PeriodicRepetitiveTask();
         startCullLogsTask();
+        hookIntoJobs();
+        InitPapi();
 
         // 완료
         console.sendMessage(Constants.DYNAMIC_SHOP_PREFIX + " Enabled! :)");
@@ -86,37 +121,66 @@ public final class DynamicShop extends JavaPlugin implements Listener
     }
 
     // 볼트 이코노미 초기화
-    private boolean setupEconomy()
+    private void SetupVault()
     {
-        boolean ret = true;
-
         if (getServer().getPluginManager().getPlugin("Vault") == null)
         {
-            console.sendMessage(Constants.DYNAMIC_SHOP_PREFIX + " Vault Not Found");
-            ret = false;
-        }
-        RegisteredServiceProvider<Economy> rsp = getServer().getServicesManager().getRegistration(Economy.class);
-        if (rsp == null)
-        {
-            console.sendMessage(Constants.DYNAMIC_SHOP_PREFIX + " RSP is null!");
-            ret = false;
+            console.sendMessage(Constants.DYNAMIC_SHOP_PREFIX + " Disabled due to no Vault dependency found!");
+            getServer().getPluginManager().disablePlugin(this);
+            return;
         }
         else
-        {
-            econ = rsp.getProvider();
-            ret = true;
-        }
-
-        if (ret)
         {
             console.sendMessage(Constants.DYNAMIC_SHOP_PREFIX + " Vault Found");
         }
+
+        SetupRSP();
+    }
+
+    private int setupRspRetryCount = 0;
+    private void SetupRSP()
+    {
+        RegisteredServiceProvider<Economy> rsp = getServer().getServicesManager().getRegistration(Economy.class);
+        if (rsp != null)
+        {
+            econ = rsp.getProvider();
+
+            Init();
+        }
         else
         {
-            console.sendMessage(String.format("[%s] - Disabled due to no Vault dependency found!", getDescription().getName()));
-        }
+            if(setupRspRetryCount >= 3)
+            {
+                console.sendMessage(Constants.DYNAMIC_SHOP_PREFIX + " Disabled due to no Vault dependency found!");
+                getServer().getPluginManager().disablePlugin(this);
+                return;
+            }
 
-        return ret;
+            setupRspRetryCount++;
+            console.sendMessage(Constants.DYNAMIC_SHOP_PREFIX + " Economy provider not found. Retry... " + setupRspRetryCount + "/3");
+
+            Bukkit.getScheduler().runTaskLater(this, this::SetupRSP, 30L);
+        }
+    }
+
+    private int ConvertVersionStringToNumber(String string)
+    {
+        String[] temp = string.replace("-snapshot","").split("\\.");
+        if(temp.length != 3)
+            return 1;
+
+        try
+        {
+            int ret = Integer.parseInt(temp[0]) * 10000;
+            ret += Integer.parseInt(temp[1]) * 100;
+            ret += Integer.parseInt(temp[2]);
+
+            return ret;
+        }
+        catch (Exception e)
+        {
+            return 1;
+        }
     }
 
     private void CheckUpdate()
@@ -125,26 +189,22 @@ public final class DynamicShop extends JavaPlugin implements Listener
         {
             try
             {
-                DynamicShop.console.sendMessage("§3-------------------------------------------------------");
-                if (DynamicShop.plugin.getDescription().getVersion().contains("SNAPSHOT"))
-                {
-                    DynamicShop.updateAvailable = false;
+                lastVersion = version;
+                yourVersion = getDescription().getVersion();
 
-                    DynamicShop.console.sendMessage(Constants.DYNAMIC_SHOP_PREFIX + " Plugin is running a dev build!");
-                    DynamicShop.console.sendMessage("Be careful and monitor what happens!");
-                }
-                if (this.getDescription().getVersion().equals(version))
+                int you = ConvertVersionStringToNumber(yourVersion);
+                int last = ConvertVersionStringToNumber(lastVersion);
+
+                if (last <= you)
                 {
                     DynamicShop.updateAvailable = false;
                     DynamicShop.console.sendMessage(Constants.DYNAMIC_SHOP_PREFIX + " Plugin is up to date!");
-                    DynamicShop.console.sendMessage("Please rate my plugin if you like it");
                 } else
                 {
                     DynamicShop.updateAvailable = true;
-                    DynamicShop.console.sendMessage(Constants.DYNAMIC_SHOP_PREFIX + "Plugin outdated!!");
+                    DynamicShop.console.sendMessage(Constants.DYNAMIC_SHOP_PREFIX + "Plugin outdated!");
+                    DynamicShop.console.sendMessage(Constants.DYNAMIC_SHOP_PREFIX + UpdateChecker.getResourceUrl());
                 }
-                DynamicShop.console.sendMessage(getResourceUrl());
-                DynamicShop.console.sendMessage("§3-------------------------------------------------------");
             } catch (Exception e)
             {
                 DynamicShop.console.sendMessage(Constants.DYNAMIC_SHOP_PREFIX + "Failed to check update. Try again later.");
@@ -152,11 +212,18 @@ public final class DynamicShop extends JavaPlugin implements Listener
         });
     }
 
+    public static TextComponent CreateLink(final String text, boolean bold, ChatColor color, final String link) {
+        final TextComponent component = new TextComponent(text);
+        component.setBold(bold);
+        component.setUnderlined(true);
+        component.setColor(color);
+        component.setClickEvent(new ClickEvent(ClickEvent.Action.OPEN_URL, link));
+        component.setHoverEvent(new HoverEvent(HoverEvent.Action.SHOW_TEXT, new ComponentBuilder(link).create()));
+        return component;
+    }
+
     private void InitBstats()
     {
-        // bstats
-        //System.setProperty("bstats.relocatecheck", "false"); // 빌드가 외부로 나갈때는 이 라인이 주석처리되야함.
-
         try
         {
             int pluginId = 4258;
@@ -167,25 +234,55 @@ public final class DynamicShop extends JavaPlugin implements Listener
         }
     }
 
+    private void InitPapi()
+    {
+        isPapiExist = Bukkit.getPluginManager().getPlugin("PlaceholderAPI") != null;
+        if(isPapiExist)
+        {
+            console.sendMessage(Constants.DYNAMIC_SHOP_PREFIX + " PlaceholderAPI Found");
+        }
+        else
+        {
+            console.sendMessage(Constants.DYNAMIC_SHOP_PREFIX + " PlaceholderAPI Not Found");
+        }
+    }
+
     public void startCullLogsTask()
     {
-        if (getConfig().getBoolean("CullLogs"))
+        if (getConfig().getBoolean("Log.CullLogs"))
         {
             if (cullLogsTask != null)
             {
                 cullLogsTask.cancel();
             }
-            cullLogsTask = Bukkit.getScheduler().runTaskTimerAsynchronously(this, LogUtil::cullLogs, 0L, (20L * 60L * (long) getConfig().getInt("LogCullTimeMinutes")));
+            cullLogsTask = Bukkit.getScheduler().runTaskTimerAsynchronously(this, LogUtil::cullLogs, 0L, (20L * 60L * (long) getConfig().getInt("Log.LogCullTimeMinutes")));
         }
     }
 
-    public void startRandomChangeTask()
+    public void PeriodicRepetitiveTask()
     {
-        if (randomChangeTask != null)
+        if (periodicRepetitiveTask != null)
         {
-            randomChangeTask.cancel();
+            periodicRepetitiveTask.cancel();
         }
-        randomChangeTask = Bukkit.getScheduler().runTaskTimer(DynamicShop.plugin, () -> ConfigUtil.randomChange(new Random()), 500, 500);
+        periodicRepetitiveTask = Bukkit.getScheduler().runTaskTimer(DynamicShop.plugin, this::RepeatAction, 100, 100); // 1000틱 = 50초/25/12.5
+    }
+
+    private int repeatTaskCount = 0;
+    private void RepeatAction()
+    {
+        repeatTaskCount++;
+
+        //SimpleDateFormat sdf = new SimpleDateFormat("MM.dd.yyyy,HH.mm.ss");
+        //String time = sdf.format(System.currentTimeMillis());
+        //console.sendMessage(time + " / " + repeatTaskCount);
+
+        if(repeatTaskCount == 5)
+        {
+            ShopUtil.randomChange(new Random());
+            repeatTaskCount = 0;
+        }
+        UIManager.RefreshUI();
     }
 
     private void hookIntoJobs()
@@ -200,17 +297,6 @@ public final class DynamicShop extends JavaPlugin implements Listener
             console.sendMessage(Constants.DYNAMIC_SHOP_PREFIX + " Jobs Reborn Found");
             JobsHook.jobsRebornActive = true;
         }
-    }
-
-    private void makeFolders()
-    {
-        // 컨버팅용 폴더 생성
-        File folder1 = new File(getDataFolder(), "Convert");
-        folder1.mkdir();
-        File folder2 = new File(getDataFolder(), "Convert/Shop");
-        folder2.mkdir();
-        File folder3 = new File(getDataFolder(), "Log");
-        folder3.mkdir();
     }
 
     private void initCommands()
@@ -236,27 +322,33 @@ public final class DynamicShop extends JavaPlugin implements Listener
         getServer().getPluginManager().registerEvents(uiManager, this);
     }
 
-    private void initCustomConfigs()
+    private void makeFolders()
+    {
+        File shopFolder = new File(getDataFolder(), "Shop");
+        shopFolder.mkdir(); // new 하고 같은줄에서 바로 하면 폴더 안만들어짐.
+
+        File LogFolder = new File(getDataFolder(), "Log");
+        LogFolder.mkdir();
+    }
+
+    private void InitConfig()
     {
         LangUtil.ccLang = new CustomConfig();
-        ShopUtil.ccShop = new CustomConfig();
+        LayoutUtil.ccLayout = new CustomConfig();
         ccUser = new CustomConfig();
         StartPage.ccStartPage = new CustomConfig();
         ccSign = new CustomConfig();
         WorthUtil.ccWorth = new CustomConfig();
         SoundUtil.ccSound = new CustomConfig();
         LogUtil.ccLog = new CustomConfig();
-    }
 
-    private void setupConfigs()
-    {
-        // Config 셋업 (기본형)
-        getConfig().options().copyDefaults();
-        saveDefaultConfig();
+        ShopUtil.Reload();
+
         ConfigUtil.configSetup(this);
 
         LangUtil.setupLangFile(getConfig().getString("Language"));
-        ShopUtil.setupShopFile();
+        LayoutUtil.Setup();
+
         setupUserFile();
         StartPage.setupStartPageFile();
         setupSignFile();
@@ -264,7 +356,9 @@ public final class DynamicShop extends JavaPlugin implements Listener
         SoundUtil.setupSoundFile();
         LogUtil.setupLogFile();
 
-        //셋업이 다 끝난 후
+        QuickSell.quickSellGui = new CustomConfig();
+        QuickSell.SetupQuickSellGUIFile();
+
         getConfig().set("Version", configVersion);
         saveConfig();
     }
@@ -275,7 +369,7 @@ public final class DynamicShop extends JavaPlugin implements Listener
         ccUser.get().options().copyDefaults(true);
 
         int userVersion = getConfig().getInt("Version");
-        if (userVersion < configVersion)
+        if (userVersion < 3)
         {
             for (String s : ccUser.get().getKeys(false))
             {

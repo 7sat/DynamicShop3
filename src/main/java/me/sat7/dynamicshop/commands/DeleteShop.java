@@ -1,47 +1,49 @@
 package me.sat7.dynamicshop.commands;
 
+import me.sat7.dynamicshop.files.CustomConfig;
+import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
 
 import me.sat7.dynamicshop.DynamicShop;
-import me.sat7.dynamicshop.utilities.LangUtil;
 import me.sat7.dynamicshop.utilities.ShopUtil;
 
-public final class DeleteShop
-{
-    private DeleteShop()
-    {
+import static me.sat7.dynamicshop.constants.Constants.P_ADMIN_DELETE_SHOP;
+import static me.sat7.dynamicshop.utilities.LangUtil.t;
 
+public final class DeleteShop extends DSCMD
+{
+    public DeleteShop()
+    {
+        inGameUseOnly = false;
+        permission = P_ADMIN_DELETE_SHOP;
+        validArgCount.add(2);
     }
 
-    static boolean deleteShop(String[] args, Player player)
+    @Override
+    public void SendHelpMessage(Player player)
     {
-        if (args.length >= 2)
-        {
-            if (!player.hasPermission("dshop.admin.deleteshop"))
-            {
-                player.sendMessage(DynamicShop.dsPrefix + LangUtil.ccLang.get().getString("ERR.NO_PERMISSION"));
-                return true;
-            }
+        player.sendMessage(DynamicShop.dsPrefix(player) + t(player, "HELP.TITLE").replace("{command}", "§c§ldeleteshop§f§r"));
+        player.sendMessage(" - " + t(player, "HELP.USAGE") + ": /ds deleteshop <shopname>");
 
-            try
-            {
-                if (ShopUtil.ccShop.get().contains(args[1]))
-                {
-                    ShopUtil.ccShop.get().set(args[1], null);
-                    ShopUtil.ccShop.save();
-                    player.sendMessage(DynamicShop.dsPrefix + LangUtil.ccLang.get().getString("SHOP_DELETED"));
-                } else
-                {
-                    player.sendMessage(DynamicShop.dsPrefix + LangUtil.ccLang.get().getString("ERR.SHOP_NOT_FOUND"));
-                }
-            } catch (Exception e)
-            {
-                player.sendMessage(DynamicShop.dsPrefix + LangUtil.ccLang.get().getString("ERR.SHOP_NOT_FOUND"));
-            }
+        player.sendMessage("");
+    }
+
+    @Override
+    public void RunCMD(String[] args, CommandSender sender)
+    {
+        if(!CheckValid(args, sender))
+            return;
+
+        if (ShopUtil.shopConfigFiles.containsKey(args[1]))
+        {
+            CustomConfig data = ShopUtil.shopConfigFiles.get(args[1]);
+            data.delete();
+
+            ShopUtil.shopConfigFiles.remove(args[1]);
+            sender.sendMessage(DynamicShop.dsPrefix(sender) + t(sender, "MESSAGE.SHOP_DELETED"));
         } else
         {
-            player.sendMessage(DynamicShop.dsPrefix + LangUtil.ccLang.get().getString("ERR.WRONG_USAGE"));
+            sender.sendMessage(DynamicShop.dsPrefix(sender) + t(sender, "ERR.SHOP_NOT_FOUND"));
         }
-        return false;
     }
 }

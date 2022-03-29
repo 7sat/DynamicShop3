@@ -2,16 +2,17 @@ package me.sat7.dynamicshop.guis;
 
 import me.sat7.dynamicshop.DynaShopAPI;
 import me.sat7.dynamicshop.DynamicShop;
+import me.sat7.dynamicshop.files.CustomConfig;
 import me.sat7.dynamicshop.transactions.Sell;
 import me.sat7.dynamicshop.utilities.ShopUtil;
 import org.bukkit.Bukkit;
 import org.bukkit.Material;
+import org.bukkit.configuration.ConfigurationSection;
 import org.bukkit.entity.Player;
 import org.bukkit.event.inventory.InventoryClickEvent;
 import org.bukkit.inventory.Inventory;
 
-import java.util.ArrayList;
-import java.util.Arrays;
+import static me.sat7.dynamicshop.utilities.LangUtil.t;
 
 public final class QuickSell extends InGameUI
 {
@@ -20,16 +21,43 @@ public final class QuickSell extends InGameUI
         uiType = UI_TYPE.QuickSell;
     }
 
+    public static CustomConfig quickSellGui;
+
     public Inventory getGui(Player player)
     {
-        inventory = Bukkit.createInventory(player, 9, t("QUICKSELL_TITLE"));
+        inventory = Bukkit.createInventory(player, quickSellGui.get().getInt("UiSlotCount"), t(player, "QUICK_SELL_TITLE"));
 
-        for (int i = 0; i < 9; i++)
+        ConfigurationSection confSec = quickSellGui.get().getConfigurationSection("Buttons");
+        for(String s : confSec.getKeys(false))
         {
-            CreateButton(i, Material.RED_STAINED_GLASS_PANE, t("QUICKSELL_GUIDE_TITLE"), new ArrayList<>(Arrays.asList(t("QUICKSELL_GUIDE_LORE").split("\n"))));
+            try{
+                int i = Integer.parseInt(s);
+                if (i > inventory.getSize())
+                    break;
+
+                Material mat = Material.getMaterial(confSec.getString(s));
+                if(mat == null)
+                    mat = Material.GREEN_STAINED_GLASS_PANE;
+
+                CreateButton(i, mat, t(player, "QUICK_SELL.GUIDE_TITLE"), t(player, "QUICK_SELL.GUIDE_LORE"));
+            }catch (Exception ignore){}
+        }
+        return inventory;
+    }
+
+    public static void SetupQuickSellGUIFile()
+    {
+        quickSellGui.setup("QuickSell", null);
+        quickSellGui.get().addDefault("UiSlotCount", 9);
+
+        if (quickSellGui.get().getKeys(false).size() == 0)
+        {
+            for (int i = 0; i<9; i++)
+                quickSellGui.get().set("Buttons." + i, "GREEN_STAINED_GLASS_PANE");
         }
 
-        return inventory;
+        quickSellGui.get().options().copyDefaults(true);
+        quickSellGui.save();
     }
 
     @Override
@@ -43,6 +71,7 @@ public final class QuickSell extends InGameUI
         }
 
         String[] targetShopInfo = ShopUtil.FindTheBestShopToSell(player, e.getCurrentItem());
+
         String topShopName = targetShopInfo[0];
         int tradeIdx = Integer.parseInt(targetShopInfo[1]);
 
@@ -52,7 +81,6 @@ public final class QuickSell extends InGameUI
             {
                 // 찾은 상점에 판매
                 Sell.quickSellItem(player, e.getCurrentItem(), topShopName, tradeIdx, e.isShiftClick(), e.getSlot());
-                //player.sendMessage(DynamicShop.dsPrefix + t("QSELL_RESULT")+topShopName);
             } else if (e.isRightClick())
             {
                 player.closeInventory();
@@ -60,7 +88,7 @@ public final class QuickSell extends InGameUI
             }
         } else
         {
-            player.sendMessage(DynamicShop.dsPrefix + t("QSELL_NA") + topShopName);
+            player.sendMessage(DynamicShop.dsPrefix(player) + t(player, "MESSAGE.QSELL_NA") + topShopName);
         }
     }
 }

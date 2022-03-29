@@ -6,9 +6,10 @@ import org.bukkit.entity.Player;
 import com.gamingmesh.jobs.Jobs;
 import com.gamingmesh.jobs.container.PlayerPoints;
 
-import me.sat7.dynamicshop.DynaShopAPI;
 import me.sat7.dynamicshop.DynamicShop;
-import me.sat7.dynamicshop.utilities.LangUtil;
+
+import static me.sat7.dynamicshop.utilities.LangUtil.n;
+import static me.sat7.dynamicshop.utilities.LangUtil.t;
 
 public final class JobsHook
 {
@@ -24,7 +25,7 @@ public final class JobsHook
     {
         if (!jobsRebornActive)
         {
-            p.sendMessage(DynamicShop.dsPrefix + LangUtil.ccLang.get().getString("ERR.JOBSREBORN_NOT_FOUND"));
+            p.sendMessage(DynamicShop.dsPrefix(p) + t(p, "ERR.JOBS_REBORN_NOT_FOUND"));
             return false;
         }
 
@@ -40,8 +41,8 @@ public final class JobsHook
             // 포인트 부족
             else
             {
-                p.sendMessage(DynamicShop.dsPrefix + LangUtil.ccLang.get().getString("NOT_ENOUGH_POINT")
-                        .replace("{bal}", DynaShopAPI.df.format(getCurJobPoints(p))));
+                p.sendMessage(DynamicShop.dsPrefix(p) + t(p, "MESSAGE.NOT_ENOUGH_POINT")
+                        .replace("{bal}", n(getCurJobPoints(p))));
                 return false;
             }
         }

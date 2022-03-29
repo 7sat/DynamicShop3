@@ -9,18 +9,29 @@ import org.bukkit.configuration.file.YamlConfiguration;
 
 import java.io.File;
 import java.io.IOException;
+import java.nio.file.Files;
 
 public class CustomConfig
 {
-    private File file; // java의 데이터타입
+    private File file;
     protected FileConfiguration customFile; // 버킷의 데이터 타입
 
     //Finds or generates the custom config file
     public void setup(String name, String folder)
     {
         String path = name + ".yml";
-        if (folder != null) path = folder + "/" + path;
-        file = new File(Bukkit.getServer().getPluginManager().getPlugin("DynamicShop").getDataFolder(), path);
+        if (folder != null)
+        {
+            path = folder + "/" + path;
+
+            File directory = new File(DynamicShop.plugin.getDataFolder() + "/" + folder);
+            if (!directory.exists())
+            {
+                directory.mkdir();
+            }
+        }
+
+        file = new File(DynamicShop.plugin.getDataFolder(), path);
 
         if (!file.exists())
         {
@@ -29,15 +40,17 @@ public class CustomConfig
                 file.createNewFile();
             } catch (IOException e)
             {
-                //System.out.println("CreateFileFail");
+                DynamicShop.console.sendMessage("Fatal error! Config Setup Fail. File name: " + name);
+                //DynamicShop.console.sendMessage(e.toString());
             }
         }
+
         customFile = YamlConfiguration.loadConfiguration(file);
     }
 
     public boolean open(String name, String folder)
     {
-        file = new File(Bukkit.getServer().getPluginManager().getPlugin("DynamicShop").getDataFolder(), folder + "/" + name + ".yml");
+        file = new File(DynamicShop.plugin.getDataFolder(), folder + "/" + name + ".yml");
 
         if (!file.exists())
         {
@@ -61,7 +74,37 @@ public class CustomConfig
             customFile.save(file);
         } catch (IOException e)
         {
-            System.out.println("Couldn't save file :" + e);
+            DynamicShop.console.sendMessage("Couldn't save file :" + e);
+        }
+    }
+
+    public void rename(String newName)
+    {
+        if (!file.exists())
+            return;
+
+        try
+        {
+            File newFile = new File(file.toPath().resolveSibling(newName) + ".yml");
+            Files.copy(file.toPath(), newFile.toPath());
+            file.delete();
+            file = newFile;
+        }
+        catch (Exception e)
+        {
+            System.out.println("rename fail :" + e);
+        }
+    }
+
+    public void delete()
+    {
+        if (file.exists())
+        {
+            if (!file.delete())
+                System.out.println("file delete fail: " + file.getName());
+        } else
+        {
+            System.out.println("file delete fail: not exist");
         }
     }
 

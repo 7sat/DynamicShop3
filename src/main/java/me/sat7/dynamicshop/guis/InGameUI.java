@@ -1,14 +1,18 @@
 package me.sat7.dynamicshop.guis;
 
+import me.sat7.dynamicshop.DynamicShop;
 import me.sat7.dynamicshop.utilities.ItemsUtil;
-import me.sat7.dynamicshop.utilities.LangUtil;
 import org.bukkit.Material;
+import org.bukkit.entity.Player;
 import org.bukkit.event.inventory.InventoryClickEvent;
 import org.bukkit.inventory.Inventory;
 import org.bukkit.inventory.ItemStack;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Collections;
+
+import static me.sat7.dynamicshop.utilities.LangUtil.t;
 
 public class InGameUI
 {
@@ -21,7 +25,9 @@ public class InGameUI
         Shop,
         ShopSettings,
         StartPage,
-        StartPageSettings
+        StartPageSettings,
+        StartPage_ShopList,
+        StartPage_ColorList,
     }
 
     public UI_TYPE uiType;
@@ -34,6 +40,8 @@ public class InGameUI
     {
     }
 
+    public void RefreshUI(){}
+
     protected Inventory inventory;
 
     @SuppressWarnings({"UnusedReturnValue", "SameParameterValue"})
@@ -45,6 +53,10 @@ public class InGameUI
         if (lore == null)
         {
             return CreateButton(slotIndex, icon, name, 1);
+        }
+        else if (lore.contains("\n"))
+        {
+            return CreateButton(slotIndex, icon, name, new ArrayList<>(Arrays.asList(lore.split("\n"))), 1);
         }
         else
         {
@@ -67,6 +79,10 @@ public class InGameUI
         if (lore == null)
         {
             return CreateButton(slotIndex, icon, name, amount);
+        }
+        else if (lore.contains("\n"))
+        {
+            return CreateButton(slotIndex, icon, name, new ArrayList<>(Arrays.asList(lore.split("\n"))), amount);
         }
         else
         {
@@ -92,13 +108,47 @@ public class InGameUI
     }
 
     @SuppressWarnings("SameParameterValue")
-    protected void CreateCloseButton(int slotIndex)
+    protected void CreateCloseButton(Player player, int slotIndex)
     {
-        CreateButton(slotIndex, Material.BARRIER, t("CLOSE"), t("CLOSE_LORE"));
+        CreateButton(slotIndex, InGameUI.GetCloseButtonIconMat(), t(player, "CLOSE"), t(player, "CLOSE_LORE"));
     }
 
-    protected String t(String tag)
+    public static Material GetCloseButtonIconMat()
     {
-        return LangUtil.ccLang.get().getString(tag);
+        String iconName = DynamicShop.plugin.getConfig().getString("UI.CloseButtonIcon");
+        Material mat = Material.getMaterial(iconName);
+        if (mat == null)
+        {
+            mat = Material.BARRIER;
+            DynamicShop.plugin.getConfig().set("UI.CloseButtonIcon", "BARRIER");
+            DynamicShop.plugin.saveConfig();
+        }
+        return mat;
+    }
+
+    public static Material GetPageButtonIconMat()
+    {
+        String iconName = DynamicShop.plugin.getConfig().getString("UI.PageButtonIcon");
+        Material mat = Material.getMaterial(iconName);
+        if (mat == null)
+        {
+            mat = Material.PAPER;
+            DynamicShop.plugin.getConfig().set("UI.PageButtonIcon", "PAPER");
+            DynamicShop.plugin.saveConfig();
+        }
+        return mat;
+    }
+
+    public static Material GetShopInfoButtonIconMat()
+    {
+        String iconName = DynamicShop.plugin.getConfig().getString("UI.ShopInfoButtonIcon");
+        Material mat = Material.getMaterial(iconName);
+        if (mat == null)
+        {
+            mat = Material.GOLD_BLOCK;
+            DynamicShop.plugin.getConfig().set("UI.ShopInfoButtonIcon", "GOLD_BLOCK");
+            DynamicShop.plugin.saveConfig();
+        }
+        return mat;
     }
 }

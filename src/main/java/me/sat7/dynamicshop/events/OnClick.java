@@ -4,13 +4,14 @@ import me.sat7.dynamicshop.DynaShopAPI;
 import me.sat7.dynamicshop.DynamicShop;
 import me.sat7.dynamicshop.guis.InGameUI;
 import me.sat7.dynamicshop.guis.UIManager;
-import me.sat7.dynamicshop.utilities.*;
 
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
 import org.bukkit.event.inventory.InventoryClickEvent;
 import org.bukkit.event.inventory.InventoryDragEvent;
+
+import static me.sat7.dynamicshop.utilities.LangUtil.t;
 
 public class OnClick implements Listener
 {
@@ -40,7 +41,7 @@ public class OnClick implements Listener
             {
                 if (!DynaShopAPI.recreateUserData(player))
                 {
-                    player.sendMessage(DynamicShop.dsPrefix + LangUtil.ccLang.get().getString("ERR.NO_USER_ID"));
+                    player.sendMessage(DynamicShop.dsPrefix(player) + t(player, "ERR.NO_USER_ID"));
                     e.setCancelled(true);
                     return;
                 }
@@ -56,7 +57,10 @@ public class OnClick implements Listener
         else
         {
             if (UIManager.GetPlayerCurrentUIType(player) == InGameUI.UI_TYPE.ItemPalette ||
-                    UIManager.GetPlayerCurrentUIType(player) == InGameUI.UI_TYPE.QuickSell)
+                UIManager.GetPlayerCurrentUIType(player) == InGameUI.UI_TYPE.QuickSell ||
+                UIManager.GetPlayerCurrentUIType(player) == InGameUI.UI_TYPE.ItemSettings ||
+                UIManager.GetPlayerCurrentUIType(player) == InGameUI.UI_TYPE.Shop ||
+                UIManager.GetPlayerCurrentUIType(player) == InGameUI.UI_TYPE.StartPage)
             {
                 e.setCancelled(true);
                 UIManager.OnClickLowerInventory(e);
