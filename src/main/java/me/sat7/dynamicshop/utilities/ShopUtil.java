@@ -55,8 +55,6 @@ public final class ShopUtil
     // 상점에서 빈 슬롯 찾기
     public static int findEmptyShopSlot(String shopName, int startIdx, boolean addPage)
     {
-        ArrayList<Integer> banList = new ArrayList<>();
-
         CustomConfig data = shopConfigFiles.get(shopName);
         if(data == null)
             return -1;

@@ -415,4 +415,15 @@ public final class DynaShopAPI
 
         return Sell.quickSellItem(player, itemStack, ret[0], Integer.parseInt(ret[1]), true, -1);
     }
+
+    /**
+     * Search for empty slots in a specific shop.
+     *
+     * @param shopName shop name
+     * @return Returns the index of an empty slot. (first slot only). Returns -1 if there is no empty slot.
+     */
+    public static int FindEmptySlot(String shopName)
+    {
+        return ShopUtil.findEmptyShopSlot(shopName, 0, false);
+    }
 }
