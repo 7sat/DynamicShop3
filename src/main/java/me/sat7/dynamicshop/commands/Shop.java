@@ -125,27 +125,14 @@ public final class Shop
                 int curTime = (int) (player.getWorld().getTime()) / 1000 + 6;
                 if (curTime > 24) curTime -= 24;
 
-                String[] temp = shopConf.getString("shophours").split("~");
-
-                int open = Integer.parseInt(temp[0]);
-                int close = Integer.parseInt(temp[1]);
-
-                if (close > open)
+                if (!ShopUtil.CheckShopHour(shopName, player))
                 {
-                    if (!(open <= curTime && curTime < close))
-                    {
-                        player.sendMessage(DynamicShop.dsPrefix(player) + t(player, "TIME.SHOP_IS_CLOSED").
-                                replace("{time}", open + "").replace("{curTime}", curTime + ""));
-                        return;
-                    }
-                } else
-                {
-                    if (!(open <= curTime || curTime < close))
-                    {
-                        player.sendMessage(DynamicShop.dsPrefix(player) + t(player, "TIME.SHOP_IS_CLOSED").
-                                replace("{time}", open + "").replace("{curTime}", curTime + ""));
-                        return;
-                    }
+                    String[] temp = shopConf.getString("shophours").split("~");
+                    int open = Integer.parseInt(temp[0]);
+
+                    player.sendMessage(DynamicShop.dsPrefix(player) + t(player, "TIME.SHOP_IS_CLOSED").
+                            replace("{time}", open + "").replace("{curTime}", curTime + ""));
+                    return;
                 }
             }
 

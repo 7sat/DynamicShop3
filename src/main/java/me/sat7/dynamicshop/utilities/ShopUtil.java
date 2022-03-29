@@ -549,12 +549,17 @@ public final class ShopUtil
                 continue;
             }
 
+            // 비활성화된 상점
             boolean enable = data.get().getBoolean("Options.enable", true);
             if (!enable)
                 continue;
 
             // 표지판 전용 상점, 지역상점, 잡포인트 상점
             if (data.get().contains("Options.flag.localshop") || data.get().contains("Options.flag.signshop") || data.get().contains("Options.flag.jobpoint"))
+                continue;
+
+            // 영업시간 확인
+            if (!CheckShopHour(entry.getKey(), player))
                 continue;
 
             int sameItemIdx = ShopUtil.findItemFromShop(entry.getKey(), itemStack);
@@ -608,12 +613,17 @@ public final class ShopUtil
                 continue;
             }
 
+            // 비활성화된 상점
             boolean enable = data.get().getBoolean("Options.enable", true);
             if (!enable)
                 continue;
 
             // 표지판 전용 상점, 지역상점, 잡포인트 상점
             if (data.get().contains("Options.flag.localshop") || data.get().contains("Options.flag.signshop") || data.get().contains("Options.flag.jobpoint"))
+                continue;
+
+            // 영업시간 확인
+            if (!CheckShopHour(entry.getKey(), player))
                 continue;
 
             int sameItemIdx = ShopUtil.findItemFromShop(entry.getKey(), itemStack);
@@ -916,5 +926,34 @@ public final class ShopUtil
         }
 
         return stock;
+    }
+
+    public static boolean CheckShopHour(String shopName, Player player)
+    {
+        CustomConfig shopData = ShopUtil.shopConfigFiles.get(shopName);
+        ConfigurationSection shopConf = shopData.get().getConfigurationSection("Options");
+
+        if (shopConf.contains("shophours"))
+        {
+            int curTimeHour = (int) (player.getWorld().getTime()) / 1000 + 6;
+            if (curTimeHour > 24) curTimeHour -= 24;
+
+            String[] temp = shopConf.getString("shophours").split("~");
+
+            int open = Integer.parseInt(temp[0]);
+            int close = Integer.parseInt(temp[1]);
+
+            if (close > open)
+            {
+                return open <= curTimeHour && curTimeHour < close;
+            } else
+            {
+                return open <= curTimeHour || curTimeHour < close;
+            }
+        }
+        else
+        {
+            return true;
+        }
     }
 }
