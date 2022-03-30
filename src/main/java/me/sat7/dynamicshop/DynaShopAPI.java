@@ -290,7 +290,7 @@ public final class DynaShopAPI
             if (idx != -1)
             {
                 double price = Calc.getCurrentPrice(shopName, String.valueOf(idx), false);
-                return price - ((price / 100) * getTaxRate(shopName));
+                return price;
             } else
             {
                 return idx;
@@ -404,6 +404,16 @@ public final class DynaShopAPI
         }
 
         return ret;
+    }
+
+    public static double QuickSell(ItemStack itemStack)
+    {
+        String[] ret = ShopUtil.FindTheBestShopToSell(itemStack);
+
+        if (!validateShopName(ret[0]))
+            return 0;
+
+        return Sell.quickSellItem(itemStack, ret[0], Integer.parseInt(ret[1]));
     }
 
     public static double QuickSell(Player player, ItemStack itemStack)
