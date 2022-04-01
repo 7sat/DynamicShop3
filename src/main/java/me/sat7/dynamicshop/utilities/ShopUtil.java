@@ -929,7 +929,12 @@ public final class ShopUtil
     public static boolean CheckShopHour(String shopName, Player player)
     {
         CustomConfig shopData = ShopUtil.shopConfigFiles.get(shopName);
+        if (shopData == null)
+            return true;
+
         ConfigurationSection shopConf = shopData.get().getConfigurationSection("Options");
+        if (shopConf == null)
+            return true;
 
         if (shopConf.contains("shophours"))
         {
