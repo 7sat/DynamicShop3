@@ -541,10 +541,13 @@ public final class ShopUtil
             CustomConfig data = entry.getValue();
 
             // 권한 없는 상점
-            String permission = data.get().getString("Options.permission");
-            if (permission != null && permission.length() > 0 && !player.hasPermission(permission) && !player.hasPermission(permission + ".sell"))
+            if(player != null)
             {
-                continue;
+                String permission = data.get().getString("Options.permission");
+                if (permission != null && permission.length() > 0 && !player.hasPermission(permission) && !player.hasPermission(permission + ".sell"))
+                {
+                    continue;
+                }
             }
 
             // 비활성화된 상점
@@ -557,7 +560,7 @@ public final class ShopUtil
                 continue;
 
             // 영업시간 확인
-            if (!CheckShopHour(entry.getKey(), player))
+            if (player != null && !CheckShopHour(entry.getKey(), player))
                 continue;
 
             int sameItemIdx = ShopUtil.findItemFromShop(entry.getKey(), itemStack);

@@ -40,63 +40,72 @@ public final class Sell
 
         // 실제 판매 가능량 확인
         int tradeAmount;
-        if (isShiftClick)
+        if (player != null)
         {
-            int amount = 0;
-            for (ItemStack item : player.getInventory().getStorageContents())
+            if (isShiftClick)
             {
-                if (item == null)
-                    continue;
-
-                if (item.isSimilar(tempIS))
+                int amount = 0;
+                for (ItemStack item : player.getInventory().getStorageContents())
                 {
-                    if (maxStock == -1)
+                    if (item == null)
+                        continue;
+
+                    if (item.isSimilar(tempIS))
                     {
-                        amount += item.getAmount();
-                        player.getInventory().removeItem(item);
-                    } else
-                    {
-                        int tempAmount = Clamp(tempIS.getAmount(), 0, maxStock - stockOld);
-                        int itemLeft = item.getAmount() - tempAmount;
-                        if (itemLeft <= 0)
+                        if (maxStock == -1)
                         {
+                            amount += item.getAmount();
                             player.getInventory().removeItem(item);
                         } else
                         {
-                            item.setAmount(itemLeft);
+                            int tempAmount = Clamp(tempIS.getAmount(), 0, maxStock - stockOld);
+                            int itemLeft = item.getAmount() - tempAmount;
+                            if (itemLeft <= 0)
+                            {
+                                player.getInventory().removeItem(item);
+                            } else
+                            {
+                                item.setAmount(itemLeft);
+                            }
+                            amount += tempAmount;
                         }
-                        amount += tempAmount;
                     }
-                }
 
-                if (maxStock != -1 && amount + stockOld <= maxStock)
-                    break;
-            }
-            tradeAmount = amount;
-        } else
-        {
-            if (maxStock == -1)
-            {
-                tradeAmount = player.getInventory().getItem(slot).getAmount();
-                player.getInventory().setItem(slot, null);
+                    if (maxStock != -1 && amount + stockOld <= maxStock)
+                        break;
+                }
+                tradeAmount = amount;
             } else
             {
-                tradeAmount = Clamp(tempIS.getAmount(), 0, maxStock - stockOld);
-                int itemAmountOld = player.getInventory().getItem(slot).getAmount();
-                int itemLeft = itemAmountOld - tradeAmount;
-
-                if (itemLeft <= 0)
+                if (maxStock == -1)
+                {
+                    tradeAmount = player.getInventory().getItem(slot).getAmount();
                     player.getInventory().setItem(slot, null);
-                else
-                    player.getInventory().getItem(slot).setAmount(itemLeft);
+                } else
+                {
+                    tradeAmount = Clamp(tempIS.getAmount(), 0, maxStock - stockOld);
+                    int itemAmountOld = player.getInventory().getItem(slot).getAmount();
+                    int itemLeft = itemAmountOld - tradeAmount;
+
+                    if (itemLeft <= 0)
+                        player.getInventory().setItem(slot, null);
+                    else
+                        player.getInventory().getItem(slot).setAmount(itemLeft);
+                }
             }
+            player.updateInventory();
         }
-        player.updateInventory();
+        else
+        {
+            tradeAmount = tempIS.getAmount();
+        }
 
         // 판매할 아이탬이 없음
         if (tradeAmount == 0)
         {
-            player.sendMessage(DynamicShop.dsPrefix(player) + t(player, "MESSAGE.NO_ITEM_TO_SELL"));
+            if(player != null)
+                player.sendMessage(DynamicShop.dsPrefix(player) + t(player, "MESSAGE.NO_ITEM_TO_SELL"));
+
             return 0;
         }
 
@@ -110,40 +119,54 @@ public final class Sell
 
         // 실제 거래부----------
         Economy econ = DynamicShop.getEconomy();
-        EconomyResponse r = DynamicShop.getEconomy().depositPlayer(player, priceSum);
+        EconomyResponse r = null;
+        if(player != null)
+            r = DynamicShop.getEconomy().depositPlayer(player, priceSum);
 
-        if (r.transactionSuccess())
+        if (player == null || r.transactionSuccess())
         {
             data.save();
 
             //로그 기록
-            LogUtil.addLog(shopName, tempIS.getType().toString(), -tradeAmount, priceSum, "vault", player.getName());
+            LogUtil.addLog(shopName, tempIS.getType().toString(), -tradeAmount, priceSum, "vault", player != null ? player.getName() : shopName);
 
-            boolean useLocalizedName = DynamicShop.plugin.getConfig().getBoolean("UI.LocalizedItemName");
-            String message = DynamicShop.dsPrefix(player) + t(player, "MESSAGE.SELL_SUCCESS", !useLocalizedName)
-                    .replace("{amount}", Integer.toString(tradeAmount))
-                    .replace("{price}", n(r.amount))
-                    .replace("{bal}", n(econ.getBalance((player))));
+            if (player != null)
+            {
+                boolean useLocalizedName = DynamicShop.plugin.getConfig().getBoolean("UI.LocalizedItemName");
+                String message = DynamicShop.dsPrefix(player) + t(player, "MESSAGE.SELL_SUCCESS", !useLocalizedName)
+                        .replace("{amount}", Integer.toString(tradeAmount))
+                        .replace("{price}", n(r.amount))
+                        .replace("{bal}", n(econ.getBalance((player))));
 
-            if (useLocalizedName)
-            {
-                message = message.replace("{item}", "<item>");
-                LangUtil.sendMessageWithLocalizedItemName(player, message, tempIS.getType());
-            } else
-            {
-                message = message.replace("{item}", ItemsUtil.getBeautifiedName(tempIS.getType()));
-                player.sendMessage(message);
+                if (useLocalizedName)
+                {
+                    message = message.replace("{item}", "<item>");
+                    LangUtil.sendMessageWithLocalizedItemName(player, message, tempIS.getType());
+                } else
+                {
+                    message = message.replace("{item}", ItemsUtil.getBeautifiedName(tempIS.getType()));
+                    player.sendMessage(message);
+                }
+
+                player.playSound(player.getLocation(), Sound.valueOf("ENTITY_EXPERIENCE_ORB_PICKUP"), 1, 1);
             }
-
-            player.playSound(player.getLocation(), Sound.valueOf("ENTITY_EXPERIENCE_ORB_PICKUP"), 1, 1);
 
             if (data.get().contains("Options.Balance"))
             {
                 ShopUtil.addShopBalance(shopName, priceSum * -1);
             }
 
-            ShopBuySellEvent event = new ShopBuySellEvent(false, priceBuyOld, Calc.getCurrentPrice(shopName, String.valueOf(tradeIdx), true), priceSellOld, DynaShopAPI.getSellPrice(shopName, tempIS), stockOld, DynaShopAPI.getStock(shopName, tempIS), DynaShopAPI.getMedian(shopName, tempIS), shopName, tempIS, player);
-            Bukkit.getPluginManager().callEvent(event);
+            if (player != null)
+            {
+                ShopBuySellEvent event = new ShopBuySellEvent(false, priceBuyOld, Calc.getCurrentPrice(shopName, String.valueOf(tradeIdx), true),
+                        priceSellOld,
+                        DynaShopAPI.getSellPrice(shopName, tempIS),
+                        stockOld,
+                        DynaShopAPI.getStock(shopName, tempIS),
+                        DynaShopAPI.getMedian(shopName, tempIS),
+                        shopName, tempIS, player);
+                Bukkit.getPluginManager().callEvent(event);
+            }
         } else
         {
             player.sendMessage(String.format("[Vault] An error occured: %s", r.errorMessage));

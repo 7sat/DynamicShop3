@@ -405,6 +405,13 @@ public final class DynaShopAPI
         return ret;
     }
 
+    /**
+     * Quick Sell
+     *
+     * @param player seller. This can be null. If null, permission and time are not checked.
+     * @param itemStack Item to sell)
+     * @return price sum.
+     */
     public static double QuickSell(Player player, ItemStack itemStack)
     {
         String[] ret = ShopUtil.FindTheBestShopToSell(player, itemStack);
