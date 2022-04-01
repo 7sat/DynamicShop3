@@ -214,7 +214,7 @@ public final class DynaShopAPI
         if (validateShopName(shopName))
         {
             CustomConfig data = ShopUtil.shopConfigFiles.get(shopName);
-            
+
             ArrayList<ItemStack> list = new ArrayList<>();
             for (String s : data.get().getKeys(false))
             {
@@ -289,8 +289,7 @@ public final class DynaShopAPI
             int idx = ShopUtil.findItemFromShop(shopName, itemStack);
             if (idx != -1)
             {
-                double price = Calc.getCurrentPrice(shopName, String.valueOf(idx), false);
-                return price - ((price / 100) * getTaxRate(shopName));
+                return Calc.getCurrentPrice(shopName, String.valueOf(idx), false);
             } else
             {
                 return idx;
