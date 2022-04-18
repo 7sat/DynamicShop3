@@ -120,7 +120,7 @@ public final class StartPage extends InGameUI
 
         if (e.isLeftClick())
         {
-            if(e.isShiftClick())
+            if(e.isShiftClick() && player.hasPermission(P_ADMIN_SHOP_EDIT))
             {
                 if(e.getCurrentItem() != null && e.getCurrentItem().getType() != Material.AIR)
                 {
