@@ -1,4 +1,4 @@
-package me.sat7.dynamicshop.guis;
+package me.sat7.dynamicshop.gui.impl;
 
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -6,6 +6,7 @@ import java.util.Comparator;
 
 import me.sat7.dynamicshop.DynaShopAPI;
 import me.sat7.dynamicshop.events.OnChat;
+import me.sat7.dynamicshop.gui.InGameUI;
 import me.sat7.dynamicshop.utilities.ShopUtil;
 import org.bukkit.Bukkit;
 import org.bukkit.Material;
@@ -59,28 +60,28 @@ public final class ItemPalette extends InGameUI
         ShowItems();
 
         // Close Button
-        CreateCloseButton(player, CLOSE);
+        createCloseButton(player, CLOSE);
 
         // Page Button
         String pageString = t(player, "PALETTE.PAGE_TITLE")
                 .replace("{curPage}", Integer.toString(page))
                 .replace("{maxPage}", Integer.toString(maxPage));
-        CreateButton(PAGE, InGameUI.GetPageButtonIconMat(), pageString, t(player, "PALETTE.PAGE_LORE"), page);
+        createButton(PAGE, InGameUI.getPageButtonIcon(), pageString, t(player, "PALETTE.PAGE_LORE"), page);
 
         // Add all Button
         if(!paletteList.isEmpty())
-            CreateButton(ADD_ALL, Material.YELLOW_STAINED_GLASS_PANE, t(player, "PALETTE.ADD_ALL"), "");
+            createButton(ADD_ALL, Material.YELLOW_STAINED_GLASS_PANE, t(player, "PALETTE.ADD_ALL"), "");
 
         // Search Button
         String filterString = search.isEmpty() ? "" : t(player, "PALETTE.FILTER_APPLIED") + search;
         filterString += "\n" + t(player, "PALETTE.FILTER_LORE");
-        CreateButton(SEARCH, Material.COMPASS, t(player, "PALETTE.SEARCH"), filterString);
+        createButton(SEARCH, Material.COMPASS, t(player, "PALETTE.SEARCH"), filterString);
 
         return inventory;
     }
 
     @Override
-    public void OnClickUpperInventory(InventoryClickEvent e)
+    public void onClickUpperInventory(InventoryClickEvent e)
     {
         this.player = (Player) e.getWhoClicked();
 
@@ -92,7 +93,7 @@ public final class ItemPalette extends InGameUI
     }
 
     @Override
-    public void OnClickLowerInventory(InventoryClickEvent e)
+    public void onClickLowerInventory(InventoryClickEvent e)
     {
         this.player = (Player) e.getWhoClicked();
 

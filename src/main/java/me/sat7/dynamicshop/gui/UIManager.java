@@ -1,4 +1,4 @@
-package me.sat7.dynamicshop.guis;
+package me.sat7.dynamicshop.gui;
 
 import me.sat7.dynamicshop.DynamicShop;
 import me.sat7.dynamicshop.utilities.SoundUtil;
@@ -79,7 +79,7 @@ public class UIManager implements Listener
             return;
 
         SoundUtil.playerSoundEffect(player, "click");
-        inGameUI.OnClickUpperInventory(e);
+        inGameUI.onClickUpperInventory(e);
     }
 
     public static void OnClickLowerInventory(InventoryClickEvent e)
@@ -90,7 +90,7 @@ public class UIManager implements Listener
             return;
 
         SoundUtil.playerSoundEffect(player, "click");
-        inGameUI.OnClickLowerInventory(e);
+        inGameUI.onClickLowerInventory(e);
     }
 
     public static void RefreshUI()
@@ -106,7 +106,7 @@ public class UIManager implements Listener
             if (ui.uiType == InGameUI.UI_TYPE.ItemTrade
                 || ui.uiType == InGameUI.UI_TYPE.Shop)
             {
-                ui.RefreshUI();
+                ui.refreshUI();
             }
         }
     }

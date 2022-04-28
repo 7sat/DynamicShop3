@@ -1,10 +1,11 @@
-package me.sat7.dynamicshop.guis;
+package me.sat7.dynamicshop.gui.impl;
 
 import java.util.ArrayList;
 import java.util.Arrays;
 
 import me.sat7.dynamicshop.DynaShopAPI;
 import me.sat7.dynamicshop.files.CustomConfig;
+import me.sat7.dynamicshop.gui.InGameUI;
 import me.sat7.dynamicshop.transactions.Buy;
 import me.sat7.dynamicshop.transactions.Sell;
 import org.bukkit.Bukkit;
@@ -74,13 +75,13 @@ public final class ItemTrade extends InGameUI
         CreateBalanceButton();
         CreateSellBuyOnlyToggle();
         CreateTradeButtons();
-        CreateCloseButton(player, CLOSE);
+        createCloseButton(player, CLOSE);
 
         return inventory;
     }
 
     @Override
-    public void OnClickUpperInventory(InventoryClickEvent e)
+    public void onClickUpperInventory(InventoryClickEvent e)
     {
         player = (Player) e.getWhoClicked();
 
@@ -127,7 +128,7 @@ public final class ItemTrade extends InGameUI
                     }
 
                     data.save();
-                    RefreshUI();
+                    refreshUI();
                 }
             } else if (e.getSlot() == BUY_ONLY_TOGGLE)
             {
@@ -145,7 +146,7 @@ public final class ItemTrade extends InGameUI
                     }
 
                     data.save();
-                    RefreshUI();
+                    refreshUI();
                 }
             } else
             {
@@ -254,7 +255,7 @@ public final class ItemTrade extends InGameUI
         if (ChatColor.stripColor(temp).startsWith("\n"))
             moneyLore = moneyLore.replaceFirst("\n", "");
 
-        CreateButton(CHECK_BALANCE, Material.EMERALD, t(player, "TRADE.BALANCE"), moneyLore);
+        createButton(CHECK_BALANCE, Material.EMERALD, t(player, "TRADE.BALANCE"), moneyLore);
     }
 
     private void CreateSellBuyOnlyToggle()
@@ -273,8 +274,8 @@ public final class ItemTrade extends InGameUI
         if (player.hasPermission(P_ADMIN_SHOP_EDIT))
             buyLore.add(t(player,"TRADE.TOGGLE_BUYABLE"));
 
-        CreateButton(SELL_ONLY_TOGGLE, Material.GREEN_STAINED_GLASS, t(player, "TRADE.SELL"), sellLore);
-        CreateButton(BUY_ONLY_TOGGLE, Material.RED_STAINED_GLASS, t(player, "TRADE.BUY"), buyLore);
+        createButton(SELL_ONLY_TOGGLE, Material.GREEN_STAINED_GLASS, t(player, "TRADE.SELL"), sellLore);
+        createButton(BUY_ONLY_TOGGLE, Material.RED_STAINED_GLASS, t(player, "TRADE.BUY"), buyLore);
     }
 
     private void CreateTradeButtons()
@@ -442,7 +443,7 @@ public final class ItemTrade extends InGameUI
     }
 
     @Override
-    public void RefreshUI()
+    public void refreshUI()
     {
         if(!CheckShopIsEnable())
             return;

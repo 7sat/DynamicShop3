@@ -1,4 +1,4 @@
-package me.sat7.dynamicshop.guis;
+package me.sat7.dynamicshop.gui;
 
 import lombok.*;
 import me.sat7.dynamicshop.DynamicShop;

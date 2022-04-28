@@ -1,4 +1,4 @@
-package me.sat7.dynamicshop.guis;
+package me.sat7.dynamicshop.gui.impl;
 
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -6,6 +6,7 @@ import java.util.regex.Pattern;
 
 import me.sat7.dynamicshop.DynaShopAPI;
 import me.sat7.dynamicshop.events.OnChat;
+import me.sat7.dynamicshop.gui.InGameUI;
 import me.sat7.dynamicshop.utilities.SoundUtil;
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
@@ -74,9 +75,9 @@ public final class Shop extends InGameUI
         uiName += "§3" + shopData.getString("Options.title", shopName);
         inventory = Bukkit.createInventory(player, 54, uiName);
 
-        CreateCloseButton(player, CLOSE);
-        CreateButton(PAGE, InGameUI.GetPageButtonIconMat(), CreatePageButtonName(), CreatePageButtonLore(), this.page);
-        CreateButton(SHOP_INFO, InGameUI.GetShopInfoButtonIconMat(), "§3" + shopName, CreateShopInfoText());
+        createCloseButton(player, CLOSE);
+        createButton(PAGE, InGameUI.getPageButtonIcon(), CreatePageButtonName(), CreatePageButtonLore(), this.page);
+        createButton(SHOP_INFO, InGameUI.getShopInfoButtonIcon(), "§3" + shopName, CreateShopInfoText());
 
         ShowItems();
 
@@ -84,7 +85,7 @@ public final class Shop extends InGameUI
     }
 
     @Override
-    public void OnClickUpperInventory(InventoryClickEvent e)
+    public void onClickUpperInventory(InventoryClickEvent e)
     {
         player = (Player) e.getWhoClicked();
 
@@ -105,7 +106,7 @@ public final class Shop extends InGameUI
     }
 
     @Override
-    public void OnClickLowerInventory(InventoryClickEvent e)
+    public void onClickLowerInventory(InventoryClickEvent e)
     {
         if(!CheckShopIsEnable())
             return;
@@ -119,7 +120,7 @@ public final class Shop extends InGameUI
         if(idx != -1)
         {
             page = idx / 45 + 1;
-            RefreshUI();
+            refreshUI();
         }
     }
 
@@ -304,7 +305,7 @@ public final class Shop extends InGameUI
             {
                 if (!s.equalsIgnoreCase("Options") && player.hasPermission(P_ADMIN_SHOP_EDIT) && idx != -1)
                 {
-                    CreateButton(idx, Material.BARRIER, t(player, "SHOP.INCOMPLETE_DATA"), t(null, "SHOP.INCOMPLETE_DATA_Lore") + idx);
+                    createButton(idx, Material.BARRIER, t(player, "SHOP.INCOMPLETE_DATA"), t(null, "SHOP.INCOMPLETE_DATA_Lore") + idx);
                 }
             }
         }
@@ -507,7 +508,7 @@ public final class Shop extends InGameUI
             }
         }
         page = targetPage;
-        RefreshUI();
+        refreshUI();
     }
 
     private void OnClickShopSettingsButton()
@@ -563,7 +564,7 @@ public final class Shop extends InGameUI
                     {
                         ShopUtil.removeItemFromShop(shopName, idx);
                         selectedSlot = -1;
-                        RefreshUI();
+                        refreshUI();
                     }
                 } else if (selectedSlot == -1)
                 {
@@ -586,7 +587,7 @@ public final class Shop extends InGameUI
 
                 ShopUtil.shopConfigFiles.get(shopName).save();
                 selectedSlot = -1;
-                RefreshUI();
+                refreshUI();
             }
             // 팔렛트 열기
             else
@@ -597,7 +598,7 @@ public final class Shop extends InGameUI
     }
 
     @Override
-    public void RefreshUI()
+    public void refreshUI()
     {
         if(!CheckShopIsEnable())
             return;

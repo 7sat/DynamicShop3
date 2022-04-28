@@ -2,8 +2,8 @@ package me.sat7.dynamicshop.events;
 
 import me.sat7.dynamicshop.DynaShopAPI;
 import me.sat7.dynamicshop.DynamicShop;
-import me.sat7.dynamicshop.guis.InGameUI;
-import me.sat7.dynamicshop.guis.UIManager;
+import me.sat7.dynamicshop.gui.InGameUI;
+import me.sat7.dynamicshop.gui.UIManager;
 
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;

@@ -1,8 +1,9 @@
-package me.sat7.dynamicshop.guis;
+package me.sat7.dynamicshop.gui.impl;
 
 import me.sat7.dynamicshop.DynaShopAPI;
 import me.sat7.dynamicshop.DynamicShop;
 import me.sat7.dynamicshop.files.CustomConfig;
+import me.sat7.dynamicshop.gui.InGameUI;
 import me.sat7.dynamicshop.transactions.Sell;
 import me.sat7.dynamicshop.utilities.ShopUtil;
 import org.bukkit.Bukkit;
@@ -39,7 +40,7 @@ public final class QuickSell extends InGameUI
                 if(mat == null)
                     mat = Material.GREEN_STAINED_GLASS_PANE;
 
-                CreateButton(i, mat, t(player, "QUICK_SELL.GUIDE_TITLE"), t(player, "QUICK_SELL.GUIDE_LORE"));
+                createButton(i, mat, t(player, "QUICK_SELL.GUIDE_TITLE"), t(player, "QUICK_SELL.GUIDE_LORE"));
             }catch (Exception ignore){}
         }
         return inventory;
@@ -61,7 +62,7 @@ public final class QuickSell extends InGameUI
     }
 
     @Override
-    public void OnClickLowerInventory(InventoryClickEvent e)
+    public void onClickLowerInventory(InventoryClickEvent e)
     {
         Player player = (Player) e.getWhoClicked();
 
