@@ -3,7 +3,7 @@ package me.sat7.dynamicshop.events;
 import me.sat7.dynamicshop.DynamicShop;
 import me.sat7.dynamicshop.UpdateChecker;
 
-import me.sat7.dynamicshop.guis.UIManager;
+import me.sat7.dynamicshop.gui.UIManager;
 import net.md_5.bungee.api.ChatColor;
 import net.md_5.bungee.api.chat.TextComponent;
 import org.bukkit.entity.Player;

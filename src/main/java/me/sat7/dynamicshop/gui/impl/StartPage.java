@@ -1,9 +1,10 @@
-package me.sat7.dynamicshop.guis;
+package me.sat7.dynamicshop.gui.impl;
 
 import java.util.ArrayList;
 import java.util.Arrays;
 
 import me.sat7.dynamicshop.DynaShopAPI;
+import me.sat7.dynamicshop.gui.InGameUI;
 import me.sat7.dynamicshop.utilities.ItemsUtil;
 import me.sat7.dynamicshop.utilities.LangUtil;
 import me.sat7.dynamicshop.utilities.ShopUtil;
@@ -114,7 +115,7 @@ public final class StartPage extends InGameUI
     }
 
     @Override
-    public void OnClickUpperInventory(InventoryClickEvent e)
+    public void onClickUpperInventory(InventoryClickEvent e)
     {
         Player player = (Player) e.getWhoClicked();
 
@@ -208,7 +209,7 @@ public final class StartPage extends InGameUI
     }
 
     @Override
-    public void OnClickLowerInventory(InventoryClickEvent e)
+    public void onClickLowerInventory(InventoryClickEvent e)
     {
         if(!DynamicShop.plugin.getConfig().getBoolean("UI.EnableInventoryClickSearch.StartPage"))
             return;

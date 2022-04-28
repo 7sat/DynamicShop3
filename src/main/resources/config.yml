@@ -15,9 +15,9 @@ Shop.UseLegacyStockStabilization: false
 
 UI.DisplayStockAsStack: false
 UI.OpenStartPageWhenClickCloseButton: true
-UI.CloseButtonIcon : BARRIER
-UI.PageButtonIcon : PAPER
-UI.ShopInfoButtonIcon : OAK_SIGN
+UI.Icons.CloseButton : BARRIER:0
+UI.Icons.PageButton : PAPER:0
+UI.Icons.ShopInfoButton : OAK_SIGN:0
 UI.IntFormat: '###,###'
 UI.DoubleFormat: '###,##0.00'
 UI.LocalizedItemName: true

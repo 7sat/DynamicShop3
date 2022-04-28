@@ -1,8 +1,9 @@
-package me.sat7.dynamicshop.guis;
+package me.sat7.dynamicshop.gui.impl;
 
 import java.util.ArrayList;
 
 import me.sat7.dynamicshop.DynaShopAPI;
+import me.sat7.dynamicshop.gui.InGameUI;
 import me.sat7.dynamicshop.utilities.*;
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
@@ -100,15 +101,15 @@ public final class ItemSettings extends InGameUI
         Material white = Material.WHITE_STAINED_GLASS_PANE;
         Material yellow = Material.YELLOW_STAINED_GLASS_PANE;
 
-        CreateButton(BUY_VALUE, (currentTab == BUY_VALUE) ? red : blue, buyValueStr, "");
-        CreateButton(SELL_VALUE, (currentTab == SELL_VALUE) ? red : gray, sellValueStr, sellValueLore);
-        CreateButton(MIN_VALUE, (currentTab == MIN_VALUE) ? red : gray, priceMinStr, "");
-        CreateButton(MAX_VALUE, (currentTab == MAX_VALUE) ? red : gray, priceMaxStr, maxPriceLore);
-        CreateButton(MEDIAN, (currentTab == MEDIAN) ? red : blue, medianStr, medianLore);
-        CreateButton(STOCK, (currentTab == STOCK) ? red : blue, stockStr, stockLore);
-        CreateButton(MAX_STOCK, (currentTab == MAX_STOCK) ? red : gray, maxStockStr, maxStockLore);
+        createButton(BUY_VALUE, (currentTab == BUY_VALUE) ? red : blue, buyValueStr, "");
+        createButton(SELL_VALUE, (currentTab == SELL_VALUE) ? red : gray, sellValueStr, sellValueLore);
+        createButton(MIN_VALUE, (currentTab == MIN_VALUE) ? red : gray, priceMinStr, "");
+        createButton(MAX_VALUE, (currentTab == MAX_VALUE) ? red : gray, priceMaxStr, maxPriceLore);
+        createButton(MEDIAN, (currentTab == MEDIAN) ? red : blue, medianStr, medianLore);
+        createButton(STOCK, (currentTab == STOCK) ? red : blue, stockStr, stockLore);
+        createButton(MAX_STOCK, (currentTab == MAX_STOCK) ? red : gray, maxStockStr, maxStockLore);
 
-        CreateButton(SHIFT, Material.BLACK_STAINED_GLASS_PANE, "Shift = x5", "");
+        createButton(SHIFT, Material.BLACK_STAINED_GLASS_PANE, "Shift = x5", "");
 
         // 조절버튼
         if (dsItem.getBuyValue() == dsItem.getSellValue())
@@ -197,37 +198,37 @@ public final class ItemSettings extends InGameUI
         editBtnLore.add(t(null, "ITEM_SETTING.BUY").replace("{num}", n(buyPrice)));
         editBtnLore.add(t(null, "ITEM_SETTING.SELL").replace("{num}", n(sellPrice)));
 
-        CreateButton(RESET, white, "Reset", editBtnLore);
-        CreateButton(ROUND_DOWN, white, t(null, "ITEM_SETTING.ROUND_DOWN"), editBtnLore);
-        CreateButton(DIVIDE, white, "/2", editBtnLore);
-        CreateButton(MULTIPLY, white, "x2", editBtnLore);
+        createButton(RESET, white, "Reset", editBtnLore);
+        createButton(ROUND_DOWN, white, t(null, "ITEM_SETTING.ROUND_DOWN"), editBtnLore);
+        createButton(DIVIDE, white, "/2", editBtnLore);
+        createButton(MULTIPLY, white, "x2", editBtnLore);
 
         if (currentTab <= MAX_VALUE)
         {
-            CreateButton(9, white, "-100", editBtnLore);
-            CreateButton(10, white, "-10", editBtnLore);
-            CreateButton(11, white, "-1", editBtnLore);
-            CreateButton(12, white, "-0.1", editBtnLore);
-            CreateButton(14, white, "+0.1", editBtnLore);
-            CreateButton(15, white, "+1", editBtnLore);
-            CreateButton(16, white, "+10", editBtnLore);
-            CreateButton(17, white, "+100", editBtnLore);
+            createButton(9, white, "-100", editBtnLore);
+            createButton(10, white, "-10", editBtnLore);
+            createButton(11, white, "-1", editBtnLore);
+            createButton(12, white, "-0.1", editBtnLore);
+            createButton(14, white, "+0.1", editBtnLore);
+            createButton(15, white, "+1", editBtnLore);
+            createButton(16, white, "+10", editBtnLore);
+            createButton(17, white, "+100", editBtnLore);
 
-            if (currentTab >= SELL_VALUE) CreateButton(SET_TO_OTHER, yellow, t(null, "ITEM_SETTING.SET_TO_VALUE"), editBtnLore);
+            if (currentTab >= SELL_VALUE) createButton(SET_TO_OTHER, yellow, t(null, "ITEM_SETTING.SET_TO_VALUE"), editBtnLore);
         } else
         {
-            CreateButton(9, white, "-1000", editBtnLore);
-            CreateButton(10, white, "-100", editBtnLore);
-            CreateButton(11, white, "-10", editBtnLore);
-            CreateButton(12, white, "-1", editBtnLore);
-            CreateButton(14, white, "+1", editBtnLore);
-            CreateButton(15, white, "+10", editBtnLore);
-            CreateButton(16, white, "+100", editBtnLore);
-            CreateButton(17, white, "+1000", editBtnLore);
+            createButton(9, white, "-1000", editBtnLore);
+            createButton(10, white, "-100", editBtnLore);
+            createButton(11, white, "-10", editBtnLore);
+            createButton(12, white, "-1", editBtnLore);
+            createButton(14, white, "+1", editBtnLore);
+            createButton(15, white, "+10", editBtnLore);
+            createButton(16, white, "+100", editBtnLore);
+            createButton(17, white, "+1000", editBtnLore);
 
-            if (currentTab == MEDIAN) CreateButton(SET_TO_OTHER, yellow, t(null, "ITEM_SETTING.SET_TO_STOCK"), editBtnLore);
-            else if (currentTab == STOCK) CreateButton(SET_TO_OTHER, yellow, t(null, "ITEM_SETTING.SET_TO_MEDIAN"), editBtnLore);
-            else if (currentTab == MAX_STOCK) CreateButton(SET_TO_OTHER, yellow, t(null, "ITEM_SETTING.SET_TO_STOCK"), editBtnLore);
+            if (currentTab == MEDIAN) createButton(SET_TO_OTHER, yellow, t(null, "ITEM_SETTING.SET_TO_STOCK"), editBtnLore);
+            else if (currentTab == STOCK) createButton(SET_TO_OTHER, yellow, t(null, "ITEM_SETTING.SET_TO_MEDIAN"), editBtnLore);
+            else if (currentTab == MAX_STOCK) createButton(SET_TO_OTHER, yellow, t(null, "ITEM_SETTING.SET_TO_STOCK"), editBtnLore);
         }
 
         inventory.setItem(SAMPLE_ITEM, dsItem.getItemStack()); // 아이탬 견본
@@ -263,16 +264,16 @@ public final class ItemSettings extends InGameUI
                     + "§7 " + dsItem.getStock() + stockChanged + sugMid;
         }
 
-        CreateButton(RECOMMEND, Material.NETHER_STAR, t(player, "ITEM_SETTING.RECOMMEND"), recommendLore); // 추천 버튼
-        CreateButton(DONE, Material.STRUCTURE_VOID, t(player, "ITEM_SETTING.DONE"), t(player, "ITEM_SETTING.DONE_LORE")); // 완료 버튼
-        CreateButton(CLOSE, Material.BARRIER, t(player, "ITEM_SETTING.CLOSE"), t(player, "ITEM_SETTING.CLOSE_LORE")); // 닫기 버튼
-        CreateButton(REMOVE, Material.BONE, t(player, "ITEM_SETTING.REMOVE"), t(player, "ITEM_SETTING.REMOVE_LORE")); // 삭제 버튼
+        createButton(RECOMMEND, Material.NETHER_STAR, t(player, "ITEM_SETTING.RECOMMEND"), recommendLore); // 추천 버튼
+        createButton(DONE, Material.STRUCTURE_VOID, t(player, "ITEM_SETTING.DONE"), t(player, "ITEM_SETTING.DONE_LORE")); // 완료 버튼
+        createButton(CLOSE, Material.BARRIER, t(player, "ITEM_SETTING.CLOSE"), t(player, "ITEM_SETTING.CLOSE_LORE")); // 닫기 버튼
+        createButton(REMOVE, Material.BONE, t(player, "ITEM_SETTING.REMOVE"), t(player, "ITEM_SETTING.REMOVE_LORE")); // 삭제 버튼
 
         return inventory;
     }
 
     @Override
-    public void OnClickUpperInventory(InventoryClickEvent e)
+    public void onClickUpperInventory(InventoryClickEvent e)
     {
         this.player = (Player) e.getWhoClicked();
 

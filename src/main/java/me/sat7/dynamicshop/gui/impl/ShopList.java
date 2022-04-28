@@ -1,6 +1,7 @@
-package me.sat7.dynamicshop.guis;
+package me.sat7.dynamicshop.gui.impl;
 
 import me.sat7.dynamicshop.DynaShopAPI;
+import me.sat7.dynamicshop.gui.InGameUI;
 import me.sat7.dynamicshop.utilities.MathUtil;
 import me.sat7.dynamicshop.utilities.ShopUtil;
 import org.bukkit.Bukkit;
@@ -34,8 +35,8 @@ public class ShopList extends InGameUI
         this.slotIndex = slotIndex;
 
         CreateShopButtons();
-        CreateCloseButton(player, CLOSE);
-        CreateButton(PAGE, GetPageButtonIconMat(),
+        createCloseButton(player, CLOSE);
+        createButton(PAGE, getPageButtonIcon(),
                 t(player, "START_PAGE.SHOP_LIST.PAGE_TITLE").replace("{curPage}", String.valueOf(this.page)).replace("{maxPage}", String.valueOf(this.maxPage)),
                 t(player, "START_PAGE.SHOP_LIST.PAGE_LORE"));
 
@@ -43,7 +44,7 @@ public class ShopList extends InGameUI
     }
 
     @Override
-    public void OnClickUpperInventory(InventoryClickEvent e)
+    public void onClickUpperInventory(InventoryClickEvent e)
     {
         Player player = (Player) e.getWhoClicked();
 
@@ -88,7 +89,7 @@ public class ShopList extends InGameUI
 
             if (idx >= (page - 1) * 45)
             {
-                CreateButton(slotIdx, Material.CHEST, shopName, "");
+                createButton(slotIdx, Material.CHEST, shopName, "");
                 slotIdx++;
             }
 

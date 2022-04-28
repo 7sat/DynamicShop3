@@ -1,9 +1,10 @@
-package me.sat7.dynamicshop.guis;
+package me.sat7.dynamicshop.gui.impl;
 
 import java.util.UUID;
 
 import me.sat7.dynamicshop.DynaShopAPI;
 import me.sat7.dynamicshop.events.OnChat;
+import me.sat7.dynamicshop.gui.InGameUI;
 import me.sat7.dynamicshop.utilities.ShopUtil;
 import org.bukkit.Bukkit;
 import org.bukkit.Material;
@@ -40,25 +41,25 @@ public final class StartPageSettings extends InGameUI
 
         inventory = Bukkit.createInventory(player, 9, t(player, "START_PAGE.EDITOR_TITLE"));
 
-        CreateCloseButton(player, CLOSE); // 닫기 버튼
+        createCloseButton(player, CLOSE); // 닫기 버튼
 
-        CreateButton(NAME, Material.BOOK, t(player, "START_PAGE.EDIT_NAME"), ""); // 이름 버튼
-        CreateButton(LORE, Material.BOOK, t(player, "START_PAGE.EDIT_LORE"), ""); // 설명 버튼
+        createButton(NAME, Material.BOOK, t(player, "START_PAGE.EDIT_NAME"), ""); // 이름 버튼
+        createButton(LORE, Material.BOOK, t(player, "START_PAGE.EDIT_LORE"), ""); // 설명 버튼
 
         // 아이콘 버튼
-        CreateButton(ICON, Material.getMaterial(StartPage.ccStartPage.get().getString("Buttons." + slotIndex + ".icon")), t(player, "START_PAGE.EDIT_ICON"), "");
+        createButton(ICON, Material.getMaterial(StartPage.ccStartPage.get().getString("Buttons." + slotIndex + ".icon")), t(player, "START_PAGE.EDIT_ICON"), "");
 
         String cmdString = StartPage.ccStartPage.get().getString("Buttons." + slotIndex + ".action");
-        CreateButton(CMD, Material.REDSTONE_TORCH, t(player, "START_PAGE.EDIT_ACTION"), cmdString == null || cmdString.isEmpty() ? null : "§7/" + cmdString); // 액션 버튼
-        CreateButton(SHOP_SHORTCUT, Material.EMERALD, t(player, "START_PAGE.SHOP_SHORTCUT"), ""); // 상점 바로가기 생성 버튼
-        CreateButton(DECO, Material.BLUE_STAINED_GLASS_PANE, t(player, "START_PAGE.CREATE_DECO"), ""); // 장식 버튼
-        CreateButton(DELETE, Material.BONE, t(player, "START_PAGE.REMOVE"), t(player, "START_PAGE.REMOVE_LORE")); // 삭제 버튼
+        createButton(CMD, Material.REDSTONE_TORCH, t(player, "START_PAGE.EDIT_ACTION"), cmdString == null || cmdString.isEmpty() ? null : "§7/" + cmdString); // 액션 버튼
+        createButton(SHOP_SHORTCUT, Material.EMERALD, t(player, "START_PAGE.SHOP_SHORTCUT"), ""); // 상점 바로가기 생성 버튼
+        createButton(DECO, Material.BLUE_STAINED_GLASS_PANE, t(player, "START_PAGE.CREATE_DECO"), ""); // 장식 버튼
+        createButton(DELETE, Material.BONE, t(player, "START_PAGE.REMOVE"), t(player, "START_PAGE.REMOVE_LORE")); // 삭제 버튼
 
         return inventory;
     }
 
     @Override
-    public void OnClickUpperInventory(InventoryClickEvent e)
+    public void onClickUpperInventory(InventoryClickEvent e)
     {
         Player player = (Player) e.getWhoClicked();
         UUID uuid = player.getUniqueId();

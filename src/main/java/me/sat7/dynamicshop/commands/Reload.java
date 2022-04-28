@@ -1,12 +1,12 @@
 package me.sat7.dynamicshop.commands;
 
-import me.sat7.dynamicshop.guis.QuickSell;
+import me.sat7.dynamicshop.gui.impl.QuickSell;
 import me.sat7.dynamicshop.utilities.*;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
 
 import me.sat7.dynamicshop.DynamicShop;
-import me.sat7.dynamicshop.guis.StartPage;
+import me.sat7.dynamicshop.gui.impl.StartPage;
 
 import static me.sat7.dynamicshop.constants.Constants.P_ADMIN_RELOAD;
 import static me.sat7.dynamicshop.utilities.ConfigUtil.configVersion;

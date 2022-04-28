@@ -4,7 +4,7 @@ import java.util.HashMap;
 
 import me.sat7.dynamicshop.events.ShopBuySellEvent;
 import me.sat7.dynamicshop.files.CustomConfig;
-import me.sat7.dynamicshop.guis.ItemTrade;
+import me.sat7.dynamicshop.gui.impl.ItemTrade;
 import me.sat7.dynamicshop.utilities.*;
 import org.bukkit.Bukkit;
 import org.bukkit.Location;

@@ -2,7 +2,8 @@ package me.sat7.dynamicshop;
 
 import lombok.NonNull;
 import me.sat7.dynamicshop.files.CustomConfig;
-import me.sat7.dynamicshop.guis.*;
+import me.sat7.dynamicshop.gui.*;
+import me.sat7.dynamicshop.gui.impl.*;
 import me.sat7.dynamicshop.models.DSItem;
 import me.sat7.dynamicshop.transactions.Calc;
 import me.sat7.dynamicshop.transactions.Sell;

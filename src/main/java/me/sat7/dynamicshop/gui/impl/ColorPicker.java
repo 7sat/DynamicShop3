@@ -1,6 +1,7 @@
-package me.sat7.dynamicshop.guis;
+package me.sat7.dynamicshop.gui.impl;
 
 import me.sat7.dynamicshop.DynaShopAPI;
+import me.sat7.dynamicshop.gui.InGameUI;
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
 import org.bukkit.Material;
@@ -28,13 +29,13 @@ public class ColorPicker extends InGameUI
         this.slotIndex = slotIndex;
 
         CreateColorButtons();
-        CreateCloseButton(player, CLOSE);
+        createCloseButton(player, CLOSE);
 
         return inventory;
     }
 
     @Override
-    public void OnClickUpperInventory(InventoryClickEvent e)
+    public void onClickUpperInventory(InventoryClickEvent e)
     {
         Player player = (Player) e.getWhoClicked();
 
@@ -56,21 +57,21 @@ public class ColorPicker extends InGameUI
 
     private void CreateColorButtons()
     {
-        CreateButton(0, Material.BLACK_STAINED_GLASS_PANE, "§fBLACK", "");
-        CreateButton(1, Material.GRAY_STAINED_GLASS_PANE, "§fGRAY", "");
-        CreateButton(2, Material.LIGHT_GRAY_STAINED_GLASS_PANE, "§fLIGHT_GRAY", "");
-        CreateButton(3, Material.WHITE_STAINED_GLASS_PANE, "§fWHITE", "");
-        CreateButton(4, Material.CYAN_STAINED_GLASS_PANE, "§fCYAN", "");
-        CreateButton(5, Material.LIGHT_BLUE_STAINED_GLASS_PANE, "§fLIGHT_BLUE", "");
-        CreateButton(6, Material.BLUE_STAINED_GLASS_PANE, "§fBLUE", "");
-        CreateButton(7, Material.BROWN_STAINED_GLASS_PANE, "§fBROWN", "");
-        CreateButton(8, Material.GREEN_STAINED_GLASS_PANE, "§fGREEN", "");
-        CreateButton(9, Material.LIME_STAINED_GLASS_PANE, "§fLIME", "");
-        CreateButton(10, Material.YELLOW_STAINED_GLASS_PANE, "§fYELLOW", "");
-        CreateButton(11, Material.ORANGE_STAINED_GLASS_PANE, "§fORANGE", "");
-        CreateButton(12, Material.PINK_STAINED_GLASS_PANE, "§fPINK", "");
-        CreateButton(13, Material.MAGENTA_STAINED_GLASS_PANE, "§fMAGENTA", "");
-        CreateButton(14, Material.PURPLE_STAINED_GLASS_PANE, "§fPURPLE", "");
-        CreateButton(15, Material.RED_STAINED_GLASS_PANE, "§fRED", "");
+        createButton(0, Material.BLACK_STAINED_GLASS_PANE, "§fBLACK", "");
+        createButton(1, Material.GRAY_STAINED_GLASS_PANE, "§fGRAY", "");
+        createButton(2, Material.LIGHT_GRAY_STAINED_GLASS_PANE, "§fLIGHT_GRAY", "");
+        createButton(3, Material.WHITE_STAINED_GLASS_PANE, "§fWHITE", "");
+        createButton(4, Material.CYAN_STAINED_GLASS_PANE, "§fCYAN", "");
+        createButton(5, Material.LIGHT_BLUE_STAINED_GLASS_PANE, "§fLIGHT_BLUE", "");
+        createButton(6, Material.BLUE_STAINED_GLASS_PANE, "§fBLUE", "");
+        createButton(7, Material.BROWN_STAINED_GLASS_PANE, "§fBROWN", "");
+        createButton(8, Material.GREEN_STAINED_GLASS_PANE, "§fGREEN", "");
+        createButton(9, Material.LIME_STAINED_GLASS_PANE, "§fLIME", "");
+        createButton(10, Material.YELLOW_STAINED_GLASS_PANE, "§fYELLOW", "");
+        createButton(11, Material.ORANGE_STAINED_GLASS_PANE, "§fORANGE", "");
+        createButton(12, Material.PINK_STAINED_GLASS_PANE, "§fPINK", "");
+        createButton(13, Material.MAGENTA_STAINED_GLASS_PANE, "§fMAGENTA", "");
+        createButton(14, Material.PURPLE_STAINED_GLASS_PANE, "§fPURPLE", "");
+        createButton(15, Material.RED_STAINED_GLASS_PANE, "§fRED", "");
     }
 }
