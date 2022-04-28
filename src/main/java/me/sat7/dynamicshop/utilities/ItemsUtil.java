@@ -6,8 +6,10 @@ import me.sat7.dynamicshop.files.CustomConfig;
 import org.bukkit.Material;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
+import org.bukkit.inventory.ItemFlag;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.ItemMeta;
+import org.jetbrains.annotations.Nullable;
 
 import static me.sat7.dynamicshop.utilities.LangUtil.t;
 
@@ -18,15 +20,27 @@ public final class ItemsUtil
 
     }
 
-    // 지정된 이름,lore,수량의 아이탬 스택 생성및 반환
-    public static ItemStack createItemStack(Material material, ItemMeta _meta, String name, ArrayList<String> lore, int amount)
-    {
-        ItemStack istack = new ItemStack(material, amount);
+    public static ItemStack createItemStack(Material material, @Nullable ItemMeta _meta, String name, ArrayList<String> lore, int amount) {
+        return createItemStack(material, _meta, name, lore, amount, null);
+    }
 
-        ItemMeta meta = _meta;
-        if (_meta == null) meta = istack.getItemMeta();
-        if (name != null && !name.equals("")) meta.setDisplayName(name);
+    // 지정된 이름,lore,수량의 아이탬 스택 생성및 반환
+    public static ItemStack createItemStack(Material material, @Nullable ItemMeta _meta, String name, ArrayList<String> lore, int amount, @Nullable Integer customModelData) {
+        ItemStack istack = new ItemStack(material, amount);
+        ItemMeta meta;
+        if (_meta == null) {
+            meta = istack.getItemMeta();
+        } else {
+            meta = _meta;
+        }
+        if (name != null && !name.equals("")) {
+            meta.setDisplayName(name);
+        }
+        if (customModelData != null) {
+            meta.setCustomModelData(customModelData);
+        }
         meta.setLore(lore);
+        meta.addItemFlags(ItemFlag.HIDE_ATTRIBUTES);
         istack.setItemMeta(meta);
         return istack;
     }

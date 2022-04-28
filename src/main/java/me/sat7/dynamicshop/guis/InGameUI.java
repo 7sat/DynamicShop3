@@ -1,5 +1,6 @@
 package me.sat7.dynamicshop.guis;
 
+import lombok.*;
 import me.sat7.dynamicshop.DynamicShop;
 import me.sat7.dynamicshop.utilities.ItemsUtil;
 import org.bukkit.Material;
@@ -7,6 +8,7 @@ import org.bukkit.entity.Player;
 import org.bukkit.event.inventory.InventoryClickEvent;
 import org.bukkit.inventory.Inventory;
 import org.bukkit.inventory.ItemStack;
+import org.jetbrains.annotations.Nullable;
 
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -14,10 +16,8 @@ import java.util.Collections;
 
 import static me.sat7.dynamicshop.utilities.LangUtil.t;
 
-public class InGameUI
-{
-    public enum UI_TYPE
-    {
+public abstract class InGameUI {
+    public enum UI_TYPE {
         ItemPalette,
         ItemSettings,
         ItemTrade,
@@ -32,123 +32,122 @@ public class InGameUI
 
     public UI_TYPE uiType;
 
-    public void OnClickUpperInventory(InventoryClickEvent e)
-    {
-    }
+    public void onClickUpperInventory(InventoryClickEvent e) {}
 
-    public void OnClickLowerInventory(InventoryClickEvent e)
-    {
-    }
+    public void onClickLowerInventory(InventoryClickEvent e) {}
 
-    public void RefreshUI(){}
+    public void refreshUI() {}
 
     protected Inventory inventory;
 
     @SuppressWarnings({"UnusedReturnValue", "SameParameterValue"})
-    protected ItemStack CreateButton(int slotIndex, Material icon, String name, String lore)
-    {
-        if (lore != null && lore.isEmpty())
-            lore = null;
+    protected ItemStack createButton(int slotIndex, Material material, String name, String lore) {
+        return createButton(slotIndex, material, name, parseStringLore(lore));
+    }
 
-        if (lore == null)
-        {
-            return CreateButton(slotIndex, icon, name, 1);
+    @SuppressWarnings({"UnusedReturnValue", "SameParameterValue"})
+    protected ItemStack createButton(int slotIndex, Material material, String name, @Nullable ArrayList<String> lore) {
+        return createButton(slotIndex, material, name, lore, 1);
+    }
+
+    @SuppressWarnings({"UnusedReturnValue", "SameParameterValue"})
+    protected ItemStack createButton(int slotIndex, Material material, String name, @Nullable ArrayList<String> lore, int amount) {
+        return createButton(slotIndex, new UIIcon(material, null), name, lore, amount);
+    }
+
+    @SuppressWarnings({"UnusedReturnValue", "SameParameterValue"})
+    protected ItemStack createButton(int slotIndex, UIIcon icon, String name, String lore) {
+        return createButton(slotIndex, icon, name, lore, 1);
+    }
+
+    @SuppressWarnings({"UnusedReturnValue", "SameParameterValue"})
+    protected ItemStack createButton(int slotIndex, UIIcon icon, String name, String lore, int amount) {
+        if (lore != null && lore.isEmpty()) {
+            lore = null;
         }
-        else if (lore.contains("\n"))
-        {
-            return CreateButton(slotIndex, icon, name, new ArrayList<>(Arrays.asList(lore.split("\n"))), 1);
-        }
-        else
-        {
-            return CreateButton(slotIndex, icon, name, new ArrayList<>(Collections.singletonList(lore)), 1);
+
+        if (lore == null) {
+            return createButton(slotIndex, icon, name, (ArrayList<String>) null, amount);
+        } else {
+            return createButton(slotIndex, icon, name, parseStringLore(lore), amount);
         }
     }
 
     @SuppressWarnings({"UnusedReturnValue", "SameParameterValue"})
-    protected ItemStack CreateButton(int slotIndex, Material icon, String name, ArrayList<String> lore)
-    {
-        return CreateButton(slotIndex, icon, name, lore, 1);
-    }
-
-    @SuppressWarnings({"UnusedReturnValue", "SameParameterValue"})
-    protected ItemStack CreateButton(int slotIndex, Material icon, String name, String lore, int amount)
-    {
-        if (lore != null && lore.isEmpty())
-            lore = null;
-
-        if (lore == null)
-        {
-            return CreateButton(slotIndex, icon, name, amount);
-        }
-        else if (lore.contains("\n"))
-        {
-            return CreateButton(slotIndex, icon, name, new ArrayList<>(Arrays.asList(lore.split("\n"))), amount);
-        }
-        else
-        {
-            return CreateButton(slotIndex, icon, name, new ArrayList<>(Collections.singletonList(lore)), amount);
-        }
-    }
-
-    protected ItemStack CreateButton(int slotIndex, Material icon, String name, int amount)
-    {
-        ItemStack itemStack = ItemsUtil.createItemStack(icon, null, name, null, amount);
+    protected ItemStack createButton(int slotIndex, UIIcon icon, String name, @Nullable ArrayList<String> lore, int amount) {
+        ItemStack itemStack = ItemsUtil.createItemStack(icon.getMaterial(), null, name, lore, amount, icon.getCustomModelData());
         inventory.setItem(slotIndex, itemStack);
-
         return itemStack;
     }
 
-    @SuppressWarnings({"UnusedReturnValue", "SameParameterValue"})
-    protected ItemStack CreateButton(int slotIndex, Material icon, String name, ArrayList<String> lore, int amount)
-    {
-        ItemStack itemStack = ItemsUtil.createItemStack(icon, null, name, lore, amount);
-        inventory.setItem(slotIndex, itemStack);
-
-        return itemStack;
-    }
-
-    @SuppressWarnings("SameParameterValue")
-    protected void CreateCloseButton(Player player, int slotIndex)
-    {
-        CreateButton(slotIndex, InGameUI.GetCloseButtonIconMat(), t(player, "CLOSE"), t(player, "CLOSE_LORE"));
-    }
-
-    public static Material GetCloseButtonIconMat()
-    {
-        String iconName = DynamicShop.plugin.getConfig().getString("UI.CloseButtonIcon");
-        Material mat = Material.getMaterial(iconName);
-        if (mat == null)
-        {
-            mat = Material.BARRIER;
-            DynamicShop.plugin.getConfig().set("UI.CloseButtonIcon", "BARRIER");
-            DynamicShop.plugin.saveConfig();
+    private static ArrayList<String> parseStringLore(String lore) {
+        if (lore.contains("\n")) {
+            return new ArrayList<>(Arrays.asList(lore.split("\n")));
+        } else {
+            return new ArrayList<>(Collections.singletonList(lore));
         }
-        return mat;
     }
 
-    public static Material GetPageButtonIconMat()
-    {
-        String iconName = DynamicShop.plugin.getConfig().getString("UI.PageButtonIcon");
-        Material mat = Material.getMaterial(iconName);
-        if (mat == null)
-        {
-            mat = Material.PAPER;
-            DynamicShop.plugin.getConfig().set("UI.PageButtonIcon", "PAPER");
-            DynamicShop.plugin.saveConfig();
-        }
-        return mat;
+    protected void createCloseButton(Player player, int slotIndex) {
+        createButton(slotIndex, UIIcons.CLOSE.get(), t(player, "CLOSE"), t(player, "CLOSE_LORE"));
     }
 
-    public static Material GetShopInfoButtonIconMat()
-    {
-        String iconName = DynamicShop.plugin.getConfig().getString("UI.ShopInfoButtonIcon");
-        Material mat = Material.getMaterial(iconName);
-        if (mat == null)
-        {
-            mat = Material.GOLD_BLOCK;
-            DynamicShop.plugin.getConfig().set("UI.ShopInfoButtonIcon", "GOLD_BLOCK");
-            DynamicShop.plugin.saveConfig();
+    public static UIIcon getPageButtonIcon() {
+        return UIIcons.PAGE.get();
+    }
+
+    public static UIIcon getShopInfoButtonIcon() {
+        return UIIcons.SHOP_INFO.get();
+    }
+
+    @Data
+    static class UIIcon {
+        final Material material;
+        final Integer customModelData;
+    }
+
+    @AllArgsConstructor
+    @RequiredArgsConstructor
+    protected enum UIIcons {
+        PAGE("CloseButton", Material.BARRIER),
+        CLOSE("PageButton", Material.PAPER),
+        SHOP_INFO("ShopInfoButton", Material.OAK_SIGN);
+
+        @Getter
+        final String configPath;
+        @Getter
+        final Material material;
+
+        String configSection = "UI.Icons";
+
+        public UIIcon get() {
+            return readIcon(getConfigSection(), this.getMaterial());
         }
-        return mat;
+
+        private String getConfigSection() {
+            String configPath = this.configSection + "." + this.getConfigPath();
+
+            // legacy support start
+            if (DynamicShop.plugin.getConfig().getConfigurationSection(this.configSection) == null) {
+                configPath = "UI." + this.getConfigPath() + "Icon";
+            }
+            // legacy support end
+            return configPath;
+        }
+
+        private static UIIcon readIcon(String configPath, Material defaultMaterial) {
+            String[] args = DynamicShop.plugin.getConfig().getString(configPath).split(":");
+            Material material = Material.getMaterial(args[0].toUpperCase().replace("-", "_").replace(" ", "_"));
+            if (material == null) {
+                material = defaultMaterial;
+                DynamicShop.plugin.getConfig().set(configPath, defaultMaterial);
+                DynamicShop.plugin.saveConfig();
+            }
+            if (args.length > 1) {
+                return new UIIcon(material, Integer.parseInt(args[1]));
+            } else {
+                return new UIIcon(material, null);
+            }
+        }
     }
 }
