@@ -69,6 +69,10 @@ public class CustomConfig
 
     public void save()
     {
+        Bukkit.getServer().getScheduler().runTaskAsynchronously(DynamicShop.plugin, () -> saveAsync());
+    }
+
+    public synchronized void saveAsync() {
         try
         {
             customFile.save(file);
