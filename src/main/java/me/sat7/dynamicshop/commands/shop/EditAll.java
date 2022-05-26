@@ -125,11 +125,11 @@ public class EditAll extends DSCMD
             {
                 if (args[5].equals("stock") || args[5].equals("median") || args[5].equals("maxStock"))
                 {
-                    shopData.get().set(s + "." + dataType, (int) (shopData.get().getInt(s + "." + dataType) / value));
+                    shopData.get().set(s + "." + dataType, Math.max(1, (int) (shopData.get().getInt(s + "." + dataType) / value)));
                 }
                 else
                 {
-                    shopData.get().set(s + "." + dataType, shopData.get().getDouble(s + "." + dataType) / value);
+                    shopData.get().set(s + "." + dataType, Math.max(1, shopData.get().getDouble(s + "." + dataType) / value));
                 }
             } else if (mod.equalsIgnoreCase("*"))
             {
