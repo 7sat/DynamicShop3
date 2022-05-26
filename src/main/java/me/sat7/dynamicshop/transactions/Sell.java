@@ -125,7 +125,7 @@ public final class Sell
 
         if (player == null || r.transactionSuccess())
         {
-            data.save();
+            Bukkit.getServer().getScheduler().runTaskAsynchronously(DynamicShop.plugin, () -> saveShopAsync(shopName));
 
             //로그 기록
             LogUtil.addLog(shopName, tempIS.getType().toString(), -tradeAmount, priceSum, "vault", player != null ? player.getName() : shopName);
@@ -173,6 +173,13 @@ public final class Sell
         }
 
         return priceSum;
+    }
+
+    // Must be called from an async thread in order to be async
+    public static synchronized void saveShopAsync(String shopName) {
+        CustomConfig data = ShopUtil.shopConfigFiles.get(shopName);
+        if (data != null)
+            data.save();
     }
 
     public static void sell(ItemTrade.CURRENCY currency, Player player, String shopName, String tradeIdx, ItemStack tempIS, double priceSum, boolean infiniteStock)
