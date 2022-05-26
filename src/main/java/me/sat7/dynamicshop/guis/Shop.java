@@ -4,6 +4,7 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.regex.Pattern;
 
+import java.util.stream.Collectors;
 import me.sat7.dynamicshop.DynaShopAPI;
 import me.sat7.dynamicshop.events.OnChat;
 import me.sat7.dynamicshop.utilities.SoundUtil;
@@ -258,12 +259,17 @@ public final class Shop extends InGameUI
                         itemMetaLoreText = itemMetaLoreText.substring(0, itemMetaLoreText.length() - 2);
                     }
 
+                    String descriptionLoreText = shopData.getStringList(s + ".description").stream()
+                            .map(x -> ChatColor.translateAlternateColorCodes('&', x))
+                            .collect(Collectors.joining("\n"));
+
                     lore = lore.replace("{\\nBuy}", buyText.isEmpty() ? "" : "\n" + buyText);
                     lore = lore.replace("{\\nSell}", sellText.isEmpty() ? "" : "\n" + sellText);
                     lore = lore.replace("{\\nStock}", stockText.isEmpty() ? "" : "\n" + stockText);
                     lore = lore.replace("{\\nPricingType}", pricingTypeText.isEmpty() ? "" : "\n" + pricingTypeText);
                     lore = lore.replace("{\\nTradeLore}", tradeLoreText.isEmpty() ? "" : "\n" + tradeLoreText);
                     lore = lore.replace("{\\nItemMetaLore}", itemMetaLoreText.isEmpty() ? "" : "\n" + itemMetaLoreText);
+                    lore = lore.replace("{\\nDescription}", descriptionLoreText.isEmpty() ? "" : "\n" + descriptionLoreText);
 
                     lore = lore.replace("{Buy}", buyText);
                     lore = lore.replace("{Sell}", sellText);
@@ -271,6 +277,7 @@ public final class Shop extends InGameUI
                     lore = lore.replace("{PricingType}", pricingTypeText);
                     lore = lore.replace("{TradeLore}", tradeLoreText);
                     lore = lore.replace("{ItemMetaLore}", itemMetaLoreText);
+                    lore = lore.replace("{Description}", descriptionLoreText);
 
                     String temp = lore.replace(" ","");
                     if(ChatColor.stripColor(temp).startsWith("\n"))
@@ -450,7 +457,8 @@ public final class Shop extends InGameUI
     private void CloseUI()
     {
         // 표지판으로 접근한 경우에는 그냥 창을 닫음
-        if (DynamicShop.userTempData.get(player.getUniqueId()).equalsIgnoreCase("sign"))
+        String tempData = DynamicShop.userTempData.get(player.getUniqueId());
+        if (tempData != null && tempData.equalsIgnoreCase("sign"))
         {
             DynamicShop.userTempData.put(player.getUniqueId(), "");
             player.closeInventory();

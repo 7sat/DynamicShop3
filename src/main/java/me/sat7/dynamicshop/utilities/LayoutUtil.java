@@ -25,7 +25,7 @@ public final class LayoutUtil
         );
 
         ccLayout.get().addDefault("SHOP.INFO", "§f{ShopLore}{\\nPermission}{\\nTax}{\\nShopBalance}{\\nShopHour}{\\nShopPosition}");
-        ccLayout.get().addDefault("SHOP.ITEM_INFO", "§f{Sell}{\\nBuy}{\\nStock}{\\nPricingType}\n{\\nItemMetaLore}{\\nTradeLore}");
+        ccLayout.get().addDefault("SHOP.ITEM_INFO", "§f{Sell}{\\nBuy}{\\nStock}{\\nPricingType}\n{\\nItemMetaLore}{\\nTradeLore}{\\nDescription}");
         ccLayout.get().addDefault("TRADE_VIEW.BUY", "§f{Price}{\\nStock}{\\nDeliveryCharge}\n{\\nTradeLore}");
         ccLayout.get().addDefault("TRADE_VIEW.SELL", "§f{Price}{\\nStock}{\\nDeliveryCharge}\n{\\nTradeLore}");
         ccLayout.get().addDefault("TRADE_VIEW.BALANCE", "§f{PlayerBalance}{\\nShopBalance}");
