@@ -59,7 +59,7 @@ public final class ItemTrade extends InGameUI
         this.player = player;
         this.shopName = shopName;
         this.tradeIdx = tradeIdx;
-        this.deliveryCharge = CalcShipping(player, shopName);
+        this.deliveryCharge = ShopUtil.CalcShipping(shopName, player);
         this.shopData = ShopUtil.shopConfigFiles.get(shopName).get();
         this.sellBuyOnly = shopData.getString(this.tradeIdx + ".tradeType", "");
         this.material = shopData.getString(tradeIdx + ".mat");
@@ -159,7 +159,7 @@ public final class ItemTrade extends InGameUI
                 ConfigurationSection optionS = data.get().getConfigurationSection("Options");
                 if (optionS.contains("world") && optionS.contains("pos1") && optionS.contains("pos2") && optionS.contains("flag.deliverycharge"))
                 {
-                    deliveryCharge = CalcShipping(player, shopName);
+                    deliveryCharge = ShopUtil.CalcShipping(shopName, player);
                     if (deliveryCharge == -1)
                     {
                         player.sendMessage(DynamicShop.dsPrefix(player) + t(player, "MESSAGE.DELIVERY_CHARGE_NA")); // 다른 월드로 배달 불가능
@@ -173,48 +173,6 @@ public final class ItemTrade extends InGameUI
                     Buy(optionS, tempIS, deliveryCharge, infiniteStock);
             }
         }
-    }
-
-    public static int CalcShipping(Player player, String shopName)
-    {
-        int deliverycharge = 0;
-
-        CustomConfig data = ShopUtil.shopConfigFiles.get(shopName);
-        ConfigurationSection optionS = data.get().getConfigurationSection("Options");
-        if (optionS.contains("world") && optionS.contains("pos1") && optionS.contains("pos2") && optionS.contains("flag.deliverycharge"))
-        {
-            boolean sameworld = true;
-            boolean outside = false;
-            if (!player.getWorld().getName().equals(optionS.getString("world"))) sameworld = false;
-
-            String[] shopPos1 = optionS.getString("pos1").split("_");
-            String[] shopPos2 = optionS.getString("pos2").split("_");
-            int x1 = Integer.parseInt(shopPos1[0]);
-            int y1 = Integer.parseInt(shopPos1[1]);
-            int z1 = Integer.parseInt(shopPos1[2]);
-            int x2 = Integer.parseInt(shopPos2[0]);
-            int y2 = Integer.parseInt(shopPos2[1]);
-            int z2 = Integer.parseInt(shopPos2[2]);
-
-            if (!((x1 <= player.getLocation().getBlockX() && player.getLocation().getBlockX() <= x2) ||
-                    (x2 <= player.getLocation().getBlockX() && player.getLocation().getBlockX() <= x1))) outside = true;
-            if (!((y1 <= player.getLocation().getBlockY() && player.getLocation().getBlockY() <= y2) ||
-                    (y2 <= player.getLocation().getBlockY() && player.getLocation().getBlockY() <= y1))) outside = true;
-            if (!((z1 <= player.getLocation().getBlockZ() && player.getLocation().getBlockZ() <= z2) ||
-                    (z2 <= player.getLocation().getBlockZ() && player.getLocation().getBlockZ() <= z1))) outside = true;
-
-            if (!sameworld)
-            {
-                deliverycharge = -1;
-            } else if (outside)
-            {
-                Location lo = new Location(player.getWorld(), x1, y1, z1);
-                int dist = (int) (player.getLocation().distance(lo) * 0.1 * DynamicShop.plugin.getConfig().getDouble("Shop.DeliveryChargeScale"));
-                deliverycharge = Clamp(dist, DynamicShop.plugin.getConfig().getInt("Shop.DeliveryChargeMin"), DynamicShop.plugin.getConfig().getInt("Shop.DeliveryChargeMax"));
-            }
-        }
-
-        return deliverycharge;
     }
 
     private void CreateBalanceButton()

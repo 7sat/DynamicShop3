@@ -5,6 +5,7 @@ import java.util.*;
 
 import me.sat7.dynamicshop.transactions.Calc;
 import org.bukkit.Bukkit;
+import org.bukkit.Location;
 import org.bukkit.command.CommandSender;
 import org.bukkit.configuration.ConfigurationSection;
 import org.bukkit.entity.Player;
@@ -14,7 +15,9 @@ import me.sat7.dynamicshop.DynamicShop;
 import me.sat7.dynamicshop.constants.Constants;
 import me.sat7.dynamicshop.files.CustomConfig;
 
+import static me.sat7.dynamicshop.utilities.LangUtil.n;
 import static me.sat7.dynamicshop.utilities.LangUtil.t;
+import static me.sat7.dynamicshop.utilities.MathUtil.Clamp;
 
 public final class ShopUtil
 {
@@ -556,11 +559,21 @@ public final class ShopUtil
                 continue;
 
             // 표지판 전용 상점, 지역상점, 잡포인트 상점
-            if (data.get().contains("Options.flag.localshop") || data.get().contains("Options.flag.signshop") || data.get().contains("Options.flag.jobpoint"))
+            boolean outside = !CheckShopLocation(entry.getKey(), player);
+            if (outside && data.get().contains("Options.flag.localshop") && !data.get().contains("Options.flag.deliverycharge")) {
+                continue;
+            }
+
+            if (data.get().contains("Options.flag.signshop") || data.get().contains("Options.flag.jobpoint"))
                 continue;
 
             // 영업시간 확인
             if (player != null && !CheckShopHour(entry.getKey(), player))
+                continue;
+
+            double deliveryCosts = CalcShipping(entry.getKey(), player);
+
+            if (deliveryCosts == -1)
                 continue;
 
             int sameItemIdx = ShopUtil.findItemFromShop(entry.getKey(), itemStack);
@@ -584,7 +597,10 @@ public final class ShopUtil
                     continue;
 
                 double value = Calc.getCurrentPrice(entry.getKey(), String.valueOf(sameItemIdx), false);
-                if (bestPrice < value)
+
+                value -= deliveryCosts;
+
+                if (topShopName.isEmpty() || bestPrice < value)
                 {
                     topShopName = entry.getKey();
                     bestPrice = value;
@@ -620,11 +636,20 @@ public final class ShopUtil
                 continue;
 
             // 표지판 전용 상점, 지역상점, 잡포인트 상점
-            if (data.get().contains("Options.flag.localshop") || data.get().contains("Options.flag.signshop") || data.get().contains("Options.flag.jobpoint"))
+            boolean outside = !CheckShopLocation(entry.getKey(), player);
+            if (outside && data.get().contains("Options.flag.localshop") && !data.get().contains("Options.flag.deliverycharge")) {
+                continue;
+            }
+
+            if (data.get().contains("Options.flag.signshop") || data.get().contains("Options.flag.jobpoint"))
                 continue;
 
             // 영업시간 확인
             if (!CheckShopHour(entry.getKey(), player))
+                continue;
+
+            double deliveryCosts = CalcShipping(entry.getKey(), player);
+            if (deliveryCosts == -1)
                 continue;
 
             int sameItemIdx = ShopUtil.findItemFromShop(entry.getKey(), itemStack);
@@ -641,6 +666,9 @@ public final class ShopUtil
                     continue;
 
                 double value = Calc.getCurrentPrice(entry.getKey(), String.valueOf(sameItemIdx), true);
+
+                value += deliveryCosts;
+
                 if (bestPrice > value)
                 {
                     topShopName = entry.getKey();
@@ -961,5 +989,82 @@ public final class ShopUtil
         {
             return true;
         }
+    }
+
+    public static boolean CheckShopLocation(String shopName, Player player)
+    {
+        CustomConfig shopData = ShopUtil.shopConfigFiles.get(shopName);
+        if (shopData == null)
+            return true;
+
+        ConfigurationSection shopConf = shopData.get().getConfigurationSection("Options");
+        if (shopConf == null)
+            return true;
+
+        if (!shopConf.contains("flag.localshop") || !shopConf.contains("world") || !shopConf.contains("pos1") || !shopConf.contains("pos2")) {
+            return true;
+        }
+
+        boolean inside = player.getWorld().getName().equals(shopConf.getString("world"));
+
+        String[] shopPos1 = shopConf.getString("pos1").split("_");
+        String[] shopPos2 = shopConf.getString("pos2").split("_");
+        int x1 = Integer.parseInt(shopPos1[0]);
+        int y1 = Integer.parseInt(shopPos1[1]);
+        int z1 = Integer.parseInt(shopPos1[2]);
+        int x2 = Integer.parseInt(shopPos2[0]);
+        int y2 = Integer.parseInt(shopPos2[1]);
+        int z2 = Integer.parseInt(shopPos2[2]);
+
+        if (!((x1 <= player.getLocation().getBlockX() && player.getLocation().getBlockX() <= x2) ||
+                (x2 <= player.getLocation().getBlockX() && player.getLocation().getBlockX() <= x1)))
+            inside = false;
+        if (!((y1 <= player.getLocation().getBlockY() && player.getLocation().getBlockY() <= y2) ||
+                (y2 <= player.getLocation().getBlockY() && player.getLocation().getBlockY() <= y1)))
+            inside = false;
+        if (!((z1 <= player.getLocation().getBlockZ() && player.getLocation().getBlockZ() <= z2) ||
+                (z2 <= player.getLocation().getBlockZ() && player.getLocation().getBlockZ() <= z1)))
+            inside = false;
+
+        return inside;
+    }
+
+    public static int CalcShipping(String shopName, Player player)
+    {
+        int deliverycharge = 0;
+
+        CustomConfig shopData = ShopUtil.shopConfigFiles.get(shopName);
+        if (shopData == null)
+            return 0;
+
+        ConfigurationSection shopConf = shopData.get().getConfigurationSection("Options");
+        if (shopConf == null)
+            return 0;
+
+
+        if (shopConf.contains("world") && shopConf.contains("pos1") && shopConf.contains("flag.deliverycharge"))
+        {
+            boolean sameworld = true;
+            boolean outside = !CheckShopLocation(shopName, player);
+
+            if (!player.getWorld().getName().equals(shopConf.getString("world"))) sameworld = false;
+
+            String[] shopPos1 = shopConf.getString("pos1").split("_");
+            int x1 = Integer.parseInt(shopPos1[0]);
+            int y1 = Integer.parseInt(shopPos1[1]);
+            int z1 = Integer.parseInt(shopPos1[2]);
+
+            if (!sameworld)
+            {
+                deliverycharge = -1;
+            } else if (outside)
+            {
+                Location lo = new Location(player.getWorld(), x1, y1, z1);
+                int dist = (int) (player.getLocation().distance(lo) * 0.1 * DynamicShop.plugin.getConfig().getDouble("Shop.DeliveryChargeScale"));
+                deliverycharge = Clamp(dist, DynamicShop.plugin.getConfig().getInt("Shop.DeliveryChargeMin"), DynamicShop.plugin.getConfig().getInt("Shop.DeliveryChargeMax"));
+            }
+        }
+
+        return deliverycharge;
     }
 }

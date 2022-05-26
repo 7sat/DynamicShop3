@@ -36,7 +36,9 @@ public final class Sell
         double priceBuyOld = Calc.getCurrentPrice(shopName, String.valueOf(tradeIdx), true);
         int stockOld = data.get().getInt(tradeIdx + ".stock");
         int maxStock = data.get().getInt(tradeIdx + ".maxStock", -1);
-        double priceSum;
+
+        double deliveryCharge = ShopUtil.CalcShipping(shopName, player);
+        double priceSum = -deliveryCharge;
 
         // 실제 판매 가능량 확인
         int tradeAmount;
@@ -109,7 +111,7 @@ public final class Sell
             return 0;
         }
 
-        priceSum = Calc.calcTotalCost(shopName, String.valueOf(tradeIdx), -tradeAmount);
+        priceSum += Calc.calcTotalCost(shopName, String.valueOf(tradeIdx), -tradeAmount);
 
         // 재고 증가
         if (stockOld > 0)
