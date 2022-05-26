@@ -450,7 +450,8 @@ public final class Shop extends InGameUI
     private void CloseUI()
     {
         // 표지판으로 접근한 경우에는 그냥 창을 닫음
-        if (DynamicShop.userTempData.get(player.getUniqueId()).equalsIgnoreCase("sign"))
+        String tempData = DynamicShop.userTempData.get(player.getUniqueId());
+        if (tempData != null && tempData.equalsIgnoreCase("sign"))
         {
             DynamicShop.userTempData.put(player.getUniqueId(), "");
             player.closeInventory();

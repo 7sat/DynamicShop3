@@ -94,7 +94,8 @@ public final class ItemTrade extends InGameUI
             if (e.getSlot() == CLOSE)
             {
                 // 표지판을 클릭해서 거래화면에 진입한 경우에는 상점UI로 돌아가는 대신 인벤토리를 닫음
-                if (DynamicShop.userTempData.get(player.getUniqueId()).equalsIgnoreCase("sign"))
+                String tempData = DynamicShop.userTempData.get(player.getUniqueId());
+                if (tempData != null && tempData.equalsIgnoreCase("sign"))
                 {
                     DynamicShop.userTempData.put(player.getUniqueId(), "");
                     player.closeInventory();
