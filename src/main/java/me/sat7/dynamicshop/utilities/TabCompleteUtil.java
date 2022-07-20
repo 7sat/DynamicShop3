@@ -81,6 +81,7 @@ public final class TabCompleteUtil
                     if (sender.hasPermission(P_ADMIN_SET_DEFAULT_SHOP)) temp.add("setdefaultshop");
                     if (sender.hasPermission(P_ADMIN_DELETE_OLD_USER)) temp.add("deleteOldUser");
                     if (sender.hasPermission(P_ADMIN_RELOAD)) temp.add("reload");
+                    if (sender.hasPermission(P_ADMIN_ITEM_INFO)) temp.add("iteminfo");
                     temp.add("cmdHelp");
 
                     AddToAutoCompleteIfValid(args[0]);

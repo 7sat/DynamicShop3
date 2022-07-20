@@ -8,6 +8,7 @@ public final class FileUtil {
     private FileUtil() {
 
     }
+    
 
     public static CustomConfig generateOutOfStockCustomConfig() {
         FileConfiguration config = new YamlConfiguration();

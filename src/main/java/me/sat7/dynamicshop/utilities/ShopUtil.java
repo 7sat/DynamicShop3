@@ -5,6 +5,7 @@ import java.util.*;
 
 import me.sat7.dynamicshop.transactions.Calc;
 import org.bukkit.Bukkit;
+import org.bukkit.Material;
 import org.bukkit.command.CommandSender;
 import org.bukkit.configuration.ConfigurationSection;
 import org.bukkit.entity.Player;
@@ -13,6 +14,7 @@ import org.bukkit.inventory.ItemStack;
 import me.sat7.dynamicshop.DynamicShop;
 import me.sat7.dynamicshop.constants.Constants;
 import me.sat7.dynamicshop.files.CustomConfig;
+import com.google.common.base.CaseFormat;
 
 import static me.sat7.dynamicshop.utilities.LangUtil.t;
 
@@ -33,8 +35,7 @@ public final class ShopUtil
         SortShopDataAll();
     }
 
-    public static void ReloadAllShop()
-    {
+    public static void ReloadAllShop() {
         shopConfigFiles.clear();
 
         File[] listOfFiles = new File(DynamicShop.plugin.getDataFolder() + "/Shop").listFiles();
@@ -53,8 +54,7 @@ public final class ShopUtil
     }
 
     // 상점에서 빈 슬롯 찾기
-    public static int findEmptyShopSlot(String shopName, int startIdx, boolean addPage)
-    {
+    public static int findEmptyShopSlot(String shopName, int startIdx, boolean addPage) {
         CustomConfig data = shopConfigFiles.get(shopName);
         if(data == null)
             return -1;
@@ -82,8 +82,7 @@ public final class ShopUtil
     }
 
     // 상점에서 아이탬타입 찾기
-    public static int findItemFromShop(String shopName, ItemStack item)
-    {
+    public static int findItemFromShop(String shopName, ItemStack item) {
         if (item == null || item.getType().isAir())
             return -1;
 
@@ -122,12 +121,10 @@ public final class ShopUtil
     }
 
     // 상점에 아이탬 추가
-    public static boolean addItemToShop(String shopName, int idx, ItemStack item, double buyValue, double sellValue, double minValue, double maxValue, int median, int stock)
-    {
+    public static boolean addItemToShop(String shopName, int idx, ItemStack item, double buyValue, double sellValue, double minValue, double maxValue, int median, int stock) {
         return addItemToShop(shopName, idx, item, buyValue, sellValue, minValue, maxValue, median, stock, -1);
     }
-    public static boolean addItemToShop(String shopName, int idx, ItemStack item, double buyValue, double sellValue, double minValue, double maxValue, int median, int stock, int maxStock)
-    {
+    public static boolean addItemToShop(String shopName, int idx, ItemStack item, double buyValue, double sellValue, double minValue, double maxValue, int median, int stock, int maxStock) {
         CustomConfig data = shopConfigFiles.get(shopName);
         if (data == null)
             return false;
@@ -256,8 +253,7 @@ public final class ShopUtil
     }
 
     // 상점에서 아이탬 제거
-    public static void removeItemFromShop(String shopName, int idx)
-    {
+    public static void removeItemFromShop(String shopName, int idx) {
         CustomConfig data = shopConfigFiles.get(shopName);
         if (data == null)
             return;
@@ -267,8 +263,7 @@ public final class ShopUtil
     }
 
     // 상점 페이지 삽입
-    public static void insetShopPage(String shopName, int page)
-    {
+    public static void insetShopPage(String shopName, int page) {
         CustomConfig data = shopConfigFiles.get(shopName);
         if (data == null)
             return;
@@ -287,8 +282,7 @@ public final class ShopUtil
     }
 
     // 상점 페이지 삭제
-    public static void deleteShopPage(String shopName, int page)
-    {
+    public static void deleteShopPage(String shopName, int page) {
         CustomConfig data = shopConfigFiles.get(shopName);
         if (data == null)
             return;
@@ -962,4 +956,5 @@ public final class ShopUtil
             return true;
         }
     }
+
 }
