@@ -7,6 +7,7 @@ import java.util.concurrent.ExecutionException;
 
 import me.sat7.dynamicshop.transactions.Calc;
 import org.bukkit.Bukkit;
+import org.bukkit.Location;
 import org.bukkit.command.CommandSender;
 import org.bukkit.configuration.ConfigurationSection;
 import org.bukkit.entity.Player;
@@ -16,7 +17,9 @@ import me.sat7.dynamicshop.DynamicShop;
 import me.sat7.dynamicshop.constants.Constants;
 import me.sat7.dynamicshop.files.CustomConfig;
 
+import static me.sat7.dynamicshop.utilities.LangUtil.n;
 import static me.sat7.dynamicshop.utilities.LangUtil.t;
+import static me.sat7.dynamicshop.utilities.MathUtil.Clamp;
 
 public final class ShopUtil
 {
@@ -582,15 +585,25 @@ public final class ShopUtil
                 if (!enable)
                     continue;
 
-                // 표지판 전용 상점, 지역상점, 잡포인트 상점
-                if (data.get().contains("Options.flag.localshop") || data.get().contains("Options.flag.signshop") || data.get().contains("Options.flag.jobpoint"))
-                    continue;
+            // 표지판 전용 상점, 지역상점, 잡포인트 상점
+            boolean outside = !CheckShopLocation(entry.getKey(), player);
+            if (outside && data.get().contains("Options.flag.localshop") && !data.get().contains("Options.flag.deliverycharge")) {
+                continue;
+            }
+
+            if (data.get().contains("Options.flag.signshop") || data.get().contains("Options.flag.jobpoint"))
+                continue;
 
                 // 영업시간 확인
                 if (player != null && !CheckShopHour(entry.getKey(), player))
                     continue;
 
-                int sameItemIdx = ShopUtil.findItemFromShop(entry.getKey(), itemStack);
+            double deliveryCosts = CalcShipping(entry.getKey(), player);
+
+            if (deliveryCosts == -1)
+                continue;
+
+            int sameItemIdx = ShopUtil.findItemFromShop(entry.getKey(), itemStack);
 
                 if (sameItemIdx != -1)
                 {
@@ -610,15 +623,18 @@ public final class ShopUtil
                     if (maxStock != -1 && maxStock <= stock)
                         continue;
 
-                    double value = Calc.getCurrentPrice(entry.getKey(), String.valueOf(sameItemIdx), false);
-                    if (bestPrice < value)
-                    {
-                        topShopName = entry.getKey();
-                        bestPrice = value;
-                        tradeIdx = sameItemIdx;
-                    }
+                double value = Calc.getCurrentPrice(entry.getKey(), String.valueOf(sameItemIdx), false);
+
+                value -= deliveryCosts;
+
+                if (topShopName.isEmpty() || bestPrice < value)
+                {
+                    topShopName = entry.getKey();
+                    bestPrice = value;
+                    tradeIdx = sameItemIdx;
                 }
             }
+        }
 
             return new String[]{topShopName, Integer.toString(tradeIdx)};
         });
@@ -648,11 +664,20 @@ public final class ShopUtil
                 continue;
 
             // 표지판 전용 상점, 지역상점, 잡포인트 상점
-            if (data.get().contains("Options.flag.localshop") || data.get().contains("Options.flag.signshop") || data.get().contains("Options.flag.jobpoint"))
+            boolean outside = !CheckShopLocation(entry.getKey(), player);
+            if (outside && data.get().contains("Options.flag.localshop") && !data.get().contains("Options.flag.deliverycharge")) {
+                continue;
+            }
+
+            if (data.get().contains("Options.flag.signshop") || data.get().contains("Options.flag.jobpoint"))
                 continue;
 
             // 영업시간 확인
             if (!CheckShopHour(entry.getKey(), player))
+                continue;
+
+            double deliveryCosts = CalcShipping(entry.getKey(), player);
+            if (deliveryCosts == -1)
                 continue;
 
             int sameItemIdx = ShopUtil.findItemFromShop(entry.getKey(), itemStack);
