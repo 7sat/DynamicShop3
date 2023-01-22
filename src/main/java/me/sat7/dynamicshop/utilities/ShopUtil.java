@@ -695,19 +695,19 @@ public final class ShopUtil
     {
         boolean legacyStabilizer = DynamicShop.plugin.getConfig().getBoolean("Shop.UseLegacyStockStabilization");
 
+        // 인게임 30분마다 실행됨 (500틱)
+        randomStockTimer += 1;
+        if (randomStockTimer >= Integer.MAX_VALUE)
+        {
+            randomStockTimer = 0;
+        }
+        //DynamicShop.console.sendMessage("debug... " + randomStockTimer);
+
         for(Map.Entry<String, CustomConfig> entry : shopConfigFiles.entrySet())
         {
             boolean somethingIsChanged = false;
 
             CustomConfig data = entry.getValue();
-
-            // 인게임 30분마다 실행됨 (500틱)
-            randomStockTimer += 1;
-            if (randomStockTimer >= Integer.MAX_VALUE)
-            {
-                randomStockTimer = 0;
-            }
-            //DynamicShop.console.sendMessage("debug... " + randomStockTimer);
 
             // fluctuation
             ConfigurationSection confSec = data.get().getConfigurationSection("Options.fluctuation");
