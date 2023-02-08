@@ -26,7 +26,7 @@ public class JoinQuit implements Listener
         DynamicShop.userInteractItem.put(player.getUniqueId(), "");
         DynamicShop.ccUser.get().set(player.getUniqueId() + ".lastJoin", System.currentTimeMillis());
         DynamicShop.ccUser.get().addDefault(player.getUniqueId() + ".cmdHelp", true);
-        DynamicShop.ccUser.save();
+        //DynamicShop.ccUser.save();
 
         boolean isSnapshot = DynamicShop.yourVersion.contains("snapshot");
         if (DynamicShop.updateAvailable || isSnapshot)

@@ -42,13 +42,13 @@ public final class CommandHelp extends DSCMD
             player.sendMessage(DynamicShop.dsPrefix(player) + "켜짐");
             DynamicShop.userTempData.put(uuid, "");
             DynamicShop.ccUser.get().set(player.getUniqueId() + ".cmdHelp", true);
-            DynamicShop.ccUser.save();
+            //DynamicShop.ccUser.save();
         } else if (args[1].equalsIgnoreCase("off"))
         {
             player.sendMessage(DynamicShop.dsPrefix(player) + "꺼짐");
             DynamicShop.userTempData.put(uuid, "");
             DynamicShop.ccUser.get().set(player.getUniqueId() + ".cmdHelp", false);
-            DynamicShop.ccUser.save();
+            //DynamicShop.ccUser.save();
         } else
         {
             player.sendMessage(DynamicShop.dsPrefix(player) + t(player, "ERR.WRONG_USAGE"));
