@@ -2,7 +2,7 @@ name: DynamicShop
 
 on:
   push:
-    branches: [ master ]
+    branches: [ master, update-actions ]
   pull_request:
     branches: [ master ]
 
