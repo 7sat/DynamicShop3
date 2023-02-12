@@ -28,6 +28,7 @@ public class InGameUI
         StartPageSettings,
         StartPage_ShopList,
         StartPage_ColorList,
+        PageEditor
     }
 
     public UI_TYPE uiType;

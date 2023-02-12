@@ -372,10 +372,19 @@ public final class TabCompleteUtil
                                 temp.add("enable");
                                 temp.add("disable");
                                 temp.add("clear");
+                                temp.add("printToConsole");
+                                temp.add("printToAdmin");
 
                                 AddToAutoCompleteIfValid(args[3]);
 
                                 Help.showHelp("log", (Player) sender, args);
+                            }
+                            else if (args.length == 5)
+                            {
+                                temp.add("on");
+                                temp.add("off");
+
+                                AddToAutoCompleteIfValid(args[4]);
                             }
                         }
                     }

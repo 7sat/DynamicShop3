@@ -19,6 +19,7 @@ import java.util.Map;
 import java.util.UUID;
 
 import static me.sat7.dynamicshop.utilities.LangUtil.t;
+import static me.sat7.dynamicshop.utilities.MathUtil.Clamp;
 
 public class OnChat implements Listener
 {
@@ -124,8 +125,13 @@ public class OnChat implements Listener
             if (e.getMessage().equals("delete"))
             {
                 String[] temp = DynamicShop.userInteractItem.get(uuid).split("/");
-                ShopUtil.deleteShopPage(temp[0], Integer.parseInt(temp[1]));
-                DynaShopAPI.openShopGui(p, temp[0], 1);
+                int targetPage = Integer.parseInt(temp[1]);
+                ShopUtil.deleteShopPage(temp[0], targetPage);
+
+                int openPage = Clamp(targetPage, 1, ShopUtil.GetShopMaxPage(temp[0]));
+                DynamicShop.userInteractItem.put(uuid, temp[0] + "/" + openPage);
+
+                DynaShopAPI.openPageEditor(p, temp[0], openPage);
             } else
             {
                 p.sendMessage(DynamicShop.dsPrefix(p) + t(p, "MESSAGE.INPUT_CANCELED"));

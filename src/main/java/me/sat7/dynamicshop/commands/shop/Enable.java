@@ -25,7 +25,7 @@ public class Enable extends DSCMD
     public void SendHelpMessage(Player player)
     {
         player.sendMessage(DynamicShop.dsPrefix(player) + t(player, "HELP.TITLE").replace("{command}", "enable"));
-        player.sendMessage(" - " + t(player, "HELP.USAGE") + ": /ds shop <shopname> <true|false>");
+        player.sendMessage(" - " + t(player, "HELP.USAGE") + ": /ds shop <shopname> <true | false>");
         player.sendMessage("");
     }
 

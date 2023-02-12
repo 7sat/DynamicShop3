@@ -71,7 +71,12 @@ public class Root implements CommandExecutor
         {
             if (args.length > 0)
             {
-                if (args[0].equalsIgnoreCase("shop"))
+                if (args[0].equalsIgnoreCase("debug"))
+                {
+                    DynamicShop.DebugLog();
+                    return true;
+                }
+                else if (args[0].equalsIgnoreCase("shop"))
                 {
                     Shop.shopCommand(args, sender);
                     return true;

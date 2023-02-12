@@ -338,6 +338,83 @@ public final class ShopUtil
         data.reload();
     }
 
+    // 상점 페이지 스왑
+    public static boolean SwapPage(String shopName, int pageA, int pageB)
+    {
+        if(pageA == pageB)
+            return true;
+
+        CustomConfig data = shopConfigFiles.get(shopName);
+        if (data == null)
+            return false;
+
+        HashMap<Integer, Object> tempA = new HashMap<>();
+        HashMap<Integer, Object> tempB = new HashMap<>();
+
+        for (String s : data.get().getKeys(false))
+        {
+            try
+            {
+                int i = Integer.parseInt(s);
+                if (i >= (pageA - 1) * 45 && i < pageA * 45)
+                {
+                    tempA.put(i, data.get().get(s));
+                    data.get().set(s, null);
+                }
+                if (i >= (pageB - 1) * 45 && i < pageB * 45)
+                {
+                    tempB.put(i, data.get().get(s));
+                    data.get().set(s, null);
+                }
+
+            } catch (Exception ignored)
+            {
+            }
+        }
+
+        tempA.forEach((key, value) ->
+        {
+            key += (pageB - pageA) * 45;
+            data.get().set(String.valueOf(key), value);
+        });
+        tempB.forEach((key, value) ->
+        {
+            key += (pageA - pageB) * 45;
+            data.get().set(String.valueOf(key), value);
+        });
+
+        tempA.clear();
+        tempB.clear();
+
+        data.save();
+        data.reload();
+        return true;
+    }
+
+    public static boolean IsPageEmpty(String shopName, int page)
+    {
+        CustomConfig data = shopConfigFiles.get(shopName);
+        if (data == null)
+            return true;
+
+        if (page < 1 || page > GetShopMaxPage(shopName))
+            return true;
+
+        for (String s : data.get().getKeys(false))
+        {
+            try
+            {
+                int i = Integer.parseInt(s);
+                if (i >= (page - 1) * 45 && i < page * 45)
+                    return false;
+            } catch (Exception ignore)
+            {
+            }
+        }
+
+        return true;
+    }
+
     // 상점 이름 바꾸기
     public static void renameShop(String shopName, String newName)
     {
@@ -585,25 +662,25 @@ public final class ShopUtil
                 if (!enable)
                     continue;
 
-            // 표지판 전용 상점, 지역상점, 잡포인트 상점
-            boolean outside = !CheckShopLocation(entry.getKey(), player);
-            if (outside && data.get().contains("Options.flag.localshop") && !data.get().contains("Options.flag.deliverycharge")) {
-                continue;
-            }
+                // 표지판 전용 상점, 지역상점, 잡포인트 상점
+                boolean outside = !CheckShopLocation(entry.getKey(), player);
+                if (outside && data.get().contains("Options.flag.localshop") && !data.get().contains("Options.flag.deliverycharge")) {
+                    continue;
+                }
 
-            if (data.get().contains("Options.flag.signshop") || data.get().contains("Options.flag.jobpoint"))
-                continue;
+                if (data.get().contains("Options.flag.signshop") || data.get().contains("Options.flag.jobpoint"))
+                    continue;
 
                 // 영업시간 확인
                 if (player != null && !CheckShopHour(entry.getKey(), player))
                     continue;
 
-            double deliveryCosts = CalcShipping(entry.getKey(), player);
+                double deliveryCosts = CalcShipping(entry.getKey(), player);
 
-            if (deliveryCosts == -1)
-                continue;
+                if (deliveryCosts == -1)
+                    continue;
 
-            int sameItemIdx = ShopUtil.findItemFromShop(entry.getKey(), itemStack);
+                int sameItemIdx = ShopUtil.findItemFromShop(entry.getKey(), itemStack);
 
                 if (sameItemIdx != -1)
                 {
@@ -623,18 +700,18 @@ public final class ShopUtil
                     if (maxStock != -1 && maxStock <= stock)
                         continue;
 
-                double value = Calc.getCurrentPrice(entry.getKey(), String.valueOf(sameItemIdx), false);
+                    double value = Calc.getCurrentPrice(entry.getKey(), String.valueOf(sameItemIdx), false);
 
-                value -= deliveryCosts;
+                    value -= deliveryCosts;
 
-                if (topShopName.isEmpty() || bestPrice < value)
-                {
-                    topShopName = entry.getKey();
-                    bestPrice = value;
-                    tradeIdx = sameItemIdx;
+                    if (topShopName.isEmpty() || bestPrice < value)
+                    {
+                        topShopName = entry.getKey();
+                        bestPrice = value;
+                        tradeIdx = sameItemIdx;
+                    }
                 }
             }
-        }
 
             return new String[]{topShopName, Integer.toString(tradeIdx)};
         });
@@ -788,6 +865,8 @@ public final class ShopUtil
                     confSec2.set("interval", 48);
                     interval = 48;
                 }
+
+                //DynamicShop.console.sendMessage("debug... " + randomStockTimer + " % " + interval + " = " + randomStockTimer % interval);
 
                 if (randomStockTimer % interval != 0) continue;
 
