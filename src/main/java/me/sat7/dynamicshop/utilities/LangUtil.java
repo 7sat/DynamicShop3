@@ -238,6 +238,7 @@ public final class LangUtil
             ccLang.get().addDefault("PALETTE.LORE_PREMIUM", "§e좌클릭: 추가\n§e씨프트 좌클릭: 설정 후 추가\n§e우클릭: 장식으로 추가\n§e씨프트 우클릭: '{item}' 를 검색");
             ccLang.get().addDefault("PALETTE.SEARCH", "§f찾기");
             ccLang.get().addDefault("PALETTE.ADD_ALL", "§f모두 추가");
+            ccLang.get().addDefault("PALETTE.ADD_ALL_LORE_LOCKED", "§e좌클릭: 모두 추가\n§7씨프트 좌클릭: 모두 추가하고 권장 값 적용");
             ccLang.get().addDefault("PALETTE.PAGE_TITLE", "§f{curPage}/{maxPage} 페이지");
             ccLang.get().addDefault("PALETTE.PAGE_LORE", "§f§n좌클릭: 이전 페이지\n§f§n우클릭: 다음 페이지");
             ccLang.get().addDefault("PALETTE.FILTER_APPLIED", "§f필터 적용됨 : ");
@@ -595,6 +596,7 @@ public final class LangUtil
             ccLang.get().addDefault("PALETTE.LORE_PREMIUM", "§eLMB: Add\n§eShift LMB: Add after setting\n§eRMB: Add as decoration\n§eShift RMB: Search '{item}'");
             ccLang.get().addDefault("PALETTE.SEARCH", "§fSearch");
             ccLang.get().addDefault("PALETTE.ADD_ALL", "§fAdd all");
+            ccLang.get().addDefault("PALETTE.ADD_ALL_LORE_LOCKED", "§eLMB: Add all\n§7Shift LMB: Add all and apply recommended values");
             ccLang.get().addDefault("PALETTE.PAGE_TITLE", "§f{curPage}/{maxPage} page");
             ccLang.get().addDefault("PALETTE.PAGE_LORE", "§f§nLMB: Prev\n§f§nRMB: Next");
             ccLang.get().addDefault("PALETTE.FILTER_APPLIED", "§fFilter Applied : ");
@@ -735,7 +737,7 @@ public final class LangUtil
             ccLang.get().addDefault("RMB", "RMB");
             ccLang.get().addDefault("CLOSE", "§fClose");
             ccLang.get().addDefault("CLOSE_LORE", "§f§nClick: Close");
-            ccLang.get().addDefault("PAID_VERSION.DESC", "§fAvailable in paid version ");
+            ccLang.get().addDefault("PAID_VERSION.DESC", "§fAvailable in paid version. ");
             ccLang.get().addDefault("PAID_VERSION.GET_PREMIUM", "Get Premium");
 
             ccLang.get().options().copyDefaults(true);

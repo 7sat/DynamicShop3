@@ -69,7 +69,7 @@ public final class ItemPalette extends InGameUI
 
         // Add all Button
         if(!paletteList.isEmpty())
-            CreateButton(ADD_ALL, Material.YELLOW_STAINED_GLASS_PANE, t(player, "PALETTE.ADD_ALL"), "");
+            CreateButton(ADD_ALL, Material.YELLOW_STAINED_GLASS_PANE, t(player, "PALETTE.ADD_ALL"), t(player, "PALETTE.ADD_ALL_LORE_LOCKED"));
 
         // Search Button
         String filterString = search.isEmpty() ? "" : t(player, "PALETTE.FILTER_APPLIED") + search;
@@ -86,7 +86,7 @@ public final class ItemPalette extends InGameUI
 
         if (e.getSlot() == CLOSE) CloseUI();
         else if (e.getSlot() == PAGE) MovePage(e.isLeftClick(), e.isRightClick());
-        else if (e.getSlot() == ADD_ALL) AddAll();
+        else if (e.getSlot() == ADD_ALL && e.isLeftClick()) AddAll(e.isShiftClick());
         else if (e.getSlot() == SEARCH) OnClickSearch(e.isLeftClick(), e.isRightClick());
         else if (e.getSlot() <= 45) OnClickItem(e.isLeftClick(), e.isRightClick(), e.isShiftClick(), e.getCurrentItem());
     }
@@ -288,8 +288,14 @@ public final class ItemPalette extends InGameUI
         DynaShopAPI.openItemPalette(player, shopName, shopSlotIndex, targetPage, this.search);
     }
 
-    private void AddAll()
+    private void AddAll(boolean applyRecommend)
     {
+        if (applyRecommend)
+        {
+            DynamicShop.PaidOnlyMsg(player);
+            return;
+        }
+
         if(paletteList.isEmpty())
             return;
 
