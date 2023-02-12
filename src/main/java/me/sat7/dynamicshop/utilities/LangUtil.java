@@ -73,7 +73,6 @@ public final class LangUtil
             ccLang.get().addDefault("SHOP.PAGE_TITLE", "§f{curPage}/{maxPage} 페이지");
             ccLang.get().addDefault("SHOP.PAGE_LORE_V2", "§f§n좌클릭: 이전 페이지\n§f§n우클릭: 다음 페이지\n§7인벤토리에서 아이템을 클릭하면 \n§7그 아이템이 있는 페이지로 이동합니다.");
             ccLang.get().addDefault("SHOP.GO_TO_PAGE_EDITOR", "§eShift+우: 페이지 에디터");
-            ccLang.get().addDefault("SHOP.PAGE_EDIT_LORE", "§eShift 좌클릭: 페이지 삽입\n§eShift 우클릭: 페이지 삭제");
             ccLang.get().addDefault("SHOP.ITEM_MOVE_SELECTED", "아이탬 선택됨. 비어있는 칸을 우클릭하면 이동합니다.");
             ccLang.get().addDefault("SHOP.PERMISSION", "§f퍼미션:");
             ccLang.get().addDefault("SHOP.PERMISSION_ITEM", "§7 - {permission}");
@@ -90,6 +89,8 @@ public final class LangUtil
 
             ccLang.get().addDefault("SHOP_SETTING_TITLE", "§3상점 설정");
             ccLang.get().addDefault("SHOP_SETTING.LOG_TOGGLE_LORE", "§e우클릭: 로그 뷰어");
+            ccLang.get().addDefault("SHOP_SETTING.LOG_PRINT_CONSOLE", "§f로그를 콘솔에 출력");
+            ccLang.get().addDefault("SHOP_SETTING.LOG_PRINT_ADMIN", "§f로그를 어드민에게 출력");
             ccLang.get().addDefault("SHOP_SETTING.MAX_PAGE", "§f최대 페이지");
             ccLang.get().addDefault("SHOP_SETTING.MAX_PAGE_LORE", "§f상점의 최대 페이지를 설정합니다");
             ccLang.get().addDefault("SHOP_SETTING.L_R_SHIFT", "§e좌: -1 우: +1 Shift: x5");
@@ -110,6 +111,32 @@ public final class LangUtil
             ccLang.get().addDefault("SHOP_SETTING.STATE", "§f상태");
             ccLang.get().addDefault("SHOP_SETTING.STATE_ENABLE", "§a활성");
             ccLang.get().addDefault("SHOP_SETTING.STATE_DISABLE", "§c비활성");
+            ccLang.get().addDefault("SHOP_SETTING.ROTATION_EDITOR", "§f로테이션: ");
+            ccLang.get().addDefault("SHOP_SETTING.ROTATION_EDITOR_LORE", "§e클릭: 로테이션 에디터");
+
+            ccLang.get().addDefault("ROTATION_EDITOR_TITLE", "§3로테이션 에디터");
+            ccLang.get().addDefault("ROTATION_EDITOR.ENABLED", "§a로테이션 켜짐");
+            ccLang.get().addDefault("ROTATION_EDITOR.DISABLED", "§c로테이션 꺼짐");
+            ccLang.get().addDefault("ROTATION_EDITOR.CLICK_TO_ENABLE", "§e좌클릭: 로테이션 켜기");
+            ccLang.get().addDefault("ROTATION_EDITOR.CLICK_TO_DISABLE", "§e좌클릭: 로테이션 끄기");
+            ccLang.get().addDefault("ROTATION_EDITOR.CURRENT_TIME", "§f현재 시간: ");
+            ccLang.get().addDefault("ROTATION_EDITOR.CURRENTLY_IN_USE", "§a[현재 적용중]");
+            ccLang.get().addDefault("ROTATION_EDITOR.NEXT_ROTATION", "§f다음 로테이션: ");
+            ccLang.get().addDefault("ROTATION_EDITOR.PERIOD", "§f로테이션 주기");
+            ccLang.get().addDefault("ROTATION_EDITOR.PERIOD_LORE_V2", "§e좌클릭: -1시간, 우클릭: +1시간, 씨프트: x10");
+            ccLang.get().addDefault("ROTATION_EDITOR.TIMER", "§f타이머 조정");
+            ccLang.get().addDefault("ROTATION_EDITOR.TIMER_LORE_V2", "§e좌클릭: -10분, 우클릭: +10분, 씨프트: x6");
+            ccLang.get().addDefault("ROTATION_EDITOR.HOUR", "§f{0}시간");
+            ccLang.get().addDefault("ROTATION_EDITOR.UNSAVED_CHANGES", "§c§o저장되지 않은 변경사항 있음");
+            ccLang.get().addDefault("ROTATION_EDITOR.APPLY_CHANGES", "§f변경사항 적용");
+            ccLang.get().addDefault("ROTATION_EDITOR.APPLY_CHANGES_LORE", "§e좌클릭: 변경사항 적용\n§e우클릭: 변경사항 초기화");
+            ccLang.get().addDefault("ROTATION_EDITOR.APPLY_ROTATION", "§e좌클릭: 지금 적용");
+            ccLang.get().addDefault("ROTATION_EDITOR.OPEN", "§e좌클릭: 열기");
+            ccLang.get().addDefault("ROTATION_EDITOR.CREATE", "§e좌클릭: 빈 로테이션 만들기");
+            ccLang.get().addDefault("ROTATION_EDITOR.COPY_AS_NEW", "§e우클릭: 현재 상점 복사하여 만들기");
+            ccLang.get().addDefault("ROTATION_EDITOR.DELETE", "§e씨프트 우클릭: §c삭제");
+            ccLang.get().addDefault("ROTATION_EDITOR.REAPPLY", "§e씨프트 좌클릭: 재적용");
+            ccLang.get().addDefault("ROTATION_EDITOR.MOVE", "§e우클릭: 이동");
 
             ccLang.get().addDefault("ITEM_SETTING_TITLE", "§3아이탬 셋팅");
             ccLang.get().addDefault("ITEM_SETTING.VALUE_BUY", "§f구매가치: ");
@@ -165,7 +192,7 @@ public final class LangUtil
             ccLang.get().addDefault("PAGE_EDITOR.PAGE_SWAP_SUCCESS", "§f페이지가 교체 되었습니다.");
             ccLang.get().addDefault("PAGE_EDITOR.PAGE_SWAP_FAIL", "§f페이지 교체 실패.");
             ccLang.get().addDefault("PAGE_EDITOR.PAGE_SWAP_SELECTED", "§f페이지 선택되었습니다. 서로 교체 할 다른 페이지를 우클릭 하세요.");
-            ccLang.get().addDefault("PAGE_EDITOR.PAGE_LORE", "§e좌클릭: 페이지 이동\n§e우클릭: 페이지 교체(스왑)\n§eShift+좌: 페이지 삽입\n§eShift+우: 페이지 삭제");
+            ccLang.get().addDefault("PAGE_EDITOR.PAGE_LORE_PREMIUM", "§e좌클릭: 페이지 이동\n§e우클릭: 페이지 교체(스왑)\n§eShift+좌: 페이지 삽입\n§eShift+우: 페이지 삭제");
             ccLang.get().addDefault("PAGE_EDITOR.PRICE", "§f구매: {num}");
             ccLang.get().addDefault("PAGE_EDITOR.SELL_PRICE", "§f판매: {num}");
             ccLang.get().addDefault("PAGE_EDITOR.STOCK", "§8재고: {num}");
@@ -180,11 +207,17 @@ public final class LangUtil
             ccLang.get().addDefault("LOG_VIEWER.PRICE", "§f가격: ");
             ccLang.get().addDefault("LOG_VIEWER.EXPAND", "§f펼치기");
             ccLang.get().addDefault("LOG_VIEWER.COLLAPSE", "§f접기");
+            ccLang.get().addDefault("LOG_VIEWER.PAGE_TITLE", "§f{curPage}/{maxPage} 페이지");
+            ccLang.get().addDefault("LOG_VIEWER.PAGE_LORE", "§e좌클릭: 이전 페이지\n§e우클릭: 다음 페이지");
+            ccLang.get().addDefault("LOG_VIEWER.FILE_LORE", "§e좌클릭: 열기\n§eShift+우: §c삭제");
+
 
             ccLang.get().addDefault("LOG.LOG", "§f로그");
             ccLang.get().addDefault("LOG.CLEAR", "§f로그 삭제됨");
             ccLang.get().addDefault("LOG.SAVE", "§f로그 저장됨");
             ccLang.get().addDefault("LOG.DELETE", "§4로그 삭제");
+            ccLang.get().addDefault("LOG.SELL", "§f{player}(이)가 {shop}에 {item} {amount}개를 판매함");
+            ccLang.get().addDefault("LOG.BUY", "§f{player}(이)가 {shop}에서 {item} {amount}개를 구매함");
 
             ccLang.get().addDefault("STOCK_SIMULATOR_TITLE", "§3재고 시뮬레이터");
             ccLang.get().addDefault("STOCK_SIMULATOR.CHANGE_SAMPLE_LORE", "§e좌, 우클릭: 아이템 변경");
@@ -202,9 +235,10 @@ public final class LangUtil
             ccLang.get().addDefault("STOCK_SIMULATOR.STOCK", "§f재고: {num}");
 
             ccLang.get().addDefault("PALETTE_TITLE", "§3판매할 아이탬 선택");
-            ccLang.get().addDefault("PALETTE.LORE", "§e좌클릭: 추가\n§e우클릭: 장식으로 추가");
+            ccLang.get().addDefault("PALETTE.LORE_PREMIUM", "§e좌클릭: 추가\n§e씨프트 좌클릭: 설정 후 추가\n§e우클릭: 장식으로 추가\n§e씨프트 우클릭: '{item}' 를 검색");
             ccLang.get().addDefault("PALETTE.SEARCH", "§f찾기");
             ccLang.get().addDefault("PALETTE.ADD_ALL", "§f모두 추가");
+            ccLang.get().addDefault("PALETTE.ADD_ALL_LORE_LOCKED", "§e좌클릭: 모두 추가\n§7씨프트 좌클릭: 모두 추가하고 권장 값 적용");
             ccLang.get().addDefault("PALETTE.PAGE_TITLE", "§f{curPage}/{maxPage} 페이지");
             ccLang.get().addDefault("PALETTE.PAGE_LORE", "§f§n좌클릭: 이전 페이지\n§f§n우클릭: 다음 페이지");
             ccLang.get().addDefault("PALETTE.FILTER_APPLIED", "§f필터 적용됨 : ");
@@ -278,6 +312,7 @@ public final class LangUtil
             ccLang.get().addDefault("MESSAGE.MOVE_TO_BEST_SHOP_SELL", "{item}을 가장 비싸게 팔 수 있는 상점으로 이동했습니다.");
             ccLang.get().addDefault("MESSAGE.SHOP_IS_CLOSED_BY_ADMIN", "이 상점은 서버 관리자에 의해 닫혔습니다.");
             ccLang.get().addDefault("MESSAGE.SHOP_DISABLED", "이 상점은 비황성화된 상태입니다. 어드민이 아닌 유저는 접근할 수 없습니다. 상점 설정에서 활성화 할 수 있습니다.");
+            ccLang.get().addDefault("MESSAGE.ROTATION_SHARED_DATA_MISSING", "§e[ ! ]§f'{0}/SharedData.yml' 에서 {1} 개의 아이템에 대한 정보를 찾을 수 없었습니다. 이 아이템들은 장식으로 추가되었습니다.");
 
             ccLang.get().addDefault("HELP.TITLE", "§f도움말: {command} --------------------");
             ccLang.get().addDefault("HELP.SHOP", "상점을 엽니다.");
@@ -355,6 +390,9 @@ public final class LangUtil
             ccLang.get().addDefault("CLOSE", "§f닫기");
             ccLang.get().addDefault("CLOSE_LORE", "§f§n클릭: 닫기");
 
+            ccLang.get().addDefault("PAID_VERSION.DESC", "§f유료 버전에서 사용할 수 있습니다. ");
+            ccLang.get().addDefault("PAID_VERSION.GET_PREMIUM", "구매하기");
+
             ccLang.get().options().copyDefaults(true);
             ccLang.save();
         }
@@ -404,7 +442,6 @@ public final class LangUtil
             ccLang.get().addDefault("SHOP.PAGE_TITLE", "§f{curPage}/{maxPage} Page");
             ccLang.get().addDefault("SHOP.PAGE_LORE_V2", "§f§nLMB: Previous page\n§f§nRMB: Next page\n§7Clicking on your item will\n§7take you to the page where\n§7that item is located.");
             ccLang.get().addDefault("SHOP.GO_TO_PAGE_EDITOR", "§eShift RMB: Page Editor");
-            ccLang.get().addDefault("SHOP.PAGE_EDIT_LORE", "§eShift LMB: Insert page\n§eShift RMB: Delete page");
             ccLang.get().addDefault("SHOP.ITEM_MOVE_SELECTED", "Item selected. Right-click on an empty field to move it.");
             ccLang.get().addDefault("SHOP.PERMISSION", "§fPermission:");
             ccLang.get().addDefault("SHOP.PERMISSION_ITEM", "§7 - {permission}");
@@ -421,6 +458,8 @@ public final class LangUtil
 
             ccLang.get().addDefault("SHOP_SETTING_TITLE", "§3Shop Settings");
             ccLang.get().addDefault("SHOP_SETTING.LOG_TOGGLE_LORE", "§eRMB: Log Viewer");
+            ccLang.get().addDefault("SHOP_SETTING.LOG_PRINT_CONSOLE", "§fPrint log to console");
+            ccLang.get().addDefault("SHOP_SETTING.LOG_PRINT_ADMIN", "§fPrint log to admin");
             ccLang.get().addDefault("SHOP_SETTING.MAX_PAGE", "§fMax page");
             ccLang.get().addDefault("SHOP_SETTING.MAX_PAGE_LORE", "§fSets the maximum page for the shop.");
             ccLang.get().addDefault("SHOP_SETTING.L_R_SHIFT", "§eLMB: -1 RMB: +1 Shift: x5");
@@ -441,6 +480,32 @@ public final class LangUtil
             ccLang.get().addDefault("SHOP_SETTING.STATE", "§fState");
             ccLang.get().addDefault("SHOP_SETTING.STATE_ENABLE", "§aEnable");
             ccLang.get().addDefault("SHOP_SETTING.STATE_DISABLE", "§cDisable");
+            ccLang.get().addDefault("SHOP_SETTING.ROTATION_EDITOR", "§fRotation: ");
+            ccLang.get().addDefault("SHOP_SETTING.ROTATION_EDITOR_LORE", "§eClick: Rotation editor");
+
+            ccLang.get().addDefault("ROTATION_EDITOR_TITLE", "§3Rotation Editor");
+            ccLang.get().addDefault("ROTATION_EDITOR.ENABLED", "§aEnabled");
+            ccLang.get().addDefault("ROTATION_EDITOR.DISABLED", "§cDisabled");
+            ccLang.get().addDefault("ROTATION_EDITOR.CLICK_TO_ENABLE", "§eLMB: Enable");
+            ccLang.get().addDefault("ROTATION_EDITOR.CLICK_TO_DISABLE", "§eLMB: Disable");
+            ccLang.get().addDefault("ROTATION_EDITOR.CURRENT_TIME", "§fCurrent time: ");
+            ccLang.get().addDefault("ROTATION_EDITOR.CURRENTLY_IN_USE", "§a[Currently in use]");
+            ccLang.get().addDefault("ROTATION_EDITOR.NEXT_ROTATION", "§fNext rotation: ");
+            ccLang.get().addDefault("ROTATION_EDITOR.PERIOD", "§fPeriod");
+            ccLang.get().addDefault("ROTATION_EDITOR.PERIOD_LORE_V2", "§eLMB: -1h, RMB: +1h, Shift: x10");
+            ccLang.get().addDefault("ROTATION_EDITOR.TIMER", "§fTimer adjustment");
+            ccLang.get().addDefault("ROTATION_EDITOR.TIMER_LORE_V2", "§eLMB: -10m, RMB: +10m, Shift: x6");
+            ccLang.get().addDefault("ROTATION_EDITOR.HOUR", "§f{0}hours");
+            ccLang.get().addDefault("ROTATION_EDITOR.UNSAVED_CHANGES", "§c§oUnsaved changes");
+            ccLang.get().addDefault("ROTATION_EDITOR.APPLY_CHANGES", "§fApply changes");
+            ccLang.get().addDefault("ROTATION_EDITOR.APPLY_CHANGES_LORE", "§eLMB: Save changes\n§eRMB: Reset Changes");
+            ccLang.get().addDefault("ROTATION_EDITOR.APPLY_ROTATION", "§eLMB: Apply now");
+            ccLang.get().addDefault("ROTATION_EDITOR.OPEN", "§eLMB: Open");
+            ccLang.get().addDefault("ROTATION_EDITOR.CREATE", "§eLMB: Create empty");
+            ccLang.get().addDefault("ROTATION_EDITOR.COPY_AS_NEW", "§eRMB: Copy as new");
+            ccLang.get().addDefault("ROTATION_EDITOR.DELETE", "§eShift RMB: §cDelete");
+            ccLang.get().addDefault("ROTATION_EDITOR.REAPPLY", "§eShift LMB: Reapply");
+            ccLang.get().addDefault("ROTATION_EDITOR.MOVE", "§eRMB: Move");
 
             ccLang.get().addDefault("ITEM_SETTING_TITLE", "§3Item Settings");
             ccLang.get().addDefault("ITEM_SETTING.VALUE_BUY", "§fPurchase value: ");
@@ -496,7 +561,7 @@ public final class LangUtil
             ccLang.get().addDefault("PAGE_EDITOR.PAGE_SWAP_SUCCESS", "§fThe page has been replaced.");
             ccLang.get().addDefault("PAGE_EDITOR.PAGE_SWAP_FAIL", "§fPage replacement failed.");
             ccLang.get().addDefault("PAGE_EDITOR.PAGE_SWAP_SELECTED", "§fPage has been selected. Right-click on the other pages to be replaced.");
-            ccLang.get().addDefault("PAGE_EDITOR.PAGE_LORE", "§eLMB: Open page\n§eRMB: Swap\n§eShift LMB: Insert\n§eShift RMB: Delete");
+            ccLang.get().addDefault("PAGE_EDITOR.PAGE_LORE_PREMIUM", "§eLMB: Open page\n§eRMB: Swap\n§eShift LMB: Insert\n§eShift RMB: Delete");
             ccLang.get().addDefault("PAGE_EDITOR.PRICE", "§fBuy: {num}");
             ccLang.get().addDefault("PAGE_EDITOR.SELL_PRICE", "§fSell: {num}");
             ccLang.get().addDefault("PAGE_EDITOR.STOCK", "§8Stock: {num}");
@@ -511,11 +576,16 @@ public final class LangUtil
             ccLang.get().addDefault("LOG_VIEWER.PRICE", "§fPrice: ");
             ccLang.get().addDefault("LOG_VIEWER.EXPAND", "§fExpand");
             ccLang.get().addDefault("LOG_VIEWER.COLLAPSE", "§fCollapse");
+            ccLang.get().addDefault("LOG_VIEWER.PAGE_TITLE", "§f{curPage}/{maxPage} Page");
+            ccLang.get().addDefault("LOG_VIEWER.PAGE_LORE", "§eLMB: Prev\n§eRMB: Next");
+            ccLang.get().addDefault("LOG_VIEWER.FILE_LORE", "§eLMB: Open\n§eShift RMB: §cDelete");
 
             ccLang.get().addDefault("LOG.LOG", "§fLog");
             ccLang.get().addDefault("LOG.CLEAR", "§fLog deleted");
             ccLang.get().addDefault("LOG.SAVE", "§fLog saved");
             ccLang.get().addDefault("LOG.DELETE", "§4Delete log");
+            ccLang.get().addDefault("LOG.SELL", "§f{player} sells {amount} {item} to {shop}");
+            ccLang.get().addDefault("LOG.BUY", "§f{player} buys {amount} {item} from {shop}");
 
             ccLang.get().addDefault("STOCK_SIMULATOR_TITLE", "§3Stock Simulator");
             ccLang.get().addDefault("STOCK_SIMULATOR.CHANGE_SAMPLE_LORE", "§eLMB, RMB: Change Item");
@@ -533,9 +603,10 @@ public final class LangUtil
             ccLang.get().addDefault("STOCK_SIMULATOR.STOCK", "§fStock: {num}");
 
             ccLang.get().addDefault("PALETTE_TITLE", "§3Select item to sell");
-            ccLang.get().addDefault("PALETTE.LORE", "§eLMB: Add\n§eRMB: Add as decoration");
+            ccLang.get().addDefault("PALETTE.LORE_PREMIUM", "§eLMB: Add\n§eShift LMB: Add after setting\n§eRMB: Add as decoration\n§eShift RMB: Search '{item}'");
             ccLang.get().addDefault("PALETTE.SEARCH", "§fSearch");
             ccLang.get().addDefault("PALETTE.ADD_ALL", "§fAdd all");
+            ccLang.get().addDefault("PALETTE.ADD_ALL_LORE_LOCKED", "§eLMB: Add all\n§7Shift LMB: Add all and apply recommended values");
             ccLang.get().addDefault("PALETTE.PAGE_TITLE", "§f{curPage}/{maxPage} page");
             ccLang.get().addDefault("PALETTE.PAGE_LORE", "§f§nLMB: Prev\n§f§nRMB: Next");
             ccLang.get().addDefault("PALETTE.FILTER_APPLIED", "§fFilter Applied : ");
@@ -609,6 +680,7 @@ public final class LangUtil
             ccLang.get().addDefault("MESSAGE.MOVE_TO_BEST_SHOP_SELL", "Moved to the shop where you can sell {item} at the highest price.");
             ccLang.get().addDefault("MESSAGE.SHOP_IS_CLOSED_BY_ADMIN", "This shop is currently closed by the server administrator.");
             ccLang.get().addDefault("MESSAGE.SHOP_DISABLED", "This shop is currently disabled. Non-admin users cannot use it. You can enable it in the shop settings.");
+            ccLang.get().addDefault("MESSAGE.ROTATION_SHARED_DATA_MISSING", "§e[ ! ]§fThe required data could not be found in '{0}/SharedData.yml' for {1} items. These items have been added as decoration.");
 
             ccLang.get().addDefault("HELP.TITLE", "§fHelp: {command} --------------------");
             ccLang.get().addDefault("HELP.SHOP", "Open shop");
@@ -685,6 +757,8 @@ public final class LangUtil
             ccLang.get().addDefault("RMB", "RMB");
             ccLang.get().addDefault("CLOSE", "§fClose");
             ccLang.get().addDefault("CLOSE_LORE", "§f§nClick: Close");
+            ccLang.get().addDefault("PAID_VERSION.DESC", "§fAvailable in paid version. ");
+            ccLang.get().addDefault("PAID_VERSION.GET_PREMIUM", "Get Premium");
 
             ccLang.get().options().copyDefaults(true);
             ccLang.save();

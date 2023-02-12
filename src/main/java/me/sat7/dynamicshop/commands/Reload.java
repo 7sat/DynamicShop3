@@ -55,6 +55,7 @@ public final class Reload extends DSCMD
         ConfigUtil.configSetup(DynamicShop.plugin);
         DynamicShop.plugin.PeriodicRepetitiveTask();
 
+        DynamicShop.plugin.startSaveLogsTask();
         DynamicShop.plugin.startCullLogsTask();
 
         QuickSell.quickSellGui.reload();

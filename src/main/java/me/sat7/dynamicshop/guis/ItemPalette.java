@@ -69,7 +69,7 @@ public final class ItemPalette extends InGameUI
 
         // Add all Button
         if(!paletteList.isEmpty())
-            CreateButton(ADD_ALL, Material.YELLOW_STAINED_GLASS_PANE, t(player, "PALETTE.ADD_ALL"), "");
+            CreateButton(ADD_ALL, Material.YELLOW_STAINED_GLASS_PANE, t(player, "PALETTE.ADD_ALL"), t(player, "PALETTE.ADD_ALL_LORE_LOCKED"));
 
         // Search Button
         String filterString = search.isEmpty() ? "" : t(player, "PALETTE.FILTER_APPLIED") + search;
@@ -86,7 +86,7 @@ public final class ItemPalette extends InGameUI
 
         if (e.getSlot() == CLOSE) CloseUI();
         else if (e.getSlot() == PAGE) MovePage(e.isLeftClick(), e.isRightClick());
-        else if (e.getSlot() == ADD_ALL) AddAll();
+        else if (e.getSlot() == ADD_ALL && e.isLeftClick()) AddAll(e.isShiftClick());
         else if (e.getSlot() == SEARCH) OnClickSearch(e.isLeftClick(), e.isRightClick());
         else if (e.getSlot() <= 45) OnClickItem(e.isLeftClick(), e.isRightClick(), e.isShiftClick(), e.getCurrentItem());
     }
@@ -165,14 +165,11 @@ public final class ItemPalette extends InGameUI
                 ItemStack btn = paletteList.get(idx);
                 ItemMeta btnMeta = btn.getItemMeta();
 
-                String lastName = btn.getType().name();
-                int subStrIdx = lastName.lastIndexOf('_');
-                if (subStrIdx != -1)
-                    lastName = lastName.substring(subStrIdx);
+                String lastName = GetItemLastName(btn);
 
                 if (btnMeta != null)
                 {
-                    String[] lore = t(player, "PALETTE.LORE").replace("{item}", lastName.replace("_", "")).split("\n");
+                    String[] lore = t(player, "PALETTE.LORE_PREMIUM").replace("{item}", lastName.replace("_", "")).split("\n");
                     btnMeta.setLore(new ArrayList<>(Arrays.asList(lore)));
                     btn.setItemMeta(btnMeta);
                 }
@@ -255,11 +252,16 @@ public final class ItemPalette extends InGameUI
     private String GetItemLastName(ItemStack iStack)
     {
         String itemName = iStack.getType().name();
-        int idx = itemName.lastIndexOf('_');
-        if (idx != -1)
-            itemName = itemName.substring(idx);
+        String[] temp = itemName.split("_");
+        if(temp.length >= 2)
+        {
+            if(temp[temp.length-1].equals(search))
+                return temp[temp.length-2];
+            else
+                return temp[temp.length-1];
+        }
 
-        return itemName.replace("_", "");
+        return itemName;
     }
 
     private void CloseUI()
@@ -286,8 +288,14 @@ public final class ItemPalette extends InGameUI
         DynaShopAPI.openItemPalette(player, shopName, shopSlotIndex, targetPage, this.search);
     }
 
-    private void AddAll()
+    private void AddAll(boolean applyRecommend)
     {
+        if (applyRecommend)
+        {
+            DynamicShop.PaidOnlyMsg(player);
+            return;
+        }
+
         if(paletteList.isEmpty())
             return;
 
@@ -342,14 +350,29 @@ public final class ItemPalette extends InGameUI
 
         if (isLeft)
         {
-            DynaShopAPI.openItemSettingGui(player, shopName, shopSlotIndex,0, itemStack, 10, 10, 0.01, -1, 10000, 10000, -1);
+            if (isShift)
+            {
+                DynaShopAPI.openItemSettingGui(player, shopName, shopSlotIndex,0, itemStack, 10, 10, 0.01, -1, 10000, 10000, -1);
+            } else
+            {
+                int targetSlotIdx = ShopUtil.findEmptyShopSlot(shopName, shopSlotIndex, true);
+                ShopUtil.addItemToShop(shopName, targetSlotIdx, itemStack, 1, 1, 0.01, -1, 10000, 10000);
+                player.sendMessage(DynamicShop.dsPrefix(player) + t(player, "MESSAGE.ITEM_ADDED"));
+
+                DynaShopAPI.openItemPalette(player, shopName, shopSlotIndex, currentPage, search);
+            }
         } else if (isRight)
         {
-            int targetSlotIdx = ShopUtil.findEmptyShopSlot(shopName, shopSlotIndex, true);
-            DynamicShop.userInteractItem.put(player.getUniqueId(), shopName + "/" + targetSlotIdx + 1);
-            ShopUtil.addItemToShop(shopName, targetSlotIdx, itemStack, -1, -1, -1, -1, -1, -1);
-
-            DynaShopAPI.openShopGui(player, shopName, targetSlotIdx / 45 + 1);
+            if (isShift)
+            {
+                DynaShopAPI.openItemPalette(player, shopName, shopSlotIndex, 1, GetItemLastName(item));
+            } else
+            {
+                int targetSlotIdx = ShopUtil.findEmptyShopSlot(shopName, shopSlotIndex, true);
+                //DynamicShop.userInteractItem.put(player.getUniqueId(), shopName + "/" + targetSlotIdx + 1);
+                ShopUtil.addItemToShop(shopName, targetSlotIdx, itemStack, -1, -1, -1, -1, -1, -1);
+                DynaShopAPI.openShopGui(player, shopName, targetSlotIdx / 45 + 1);
+            }
         }
     }
 

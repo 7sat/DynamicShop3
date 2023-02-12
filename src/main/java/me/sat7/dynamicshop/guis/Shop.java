@@ -323,7 +323,7 @@ public final class Shop extends InGameUI
         String pageLore = t(player, "SHOP.PAGE_LORE_V2");
         if (player.hasPermission(P_ADMIN_SHOP_EDIT))
         {
-            pageLore += "\n" + t(player, "SHOP.PAGE_EDIT_LORE");
+            pageLore += "\n" + t(player, "SHOP.GO_TO_PAGE_EDITOR");
         }
         return pageLore;
     }
@@ -472,15 +472,9 @@ public final class Shop extends InGameUI
         int targetPage = page;
         if (isLeftClick)
         {
-            if (!isShiftClick)
-            {
-                targetPage -= 1;
-                if (targetPage < 1)
-                    targetPage = GetShopMaxPage(shopName);
-            } else if (player.hasPermission(P_ADMIN_SHOP_EDIT))
-            {
-                ShopUtil.insetShopPage(shopName, page);
-            }
+            targetPage -= 1;
+            if (targetPage < 1)
+                targetPage = GetShopMaxPage(shopName);
         } else if (isRightClick)
         {
             if (!isShiftClick)
@@ -488,22 +482,13 @@ public final class Shop extends InGameUI
                 targetPage += 1;
                 if (targetPage > GetShopMaxPage(shopName))
                     targetPage = 1;
-            } else if (player.hasPermission(P_ADMIN_SHOP_EDIT))
+            } else
             {
-                if (shopData.getInt("Options.page") > 1)
+                if (player.hasPermission(P_ADMIN_SHOP_EDIT))
                 {
-                    ShopUtil.closeInventoryWithDelay(player);
-
-                    DynamicShop.userInteractItem.put(player.getUniqueId(), shopName + "/" + page);
-                    DynamicShop.userTempData.put(player.getUniqueId(), "waitforPageDelete");
-                    OnChat.WaitForInput(player);
-
-                    player.sendMessage(DynamicShop.dsPrefix(player) + t(player, "MESSAGE.DELETE_CONFIRM"));
-                } else
-                {
-                    player.sendMessage(DynamicShop.dsPrefix(player) + t(player, "MESSAGE.CANT_DELETE_LAST_PAGE"));
+                    DynaShopAPI.openPageEditor(player, shopName, page);
+                    return;
                 }
-                return;
             }
         }
         page = targetPage;
@@ -607,7 +592,6 @@ public final class Shop extends InGameUI
 
         ItemStack pageButton = inventory.getItem(PAGE);
         ItemMeta pageButtonMeta = pageButton.getItemMeta();
-        maxPage = GetShopMaxPage(shopName);
         pageButtonMeta.setDisplayName(CreatePageButtonName());
         pageButton.setItemMeta(pageButtonMeta);
         pageButton.setAmount(page);

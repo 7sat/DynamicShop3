@@ -9,6 +9,7 @@ import me.sat7.dynamicshop.files.CustomConfig;
 import me.sat7.dynamicshop.jobshook.JobsHook;
 import me.sat7.dynamicshop.utilities.ConfigUtil;
 import org.bukkit.Bukkit;
+import org.bukkit.ChatColor;
 import org.bukkit.Material;
 import org.bukkit.configuration.ConfigurationSection;
 import org.bukkit.entity.Player;
@@ -33,6 +34,7 @@ public final class ShopSettings extends InGameUI
     private final int ENABLE_TOGGLE = 0;
     private final int PERMISSION = 1;
     private final int MAX_PAGE = 2;
+    private final int ROTATION_EDITOR = 3;
     private final int SHOP_HOUR = 6;
     private final int SHOP_HOUR_OPEN = 7;
     private final int SHOP_HOUR_CLOSE = 8;
@@ -58,7 +60,8 @@ public final class ShopSettings extends InGameUI
     private final int TAX_TOGGLE = 33;
     private final int TAX_AMOUNT = 34;
     private final int LOG_TOGGLE = 42;
-    private final int LOG_DELETE = 43;
+    private final int LOG_PRINT_CONSOLE = 43;
+    private final int LOG_PRINT_ADMIN = 44;
 
     private final int CLOSE = 36;
 
@@ -112,6 +115,11 @@ public final class ShopSettings extends InGameUI
         //최대 페이지 버튼
         CreateButton(MAX_PAGE, InGameUI.GetPageButtonIconMat(), t(player, "SHOP_SETTING.MAX_PAGE"), new ArrayList<>(Arrays.asList(t(player, "SHOP_SETTING.MAX_PAGE_LORE"), t(player, "SHOP_SETTING.L_R_SHIFT"))), data.get().getInt("Options.page"));
 
+        // 로테이션 에디터
+        int currentRotation = confSec_Options.getInt("Rotation.Current", -1);
+        String rotationString = currentRotation == -1 ? t(player, "ROTATION_EDITOR.DISABLED") : String.valueOf(currentRotation + 1);
+        CreateButton(ROTATION_EDITOR, Material.CLOCK, t(player, "SHOP_SETTING.ROTATION_EDITOR") + rotationString, "§7" + ChatColor.stripColor(t(player, "SHOP_SETTING.ROTATION_EDITOR_LORE")));
+
         // 영업시간 버튼
         int curTime = (int) (player.getWorld().getTime()) / 1000 + 6;
         if (curTime > 24) curTime -= 24;
@@ -145,7 +153,8 @@ public final class ShopSettings extends InGameUI
         {
             ArrayList<String> fluctuationLore = new ArrayList<>(Arrays.asList(
                     "§9" + t(player, "CUR_STATE") + ": " + t(player, "ON"),
-                    "§e" + t(player, "LMB") + ": " + t(player, "OFF")
+                    "§e" + t(player, "LMB") + ": " + t(player, "OFF"),
+                    "§7" + ChatColor.stripColor(t(player, "STOCK_SIMULATOR.SIMULATOR_BUTTON_LORE"))
                     ));
             CreateButton(FLUC, Material.COMPARATOR, t(player, "FLUCTUATION.FLUCTUATION"), fluctuationLore);
 
@@ -166,7 +175,8 @@ public final class ShopSettings extends InGameUI
                     t(player, "FLUCTUATION.FLUCTUATION"),
                     new ArrayList<>(Arrays.asList(
                             "§9" + t(player, "CUR_STATE") + ": " + t(player, "OFF"),
-                            "§e" + t(player, "LMB") + ": " + t(player, "ON")
+                            "§e" + t(player, "LMB") + ": " + t(player, "ON"),
+                            "§7" + ChatColor.stripColor(t(player, "STOCK_SIMULATOR.SIMULATOR_BUTTON_LORE"))
                             )),
                     1);
             inventory.setItem(FLUC, flucToggleBtn);
@@ -178,7 +188,8 @@ public final class ShopSettings extends InGameUI
         {
             ArrayList<String> stableLore = new ArrayList<>(Arrays.asList(
                     "§9" + t(player, "CUR_STATE") + ": " + t(player, "ON"),
-                    "§e" + t(player, "LMB") + ": " + t(player, "OFF")
+                    "§e" + t(player, "LMB") + ": " + t(player, "OFF"),
+                    "§7" + ChatColor.stripColor(t(player, "STOCK_SIMULATOR.SIMULATOR_BUTTON_LORE"))
             ));
             CreateButton(STABLE, Material.COMPARATOR, t(player, "STOCK_STABILIZING.SS"), stableLore);
 
@@ -197,7 +208,8 @@ public final class ShopSettings extends InGameUI
         {
             ArrayList<String> stableLore = new ArrayList<>(Arrays.asList(
                     "§9" + t(player, "CUR_STATE") + ": " + t(player, "OFF"),
-                    "§e" + t(player, "LMB") + ": " + t(player, "ON")
+                    "§e" + t(player, "LMB") + ": " + t(player, "ON"),
+                    "§7" + ChatColor.stripColor(t(player, "STOCK_SIMULATOR.SIMULATOR_BUTTON_LORE"))
                     ));
             CreateButton(STABLE, Material.COMPARATOR, t(player, "STOCK_STABILIZING.SS"), stableLore);
         }
@@ -241,7 +253,7 @@ public final class ShopSettings extends InGameUI
         // 로그 버튼
         String log_cur;
         String log_set;
-        if (confSec_Options.contains("log"))
+        if (confSec_Options.contains("log.active") && confSec_Options.getBoolean("log.active"))
         {
             log_cur = t(player, "ON");
             log_set = t(player, "OFF");
@@ -253,8 +265,22 @@ public final class ShopSettings extends InGameUI
         ArrayList<String> logLore = new ArrayList<>();
         logLore.add("§9" + t(player, "CUR_STATE") + ": " + log_cur);
         logLore.add("§e" + t(player, "LMB") + ": " + log_set);
+        logLore.add(t(player, "§7" + ChatColor.stripColor(t(player, "SHOP_SETTING.LOG_TOGGLE_LORE"))));
         CreateButton(LOG_TOGGLE, Material.BOOK, t(player, "LOG.LOG"), logLore);
-        CreateButton(LOG_DELETE, Material.RED_STAINED_GLASS_PANE, t(player, "LOG.DELETE"), "");
+
+
+        boolean printToConsoleActive = data.get().contains("Options.log.printToConsole") && data.get().getBoolean("Options.log.printToConsole");
+        ArrayList<String> logLore_2 = new ArrayList<>();
+        logLore_2.add("§9" + t(player, "CUR_STATE") + ": " + (printToConsoleActive ? t(player, "ON") : t(player, "OFF")));
+        logLore_2.add("§e" + t(player, "LMB") + ": " + (printToConsoleActive ? t(player, "OFF") : t(player, "ON")));
+        CreateButton(LOG_PRINT_CONSOLE, printToConsoleActive ? Material.GREEN_STAINED_GLASS_PANE : Material.BLACK_STAINED_GLASS_PANE, t(player, "SHOP_SETTING.LOG_PRINT_CONSOLE"), logLore_2);
+
+        boolean printToAdminActive = data.get().contains("Options.log.printToAdmin") && data.get().getBoolean("Options.log.printToAdmin");
+        ArrayList<String> logLore_3 = new ArrayList<>();
+        logLore_3.add("§9" + t(player, "CUR_STATE") + ": " + (printToAdminActive ? t(player, "ON") : t(player, "OFF")));
+        logLore_3.add("§e" + t(player, "LMB") + ": " + (printToAdminActive ? t(player, "OFF") : t(player, "ON")));
+        CreateButton(LOG_PRINT_ADMIN, printToAdminActive ? Material.GREEN_STAINED_GLASS_PANE : Material.BLACK_STAINED_GLASS_PANE, t(player, "SHOP_SETTING.LOG_PRINT_ADMIN"), logLore_3);
+
         return inventory;
     }
 
@@ -314,6 +340,11 @@ public final class ShopSettings extends InGameUI
                 Bukkit.dispatchCommand(player, "DynamicShop shop " + shopName + " maxpage " + targetValue);
             }
             DynaShopAPI.openShopSettingGui(player, shopName);
+        }
+        // 로테이션 편집기
+        else if (e.getSlot() == ROTATION_EDITOR)
+        {
+            DynaShopAPI.OpenRotationEditor(player, shopName);
         }
         // 영업시간
         else if (e.getSlot() == SHOP_HOUR || e.getSlot() == SHOP_HOUR_OPEN || e.getSlot() == SHOP_HOUR_CLOSE)
@@ -388,7 +419,15 @@ public final class ShopSettings extends InGameUI
 
                 if (e.getSlot() == FLUC)
                 {
-                    Bukkit.dispatchCommand(player, "DynamicShop shop " + shopName + " fluctuation off");
+                    if(e.isLeftClick())
+                    {
+                        Bukkit.dispatchCommand(player, "DynamicShop shop " + shopName + " fluctuation off");
+                    }
+                    else if(e.isRightClick())
+                    {
+                        DynaShopAPI.openStockSimulator(player, shopName);
+                        return;
+                    }
                 } else if (e.getSlot() == FLUC_INTERVAL)
                 {
                     int edit = -1;
@@ -417,8 +456,15 @@ public final class ShopSettings extends InGameUI
             {
                 if (e.getSlot() == FLUC)
                 {
-                    Bukkit.dispatchCommand(player, "DynamicShop shop " + shopName + " fluctuation 48 0.1");
-                    DynaShopAPI.openShopSettingGui(player, shopName);
+                    if(e.isLeftClick())
+                    {
+                        Bukkit.dispatchCommand(player, "DynamicShop shop " + shopName + " fluctuation 48 0.1");
+                        DynaShopAPI.openShopSettingGui(player, shopName);
+                    }
+                    else if(e.isRightClick())
+                    {
+                        DynaShopAPI.openStockSimulator(player, shopName);
+                    }
                 }
             }
         }
@@ -432,7 +478,15 @@ public final class ShopSettings extends InGameUI
 
                 if (e.getSlot() == STABLE)
                 {
-                    Bukkit.dispatchCommand(player, "DynamicShop shop " + shopName + " stockStabilizing off");
+                    if(e.isLeftClick())
+                    {
+                        Bukkit.dispatchCommand(player, "DynamicShop shop " + shopName + " stockStabilizing off");
+                    }
+                    else if(e.isRightClick())
+                    {
+                        DynaShopAPI.openStockSimulator(player, shopName);
+                        return;
+                    }
                 } else if (e.getSlot() == STABLE_INTERVAL)
                 {
                     int edit = -1;
@@ -461,8 +515,15 @@ public final class ShopSettings extends InGameUI
             {
                 if (e.getSlot() == STABLE)
                 {
-                    Bukkit.dispatchCommand(player, "DynamicShop shop " + shopName + " stockStabilizing 48 0.5");
-                    DynaShopAPI.openShopSettingGui(player, shopName);
+                    if(e.isLeftClick())
+                    {
+                        Bukkit.dispatchCommand(player, "DynamicShop shop " + shopName + " stockStabilizing 48 0.5");
+                        DynaShopAPI.openShopSettingGui(player, shopName);
+                    }
+                    else if(e.isRightClick())
+                    {
+                        DynaShopAPI.openStockSimulator(player, shopName);
+                    }
                 }
             }
         }
@@ -637,18 +698,34 @@ public final class ShopSettings extends InGameUI
         // log
         else if (e.getSlot() == LOG_TOGGLE)
         {
-            if (data.get().contains("Options.log") && data.get().getBoolean("Options.log"))
+            if (e.isLeftClick())
             {
-                Bukkit.dispatchCommand(player, "DynamicShop shop " + shopName + " log disable");
-            } else
+                if (data.get().contains("Options.log.active") && data.get().getBoolean("Options.log.active"))
+                {
+                    Bukkit.dispatchCommand(player, "DynamicShop shop " + shopName + " log disable");
+                } else
+                {
+                    Bukkit.dispatchCommand(player, "DynamicShop shop " + shopName + " log enable");
+                }
+
+                DynaShopAPI.openShopSettingGui(player, shopName);
+            } else if (e.isRightClick())
             {
-                Bukkit.dispatchCommand(player, "DynamicShop shop " + shopName + " log enable");
+                DynaShopAPI.openLogViewer(player, shopName);
             }
+        } else if (e.getSlot() == LOG_PRINT_CONSOLE)
+        {
+            boolean active = data.get().contains("Options.log.printToConsole") && data.get().getBoolean("Options.log.printToConsole");
+
+            Bukkit.dispatchCommand(player, "DynamicShop shop " + shopName + " log printToConsole " + (active ? "off" :"on"));
 
             DynaShopAPI.openShopSettingGui(player, shopName);
-        } else if (e.getSlot() == LOG_DELETE)
+        }
+        else if (e.getSlot() == LOG_PRINT_ADMIN)
         {
-            Bukkit.dispatchCommand(player, "DynamicShop shop " + shopName + " log clear");
+            boolean active = data.get().contains("Options.log.printToAdmin") && data.get().getBoolean("Options.log.printToAdmin");
+
+            Bukkit.dispatchCommand(player, "DynamicShop shop " + shopName + " log printToAdmin " + (active ? "off" :"on"));
 
             DynaShopAPI.openShopSettingGui(player, shopName);
         }

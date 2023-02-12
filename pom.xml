@@ -6,7 +6,7 @@
 
     <groupId>me.sat7</groupId>
     <artifactId>DynamicShop</artifactId>
-    <version>3.7.1</version>
+    <version>3.8.0</version>
     <packaging>jar</packaging>
 
     <name>DynamicShop</name>
@@ -40,13 +40,17 @@
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-shade-plugin</artifactId>
-                <version>3.1.0</version>
+                <version>3.2.4</version>
                 <configuration>
                     <minimizeJar>true</minimizeJar>
                     <relocations>
                         <relocation>
                             <pattern>org.bstats</pattern>
                             <shadedPattern>me.sat7.dynamicshop.lib.bstats</shadedPattern>
+                        </relocation>
+                        <relocation>
+                            <pattern>com.opencsv</pattern>
+                            <shadedPattern>me.sat7.dynamicshop.lib.opencsv</shadedPattern>
                         </relocation>
                     </relocations>
                 </configuration>
@@ -116,6 +120,16 @@
             <artifactId>bstats-bukkit</artifactId>
             <version>2.2.1</version>
             <scope>compile</scope>
+        </dependency>
+        <dependency>
+            <groupId>com.opencsv</groupId>
+            <artifactId>opencsv</artifactId>
+            <version>5.2</version>
+        </dependency>
+        <dependency>
+            <groupId>commons-io</groupId>
+            <artifactId>commons-io</artifactId>
+            <version>2.11.0</version>
         </dependency>
         <dependency>
             <groupId>me.clip</groupId>

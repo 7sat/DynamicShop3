@@ -36,6 +36,7 @@ import java.io.File;
 import java.util.*;
 
 import static me.sat7.dynamicshop.utilities.ConfigUtil.configVersion;
+import static me.sat7.dynamicshop.utilities.LangUtil.t;
 
 public final class DynamicShop extends JavaPlugin implements Listener
 {
@@ -76,6 +77,7 @@ public final class DynamicShop extends JavaPlugin implements Listener
     public static CustomConfig ccSign;
 
     private BukkitTask periodicRepetitiveTask;
+    private BukkitTask saveLogsTask;
     private BukkitTask cullLogsTask;
 
     public static boolean updateAvailable = false;
@@ -88,6 +90,43 @@ public final class DynamicShop extends JavaPlugin implements Listener
 
     public static final LocaleManager localeManager = new LocaleManager();
     public static boolean isPapiExist;
+
+    public static final boolean DEBUG_MODE = false;
+    public static void DebugLog()
+    {
+        if(!DEBUG_MODE)
+            return;
+
+        console.sendMessage("========== DEBUG LOG ==========");
+
+        console.sendMessage("userTempData: size" + userTempData.size());
+        for(Map.Entry<UUID, String> entry : userTempData.entrySet())
+            console.sendMessage(entry.getKey() + ": " + entry.getValue());
+
+        console.sendMessage("---------------------");
+
+        console.sendMessage("userInteractItem: size" + userInteractItem.size());
+        for(Map.Entry<UUID, String> entry : userInteractItem.entrySet())
+            console.sendMessage(entry.getKey() + ": " + entry.getValue());
+
+        console.sendMessage("---------------------");
+
+        console.sendMessage("ShopUtil.shopConfigFiles: size" + ShopUtil.shopConfigFiles.size());
+        for(Map.Entry<String, CustomConfig> entry : ShopUtil.shopConfigFiles.entrySet())
+            console.sendMessage(entry.getKey() + ": " + entry.getValue());
+
+        console.sendMessage("---------------------");
+
+        UIManager.DebugLog();
+
+        //console.sendMessage("---------------------");
+
+        //console.sendMessage("RotationTaskMap: size" + RotationUtil.RotationTaskMap.size());
+        //for(Map.Entry<String, Integer> entry : RotationUtil.RotationTaskMap.entrySet())
+        //    console.sendMessage(entry.getKey() + ": " + entry.getValue());
+
+        console.sendMessage("========== DEBUG LOG END ==========");
+    }
 
     @Override
     public void onEnable()
@@ -109,6 +148,7 @@ public final class DynamicShop extends JavaPlugin implements Listener
         InitConfig();
 
         PeriodicRepetitiveTask();
+        startSaveLogsTask();
         startCullLogsTask();
         hookIntoJobs();
         InitPapi();
@@ -247,6 +287,18 @@ public final class DynamicShop extends JavaPlugin implements Listener
         }
     }
 
+    public void startSaveLogsTask()
+    {
+        if (getConfig().getBoolean("Log.SaveLogs"))
+        {
+            if (saveLogsTask != null)
+            {
+                saveLogsTask.cancel();
+            }
+            saveLogsTask = Bukkit.getScheduler().runTaskTimerAsynchronously(this, LogUtil::SaveLogToCSV, 0L, (20L * 10L));
+        }
+    }
+
     public void startCullLogsTask()
     {
         if (getConfig().getBoolean("Log.CullLogs"))
@@ -340,7 +392,6 @@ public final class DynamicShop extends JavaPlugin implements Listener
         ccSign = new CustomConfig();
         WorthUtil.ccWorth = new CustomConfig();
         SoundUtil.ccSound = new CustomConfig();
-        LogUtil.ccLog = new CustomConfig();
 
         ShopUtil.Reload();
 
@@ -354,7 +405,6 @@ public final class DynamicShop extends JavaPlugin implements Listener
         setupSignFile();
         WorthUtil.setupWorthFile();
         SoundUtil.setupSoundFile();
-        LogUtil.setupLogFile();
 
         QuickSell.quickSellGui = new CustomConfig();
         QuickSell.SetupQuickSellGUIFile();
@@ -398,7 +448,18 @@ public final class DynamicShop extends JavaPlugin implements Listener
     @Override
     public void onDisable()
     {
+        DynamicShop.ccUser.save();
+
         Bukkit.getScheduler().cancelTasks(this);
         console.sendMessage(Constants.DYNAMIC_SHOP_PREFIX + " Disabled");
+    }
+
+    public static void PaidOnlyMsg(Player p)
+    {
+        TextComponent text = new TextComponent("");
+        text.addExtra(DynamicShop.dsPrefix(p) +  t(p, "PAID_VERSION.DESC"));
+        text.addExtra(DynamicShop.CreateLink(t(p, "PAID_VERSION.GET_PREMIUM"), false, ChatColor.WHITE, "https://spigotmc.org/resources/100058"));
+
+        p.spigot().sendMessage(text);
     }
 }

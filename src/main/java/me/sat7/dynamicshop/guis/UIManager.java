@@ -18,6 +18,13 @@ public class UIManager implements Listener
 {
     private static final HashMap<Player, InGameUI> currentUI = new HashMap<>();
 
+    public static void DebugLog()
+    {
+        DynamicShop.console.sendMessage("currentUI: size" + currentUI.size());
+        for(Map.Entry<Player, InGameUI> entry : currentUI.entrySet())
+            DynamicShop.console.sendMessage(entry.getKey() + ": " + entry.getValue().uiType);
+    }
+
     @SuppressWarnings("EmptyMethod")
     @EventHandler
     public void OnOpen(InventoryOpenEvent e)
