@@ -4,13 +4,14 @@ main: me.sat7.dynamicshop.DynamicShop
 depend: [Vault]
 softdepend: [PlaceholderAPI, Jobs, LocaleLib]
 api-version: 1.16
-authors: [sat7]
+authors: [sat7, jpenilla, Multitallented, Chris6ix, KevinDaGame, FlorianKoerner, Kapitowa, LincolnJota]
 description: Full GUI shop with dynamic prices
 commands:
   DynamicShop:
     description: "Full GUI shop with dynamic prices"
     aliases: [ds]
   shop:
+    description: "Open shop menu"
 permissions:
   dshop.use:
     description: Allows use of the /ds command

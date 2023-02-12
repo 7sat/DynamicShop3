@@ -79,4 +79,21 @@ public final class ItemsUtil
                 replace("{info}", info)
         );
     }
+
+    /**
+     * Converts the item name to a material.
+     *
+     * @param shortname Short name of item.
+     * @return material item
+     */
+    public static Material GetMaterialFromShortname(String shortname) {
+        Material[] materials = Material.values();
+        for (Material material : materials) {
+            String materialShortname = StringUtil.getShortenedNameSign(material.name());
+            if(materialShortname.equals(shortname)) {
+                return material;
+            }
+        }
+        return null;
+    }
 }

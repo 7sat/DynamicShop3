@@ -37,6 +37,8 @@ public class CMDManager
     public static ShopHours shopHours;
     public static StockStabilizing stockStabilizing;
 
+    public static ItemInfo itemInfo;
+
     public static void Init()
     {
         CMDHashMap.clear();
@@ -52,6 +54,8 @@ public class CMDManager
         reload = new Reload();
         setDefaultShop = new SetDefaultShop();
         setTax = new SetTax();
+        itemInfo = new ItemInfo();
+
 
         CMDHashMap.put("cmdhelp", commandHelp);
         CMDHashMap.put("createshop", createShop);
@@ -63,6 +67,7 @@ public class CMDManager
         CMDHashMap.put("reload", reload);
         CMDHashMap.put("setdefaultshop", setDefaultShop);
         CMDHashMap.put("settax", setTax);
+        CMDHashMap.put("iteminfo", itemInfo);
 
         // ds shop
         account = new Account();

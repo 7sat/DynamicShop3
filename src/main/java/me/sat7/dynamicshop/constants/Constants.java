@@ -25,6 +25,8 @@ public final class Constants
     public static final String P_USE = "dshop.use"; // 이 권한은 기본적으로 지급됨
     public static final String P_USE_QSELL = "dshop.use.qsell"; // 이 권한은 기본적으로 지급됨
 
+    public static final String P_ADMIN_ITEM_INFO = "dshop.admin.iteminfo";
+
     private Constants()
     {
 
