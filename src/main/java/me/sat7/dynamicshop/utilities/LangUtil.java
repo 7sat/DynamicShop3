@@ -352,6 +352,7 @@ public final class LangUtil
             ccLang.get().addDefault("ERR.HAND_EMPTY2", "§c§o아이탬을 손에 들고 있어야 합니다!");
             ccLang.get().addDefault("ERR.SHOP_NOT_FOUND", "§f해당 상점을 찾을 수 없습니다.");
             ccLang.get().addDefault("ERR.SHOP_EXIST", "해당 이름을 가진 상점이 이미 존재합니다.");
+            ccLang.get().addDefault("ERR.SHOP_NOT_EXIST", "그런 이름을 가진 상점이 없습니다.");
             ccLang.get().addDefault("ERR.SIGN_SHOP_REMOTE_ACCESS", "해당 상점은 표지판을 통해서만 접근할 수 있습니다.");
             ccLang.get().addDefault("ERR.LOCAL_SHOP_REMOTE_ACCESS", "해당 상점은 직접 방문해야만 사용할 수 있습니다.");
             ccLang.get().addDefault("ERR.MAX_LOWER_THAN_MIN", "최대 가격은 최소 가격보다 커야합니다.");
@@ -367,8 +368,9 @@ public final class LangUtil
             ccLang.get().addDefault("ERR.CREATIVE", "§eCreative mode 에서 이 명령어를 사용할 수 없습니다. 권한이 없습니다.");
             ccLang.get().addDefault("ERR.FILE_CREATE_FAIL", "§e파일 생성에 실패했습니다.");
             ccLang.get().addDefault("ERR.INVALID_TRANSACTION", "이 거래는 더이상 유효하지 않습니다. 문제가 반복되면 서버 관리자에게 문의하세요.");
+            ccLang.get().addDefault("ERR.SIGN_WALL", "상점 표지판이 벽에 설치되야 합니다.");
 
-            ccLang.get().addDefault("ERR.SHOP_NULL", "§e상점 이름은 null일 수 없습니다.");
+            ccLang.get().addDefault("ERR.SHOP_NULL", "§e상점 이름이 지정되지 않았습니다.");
             ccLang.get().addDefault("ERR.ITEMINFO_HAND_EMPTY", "아이템을 들고 있어야 합니다.");
             ccLang.get().addDefault("HELP.ITEMINFO_USAGE", "§f아이템 정보를 보려면 손에 아이템을 들고 있어야 합니다.");
             ccLang.get().addDefault("HELP.ITEMINFO_REALNAME", "§7실제 이름: §3{item_realname}");
@@ -719,6 +721,7 @@ public final class LangUtil
             ccLang.get().addDefault("ERR.HAND_EMPTY2", "§c§oYou must have the item in your hand!");
             ccLang.get().addDefault("ERR.SHOP_NOT_FOUND", "§fThe shop could not be found.");
             ccLang.get().addDefault("ERR.SHOP_EXIST", "A store with that name already exists.");
+            ccLang.get().addDefault("ERR.SHOP_NOT_EXIST", "No shop with that name.");
             ccLang.get().addDefault("ERR.SIGN_SHOP_REMOTE_ACCESS", "The shop is only accessible via sign.");
             ccLang.get().addDefault("ERR.LOCAL_SHOP_REMOTE_ACCESS", "The shop can only be used by visiting it in person.");
             ccLang.get().addDefault("ERR.MAX_LOWER_THAN_MIN", "The maximum price must be greater than the minimum price.");
@@ -734,6 +737,7 @@ public final class LangUtil
             ccLang.get().addDefault("ERR.CREATIVE", "§eYou cannot use this command in Creative mode. You do not have permission.");
             ccLang.get().addDefault("ERR.FILE_CREATE_FAIL", "§eFile creation failed");
             ccLang.get().addDefault("ERR.INVALID_TRANSACTION", "This transaction is no longer valid. If this problem recurs, contact your server administrator");
+            ccLang.get().addDefault("ERR.SIGN_WALL", "Sign must be placed on wall.");
 
             ccLang.get().addDefault("ERR.SHOP_NULL", "§eShop name cannot be null.");
             ccLang.get().addDefault("ERR.ITEMINFO_HAND_EMPTY", "You need to hold an item.");

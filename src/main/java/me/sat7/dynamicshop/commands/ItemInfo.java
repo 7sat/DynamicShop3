@@ -9,9 +9,11 @@ import org.bukkit.entity.Player;
 import static me.sat7.dynamicshop.constants.Constants.P_ADMIN_ITEM_INFO;
 import static me.sat7.dynamicshop.utilities.LangUtil.t;
 
-public class ItemInfo extends DSCMD {
+public class ItemInfo extends DSCMD
+{
 
-    public ItemInfo() {
+    public ItemInfo()
+    {
         inGameUseOnly = true;
         permission = P_ADMIN_ITEM_INFO;
     }
@@ -26,27 +28,21 @@ public class ItemInfo extends DSCMD {
     }
 
     @Override
-    public void RunCMD(String[] args, CommandSender sender) {
-        if(!CheckValid(args, sender))
+    public void RunCMD(String[] args, CommandSender sender)
+    {
+        if (!CheckValid(args, sender))
             return;
         Player p = (Player) sender;
         Material material = p.getInventory().getItemInMainHand().getType();
 
-        if (material == Material.AIR) {
+        if (material == Material.AIR)
+        {
             p.sendMessage(DynamicShop.dsPrefix(p) + t(p, "ERR.ITEMINFO_HAND_EMPTY"));
-            return;
-        } else {
+        } else
+        {
             String result = StringUtil.getShortenedNameSign(material.name());
-            p.sendMessage(DynamicShop.dsPrefix(p) + t(p, "HELP.TITLE").replace("{command}", "iteminfo"));
-            p.sendMessage("");
             p.sendMessage(t(p, "HELP.ITEMINFO_REALNAME").replace("{item_realname}", material.name().toUpperCase()));
             p.sendMessage(t(p, "HELP.ITEMINFO_SIGN_NAME").replace("{item_signname}", result));
-            p.sendMessage("");
         }
-
-
-
-
-        super.RunCMD(args, sender);
     }
 }

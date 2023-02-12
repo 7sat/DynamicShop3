@@ -451,7 +451,10 @@ public final class TabCompleteUtil
 
                         Help.showHelp("cmd_help", (Player) sender, args);
                     }
-                } else if (args[0].equalsIgnoreCase("settax"))
+                } else if (args[0].equalsIgnoreCase("iteminfo"))
+                {
+                    Help.showHelp("iteminfo", (Player) sender, args);
+                }  else if (args[0].equalsIgnoreCase("settax"))
                 {
                     Help.showHelp("set_tax", (Player) sender, args);
                 } else if (args[0].equalsIgnoreCase("setdefaultshop"))

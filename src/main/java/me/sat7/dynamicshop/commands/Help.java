@@ -147,7 +147,10 @@ public final class Help
         } else if (helpcode.equals("cmd_help"))
         {
             CMDManager.commandHelp.SendHelpMessage(player);
-        } else if (helpcode.equals("create_shop"))
+        }else if (helpcode.equals("iteminfo"))
+        {
+            CMDManager.itemInfo.SendHelpMessage(player);
+        }else if (helpcode.equals("create_shop"))
         {
             CMDManager.createShop.SendHelpMessage(player);
         } else if (helpcode.equals("delete_shop"))

@@ -50,13 +50,13 @@ public class OnSignClick implements Listener
 
             if (e.getLine(1).length() == 0) {
                 e.getBlock().breakNaturally();
-                e.getPlayer().sendMessage(Constants.DYNAMIC_SHOP_PREFIX + " Err. shop name is null" );
+                e.getPlayer().sendMessage(DynamicShop.dsPrefix(e.getPlayer()) + t(e.getPlayer(),"ERR.SHOP_NULL"));
                 return;
             }
 
             if (!ShopUtil.shopConfigFiles.containsKey(e.getLine(1))) {
                 e.getBlock().breakNaturally();
-                e.getPlayer().sendMessage(Constants.DYNAMIC_SHOP_PREFIX + " Err. No shop with that name." );
+                e.getPlayer().sendMessage(DynamicShop.dsPrefix(e.getPlayer()) + t(e.getPlayer(), "ERR.SHOP_NOT_EXIST"));
                 return;
             }
 
@@ -80,7 +80,7 @@ public class OnSignClick implements Listener
                 DynamicShop.ccSign.get().set(signId + ".attached", CreateID(blockBehind));
             } else {
                 e.getBlock().breakNaturally();
-                e.getPlayer().sendMessage(Constants.DYNAMIC_SHOP_PREFIX + " Err. Sign must be placed on wall." );
+                e.getPlayer().sendMessage(DynamicShop.dsPrefix(e.getPlayer()) + t(e.getPlayer(), "ERR.SIGN_WALL"));
                 return;
             }
 
