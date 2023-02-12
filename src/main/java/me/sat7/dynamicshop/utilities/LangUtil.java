@@ -368,15 +368,14 @@ public final class LangUtil
             ccLang.get().addDefault("ERR.FILE_CREATE_FAIL", "§e파일 생성에 실패했습니다.");
             ccLang.get().addDefault("ERR.INVALID_TRANSACTION", "이 거래는 더이상 유효하지 않습니다. 문제가 반복되면 서버 관리자에게 문의하세요.");
 
-            // Added in 3.7.0
             ccLang.get().addDefault("ERR.SHOP_NULL", "§e상점 이름은 null일 수 없습니다.");
             ccLang.get().addDefault("ERR.ITEMINFO_HAND_EMPTY", "아이템을 들고 있어야 합니다.");
-            ccLang.get().addDefault("HELP.ITEMINFO_USAGE", "§f그것에 대해 배우려면 손에 항목을 잡으십시오.");
+            ccLang.get().addDefault("HELP.ITEMINFO_USAGE", "§f아이템 정보를 보려면 손에 아이템을 들고 있어야 합니다.");
             ccLang.get().addDefault("HELP.ITEMINFO_REALNAME", "§7실제 이름: §3{item_realname}");
-            ccLang.get().addDefault("HELP.ITEMINFO_SIGN_NAME", "§7서명 이름: §3{item_signname}");
-            ccLang.get().addDefault("ERR.SIGN_ITEM_INVALID", "잘못된 항목입니다. /ds iteminfo 를 사용하여 표지판에 있는 항목의 이름을 찾으십시오.");
-            ccLang.get().addDefault("ERR.SIGN_ITEM_NOT_FOR_SALE", "먼저 상점에 항목을 추가한 다음 간판에 사용해야 합니다.");
-            ccLang.get().addDefault("MESSAGE.SIGN_SHOP_CREATED", "§a사인샵 생성!");
+            ccLang.get().addDefault("HELP.ITEMINFO_SIGN_NAME", "§7표지판용 이름: §3{item_signname}");
+            ccLang.get().addDefault("ERR.SIGN_ITEM_INVALID", "아이템 이름이 잘못되었습니다. /ds iteminfo 를 사용하여 아이템 이름을 확인해 보세요.");
+            ccLang.get().addDefault("ERR.SIGN_ITEM_NOT_FOR_SALE", "상점에 없는 아이템 입니다.");
+            ccLang.get().addDefault("MESSAGE.SIGN_SHOP_CREATED", "§a표지판 상점 생성!");
 
             ccLang.get().addDefault("ON", "켜짐");
             ccLang.get().addDefault("OFF", "꺼짐");
@@ -736,7 +735,6 @@ public final class LangUtil
             ccLang.get().addDefault("ERR.FILE_CREATE_FAIL", "§eFile creation failed");
             ccLang.get().addDefault("ERR.INVALID_TRANSACTION", "This transaction is no longer valid. If this problem recurs, contact your server administrator");
 
-            // Added in 3.7.0
             ccLang.get().addDefault("ERR.SHOP_NULL", "§eShop name cannot be null.");
             ccLang.get().addDefault("ERR.ITEMINFO_HAND_EMPTY", "You need to hold an item.");
             ccLang.get().addDefault("HELP.ITEMINFO_USAGE", "§fHold an item in your hand to learn about it.");
