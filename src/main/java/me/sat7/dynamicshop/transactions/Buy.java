@@ -188,7 +188,8 @@ public final class Buy
         }
 
         // 커맨드 실행
-        if (data.get().contains("Options.command.buy"))
+        if (data.get().contains("Options.command.active") && data.get().getBoolean("Options.command.active") &&
+            data.get().contains("Options.command.buy"))
         {
             String buyCmd = data.get().getString("Options.command.buy")
                     .replace("{player}", player.getName())

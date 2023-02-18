@@ -427,7 +427,8 @@ public final class ItemPalette extends InGameUI
 
                 StartPage.ccStartPage.save();
 
-                DynaShopAPI.openStartPageSettingGui(player, shopSlotIndex);
+                //DynaShopAPI.openStartPageSettingGui(player, shopSlotIndex);
+                DynaShopAPI.openStartPage(player);
             }
             else if (isRight && isShift)
             {
@@ -468,7 +469,8 @@ public final class ItemPalette extends InGameUI
 
                 StartPage.ccStartPage.save();
 
-                DynaShopAPI.openStartPageSettingGui(player, shopSlotIndex);
+                //DynaShopAPI.openStartPageSettingGui(player, shopSlotIndex);
+                DynaShopAPI.openStartPage(player);
             }
         }
     }

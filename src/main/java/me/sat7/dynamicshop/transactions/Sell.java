@@ -162,7 +162,8 @@ public final class Sell
             }
 
             // 커맨드 실행
-            if (data.get().contains("Options.command.sell"))
+            if (data.get().contains("Options.command.active") && data.get().getBoolean("Options.command.active") &&
+                data.get().contains("Options.command.sell"))
             {
                 String sellCmd = data.get().getString("Options.command.sell")
                         .replace("{player}", player != null ? player.getName() : shopName)
@@ -292,7 +293,8 @@ public final class Sell
         }
 
         // 커맨드 실행
-        if (data.get().contains("Options.command.sell"))
+        if (data.get().contains("Options.command.active") && data.get().getBoolean("Options.command.active") &&
+            data.get().contains("Options.command.sell"))
         {
             String sellCmd = data.get().getString("Options.command.sell")
                     .replace("{player}", player.getName())
