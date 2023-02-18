@@ -95,10 +95,8 @@ public final class StartPageSettings extends InGameUI
         //아이콘
         else if (e.getSlot() == ICON)
         {
-            player.sendMessage(DynamicShop.dsPrefix(player) + t(player, "START_PAGE.ENTER_ICON"));
-            ShopUtil.closeInventoryWithDelay(player);
-            DynamicShop.userTempData.put(uuid,"waitforInput" + "btnIcon");
-            OnChat.WaitForInput(player);
+            DynamicShop.userInteractItem.put(player.getUniqueId(), "startPage/" + slotIndex);
+            DynaShopAPI.openItemPalette(player, 1, "", slotIndex, 1, "");
         }
         //액션
         else if (e.getSlot() == CMD)

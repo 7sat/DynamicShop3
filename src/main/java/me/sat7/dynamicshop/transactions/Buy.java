@@ -151,6 +151,7 @@ public final class Buy
         String currencyString = currency == ItemTrade.CURRENCY.VAULT ? "vault" : "jobpoint";
         LogUtil.addLog(shopName, tempIS.getType().toString(), actualAmount, priceSum, currencyString, player.getName());
 
+        // 메시지 출력
         String message = "";
         boolean useLocalizedName = DynamicShop.plugin.getConfig().getBoolean("UI.LocalizedItemName");
         if (currency == ItemTrade.CURRENCY.VAULT)
@@ -177,16 +178,32 @@ public final class Buy
             player.sendMessage(message);
         }
 
+        // 플레이어에게 소리 재생
         SoundUtil.playerSoundEffect(player, "buy");
 
+        // 상점 계좌 잔액 수정
         if (data.get().contains("Options.Balance"))
         {
             ShopUtil.addShopBalance(shopName, priceSum);
         }
 
+        // 커맨드 실행
+        if (data.get().contains("Options.command.buy"))
+        {
+            String buyCmd = data.get().getString("Options.command.buy")
+                    .replace("{player}", player.getName())
+                    .replace("{shop}", shopName)
+                    .replace("{itemType}", tempIS.getType().toString())
+                    .replace("{amount}", actualAmount+"")
+                    .replace("{priceSum}", priceSum+"");
+
+            Bukkit.dispatchCommand(Bukkit.getConsoleSender(), buyCmd);
+        }
+
         data.save();
         DynaShopAPI.openItemTradeGui(player, shopName, tradeIdx);
 
+        // 이벤트 호출
         ShopBuySellEvent event = new ShopBuySellEvent(true, priceBuyOld, Calc.getCurrentPrice(shopName, tradeIdx, true), priceSellOld, DynaShopAPI.getSellPrice(shopName, tempIS), stockOld, DynaShopAPI.getStock(shopName, tempIS), DynaShopAPI.getMedian(shopName, tempIS), shopName, tempIS, player);
         Bukkit.getPluginManager().callEvent(event);
     }

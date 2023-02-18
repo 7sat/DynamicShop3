@@ -13,6 +13,7 @@ import org.bukkit.entity.Player;
 import org.bukkit.inventory.Inventory;
 import org.bukkit.inventory.ItemStack;
 
+import java.text.DecimalFormat;
 import java.util.ArrayList;
 
 import static me.sat7.dynamicshop.constants.Constants.P_ADMIN_SHOP_EDIT;
@@ -95,10 +96,10 @@ public final class DynaShopAPI
 
 
     // 아이탬 파렛트 생성 및 열기
-    public static void openItemPalette(Player player, String shopName, int targetSlot, int page, String search)
+    public static void openItemPalette(Player player, int uiSubType, String shopName, int targetSlot, int page, String search)
     {
         ItemPalette uiClass = new ItemPalette();
-        Inventory inventory = uiClass.getGui(player, shopName, targetSlot, page, search);
+        Inventory inventory = uiClass.getGui(player, uiSubType, shopName, targetSlot, page, search);
         UIManager.Open(player, inventory, uiClass);
     }
 
@@ -240,7 +241,7 @@ public final class DynaShopAPI
         if (validateShopName(shopName))
         {
             CustomConfig data = ShopUtil.shopConfigFiles.get(shopName);
-            
+
             ArrayList<ItemStack> list = new ArrayList<>();
             for (String s : data.get().getKeys(false))
             {

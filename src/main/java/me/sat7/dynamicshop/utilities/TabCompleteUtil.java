@@ -135,6 +135,7 @@ public final class TabCompleteUtil
                             temp.add("shophours");
                             temp.add("fluctuation");
                             temp.add("stockStabilizing");
+                            temp.add("command");
                             temp.add("account");
                             temp.add("sellbuy");
                             temp.add("log");
@@ -316,6 +317,25 @@ public final class TabCompleteUtil
                         } else if (args[2].equalsIgnoreCase("stockStabilizing") && sender.hasPermission(P_ADMIN_SHOP_EDIT))
                         {
                             Help.showHelp("stock_stabilizing", (Player) sender, args);
+                        } else if (args[2].equalsIgnoreCase("command") && sender.hasPermission(P_ADMIN_SHOP_EDIT))
+                        {
+                            if (args.length == 4)
+                            {
+                                temp.add("sell");
+                                temp.add("buy");
+                                temp.add("active");
+
+                                AddToAutoCompleteIfValid(args[3]);
+                            }
+                            else if (args.length == 5 && args[3].equalsIgnoreCase("active"))
+                            {
+                                temp.add("true");
+                                temp.add("false");
+
+                                AddToAutoCompleteIfValid(args[4]);
+                            }
+
+                            Help.showHelp("command", (Player) sender, args);
                         } else if (args[2].equalsIgnoreCase("account") && sender.hasPermission(P_ADMIN_SHOP_EDIT))
                         {
                             if (args.length == 4)

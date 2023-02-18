@@ -38,7 +38,7 @@ public class OnChat implements Listener
             UUID uuid = player.getUniqueId();
             String userData = DynamicShop.userTempData.get(uuid);
 
-            if (userData.equals("waitforPalette"))
+            if (userData.contains("waitforPalette"))
             {
                 DynamicShop.userTempData.put(uuid, "");
                 player.sendMessage(DynamicShop.dsPrefix(player) + t(player, "MESSAGE.SEARCH_CANCELED"));
@@ -46,13 +46,13 @@ public class OnChat implements Listener
             {
                 DynamicShop.userTempData.put(uuid, "");
                 player.sendMessage(DynamicShop.dsPrefix(player) + t(player, "MESSAGE.INPUT_CANCELED"));
-            } else if (userData.equals("waitforPageDelete"))
+            } else if (userData.equals("waitforPageDelete") || userData.equals("sellCmd") || userData.equals("buyCmd"))
             {
                 DynamicShop.userTempData.put(uuid, "");
                 player.sendMessage(DynamicShop.dsPrefix(player) + t(player, "MESSAGE.INPUT_CANCELED"));
             }
 
-        }, 400);
+        }, 600);
         runnableMap.put(player.getUniqueId(), taskID.getTaskId());
     }
 
@@ -75,13 +75,16 @@ public class OnChat implements Listener
 
         String userData = DynamicShop.userTempData.get(uuid);
 
-        if (userData.equals("waitforPalette"))
+        if (userData.contains("waitforPalette"))
         {
             e.setCancelled(true);
 
+            String s = userData.replace("waitforPalette", "");
+            int subType = Integer.parseInt(s);
+
             String[] userInteractData = DynamicShop.userInteractItem.get(p.getUniqueId()).split("/");
             DynamicShop.userTempData.put(uuid, "");
-            DynaShopAPI.openItemPalette(p, userInteractData[0], Integer.parseInt(userInteractData[1]), 1, e.getMessage());
+            DynaShopAPI.openItemPalette(p, subType, userInteractData[0], Integer.parseInt(userInteractData[1]), 1, e.getMessage());
             cancelRunnable(p);
         } else if (userData.contains("waitforInput"))
         {
@@ -97,16 +100,6 @@ public class OnChat implements Listener
                     break;
                 case "btnLore":
                     StartPage.ccStartPage.get().set("Buttons." + temp[1] + ".lore", "§f" + e.getMessage());
-                    break;
-                case "btnIcon":
-                    try
-                    {
-                        Material tempMat = Material.getMaterial(ChatColor.stripColor(e.getMessage()).toUpperCase());
-                        StartPage.ccStartPage.get().set("Buttons." + temp[1] + ".icon", tempMat.name());
-                    } catch (Exception exception)
-                    {
-                        p.sendMessage(DynamicShop.dsPrefix(p) + t(p, "ERR.WRONG_ITEM_NAME"));
-                    }
                     break;
                 case "btnAction":
                     StartPage.ccStartPage.get().set("Buttons." + temp[1] + ".action", ChatColor.stripColor(e.getMessage()));
@@ -138,6 +131,26 @@ public class OnChat implements Listener
             }
 
             DynamicShop.userTempData.put(uuid, "");
+            cancelRunnable(p);
+        } else if (userData.equals("sellCmd") || userData.equals("buyCmd"))
+        {
+            e.setCancelled(true);
+
+            String[] userInteractData = DynamicShop.userInteractItem.get(p.getUniqueId()).split("/");
+            String shopName = userInteractData[0];
+            DynamicShop.userTempData.put(uuid, "");
+
+            if (userData.equals("sellCmd"))
+            {
+                ShopUtil.SetShopSellCommand(shopName, e.getMessage());
+            }
+            else
+            {
+                ShopUtil.SetShopBuyCommand(shopName, e.getMessage());
+            }
+
+            DynaShopAPI.openShopSettingGui(p, shopName);
+
             cancelRunnable(p);
         }
     }

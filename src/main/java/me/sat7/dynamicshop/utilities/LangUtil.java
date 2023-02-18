@@ -113,6 +113,12 @@ public final class LangUtil
             ccLang.get().addDefault("SHOP_SETTING.STATE_DISABLE", "§c비활성");
             ccLang.get().addDefault("SHOP_SETTING.ROTATION_EDITOR", "§f로테이션: ");
             ccLang.get().addDefault("SHOP_SETTING.ROTATION_EDITOR_LORE", "§e클릭: 로테이션 에디터");
+            ccLang.get().addDefault("SHOP_SETTING.COMMAND_TOGGLE", "§f커맨드 실행");
+            ccLang.get().addDefault("SHOP_SETTING.COMMAND_TOGGLE_LORE", "§f상점 거래 발생시 서버 명령어를 실행합니다.");
+            ccLang.get().addDefault("SHOP_SETTING.COMMAND_SELL", "§f판매시 명령어");
+            ccLang.get().addDefault("SHOP_SETTING.COMMAND_BUY", "§f구매시 명령어");
+            ccLang.get().addDefault("SHOP_SETTING.COMMAND_LORE1", "§e좌클릭: 설정");
+            ccLang.get().addDefault("SHOP_SETTING.COMMAND_LORE2", "§e씨프트 우클릭: 삭제");
 
             ccLang.get().addDefault("ROTATION_EDITOR_TITLE", "§3로테이션 에디터");
             ccLang.get().addDefault("ROTATION_EDITOR.ENABLED", "§a로테이션 켜짐");
@@ -235,7 +241,9 @@ public final class LangUtil
             ccLang.get().addDefault("STOCK_SIMULATOR.STOCK", "§f재고: {num}");
 
             ccLang.get().addDefault("PALETTE_TITLE", "§3판매할 아이탬 선택");
+            ccLang.get().addDefault("PALETTE_TITLE2", "§3아이탬 선택");
             ccLang.get().addDefault("PALETTE.LORE_PREMIUM", "§e좌클릭: 추가\n§e씨프트 좌클릭: 설정 후 추가\n§e우클릭: 장식으로 추가\n§e씨프트 우클릭: '{item}' 를 검색");
+            ccLang.get().addDefault("PALETTE.LORE2", "§e좌클릭: 선택\n§e씨프트 우클릭: '{item}' 를 검색");
             ccLang.get().addDefault("PALETTE.SEARCH", "§f찾기");
             ccLang.get().addDefault("PALETTE.ADD_ALL", "§f모두 추가");
             ccLang.get().addDefault("PALETTE.ADD_ALL_LORE_LOCKED", "§e좌클릭: 모두 추가\n§7씨프트 좌클릭: 모두 추가하고 권장 값 적용");
@@ -313,6 +321,7 @@ public final class LangUtil
             ccLang.get().addDefault("MESSAGE.SHOP_IS_CLOSED_BY_ADMIN", "이 상점은 서버 관리자에 의해 닫혔습니다.");
             ccLang.get().addDefault("MESSAGE.SHOP_DISABLED", "이 상점은 비황성화된 상태입니다. 어드민이 아닌 유저는 접근할 수 없습니다. 상점 설정에서 활성화 할 수 있습니다.");
             ccLang.get().addDefault("MESSAGE.ROTATION_SHARED_DATA_MISSING", "§e[ ! ]§f'{0}/SharedData.yml' 에서 {1} 개의 아이템에 대한 정보를 찾을 수 없었습니다. 이 아이템들은 장식으로 추가되었습니다.");
+            ccLang.get().addDefault("MESSAGE.ENTER_COMMAND", "명령어를 '/' 제외하고 입력하세요.");
 
             ccLang.get().addDefault("HELP.TITLE", "§f도움말: {command} --------------------");
             ccLang.get().addDefault("HELP.SHOP", "상점을 엽니다.");
@@ -483,6 +492,12 @@ public final class LangUtil
             ccLang.get().addDefault("SHOP_SETTING.STATE_DISABLE", "§cDisable");
             ccLang.get().addDefault("SHOP_SETTING.ROTATION_EDITOR", "§fRotation: ");
             ccLang.get().addDefault("SHOP_SETTING.ROTATION_EDITOR_LORE", "§eClick: Rotation editor");
+            ccLang.get().addDefault("SHOP_SETTING.COMMAND_TOGGLE", "§fCommand");
+            ccLang.get().addDefault("SHOP_SETTING.COMMAND_TOGGLE_LORE", "§fExecutes server commands\n§fwhen a store transaction occurs.");
+            ccLang.get().addDefault("SHOP_SETTING.COMMAND_SELL", "§fSell Command");
+            ccLang.get().addDefault("SHOP_SETTING.COMMAND_BUY", "§fBuy Command");
+            ccLang.get().addDefault("SHOP_SETTING.COMMAND_LORE1", "§eLMB: Set");
+            ccLang.get().addDefault("SHOP_SETTING.COMMAND_LORE2", "§eShift RMB: Delete");
 
             ccLang.get().addDefault("ROTATION_EDITOR_TITLE", "§3Rotation Editor");
             ccLang.get().addDefault("ROTATION_EDITOR.ENABLED", "§aEnabled");
@@ -604,7 +619,9 @@ public final class LangUtil
             ccLang.get().addDefault("STOCK_SIMULATOR.STOCK", "§fStock: {num}");
 
             ccLang.get().addDefault("PALETTE_TITLE", "§3Select item to sell");
+            ccLang.get().addDefault("PALETTE_TITLE2", "§3Select item");
             ccLang.get().addDefault("PALETTE.LORE_PREMIUM", "§eLMB: Add\n§eShift LMB: Add after setting\n§eRMB: Add as decoration\n§eShift RMB: Search '{item}'");
+            ccLang.get().addDefault("PALETTE.LORE2", "§eLMB: Select\n§eShift RMB: Search '{item}'");
             ccLang.get().addDefault("PALETTE.SEARCH", "§fSearch");
             ccLang.get().addDefault("PALETTE.ADD_ALL", "§fAdd all");
             ccLang.get().addDefault("PALETTE.ADD_ALL_LORE_LOCKED", "§eLMB: Add all\n§7Shift LMB: Add all and apply recommended values");
@@ -682,6 +699,7 @@ public final class LangUtil
             ccLang.get().addDefault("MESSAGE.SHOP_IS_CLOSED_BY_ADMIN", "This shop is currently closed by the server administrator.");
             ccLang.get().addDefault("MESSAGE.SHOP_DISABLED", "This shop is currently disabled. Non-admin users cannot use it. You can enable it in the shop settings.");
             ccLang.get().addDefault("MESSAGE.ROTATION_SHARED_DATA_MISSING", "§e[ ! ]§fThe required data could not be found in '{0}/SharedData.yml' for {1} items. These items have been added as decoration.");
+            ccLang.get().addDefault("MESSAGE.ENTER_COMMAND", "Enter the command without '/'.");
 
             ccLang.get().addDefault("HELP.TITLE", "§fHelp: {command} --------------------");
             ccLang.get().addDefault("HELP.SHOP", "Open shop");

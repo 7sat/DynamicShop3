@@ -36,6 +36,7 @@ public class CMDManager
     public static SetToRecAll setToRecAll;
     public static ShopHours shopHours;
     public static StockStabilizing stockStabilizing;
+    public static Command command;
 
     public static ItemInfo itemInfo;
 
@@ -55,7 +56,6 @@ public class CMDManager
         setDefaultShop = new SetDefaultShop();
         setTax = new SetTax();
         itemInfo = new ItemInfo();
-
 
         CMDHashMap.put("cmdhelp", commandHelp);
         CMDHashMap.put("createshop", createShop);
@@ -86,6 +86,7 @@ public class CMDManager
         setToRecAll = new SetToRecAll();
         shopHours = new ShopHours();
         stockStabilizing = new StockStabilizing();
+        command = new Command();
 
         CMDHashMap.put("account", account);
         CMDHashMap.put("add", add);
@@ -103,6 +104,7 @@ public class CMDManager
         CMDHashMap.put("settorecall", setToRecAll);
         CMDHashMap.put("shophours", shopHours);
         CMDHashMap.put("stockstabilizing", stockStabilizing);
+        CMDHashMap.put("command", command);
     }
 
     public static void RunCMD(String key, String[] args, CommandSender sender)

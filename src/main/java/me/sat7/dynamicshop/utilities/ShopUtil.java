@@ -40,7 +40,8 @@ public final class ShopUtil
         SortShopDataAll();
     }
 
-    public static void ReloadAllShop() {
+    public static void ReloadAllShop()
+    {
         shopConfigFiles.clear();
 
         File[] listOfFiles = new File(DynamicShop.plugin.getDataFolder() + "/Shop").listFiles();
@@ -59,7 +60,8 @@ public final class ShopUtil
     }
 
     // 상점에서 빈 슬롯 찾기
-    public static int findEmptyShopSlot(String shopName, int startIdx, boolean addPage) {
+    public static int findEmptyShopSlot(String shopName, int startIdx, boolean addPage)
+    {
         CustomConfig data = shopConfigFiles.get(shopName);
         if(data == null)
             return -1;
@@ -140,10 +142,12 @@ public final class ShopUtil
     }
 
     // 상점에 아이탬 추가
-    public static boolean addItemToShop(String shopName, int idx, ItemStack item, double buyValue, double sellValue, double minValue, double maxValue, int median, int stock) {
+    public static boolean addItemToShop(String shopName, int idx, ItemStack item, double buyValue, double sellValue, double minValue, double maxValue, int median, int stock)
+    {
         return addItemToShop(shopName, idx, item, buyValue, sellValue, minValue, maxValue, median, stock, -1);
     }
-    public static boolean addItemToShop(String shopName, int idx, ItemStack item, double buyValue, double sellValue, double minValue, double maxValue, int median, int stock, int maxStock) {
+    public static boolean addItemToShop(String shopName, int idx, ItemStack item, double buyValue, double sellValue, double minValue, double maxValue, int median, int stock, int maxStock)
+    {
         CustomConfig data = shopConfigFiles.get(shopName);
         if (data == null)
             return false;
@@ -272,7 +276,8 @@ public final class ShopUtil
     }
 
     // 상점에서 아이탬 제거
-    public static void removeItemFromShop(String shopName, int idx) {
+    public static void removeItemFromShop(String shopName, int idx)
+    {
         CustomConfig data = shopConfigFiles.get(shopName);
         if (data == null)
             return;
@@ -282,7 +287,8 @@ public final class ShopUtil
     }
 
     // 상점 페이지 삽입
-    public static void insetShopPage(String shopName, int page) {
+    public static void insetShopPage(String shopName, int page)
+    {
         CustomConfig data = shopConfigFiles.get(shopName);
         if (data == null)
             return;
@@ -301,7 +307,8 @@ public final class ShopUtil
     }
 
     // 상점 페이지 삭제
-    public static void deleteShopPage(String shopName, int page) {
+    public static void deleteShopPage(String shopName, int page)
+    {
         CustomConfig data = shopConfigFiles.get(shopName);
         if (data == null)
             return;
@@ -1170,4 +1177,31 @@ public final class ShopUtil
         }
     }
 
+    public static void SetShopSellCommand(String shopName, String command)
+    {
+        CustomConfig shopData = ShopUtil.shopConfigFiles.get(shopName);
+        if (shopData == null)
+            return;
+
+        ConfigurationSection shopConf = shopData.get().getConfigurationSection("Options");
+        if (shopConf == null)
+            return;
+
+        shopConf.set("command.sell", command);
+        shopData.save();
+    }
+
+    public static void SetShopBuyCommand(String shopName, String command)
+    {
+        CustomConfig shopData = ShopUtil.shopConfigFiles.get(shopName);
+        if (shopData == null)
+            return;
+
+        ConfigurationSection shopConf = shopData.get().getConfigurationSection("Options");
+        if (shopConf == null)
+            return;
+
+        shopConf.set("command.buy", command);
+        shopData.save();
+    }
 }

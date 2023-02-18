@@ -96,7 +96,18 @@ public final class StartPage extends InGameUI
                 }
 
                 ItemStack btn = new ItemStack(Material.getMaterial(cs.getConfigurationSection(s).getString("icon")));
-                ItemMeta meta = btn.getItemMeta();
+                ItemMeta meta = null;
+
+                if (cs.contains(s + ".itemStack"))
+                {
+                    ItemMeta tempMeta = (ItemMeta) cs.get(s + ".itemStack"); // 저장된 메타 적용
+                    meta = tempMeta.clone();
+                }
+                else
+                {
+                    meta = btn.getItemMeta();
+                }
+
                 meta.setDisplayName(name);
                 meta.setLore(tempList);
                 meta.addItemFlags(ItemFlag.HIDE_ATTRIBUTES);
@@ -192,6 +203,7 @@ public final class StartPage extends InGameUI
                     StartPage.ccStartPage.get().set("Buttons." + e.getSlot() + ".displayName", StartPage.ccStartPage.get().get("Buttons." + selectedIndex + ".displayName"));
                     StartPage.ccStartPage.get().set("Buttons." + e.getSlot() + ".lore", StartPage.ccStartPage.get().get("Buttons." + selectedIndex + ".lore"));
                     StartPage.ccStartPage.get().set("Buttons." + e.getSlot() + ".icon", StartPage.ccStartPage.get().get("Buttons." + selectedIndex + ".icon"));
+                    StartPage.ccStartPage.get().set("Buttons." + e.getSlot() + ".itemStack", StartPage.ccStartPage.get().get("Buttons." + selectedIndex + ".itemStack"));
                     StartPage.ccStartPage.get().set("Buttons." + e.getSlot() + ".action", StartPage.ccStartPage.get().get("Buttons." + selectedIndex + ".action"));
 
                     if (StartPage.ccStartPage.get().getString("Buttons." + selectedIndex + ".action").length() > 0)

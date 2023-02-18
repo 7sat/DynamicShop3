@@ -576,7 +576,7 @@ public final class Shop extends InGameUI
             // 팔렛트 열기
             else
             {
-                DynaShopAPI.openItemPalette(player, shopName, idx, 1, "");
+                DynaShopAPI.openItemPalette(player, 0, shopName, idx, 1, "");
             }
         }
     }

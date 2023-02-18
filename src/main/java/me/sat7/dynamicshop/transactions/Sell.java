@@ -134,6 +134,7 @@ public final class Sell
 
             if (player != null)
             {
+                // 플레이어에게 메시지 출력
                 boolean useLocalizedName = DynamicShop.plugin.getConfig().getBoolean("UI.LocalizedItemName");
                 String message = DynamicShop.dsPrefix(player) + t(player, "MESSAGE.SELL_SUCCESS", !useLocalizedName)
                         .replace("{amount}", Integer.toString(tradeAmount))
@@ -150,14 +151,30 @@ public final class Sell
                     player.sendMessage(message);
                 }
 
+                // 플레이어에게 소리 재생
                 player.playSound(player.getLocation(), Sound.valueOf("ENTITY_EXPERIENCE_ORB_PICKUP"), 1, 1);
             }
 
+            // 상점 계좌 잔액 수정
             if (data.get().contains("Options.Balance"))
             {
                 ShopUtil.addShopBalance(shopName, priceSum * -1);
             }
 
+            // 커맨드 실행
+            if (data.get().contains("Options.command.sell"))
+            {
+                String sellCmd = data.get().getString("Options.command.sell")
+                        .replace("{player}", player != null ? player.getName() : shopName)
+                        .replace("{shop}", shopName)
+                        .replace("{itemType}", tempIS.getType().toString())
+                        .replace("{amount}", tradeAmount+"")
+                        .replace("{priceSum}", priceSum+"");
+
+                Bukkit.dispatchCommand(Bukkit.getConsoleSender(), sellCmd);
+            }
+
+            // 이벤트 호출
             if (player != null)
             {
                 ShopBuySellEvent event = new ShopBuySellEvent(false, priceBuyOld, Calc.getCurrentPrice(shopName, String.valueOf(tradeIdx), true),
@@ -238,6 +255,7 @@ public final class Sell
         String currencyString = currency == ItemTrade.CURRENCY.VAULT ? "vault" : "jobpoint";
         LogUtil.addLog(shopName, tempIS.getType().toString(), -actualAmount, priceSum, currencyString, player.getName());
 
+        // 메시지 출력
         boolean useLocalizedName = DynamicShop.plugin.getConfig().getBoolean("UI.LocalizedItemName");
         String message = "";
         if (currency == ItemTrade.CURRENCY.VAULT)
@@ -264,16 +282,32 @@ public final class Sell
             player.sendMessage(message);
         }
 
+        // 플레이어에게 소리 재생
         SoundUtil.playerSoundEffect(player, "sell");
 
+        // 상점 계좌 잔액 수정
         if (data.get().contains("Options.Balance"))
         {
             ShopUtil.addShopBalance(shopName, priceSum * -1);
         }
 
+        // 커맨드 실행
+        if (data.get().contains("Options.command.sell"))
+        {
+            String sellCmd = data.get().getString("Options.command.sell")
+                    .replace("{player}", player.getName())
+                    .replace("{shop}", shopName)
+                    .replace("{itemType}", tempIS.getType().toString())
+                    .replace("{amount}", actualAmount+"")
+                    .replace("{priceSum}", priceSum+"");
+
+            Bukkit.dispatchCommand(Bukkit.getConsoleSender(), sellCmd);
+        }
+
         data.save();
         DynaShopAPI.openItemTradeGui(player, shopName, tradeIdx);
 
+        // 이벤트 호출
         ShopBuySellEvent event = new ShopBuySellEvent(false, priceBuyOld, Calc.getCurrentPrice(shopName, String.valueOf(tradeIdx), true), priceSellOld, DynaShopAPI.getSellPrice(shopName, tempIS), stockOld, DynaShopAPI.getStock(shopName, tempIS), DynaShopAPI.getMedian(shopName, tempIS), shopName, tempIS, player);
         Bukkit.getPluginManager().callEvent(event);
     }
