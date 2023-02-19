@@ -23,7 +23,7 @@ public class Position extends DSCMD
     public void SendHelpMessage(Player player)
     {
         player.sendMessage(DynamicShop.dsPrefix(player) + t(player, "HELP.TITLE").replace("{command}", "position"));
-        player.sendMessage(" - " + t(player, "HELP.USAGE") + ": /ds shop <shopname> position <pos1 | pos2 | clear>");
+        player.sendMessage(" - " + t(player, "HELP.USAGE") + ": ... position <pos1 | pos2 | clear>");
 
         player.sendMessage("");
     }

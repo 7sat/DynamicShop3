@@ -26,7 +26,7 @@ public class Permission extends DSCMD
     public void SendHelpMessage(Player player)
     {
         player.sendMessage(DynamicShop.dsPrefix(player) + t(player, "HELP.TITLE").replace("{command}", "permission"));
-        player.sendMessage(" - " + t(player, "HELP.USAGE") + ": /ds shop <shopname> permission [<true | false | custom >]");
+        player.sendMessage(" - " + t(player, "HELP.USAGE") + ": ... permission [<true | false | custom >]");
 
         player.sendMessage("");
     }

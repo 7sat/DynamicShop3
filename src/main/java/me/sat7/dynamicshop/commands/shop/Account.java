@@ -3,9 +3,9 @@ package me.sat7.dynamicshop.commands.shop;
 import me.sat7.dynamicshop.DynamicShop;
 import me.sat7.dynamicshop.commands.DSCMD;
 import me.sat7.dynamicshop.commands.Shop;
+import me.sat7.dynamicshop.economyhook.PlayerpointHook;
 import me.sat7.dynamicshop.files.CustomConfig;
-import me.sat7.dynamicshop.jobshook.JobsHook;
-import me.sat7.dynamicshop.utilities.LangUtil;
+import me.sat7.dynamicshop.economyhook.JobsHook;
 import me.sat7.dynamicshop.utilities.ShopUtil;
 import net.milkbowl.vault.economy.Economy;
 import net.milkbowl.vault.economy.EconomyResponse;
@@ -31,9 +31,9 @@ public class Account extends DSCMD
     public void SendHelpMessage(Player player)
     {
         player.sendMessage(DynamicShop.dsPrefix(player) + t(player, "HELP.TITLE").replace("{command}", "account"));
-        player.sendMessage(" - " + t(player, "HELP.USAGE") + ": /ds shop <shopname> account set <amount>");
-        player.sendMessage(" - " + t(player, "HELP.USAGE") + ": /ds shop <shopname> account linkto <shopname>");
-        player.sendMessage(" - " + t(player, "HELP.USAGE") + ": /ds shop <shopname> account transfer <target> <amount>");
+        player.sendMessage(" - " + t(player, "HELP.USAGE") + ": ... account set <amount>");
+        player.sendMessage(" - " + t(player, "HELP.USAGE") + ": ... account linkto <shopname>");
+        player.sendMessage(" - " + t(player, "HELP.USAGE") + ": ... account transfer <target> <amount>");
         player.sendMessage(" - " + t(player, "HELP.ACCOUNT"));
 
         player.sendMessage("");
@@ -117,7 +117,8 @@ public class Account extends DSCMD
                 }
 
                 // 출발 상점과 도착 상점의 통화 유형이 다름
-                if (shopData.get().contains("Options.flag.jobpoint") != targetShopData.get().contains("Options.flag.jobpoint"))
+                if ((shopData.get().contains("Options.flag.jobpoint") != targetShopData.get().contains("Options.flag.jobpoint")) ||
+                    (shopData.get().contains("Options.flag.playerpoint") != targetShopData.get().contains("Options.flag.playerpoint")) )
                 {
                     sender.sendMessage(DynamicShop.dsPrefix(sender) + t(sender, "ERR.SHOP_DIFF_CURRENCY"));
                     return;
@@ -160,7 +161,13 @@ public class Account extends DSCMD
                     {
                         sender.sendMessage(DynamicShop.dsPrefix(sender) + t(sender, "MESSAGE.NOT_ENOUGH_POINT").
                                 replace("{bal}", n(ShopUtil.getShopBalance(args[1]))));
-                    } else
+                    }
+                    else if (shopData.get().contains("Options.flag.playerpoint"))
+                    {
+                        sender.sendMessage(DynamicShop.dsPrefix(sender) + t(sender, "MESSAGE.NOT_ENOUGH_PLAYER_POINT").
+                                replace("{bal}", n(ShopUtil.getShopBalance(args[1]))));
+                    }
+                    else
                     {
                         sender.sendMessage(DynamicShop.dsPrefix(sender) + t(sender, "MESSAGE.NOT_ENOUGH_MONEY").
                                 replace("{bal}", n(ShopUtil.getShopBalance(args[1]))));
@@ -186,7 +193,8 @@ public class Account extends DSCMD
                     }
 
                     // 출발 상점과 도착 상점의 통화 유형이 다름
-                    if (shopData.get().contains("Options.flag.jobpoint") != targetShopData.get().contains("Options.flag.jobpoint"))
+                    if ((shopData.get().contains("Options.flag.jobpoint") != targetShopData.get().contains("Options.flag.jobpoint")) ||
+                        (shopData.get().contains("Options.flag.playerpoint") != targetShopData.get().contains("Options.flag.playerpoint")) )
                     {
                         sender.sendMessage(DynamicShop.dsPrefix(sender) + t(sender, "ERR.SHOP_DIFF_CURRENCY"));
                         return;
@@ -221,7 +229,16 @@ public class Account extends DSCMD
                             shopData.save();
 
                             sender.sendMessage(DynamicShop.dsPrefix(sender) + t(sender, "MESSAGE.TRANSFER_SUCCESS"));
-                        } else
+                        }
+                        else if (shopData.get().contains("Options.flag.playerpoint"))
+                        {
+                            PlayerpointHook.addPP(target, amount);
+                            ShopUtil.addShopBalance(args[1], amount * -1);
+                            shopData.save();
+
+                            sender.sendMessage(DynamicShop.dsPrefix(sender) + t(sender, "MESSAGE.TRANSFER_SUCCESS"));
+                        }
+                        else
                         {
                             Economy econ = DynamicShop.getEconomy();
                             EconomyResponse er = econ.depositPlayer(target, amount);

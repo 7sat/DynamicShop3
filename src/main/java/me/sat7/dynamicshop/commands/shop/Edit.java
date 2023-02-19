@@ -28,8 +28,8 @@ public class Edit extends DSCMD
     public void SendHelpMessage(Player player)
     {
         player.sendMessage(DynamicShop.dsPrefix(player) + t(player, "HELP.TITLE").replace("{command}", "edit"));
-        player.sendMessage(" - " + t(player, "HELP.USAGE") + ": /ds shop <shopname> edit <item> <value> <median> <stock>");
-        player.sendMessage(" - " + t(player, "HELP.USAGE") + ": /ds shop <shopname> edit <item> <value> <min value> <max value> <median> <stock> [<max stock>]");
+        player.sendMessage(" - " + t(player, "HELP.USAGE") + ": ... edit <item> <value> <median> <stock>");
+        player.sendMessage(" - " + t(player, "HELP.USAGE") + ": ... edit <item> <value> <min value> <max value> <median> <stock> [<max stock>]");
         player.sendMessage(" - " + t(player, "HELP.SHOP_EDIT"));
         player.sendMessage(" - " + t(player, "HELP.PRICE"));
         player.sendMessage(" - " + t(player, "HELP.INF_STATIC"));

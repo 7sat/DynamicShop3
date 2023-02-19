@@ -26,7 +26,7 @@ public class Flag extends DSCMD
     public void SendHelpMessage(Player player)
     {
         player.sendMessage(DynamicShop.dsPrefix(player) + t(player, "HELP.TITLE").replace("{command}", "flag"));
-        player.sendMessage(" - " + t(player, "HELP.USAGE") + ": /ds shop <shopname> flag <flag> <set | unset>");
+        player.sendMessage(" - " + t(player, "HELP.USAGE") + ": ... flag <flag> <set | unset>");
 
         player.sendMessage("");
     }
@@ -61,6 +61,7 @@ public class Flag extends DSCMD
                 args[3].equalsIgnoreCase("localshop") ||
                 args[3].equalsIgnoreCase("deliverycharge") ||
                 args[3].equalsIgnoreCase("jobpoint") ||
+                args[3].equalsIgnoreCase("playerpoint") ||
                 args[3].equalsIgnoreCase("showValueChange") ||
                 args[3].equalsIgnoreCase("hidestock") ||
                 args[3].equalsIgnoreCase("hidepricingtype") ||

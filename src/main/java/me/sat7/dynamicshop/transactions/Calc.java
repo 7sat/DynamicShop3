@@ -77,8 +77,8 @@ public final class Calc
         }
     }
 
-    // 특정 아이탬의 앞으로 n개의 가치합을 계산 (다이나믹 or 고정가) (세금 반영)
-    public static double calcTotalCost(String shopName, String idx, int amount)
+    // 특정 아이탬의 앞으로 n개의 가치합을 계산 (다이나믹 or 고정가) ([0] 세금 반영된 값, [1] 세금)
+    public static double[] calcTotalCost(String shopName, String idx, int amount)
     {
         FileConfiguration data = ShopUtil.shopConfigFiles.get(shopName).get();
 
@@ -133,23 +133,26 @@ public final class Calc
         }
 
         // 세금 적용 (판매가 별도지정시 세금계산 안함)
+        double tax = 0;
         if (amount < 0 && !data.contains(idx + ".value2"))
         {
-            double tax = ((total / 100) * getTaxRate(shopName));
+            tax = ((total / 100) * getTaxRate(shopName));
             total -= tax;
         }
 
         if (data.contains("Options.flag.integeronly"))
         {
             if(amount > 0)
-                return Math.ceil(total);
+                total = Math.ceil(total);
             else
-                return Math.floor(total);
+                total = Math.floor(total);
         }
         else
         {
-            return (Math.round(total * 100) / 100.0);
+            total = (Math.round(total * 100) / 100.0);
         }
+
+        return new double[]{total, tax};
     }
 
     // 상점의 세율 반환

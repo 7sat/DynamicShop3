@@ -2,7 +2,7 @@ name: DynamicShop
 version: ${project.version}
 main: me.sat7.dynamicshop.DynamicShop
 depend: [Vault]
-softdepend: [PlaceholderAPI, Jobs, LocaleLib]
+softdepend: [PlaceholderAPI, Jobs, LocaleLib, PlayerPoints]
 api-version: 1.16
 authors: [sat7, jpenilla, Multitallented, Chris6ix, KevinDaGame, FlorianKoerner, Kapitowa, LincolnJota]
 description: Full GUI shop with dynamic prices

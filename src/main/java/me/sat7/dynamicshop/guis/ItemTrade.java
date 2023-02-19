@@ -4,12 +4,12 @@ import java.util.ArrayList;
 import java.util.Arrays;
 
 import me.sat7.dynamicshop.DynaShopAPI;
+import me.sat7.dynamicshop.economyhook.PlayerpointHook;
 import me.sat7.dynamicshop.files.CustomConfig;
 import me.sat7.dynamicshop.transactions.Buy;
 import me.sat7.dynamicshop.transactions.Sell;
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
-import org.bukkit.Location;
 import org.bukkit.Material;
 import org.bukkit.configuration.ConfigurationSection;
 import org.bukkit.configuration.file.FileConfiguration;
@@ -20,7 +20,7 @@ import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.ItemMeta;
 
 import me.sat7.dynamicshop.DynamicShop;
-import me.sat7.dynamicshop.jobshook.JobsHook;
+import me.sat7.dynamicshop.economyhook.JobsHook;
 import me.sat7.dynamicshop.transactions.Calc;
 import me.sat7.dynamicshop.utilities.ShopUtil;
 
@@ -52,7 +52,7 @@ public final class ItemTrade extends InGameUI
     private ItemMeta itemMeta;
 
     public enum CURRENCY
-    {VAULT, JOB_POINT}
+    {VAULT, JOB_POINT, PLAYER_POINT}
 
     public Inventory getGui(Player player, String shopName, String tradeIdx)
     {
@@ -106,7 +106,10 @@ public final class ItemTrade extends InGameUI
             {
                 if (data.get().contains("Options.flag.jobpoint"))
                 {
-                    player.sendMessage(DynamicShop.dsPrefix(player) + t(player, "TRADE.BALANCE") + ":§f " + n(JobsHook.getCurJobPoints(player)) + "Points");
+                    player.sendMessage(DynamicShop.dsPrefix(player) + t(player, "TRADE.BALANCE") + ":§f " + n(JobsHook.getCurJobPoints(player)) + t(player, "JOB_POINTS"));
+                } else if (data.get().contains("Options.flag.playerpoint"))
+                {
+                    player.sendMessage(DynamicShop.dsPrefix(player) + t(player, "TRADE.BALANCE") + ":§f " + n(PlayerpointHook.getCurrentPP(player)) + t(player, "PLAYER_POINTS"));
                 } else
                 {
                     player.sendMessage(DynamicShop.dsPrefix(player) + t(player, "TRADE.BALANCE") + ":§f " + n(DynamicShop.getEconomy().getBalance(player)));
@@ -183,8 +186,13 @@ public final class ItemTrade extends InGameUI
 
         if (optionS.contains("flag.jobpoint"))
         {
-            myBalanceString = "§f" + n(JobsHook.getCurJobPoints(player)) + "Points";
-        } else
+            myBalanceString = "§f" + n(JobsHook.getCurJobPoints(player)) + t(player,"JOB_POINTS");
+        }
+        else if (optionS.contains("flag.playerpoint"))
+        {
+            myBalanceString = "§f" + n(PlayerpointHook.getCurrentPP(player)) + t(player,"PLAYER_POINTS");
+        }
+        else
         {
             myBalanceString = "§f" + n(DynamicShop.getEconomy().getBalance(player));
         }
@@ -193,7 +201,10 @@ public final class ItemTrade extends InGameUI
         {
             double d = ShopUtil.getShopBalance(shopName);
             balStr = n(d);
-            if (optionS.contains("flag.jobpoint")) balStr += "Points";
+            if (optionS.contains("flag.jobpoint"))
+                balStr += t(player, "JOB_POINTS");
+            else if (optionS.contains("flag.playerpoint"))
+                balStr += t(player, "PLAYER_POINTS");
         } else
         {
             balStr = t(player, "TRADE.SHOP_BAL_INF");
@@ -256,7 +267,7 @@ public final class ItemTrade extends InGameUI
             int stock = shopData.getInt(tradeIdx + ".stock");
             int maxStock = shopData.getInt(tradeIdx + ".maxStock", -1);
 
-            double price = Calc.calcTotalCost(shopName, tradeIdx, sell ? -amount : amount);
+            double price = Calc.calcTotalCost(shopName, tradeIdx, sell ? -amount : amount)[0];
             String lore;
             String priceText;
             if (sell)
@@ -375,7 +386,12 @@ public final class ItemTrade extends InGameUI
         if (options.contains("flag.jobpoint"))
         {
             Sell.sell(CURRENCY.JOB_POINT, player, shopName, tradeIdx, itemStack, -deliveryCharge, infiniteStock);
-        } else
+        }
+        else if (options.contains("flag.playerpoint"))
+        {
+            Sell.sell(CURRENCY.PLAYER_POINT, player, shopName, tradeIdx, itemStack, -deliveryCharge, infiniteStock);
+        }
+        else
         {
             Sell.sell(CURRENCY.VAULT, player, shopName, tradeIdx, itemStack, -deliveryCharge, infiniteStock);
         }
@@ -393,7 +409,12 @@ public final class ItemTrade extends InGameUI
         if (options.contains("flag.jobpoint"))
         {
             Buy.buy(CURRENCY.JOB_POINT, player, shopName, tradeIdx, itemStack, deliveryCharge, infiniteStock);
-        } else
+        }
+        else if (options.contains("flag.playerpoint"))
+        {
+            Buy.buy(CURRENCY.PLAYER_POINT, player, shopName, tradeIdx, itemStack, deliveryCharge, infiniteStock);
+        }
+        else
         {
             Buy.buy(CURRENCY.VAULT, player, shopName, tradeIdx, itemStack, deliveryCharge, infiniteStock);
         }

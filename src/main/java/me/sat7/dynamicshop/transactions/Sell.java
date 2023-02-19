@@ -1,7 +1,9 @@
 package me.sat7.dynamicshop.transactions;
 
 import java.util.HashMap;
+import java.util.Map;
 
+import me.sat7.dynamicshop.economyhook.PlayerpointHook;
 import me.sat7.dynamicshop.events.ShopBuySellEvent;
 import me.sat7.dynamicshop.files.CustomConfig;
 import me.sat7.dynamicshop.guis.ItemTrade;
@@ -13,7 +15,7 @@ import org.bukkit.inventory.ItemStack;
 
 import me.sat7.dynamicshop.DynaShopAPI;
 import me.sat7.dynamicshop.DynamicShop;
-import me.sat7.dynamicshop.jobshook.JobsHook;
+import me.sat7.dynamicshop.economyhook.JobsHook;
 import net.milkbowl.vault.economy.Economy;
 import net.milkbowl.vault.economy.EconomyResponse;
 
@@ -111,7 +113,8 @@ public final class Sell
             return 0;
         }
 
-        priceSum += Calc.calcTotalCost(shopName, String.valueOf(tradeIdx), -tradeAmount);
+        double[] calcResult = Calc.calcTotalCost(shopName, String.valueOf(tradeIdx), -tradeAmount);
+        priceSum += calcResult[0];
 
         // 재고 증가
         if (stockOld > 0)
@@ -135,21 +138,7 @@ public final class Sell
             if (player != null)
             {
                 // 플레이어에게 메시지 출력
-                boolean useLocalizedName = DynamicShop.plugin.getConfig().getBoolean("UI.LocalizedItemName");
-                String message = DynamicShop.dsPrefix(player) + t(player, "MESSAGE.SELL_SUCCESS", !useLocalizedName)
-                        .replace("{amount}", Integer.toString(tradeAmount))
-                        .replace("{price}", n(r.amount))
-                        .replace("{bal}", n(econ.getBalance((player))));
-
-                if (useLocalizedName)
-                {
-                    message = message.replace("{item}", "<item>");
-                    LangUtil.sendMessageWithLocalizedItemName(player, message, tempIS.getType());
-                } else
-                {
-                    message = message.replace("{item}", ItemsUtil.getBeautifiedName(tempIS.getType()));
-                    player.sendMessage(message);
-                }
+                SendSellMessage(ItemTrade.CURRENCY.VAULT, econ, r, player, tradeAmount, priceSum, tempIS);
 
                 // 플레이어에게 소리 재생
                 player.playSound(player.getLocation(), Sound.valueOf("ENTITY_EXPERIENCE_ORB_PICKUP"), 1, 1);
@@ -162,18 +151,7 @@ public final class Sell
             }
 
             // 커맨드 실행
-            if (data.get().contains("Options.command.active") && data.get().getBoolean("Options.command.active") &&
-                data.get().contains("Options.command.sell"))
-            {
-                String sellCmd = data.get().getString("Options.command.sell")
-                        .replace("{player}", player != null ? player.getName() : shopName)
-                        .replace("{shop}", shopName)
-                        .replace("{itemType}", tempIS.getType().toString())
-                        .replace("{amount}", tradeAmount+"")
-                        .replace("{priceSum}", priceSum+"");
-
-                Bukkit.dispatchCommand(Bukkit.getConsoleSender(), sellCmd);
-            }
+            RunSellCommand(data, player, shopName, tempIS, tradeAmount, priceSum, calcResult[1]);
 
             // 이벤트 호출
             if (player != null)
@@ -208,7 +186,7 @@ public final class Sell
         double priceBuyOld = Calc.getCurrentPrice(shopName, String.valueOf(tradeIdx), true);
         int stockOld = data.get().getInt(tradeIdx + ".stock");
         // 상점에 돈이 없음
-        if (ShopUtil.getShopBalance(shopName) != -1 && ShopUtil.getShopBalance(shopName) < Calc.calcTotalCost(shopName, tradeIdx, tempIS.getAmount()))
+        if (ShopUtil.getShopBalance(shopName) != -1 && ShopUtil.getShopBalance(shopName) < Calc.calcTotalCost(shopName, tradeIdx, tempIS.getAmount())[0])
         {
             player.sendMessage(DynamicShop.dsPrefix(player) + t(player, "MESSAGE.SHOP_BAL_LOW"));
             return;
@@ -230,7 +208,8 @@ public final class Sell
             return;
         }
 
-        priceSum += Calc.calcTotalCost(shopName, tradeIdx, -actualAmount);
+        double[] calcResult = Calc.calcTotalCost(shopName, tradeIdx, -actualAmount);
+        priceSum += calcResult[0];
 
         // 재고 증가
         if (!infiniteStock)
@@ -250,38 +229,30 @@ public final class Sell
         {
             if (!JobsHook.addJobsPoint(player, priceSum))
                 return;
+        } else if (currency == ItemTrade.CURRENCY.PLAYER_POINT)
+        {
+            if (!PlayerpointHook.addPP(player, priceSum))
+                return;
         }
 
         //로그 기록
-        String currencyString = currency == ItemTrade.CURRENCY.VAULT ? "vault" : "jobpoint";
+        String currencyString = "";
+        if(currency == ItemTrade.CURRENCY.VAULT)
+        {
+            currencyString = "vault";
+        }
+        else if(currency == ItemTrade.CURRENCY.JOB_POINT)
+        {
+            currencyString = "jobpoint";
+        }
+        else if(currency == ItemTrade.CURRENCY.PLAYER_POINT)
+        {
+            currencyString = "playerPoint";
+        }
         LogUtil.addLog(shopName, tempIS.getType().toString(), -actualAmount, priceSum, currencyString, player.getName());
 
         // 메시지 출력
-        boolean useLocalizedName = DynamicShop.plugin.getConfig().getBoolean("UI.LocalizedItemName");
-        String message = "";
-        if (currency == ItemTrade.CURRENCY.VAULT)
-        {
-            message = DynamicShop.dsPrefix(player) + t(player, "MESSAGE.SELL_SUCCESS", !useLocalizedName)
-                    .replace("{amount}", Integer.toString(actualAmount))
-                    .replace("{price}", n(r.amount))
-                    .replace("{bal}", n(econ.getBalance((player))));
-        } else if (currency == ItemTrade.CURRENCY.JOB_POINT)
-        {
-            message = DynamicShop.dsPrefix(player) + t(player, "MESSAGE.SELL_SUCCESS_JP", !useLocalizedName)
-                    .replace("{amount}", Integer.toString(actualAmount))
-                    .replace("{price}", n(priceSum))
-                    .replace("{bal}", n(JobsHook.getCurJobPoints(player)));
-        }
-
-        if (useLocalizedName)
-        {
-            message = message.replace("{item}", "<item>");
-            LangUtil.sendMessageWithLocalizedItemName(player, message, tempIS.getType());
-        } else
-        {
-            message = message.replace("{item}", ItemsUtil.getBeautifiedName(tempIS.getType()));
-            player.sendMessage(message);
-        }
+        SendSellMessage(currency, econ, r, player, actualAmount, priceSum, tempIS);
 
         // 플레이어에게 소리 재생
         SoundUtil.playerSoundEffect(player, "sell");
@@ -293,18 +264,7 @@ public final class Sell
         }
 
         // 커맨드 실행
-        if (data.get().contains("Options.command.active") && data.get().getBoolean("Options.command.active") &&
-            data.get().contains("Options.command.sell"))
-        {
-            String sellCmd = data.get().getString("Options.command.sell")
-                    .replace("{player}", player.getName())
-                    .replace("{shop}", shopName)
-                    .replace("{itemType}", tempIS.getType().toString())
-                    .replace("{amount}", actualAmount+"")
-                    .replace("{priceSum}", priceSum+"");
-
-            Bukkit.dispatchCommand(Bukkit.getConsoleSender(), sellCmd);
-        }
+        RunSellCommand(data, player, shopName, tempIS, actualAmount, priceSum, calcResult[1]);
 
         data.save();
         DynaShopAPI.openItemTradeGui(player, shopName, tradeIdx);
@@ -312,5 +272,63 @@ public final class Sell
         // 이벤트 호출
         ShopBuySellEvent event = new ShopBuySellEvent(false, priceBuyOld, Calc.getCurrentPrice(shopName, String.valueOf(tradeIdx), true), priceSellOld, DynaShopAPI.getSellPrice(shopName, tempIS), stockOld, DynaShopAPI.getStock(shopName, tempIS), DynaShopAPI.getMedian(shopName, tempIS), shopName, tempIS, player);
         Bukkit.getPluginManager().callEvent(event);
+    }
+
+    private static void SendSellMessage(ItemTrade.CURRENCY currency, Economy econ, EconomyResponse r, Player player, int actualAmount, double priceSum, ItemStack tempIS)
+    {
+        boolean useLocalizedName = DynamicShop.plugin.getConfig().getBoolean("UI.LocalizedItemName");
+        String message = "";
+        if (currency == ItemTrade.CURRENCY.VAULT)
+        {
+            message = DynamicShop.dsPrefix(player) + t(player, "MESSAGE.SELL_SUCCESS", !useLocalizedName)
+                    .replace("{amount}", Integer.toString(actualAmount))
+                    .replace("{price}", n(r.amount))
+                    .replace("{bal}", n(econ.getBalance(player)));
+        } else if (currency == ItemTrade.CURRENCY.JOB_POINT)
+        {
+            message = DynamicShop.dsPrefix(player) + t(player, "MESSAGE.SELL_SUCCESS_JP", !useLocalizedName)
+                    .replace("{amount}", Integer.toString(actualAmount))
+                    .replace("{price}", n(priceSum))
+                    .replace("{bal}", n(JobsHook.getCurJobPoints(player)));
+        }
+        else if (currency == ItemTrade.CURRENCY.PLAYER_POINT)
+        {
+            message = DynamicShop.dsPrefix(player) + t(player, "MESSAGE.SELL_SUCCESS_PP", !useLocalizedName)
+                    .replace("{amount}", Integer.toString(actualAmount))
+                    .replace("{price}", n(priceSum))
+                    .replace("{bal}", n(PlayerpointHook.getCurrentPP(player)));
+        }
+
+        if (useLocalizedName)
+        {
+            message = message.replace("{item}", "<item>");
+            LangUtil.sendMessageWithLocalizedItemName(player, message, tempIS.getType());
+        } else
+        {
+            message = message.replace("{item}", ItemsUtil.getBeautifiedName(tempIS.getType()));
+            player.sendMessage(message);
+        }
+    }
+
+    private static void RunSellCommand(CustomConfig data, Player player, String shopName, ItemStack tempIS, int actualAmount, double priceSum, double tax)
+    {
+        if (data.get().contains("Options.command.active") && data.get().getBoolean("Options.command.active") &&
+            data.get().contains("Options.command.sell"))
+        {
+            if (data.get().getConfigurationSection("Options.command.sell") != null)
+            {
+                for (Map.Entry<String, Object> s : data.get().getConfigurationSection("Options.command.sell").getValues(false).entrySet())
+                {
+                    String sellCmd = s.getValue().toString()
+                            .replace("{player}", player.getName())
+                            .replace("{shop}", shopName)
+                            .replace("{itemType}", tempIS.getType().toString())
+                            .replace("{amount}", actualAmount+"")
+                            .replace("{priceSum}", priceSum+"")
+                            .replace("{tax}", tax+"");
+                    Bukkit.dispatchCommand(Bukkit.getConsoleSender(), sellCmd);
+                }
+            }
+        }
     }
 }

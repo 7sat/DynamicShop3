@@ -140,13 +140,33 @@ public class OnChat implements Listener
             String shopName = userInteractData[0];
             DynamicShop.userTempData.put(uuid, "");
 
-            if (userData.equals("sellCmd"))
+            String[] input = e.getMessage().split("/");
+            if(input.length == 2)
             {
-                ShopUtil.SetShopSellCommand(shopName, e.getMessage());
+                int idx = 0;
+                try
+                {
+                    idx = Integer.parseInt(input[0]);
+                }catch (Exception ignore)
+                {
+                    p.sendMessage(t(p,"ERR.WRONG_DATATYPE"));
+                    DynaShopAPI.openShopSettingGui(p, shopName);
+                    cancelRunnable(p);
+                    return;
+                }
+
+                if (userData.equals("sellCmd"))
+                {
+                    ShopUtil.SetShopSellCommand(shopName, idx, input[1]);
+                }
+                else
+                {
+                    ShopUtil.SetShopBuyCommand(shopName, idx, input[1]);
+                }
             }
             else
             {
-                ShopUtil.SetShopBuyCommand(shopName, e.getMessage());
+                p.sendMessage(t(p,"ERR.WRONG_USAGE"));
             }
 
             DynaShopAPI.openShopSettingGui(p, shopName);

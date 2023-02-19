@@ -241,7 +241,7 @@ public final class DynaShopAPI
         if (validateShopName(shopName))
         {
             CustomConfig data = ShopUtil.shopConfigFiles.get(shopName);
-
+            
             ArrayList<ItemStack> list = new ArrayList<>();
             for (String s : data.get().getKeys(false))
             {
@@ -396,6 +396,25 @@ public final class DynaShopAPI
         {
             CustomConfig data = ShopUtil.shopConfigFiles.get(shopName);
             return data.get().contains("Options.flag.jobpoint");
+        } else
+        {
+            throw new IllegalArgumentException("Shop: " + shopName + " does not exist");
+        }
+    }
+
+    /**
+     * Get whether a shop is for Vault money or Player points
+     *
+     * @param shopName The shop to check the type of
+     * @return True if it is a Player Point shop, False if it is a Vault economy money shop
+     * @throws IllegalArgumentException When the shop does not exist
+     */
+    public static boolean isPlayerPointShop(@NonNull String shopName) throws IllegalArgumentException
+    {
+        if (validateShopName(shopName))
+        {
+            CustomConfig data = ShopUtil.shopConfigFiles.get(shopName);
+            return data.get().contains("Options.flag.playerpoint");
         } else
         {
             throw new IllegalArgumentException("Shop: " + shopName + " does not exist");

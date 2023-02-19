@@ -100,9 +100,9 @@ public class OnSignClick implements Listener
                     e.getPlayer().sendMessage(DynamicShop.dsPrefix(e.getPlayer()) + t(e.getPlayer(), "ERR.SIGN_ITEM_NOT_FOR_SALE"));
                 }
             }  else if (signItemName.isEmpty()) {
-                    e.setLine(2, "");
-                    e.getBlock().getState().update();
-                    e.getPlayer().sendMessage(DynamicShop.dsPrefix(e.getPlayer()) + t(e.getPlayer(), "MESSAGE.SIGN_SHOP_CREATED"));
+                e.setLine(2, "");
+                e.getBlock().getState().update();
+                e.getPlayer().sendMessage(DynamicShop.dsPrefix(e.getPlayer()) + t(e.getPlayer(), "MESSAGE.SIGN_SHOP_CREATED"));
             } else {
                 e.getBlock().breakNaturally();
                 e.getPlayer().sendMessage(DynamicShop.dsPrefix(e.getPlayer()) + t(e.getPlayer(), "ERR.SIGN_ITEM_INVALID"));
@@ -139,18 +139,18 @@ public class OnSignClick implements Listener
 
                         String signItemName = s.getLine(2);
                         Material mat = ItemsUtil.GetMaterialFromShortname(signItemName);
-                      if(mat != null) {
-                          int i = ShopUtil.findItemFromShop(shop, new ItemStack(mat));
-                          if (i != -1) {
-                              String itemShortName = StringUtil.getShortenedNameSign(mat.name());
-                              s.setLine(2, itemShortName);
-                              DynamicShop.ccSign.get().set(signId + ".mat", mat.name().toUpperCase());
-                          } else {
-                              s.setLine(2, "");
-                          }
-                      } else {
-                          s.setLine(2, "");
-                      }
+                        if(mat != null) {
+                            int i = ShopUtil.findItemFromShop(shop, new ItemStack(mat));
+                            if (i != -1) {
+                                String itemShortName = StringUtil.getShortenedNameSign(mat.name());
+                                s.setLine(2, itemShortName);
+                                DynamicShop.ccSign.get().set(signId + ".mat", mat.name().toUpperCase());
+                            } else {
+                                s.setLine(2, "");
+                            }
+                        } else {
+                            s.setLine(2, "");
+                        }
 
                         s.update();
                         DynamicShop.ccSign.save();
@@ -195,7 +195,7 @@ public class OnSignClick implements Listener
                     {
                         String itemName = p.getInventory().getItemInMainHand().getType().name();
                         if(itemName.contains("INK_SAC") || itemName.contains("_DYE"))
-                        return;
+                            return;
                     }
 
 

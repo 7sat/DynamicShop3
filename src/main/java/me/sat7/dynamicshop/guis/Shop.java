@@ -19,7 +19,7 @@ import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.ItemMeta;
 
 import me.sat7.dynamicshop.DynamicShop;
-import me.sat7.dynamicshop.jobshook.JobsHook;
+import me.sat7.dynamicshop.economyhook.JobsHook;
 import me.sat7.dynamicshop.transactions.Calc;
 import me.sat7.dynamicshop.utilities.ShopUtil;
 
@@ -369,7 +369,10 @@ public final class Shop extends InGameUI
             if (ShopUtil.getShopBalance(shopName) >= 0)
             {
                 String temp = n(ShopUtil.getShopBalance(shopName));
-                if (shopData.contains("Options.flag.jobpoint")) temp += "Points";
+                if (shopData.contains("Options.flag.jobpoint"))
+                    temp += t(player,"JOB_POINTS");
+                else if (shopData.contains("Options.flag.playerpoint"))
+                    temp += t(player,"PLAYER_POINTS");
 
                 finalShopBalanceText += t(player, "SHOP.SHOP_INFO_DASH") + temp + "\n";
             } else

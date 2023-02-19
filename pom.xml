@@ -6,7 +6,7 @@
 
     <groupId>me.sat7</groupId>
     <artifactId>DynamicShop</artifactId>
-    <version>3.9.0</version>
+    <version>3.10.0</version>
     <packaging>jar</packaging>
 
     <name>DynamicShop</name>
@@ -100,6 +100,10 @@
             <id>placeholderapi</id>
             <url>https://repo.extendedclip.com/content/repositories/placeholderapi/</url>
         </repository>
+        <repository>
+            <id>rosewood-repo</id>
+            <url>https://repo.rosewooddev.io/repository/public/</url>
+        </repository>
     </repositories>
 
     <dependencies>
@@ -159,6 +163,12 @@
             <groupId>com.github.PikaMug</groupId>
             <artifactId>LocaleLib</artifactId>
             <version>2.4</version>
+        </dependency>
+        <dependency>
+            <groupId>org.black_ixx</groupId>
+            <artifactId>playerpoints</artifactId>
+            <version>3.2.5</version>
+            <scope>provided</scope>
         </dependency>
     </dependencies>
 </project>

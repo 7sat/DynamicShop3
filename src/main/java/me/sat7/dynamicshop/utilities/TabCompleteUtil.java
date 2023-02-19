@@ -278,6 +278,7 @@ public final class TabCompleteUtil
                                 temp.add("localShop");
                                 temp.add("deliveryCharge");
                                 temp.add("jobPoint");
+                                temp.add("playerPoint");
                                 temp.add("showValueChange");
                                 temp.add("hideStock");
                                 temp.add("hidePricingType");
@@ -333,6 +334,16 @@ public final class TabCompleteUtil
                                 temp.add("false");
 
                                 AddToAutoCompleteIfValid(args[4]);
+                            }
+                            else if (args[3].equalsIgnoreCase("sell") || args[3].equalsIgnoreCase("buy"))
+                            {
+                                if(args.length == 5)
+                                {
+                                    temp.add("add");
+                                    temp.add("delete");
+
+                                    AddToAutoCompleteIfValid(args[4]);
+                                }
                             }
 
                             Help.showHelp("command", (Player) sender, args);

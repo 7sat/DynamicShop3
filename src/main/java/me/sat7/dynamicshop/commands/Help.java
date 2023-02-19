@@ -1,5 +1,6 @@
 package me.sat7.dynamicshop.commands;
 
+import me.sat7.dynamicshop.commands.shop.Command;
 import org.bukkit.Material;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
@@ -186,6 +187,7 @@ public final class Help
         } else if (helpcode.equals("command"))
         {
             CMDManager.command.SendHelpMessage(player);
+            Command.PrintCurrentState(player, Shop.GetShopName(args), true, true);
         } else if (helpcode.equals("account"))
         {
             CMDManager.account.SendHelpMessage(player);

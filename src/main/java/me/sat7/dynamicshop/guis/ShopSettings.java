@@ -3,11 +3,14 @@ package me.sat7.dynamicshop.guis;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
+import java.util.Map;
 
 import me.sat7.dynamicshop.DynaShopAPI;
+import me.sat7.dynamicshop.commands.shop.Command;
+import me.sat7.dynamicshop.economyhook.PlayerpointHook;
 import me.sat7.dynamicshop.events.OnChat;
 import me.sat7.dynamicshop.files.CustomConfig;
-import me.sat7.dynamicshop.jobshook.JobsHook;
+import me.sat7.dynamicshop.economyhook.JobsHook;
 import me.sat7.dynamicshop.utilities.ConfigUtil;
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
@@ -57,6 +60,7 @@ public final class ShopSettings extends InGameUI
     private final int FLAG9 = 22;
     private final int FLAG10 = 13;
     private final int FLAG11 = 27;
+    private final int FLAG12 = 28;
 
     private final int CMD_TOGGLE = 33;
     private final int CMD_SELL = 34;
@@ -228,22 +232,46 @@ public final class ShopSettings extends InGameUI
         CreateButton(CMD_TOGGLE, Material.COMMAND_BLOCK, t(player, "SHOP_SETTING.COMMAND_TOGGLE"), CmdToggleLore);
 
         boolean sellCmdValid = confSec_Options.contains("command.sell");
-        String sellCmdString = sellCmdValid ? ("/" + confSec_Options.getString("command.sell")) : "(null)";
-        ArrayList<String> sellCmdLore = new ArrayList<>(Arrays.asList(
-                "§9" + t(player, "CUR_STATE") + ": ",
-                "§f" + sellCmdString,
-                t(player, "SHOP_SETTING.COMMAND_LORE1"),
-                t(player, "SHOP_SETTING.COMMAND_LORE2")
+        ArrayList<String> sellCmdLore = new ArrayList<>(Collections.singletonList(
+                "§9" + t(player, "CUR_STATE") + ": "
         ));
+        if(sellCmdValid)
+        {
+            if (data.get().getConfigurationSection("Options.command.sell") != null)
+            {
+                for (Map.Entry<String, Object> s : data.get().getConfigurationSection("Options.command.sell").getValues(false).entrySet())
+                {
+                    sellCmdLore.add("§f/" + s.getValue());
+                }
+            }
+        }
+        else
+        {
+            sellCmdLore.add("§f(empty)");
+        }
+        sellCmdLore.add(t(player, "SHOP_SETTING.COMMAND_LORE1"));
+        sellCmdLore.add(t(player, "SHOP_SETTING.COMMAND_LORE3"));
 
         boolean buyCmdValid = confSec_Options.contains("command.buy");
-        String buyCmdString = buyCmdValid ? ("/" + confSec_Options.getString("command.buy")) : "(null)";
-        ArrayList<String> buyCmdLore = new ArrayList<>(Arrays.asList(
-                "§9" + t(player, "CUR_STATE") + ": ",
-                "§f" + buyCmdString,
-                t(player, "SHOP_SETTING.COMMAND_LORE1"),
-                t(player, "SHOP_SETTING.COMMAND_LORE2")
+        ArrayList<String> buyCmdLore = new ArrayList<>(Collections.singletonList(
+                "§9" + t(player, "CUR_STATE") + ": "
         ));
+        if(buyCmdValid)
+        {
+            if (data.get().getConfigurationSection("Options.command.buy") != null)
+            {
+                for (Map.Entry<String, Object> s : data.get().getConfigurationSection("Options.command.buy").getValues(false).entrySet())
+                {
+                    buyCmdLore.add("§f/" + s.getValue());
+                }
+            }
+        }
+        else
+        {
+            buyCmdLore.add("§f(empty)");
+        }
+        buyCmdLore.add(t(player, "SHOP_SETTING.COMMAND_LORE1"));
+        buyCmdLore.add(t(player, "SHOP_SETTING.COMMAND_LORE3"));
 
         CreateButton(CMD_SELL, sellCmdValid ? Material.GREEN_STAINED_GLASS_PANE : Material.BLACK_STAINED_GLASS_PANE, t(player, "SHOP_SETTING.COMMAND_SELL"), sellCmdLore);
         CreateButton(CMD_BUY, buyCmdValid ? Material.RED_STAINED_GLASS_PANE : Material.BLACK_STAINED_GLASS_PANE, t(player, "SHOP_SETTING.COMMAND_BUY"), buyCmdLore);
@@ -283,6 +311,7 @@ public final class ShopSettings extends InGameUI
         CreateFlagButton(FLAG9, confSec_Options.contains("flag.showmaxstock"), "showMaxStock", t(player, "SHOP_SETTING.SHOW_MAX_STOCK"));
         CreateFlagButton(FLAG10, confSec_Options.contains("flag.hiddenincommand"), "hiddenInCommand", t(player, "SHOP_SETTING.HIDDEN_IN_COMMAND"));
         CreateFlagButton(FLAG11, confSec_Options.contains("flag.integeronly"), "integerOnly", t(player, "SHOP_SETTING.INTEGER_ONLY"));
+        CreateFlagButton(FLAG12, confSec_Options.contains("flag.playerpoint"), "playerPoint", t(player, "SHOP_SETTING.PLAYER_POINT_LORE"));
 
         // 로그 버튼
         String log_cur;
@@ -722,9 +751,30 @@ public final class ShopSettings extends InGameUI
             if (data.get().contains("Options.flag.integeronly"))
             {
                 Bukkit.dispatchCommand(player, "DynamicShop shop " + shopName + " flag integerOnly unset");
+                if(data.get().contains("Options.flag.playerpoint"))
+                    Bukkit.dispatchCommand(player, "DynamicShop shop " + shopName + " flag playerpoint unset");
             } else
             {
                 Bukkit.dispatchCommand(player, "DynamicShop shop " + shopName + " flag integerOnly set");
+            }
+            DynaShopAPI.openShopSettingGui(player, shopName);
+        }
+        // Player point
+        else if (e.getSlot() == FLAG12)
+        {
+            if (data.get().contains("Options.flag.playerpoint"))
+            {
+                Bukkit.dispatchCommand(player, "DynamicShop shop " + shopName + " flag playerpoint unset");
+            } else
+            {
+                if (!PlayerpointHook.isPPActive)
+                {
+                    player.sendMessage(DynamicShop.dsPrefix(player) + t(player, "ERR.PLAYER_POINTS_NOT_FOUND"));
+                    return;
+                }
+
+                Bukkit.dispatchCommand(player, "DynamicShop shop " + shopName + " flag integerOnly set");
+                Bukkit.dispatchCommand(player, "DynamicShop shop " + shopName + " flag playerpoint set");
             }
             DynaShopAPI.openShopSettingGui(player, shopName);
         }
@@ -774,30 +824,44 @@ public final class ShopSettings extends InGameUI
         {
             if (e.isShiftClick() && e.isRightClick())
             {
-                Bukkit.dispatchCommand(player, "DynamicShop shop " + shopName + " command sell clear");
-                DynaShopAPI.openShopSettingGui(player, shopName);
+                if (data.get().getConfigurationSection("Options.command.sell") != null)
+                {
+                    Object[] indexList = data.get().getConfigurationSection("Options.command.sell").getKeys(false).toArray();
+                    int idx = Integer.parseInt(indexList[indexList.length-1].toString());
+                    Bukkit.dispatchCommand(player, "DynamicShop shop " + shopName + " command sell delete " + idx);
+
+                    DynaShopAPI.openShopSettingGui(player, shopName);
+                }
             }
             else if(e.isLeftClick())
             {
                 player.closeInventory();
-                player.sendMessage(DynamicShop.dsPrefix(player) + t(player, "MESSAGE.ENTER_COMMAND"));
+                player.sendMessage(DynamicShop.dsPrefix(player) + t(player, "MESSAGE.ENTER_COMMAND_2"));
 
                 DynamicShop.userTempData.put(player.getUniqueId(), "sellCmd");
+                Command.PrintCurrentState(player, shopName, true, false);
                 OnChat.WaitForInput(player);
             }
         } else if (e.getSlot() == CMD_BUY)
         {
             if (e.isShiftClick() && e.isRightClick())
             {
-                Bukkit.dispatchCommand(player, "DynamicShop shop " + shopName + " command buy clear");
-                DynaShopAPI.openShopSettingGui(player, shopName);
+                if (data.get().getConfigurationSection("Options.command.buy") != null)
+                {
+                    Object[] indexList = data.get().getConfigurationSection("Options.command.buy").getKeys(false).toArray();
+                    int idx = Integer.parseInt(indexList[indexList.length-1].toString());
+                    Bukkit.dispatchCommand(player, "DynamicShop shop " + shopName + " command buy delete " + idx);
+
+                    DynaShopAPI.openShopSettingGui(player, shopName);
+                }
             }
             else if(e.isLeftClick())
             {
                 player.closeInventory();
-                player.sendMessage(DynamicShop.dsPrefix(player) + t(player, "MESSAGE.ENTER_COMMAND"));
+                player.sendMessage(DynamicShop.dsPrefix(player) + t(player, "MESSAGE.ENTER_COMMAND_2"));
 
                 DynamicShop.userTempData.put(player.getUniqueId(), "buyCmd");
+                Command.PrintCurrentState(player, shopName, false, true);
                 OnChat.WaitForInput(player);
             }
         }

@@ -26,7 +26,7 @@ public class ShopHours extends DSCMD
     public void SendHelpMessage(Player player)
     {
         player.sendMessage(DynamicShop.dsPrefix(player) + t(player, "HELP.TITLE").replace("{command}", "shophours"));
-        player.sendMessage(" - " + t(player, "HELP.USAGE") + ": /ds shop <shopname> shophours <open> <close>");
+        player.sendMessage(" - " + t(player, "HELP.USAGE") + ": ... shophours <open> <close>");
 
         player.sendMessage("");
     }

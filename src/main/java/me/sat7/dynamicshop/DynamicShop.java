@@ -6,12 +6,13 @@ import me.sat7.dynamicshop.commands.CMDManager;
 import me.sat7.dynamicshop.commands.Optional;
 import me.sat7.dynamicshop.commands.Root;
 import me.sat7.dynamicshop.constants.Constants;
+import me.sat7.dynamicshop.economyhook.PlayerpointHook;
 import me.sat7.dynamicshop.events.*;
 import me.sat7.dynamicshop.files.CustomConfig;
 import me.sat7.dynamicshop.guis.QuickSell;
 import me.sat7.dynamicshop.guis.StartPage;
 import me.sat7.dynamicshop.guis.UIManager;
-import me.sat7.dynamicshop.jobshook.JobsHook;
+import me.sat7.dynamicshop.economyhook.JobsHook;
 import me.sat7.dynamicshop.utilities.*;
 import net.md_5.bungee.api.ChatColor;
 import net.md_5.bungee.api.chat.ClickEvent;
@@ -20,7 +21,10 @@ import net.md_5.bungee.api.chat.HoverEvent;
 import net.md_5.bungee.api.chat.TextComponent;
 import net.milkbowl.vault.economy.Economy;
 
+import org.black_ixx.playerpoints.PlayerPoints;
+import org.black_ixx.playerpoints.PlayerPointsAPI;
 import org.bstats.bukkit.Metrics;
+import org.bukkit.configuration.ConfigurationSection;
 import org.bukkit.entity.Player;
 import org.bukkit.plugin.java.JavaPlugin;
 
@@ -45,6 +49,8 @@ public final class DynamicShop extends JavaPlugin implements Listener
     {
         return econ;
     }
+
+    public static PlayerPointsAPI ppAPI;
 
     public static DynamicShop plugin;
     public static ConsoleCommandSender console;
@@ -151,6 +157,7 @@ public final class DynamicShop extends JavaPlugin implements Listener
         startSaveLogsTask();
         startCullLogsTask();
         hookIntoJobs();
+        hookIntoPlayerPoints();
         InitPapi();
 
         // 완료
@@ -171,7 +178,7 @@ public final class DynamicShop extends JavaPlugin implements Listener
         }
         else
         {
-            console.sendMessage(Constants.DYNAMIC_SHOP_PREFIX + " Vault Found");
+            console.sendMessage(Constants.DYNAMIC_SHOP_PREFIX + " 'Vault' Found");
         }
 
         SetupRSP();
@@ -279,11 +286,11 @@ public final class DynamicShop extends JavaPlugin implements Listener
         isPapiExist = Bukkit.getPluginManager().getPlugin("PlaceholderAPI") != null;
         if(isPapiExist)
         {
-            console.sendMessage(Constants.DYNAMIC_SHOP_PREFIX + " PlaceholderAPI Found");
+            console.sendMessage(Constants.DYNAMIC_SHOP_PREFIX + " 'PlaceholderAPI' Found");
         }
         else
         {
-            console.sendMessage(Constants.DYNAMIC_SHOP_PREFIX + " PlaceholderAPI Not Found");
+            console.sendMessage(Constants.DYNAMIC_SHOP_PREFIX + " 'PlaceholderAPI' Not Found");
         }
     }
 
@@ -342,12 +349,28 @@ public final class DynamicShop extends JavaPlugin implements Listener
         // Jobs
         if (getServer().getPluginManager().getPlugin("Jobs") == null)
         {
-            console.sendMessage(Constants.DYNAMIC_SHOP_PREFIX + " Jobs Reborn Not Found");
+            console.sendMessage(Constants.DYNAMIC_SHOP_PREFIX + " 'Jobs Reborn' Not Found");
             JobsHook.jobsRebornActive = false;
         } else
         {
-            console.sendMessage(Constants.DYNAMIC_SHOP_PREFIX + " Jobs Reborn Found");
+            console.sendMessage(Constants.DYNAMIC_SHOP_PREFIX + " 'Jobs Reborn' Found");
             JobsHook.jobsRebornActive = true;
+        }
+    }
+
+    private void hookIntoPlayerPoints()
+    {
+        if (Bukkit.getPluginManager().isPluginEnabled("PlayerPoints"))
+        {
+            console.sendMessage(Constants.DYNAMIC_SHOP_PREFIX + " 'PlayerPoints' Found");
+            ppAPI = PlayerPoints.getInstance().getAPI();
+            PlayerpointHook.isPPActive = true;
+
+        }
+        else
+        {
+            console.sendMessage(Constants.DYNAMIC_SHOP_PREFIX + " 'PlayerPoints' Not Found");
+            PlayerpointHook.isPPActive = false;
         }
     }
 
@@ -409,8 +432,39 @@ public final class DynamicShop extends JavaPlugin implements Listener
         QuickSell.quickSellGui = new CustomConfig();
         QuickSell.SetupQuickSellGUIFile();
 
+        ConfigUpdate();
+
         getConfig().set("Version", configVersion);
         saveConfig();
+    }
+
+    private void ConfigUpdate()
+    {
+        int userVersion = getConfig().getInt("Version");
+        if (userVersion == 3)
+        {
+            for(Map.Entry<String, CustomConfig> entry : ShopUtil.shopConfigFiles.entrySet())
+            {
+                ConfigurationSection cmdCS = entry.getValue().get().getConfigurationSection("Options.command");
+                if(cmdCS == null)
+                    continue;
+
+                boolean somethingChanged = false;
+                if(cmdCS.contains("sell"))
+                {
+                    cmdCS.set("sell.0", cmdCS.get("sell"));
+                    somethingChanged = true;
+                }
+                if(cmdCS.contains("buy"))
+                {
+                    cmdCS.set("buy.0", cmdCS.get("buy"));
+                    somethingChanged = true;
+                }
+
+                if(somethingChanged)
+                    entry.getValue().save();
+            }
+        }
     }
 
     private void setupUserFile()

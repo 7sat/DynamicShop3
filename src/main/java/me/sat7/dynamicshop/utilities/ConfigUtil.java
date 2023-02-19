@@ -13,7 +13,7 @@ public final class ConfigUtil
     @Setter
     private static int currentTax;
 
-    public final static int configVersion = 3;
+    public final static int configVersion = 4;
 
     private final static String[] dataKeys = new String[]
             {

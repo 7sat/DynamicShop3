@@ -100,6 +100,7 @@ public final class LangUtil
             ccLang.get().addDefault("SHOP_SETTING.LOCAL_SHOP_LORE", "§f실제 상점 위치를 방문해야 합니다.\n§f상점의 위치를 설정해야만 합니다.");
             ccLang.get().addDefault("SHOP_SETTING.DELIVERY_CHARGE_LORE", "§f배달비를 지불하고 localshop에서 원격으로 거래합니다.");
             ccLang.get().addDefault("SHOP_SETTING.JOB_POINT_LORE", "§fJobs 플러그인의 job point로 거래합니다.");
+            ccLang.get().addDefault("SHOP_SETTING.PLAYER_POINT_LORE", "§fPlayerPoint 플러그인의 point로 거래합니다.");
             ccLang.get().addDefault("SHOP_SETTING.SHOW_VALUE_CHANGE_LORE", "§f가격 변화량을 표시합니다.");
             ccLang.get().addDefault("SHOP_SETTING.HIDE_STOCK", "§f재고 수량 표시를 숨깁니다.");
             ccLang.get().addDefault("SHOP_SETTING.HIDE_PRICING_TYPE", "§f가격 유형 표기를 숨깁니다.");
@@ -118,7 +119,7 @@ public final class LangUtil
             ccLang.get().addDefault("SHOP_SETTING.COMMAND_SELL", "§f판매시 명령어");
             ccLang.get().addDefault("SHOP_SETTING.COMMAND_BUY", "§f구매시 명령어");
             ccLang.get().addDefault("SHOP_SETTING.COMMAND_LORE1", "§e좌클릭: 설정");
-            ccLang.get().addDefault("SHOP_SETTING.COMMAND_LORE2", "§e씨프트 우클릭: 삭제");
+            ccLang.get().addDefault("SHOP_SETTING.COMMAND_LORE3", "§e씨프트 우클릭: 마지막 항목 삭제");
 
             ccLang.get().addDefault("ROTATION_EDITOR_TITLE", "§3로테이션 에디터");
             ccLang.get().addDefault("ROTATION_EDITOR.ENABLED", "§a로테이션 켜짐");
@@ -299,11 +300,14 @@ public final class LangUtil
             ccLang.get().addDefault("MESSAGE.SELL_SUCCESS", "§f{item} {amount}개를 {price}에 판매함. 잔액: {bal}");
             ccLang.get().addDefault("MESSAGE.BUY_SUCCESS_JP", "§f{item} {amount}개를 {price}포인트에 구매함. 남은포인트: {bal}");
             ccLang.get().addDefault("MESSAGE.SELL_SUCCESS_JP", "§f{item} {amount}개를 {price}포인트에 판매함. 남은포인트: {bal}");
+            ccLang.get().addDefault("MESSAGE.BUY_SUCCESS_PP", "§f{item} {amount}개를 {price}포인트에 구매함. 남은포인트: {bal}");
+            ccLang.get().addDefault("MESSAGE.SELL_SUCCESS_PP", "§f{item} {amount}개를 {price}포인트에 판매함. 남은포인트: {bal}");
             ccLang.get().addDefault("MESSAGE.QSELL_NA", "§f해당 아이탬을 취급하는 상점이 없습니다.");
             ccLang.get().addDefault("MESSAGE.DELIVERY_CHARGE", "§f배달비: {fee}");
             ccLang.get().addDefault("MESSAGE.DELIVERY_CHARGE_NA", "§f다른 월드로 배달할 수 없습니다.");
             ccLang.get().addDefault("MESSAGE.NOT_ENOUGH_MONEY", "§f돈이 부족합니다. 잔액: {bal}");
             ccLang.get().addDefault("MESSAGE.NOT_ENOUGH_POINT", "§f포인트가 부족합니다. 잔액: {bal}");
+            ccLang.get().addDefault("MESSAGE.NOT_ENOUGH_PLAYER_POINT", "§f플레이어 포인트가 부족합니다. 잔액: {bal}");
             ccLang.get().addDefault("MESSAGE.NO_ITEM_TO_SELL", "§f판매 할 아이탬이 없습니다.");
             ccLang.get().addDefault("MESSAGE.INVENTORY_FULL", "§4인벤토리에 빈 공간이 없습니다!");
             ccLang.get().addDefault("MESSAGE.IRREVERSIBLE", "§f이 행동은 되돌릴 수 없습니다!");
@@ -322,6 +326,9 @@ public final class LangUtil
             ccLang.get().addDefault("MESSAGE.SHOP_DISABLED", "이 상점은 비황성화된 상태입니다. 어드민이 아닌 유저는 접근할 수 없습니다. 상점 설정에서 활성화 할 수 있습니다.");
             ccLang.get().addDefault("MESSAGE.ROTATION_SHARED_DATA_MISSING", "§e[ ! ]§f'{0}/SharedData.yml' 에서 {1} 개의 아이템에 대한 정보를 찾을 수 없었습니다. 이 아이템들은 장식으로 추가되었습니다.");
             ccLang.get().addDefault("MESSAGE.ENTER_COMMAND", "명령어를 '/' 제외하고 입력하세요.");
+            ccLang.get().addDefault("MESSAGE.ENTER_COMMAND_2", "'인덱스/명령어' 형태로 입력하세요.");
+            ccLang.get().addDefault("MESSAGE.SELL_COMMAND_CUR", "현재 적용중인 판매 명령어:");
+            ccLang.get().addDefault("MESSAGE.BUY_COMMAND_CUR", "현재 적용중인 구매 명령어:");
 
             ccLang.get().addDefault("HELP.TITLE", "§f도움말: {command} --------------------");
             ccLang.get().addDefault("HELP.SHOP", "상점을 엽니다.");
@@ -368,6 +375,7 @@ public final class LangUtil
             ccLang.get().addDefault("ERR.DEFAULT_VALUE_OUT_OF_RANGE", "기본 가격은 최소 가격과 최대 가격 사이의 값이어야 합니다.");
             ccLang.get().addDefault("ERR.NO_RECOMMEND_DATA", "Worth.yml 파일에 이 아이탬의 정보가 없습니다.");
             ccLang.get().addDefault("ERR.JOBS_REBORN_NOT_FOUND", "Jobs reborn 플러그인을 찾을 수 없습니다.");
+            ccLang.get().addDefault("ERR.PLAYER_POINTS_NOT_FOUND", "Player points 플러그인을 찾을 수 없습니다.");
             ccLang.get().addDefault("ERR.SHOP_HAS_INF_BAL", "{shop} 상점은 무한계좌 상점입니다.");
             ccLang.get().addDefault("ERR.SHOP_DIFF_CURRENCY", "두 상점이 서로 다른 통화를 사용합니다.");
             ccLang.get().addDefault("ERR.PLAYER_NOT_EXIST", "해당 플레이어를 찾을 수 없습니다.");
@@ -399,6 +407,9 @@ public final class LangUtil
             ccLang.get().addDefault("RMB", "우클릭");
             ccLang.get().addDefault("CLOSE", "§f닫기");
             ccLang.get().addDefault("CLOSE_LORE", "§f§n클릭: 닫기");
+
+            ccLang.get().addDefault("JOB_POINTS", "Job Points");
+            ccLang.get().addDefault("PLAYER_POINTS", "Player Points");
 
             ccLang.get().addDefault("PAID_VERSION.DESC", "§f유료 버전에서 사용할 수 있습니다. ");
             ccLang.get().addDefault("PAID_VERSION.GET_PREMIUM", "구매하기");
@@ -479,6 +490,7 @@ public final class LangUtil
             ccLang.get().addDefault("SHOP_SETTING.LOCAL_SHOP_LORE", "§fMust visit actual store locations.");
             ccLang.get().addDefault("SHOP_SETTING.DELIVERY_CHARGE_LORE", "§fYou can pay for delivery without \n§fhaving to go to the shop location to transact.");
             ccLang.get().addDefault("SHOP_SETTING.JOB_POINT_LORE", "§fTrade with job points. \n§fRequires 'Jobs Reborn' plugin");
+            ccLang.get().addDefault("SHOP_SETTING.PLAYER_POINT_LORE", "§fTrade with player points. \n§fRequires 'Player point' plugin");
             ccLang.get().addDefault("SHOP_SETTING.SHOW_VALUE_CHANGE_LORE", "§fShows the amount of change in price.");
             ccLang.get().addDefault("SHOP_SETTING.HIDE_STOCK", "§fHide stock.");
             ccLang.get().addDefault("SHOP_SETTING.HIDE_PRICING_TYPE", "§fHide price type.");
@@ -497,7 +509,7 @@ public final class LangUtil
             ccLang.get().addDefault("SHOP_SETTING.COMMAND_SELL", "§fSell Command");
             ccLang.get().addDefault("SHOP_SETTING.COMMAND_BUY", "§fBuy Command");
             ccLang.get().addDefault("SHOP_SETTING.COMMAND_LORE1", "§eLMB: Set");
-            ccLang.get().addDefault("SHOP_SETTING.COMMAND_LORE2", "§eShift RMB: Delete");
+            ccLang.get().addDefault("SHOP_SETTING.COMMAND_LORE3", "§eShift RMB: Delete last item");
 
             ccLang.get().addDefault("ROTATION_EDITOR_TITLE", "§3Rotation Editor");
             ccLang.get().addDefault("ROTATION_EDITOR.ENABLED", "§aEnabled");
@@ -677,11 +689,14 @@ public final class LangUtil
             ccLang.get().addDefault("MESSAGE.SELL_SUCCESS", "§fSold {item} x{amount} for {price}. Balance: {bal}");
             ccLang.get().addDefault("MESSAGE.BUY_SUCCESS_JP", "§fBought {item} x{amount} for {price}points. Remaining points: {bal}");
             ccLang.get().addDefault("MESSAGE.SELL_SUCCESS_JP", "§fSold {item} x{amount} for {price}points. Remaining points: {bal}");
+            ccLang.get().addDefault("MESSAGE.BUY_SUCCESS_PP", "§fBought {item} x{amount} for {price}points. Remaining points: {bal}");
+            ccLang.get().addDefault("MESSAGE.SELL_SUCCESS_PP", "§fSold {item} x{amount} for {price}points. Remaining points: {bal}");
             ccLang.get().addDefault("MESSAGE.QSELL_NA", "§fThere is no shop that handles this item.");
             ccLang.get().addDefault("MESSAGE.DELIVERY_CHARGE", "§fDelivery fee: {fee}");
             ccLang.get().addDefault("MESSAGE.DELIVERY_CHARGE_NA", "§fIt cannot be delivered to another world.");
             ccLang.get().addDefault("MESSAGE.NOT_ENOUGH_MONEY", "§fNot enough money. balance: {bal}");
             ccLang.get().addDefault("MESSAGE.NOT_ENOUGH_POINT", "§fNot enough points. balance: {bal}");
+            ccLang.get().addDefault("MESSAGE.NOT_ENOUGH_PLAYER_POINT", "§fNot enough player points. balance: {bal}");
             ccLang.get().addDefault("MESSAGE.NO_ITEM_TO_SELL", "§fThere are no items for sale.");
             ccLang.get().addDefault("MESSAGE.INVENTORY_FULL", "§4There are no empty spaces in your inventory!");
             ccLang.get().addDefault("MESSAGE.IRREVERSIBLE", "§fThis action is irreversible!");
@@ -700,6 +715,9 @@ public final class LangUtil
             ccLang.get().addDefault("MESSAGE.SHOP_DISABLED", "This shop is currently disabled. Non-admin users cannot use it. You can enable it in the shop settings.");
             ccLang.get().addDefault("MESSAGE.ROTATION_SHARED_DATA_MISSING", "§e[ ! ]§fThe required data could not be found in '{0}/SharedData.yml' for {1} items. These items have been added as decoration.");
             ccLang.get().addDefault("MESSAGE.ENTER_COMMAND", "Enter the command without '/'.");
+            ccLang.get().addDefault("MESSAGE.ENTER_COMMAND_2", "Enter in the form of 'index/command'.");
+            ccLang.get().addDefault("MESSAGE.SELL_COMMAND_CUR", "Sell commands currently in effect:");
+            ccLang.get().addDefault("MESSAGE.BUY_COMMAND_CUR", "Buy commands currently in effect:");
 
             ccLang.get().addDefault("HELP.TITLE", "§fHelp: {command} --------------------");
             ccLang.get().addDefault("HELP.SHOP", "Open shop");
@@ -746,6 +764,7 @@ public final class LangUtil
             ccLang.get().addDefault("ERR.DEFAULT_VALUE_OUT_OF_RANGE", "The base price must be between the minimum price and the maximum price.");
             ccLang.get().addDefault("ERR.NO_RECOMMEND_DATA", "There is no information for this item in the Worth.yml file.");
             ccLang.get().addDefault("ERR.JOBS_REBORN_NOT_FOUND", "Could not find 'Jobs reborn'.");
+            ccLang.get().addDefault("ERR.PLAYER_POINTS_NOT_FOUND", "Could not find 'Player points'.");
             ccLang.get().addDefault("ERR.SHOP_HAS_INF_BAL", "{shop} is an infinite account store.");
             ccLang.get().addDefault("ERR.SHOP_DIFF_CURRENCY", "The two stores use different currencies.");
             ccLang.get().addDefault("ERR.PLAYER_NOT_EXIST", "The player could not be found.");
@@ -777,6 +796,10 @@ public final class LangUtil
             ccLang.get().addDefault("RMB", "RMB");
             ccLang.get().addDefault("CLOSE", "§fClose");
             ccLang.get().addDefault("CLOSE_LORE", "§f§nClick: Close");
+
+            ccLang.get().addDefault("JOB_POINTS", "Job Points");
+            ccLang.get().addDefault("PLAYER_POINTS", "Player Points");
+
             ccLang.get().addDefault("PAID_VERSION.DESC", "§fAvailable in paid version. ");
             ccLang.get().addDefault("PAID_VERSION.GET_PREMIUM", "Get Premium");
 

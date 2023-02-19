@@ -24,7 +24,7 @@ public class EditAll extends DSCMD
     public void SendHelpMessage(Player player)
     {
         player.sendMessage(DynamicShop.dsPrefix(player) + t(player, "HELP.TITLE").replace("{command}", "editall"));
-        player.sendMessage(" - " + t(player, "HELP.USAGE") + ": /ds shop <shopname> editall <purchaseValue | salesValue | valueMin | valueMax | median | stock | max stock> <= | + | - | * | /> <amount>");
+        player.sendMessage(" - " + t(player, "HELP.USAGE") + ": ... editall <purchaseValue | salesValue | valueMin | valueMax | median | stock | max stock> <= | + | - | * | /> <amount>");
         player.sendMessage(" - " + t(player, "HELP.EDIT_ALL"));
         player.sendMessage(" - " + t(player, "HELP.EDIT_ALL_2"));
 

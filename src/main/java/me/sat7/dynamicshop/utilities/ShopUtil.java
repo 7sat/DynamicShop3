@@ -670,7 +670,9 @@ public final class ShopUtil
                     continue;
                 }
 
-                if (data.get().contains("Options.flag.signshop") || data.get().contains("Options.flag.jobpoint"))
+                if (data.get().contains("Options.flag.signshop") ||
+                    data.get().contains("Options.flag.jobpoint") ||
+                    data.get().contains("Options.flag.playerpoint"))
                     continue;
 
                 // 영업시간 확인
@@ -691,7 +693,8 @@ public final class ShopUtil
                     if (tradeType != null && tradeType.equalsIgnoreCase("BuyOnly")) continue; // 구매만 가능함
 
                     // 상점에 돈이 없음
-                    if (ShopUtil.getShopBalance(entry.getKey()) != -1 && ShopUtil.getShopBalance(entry.getKey()) < Calc.calcTotalCost(entry.getKey(), String.valueOf(sameItemIdx), itemStack.getAmount()))
+                    if (ShopUtil.getShopBalance(entry.getKey()) != -1 &&
+                        ShopUtil.getShopBalance(entry.getKey()) < Calc.calcTotalCost(entry.getKey(), String.valueOf(sameItemIdx), itemStack.getAmount())[0])
                     {
                         continue;
                     }
@@ -748,7 +751,9 @@ public final class ShopUtil
                 continue;
             }
 
-            if (data.get().contains("Options.flag.signshop") || data.get().contains("Options.flag.jobpoint"))
+            if (data.get().contains("Options.flag.signshop") ||
+                data.get().contains("Options.flag.jobpoint") ||
+                data.get().contains("Options.flag.playerpoint"))
                 continue;
 
             // 영업시간 확인
@@ -1177,7 +1182,7 @@ public final class ShopUtil
         }
     }
 
-    public static void SetShopSellCommand(String shopName, String command)
+    public static void SetShopSellCommand(String shopName, int idx, String command)
     {
         CustomConfig shopData = ShopUtil.shopConfigFiles.get(shopName);
         if (shopData == null)
@@ -1187,11 +1192,11 @@ public final class ShopUtil
         if (shopConf == null)
             return;
 
-        shopConf.set("command.sell", command);
+        shopConf.set("command.sell." + idx, command);
         shopData.save();
     }
 
-    public static void SetShopBuyCommand(String shopName, String command)
+    public static void SetShopBuyCommand(String shopName, int idx, String command)
     {
         CustomConfig shopData = ShopUtil.shopConfigFiles.get(shopName);
         if (shopData == null)
@@ -1201,7 +1206,7 @@ public final class ShopUtil
         if (shopConf == null)
             return;
 
-        shopConf.set("command.buy", command);
+        shopConf.set("command.buy." + idx, command);
         shopData.save();
     }
 }

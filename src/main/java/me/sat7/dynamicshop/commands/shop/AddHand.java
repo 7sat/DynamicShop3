@@ -25,8 +25,8 @@ public class AddHand extends DSCMD
     public void SendHelpMessage(Player player)
     {
         player.sendMessage(DynamicShop.dsPrefix(player) + t(player, "HELP.TITLE").replace("{command}", "addhand"));
-        player.sendMessage(" - " + t(player, "HELP.USAGE") + ": /ds shop <shopname> addhand <value> <median> <stock>");
-        player.sendMessage(" - " + t(player, "HELP.USAGE") + ": /ds shop <shopname> addhand <value> <min value> <max value> <median> <stock>");
+        player.sendMessage(" - " + t(player, "HELP.USAGE") + ": ... addhand <value> <median> <stock>");
+        player.sendMessage(" - " + t(player, "HELP.USAGE") + ": ... addhand <value> <min value> <max value> <median> <stock>");
         player.sendMessage(" - " + t(player, "HELP.SHOP_ADD_HAND"));
         player.sendMessage(" - " + t(player, "HELP.PRICE"));
         player.sendMessage(" - " + t(player, "HELP.INF_STATIC"));

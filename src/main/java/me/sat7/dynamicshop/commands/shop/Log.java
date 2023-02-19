@@ -26,8 +26,8 @@ public class Log extends DSCMD
     public void SendHelpMessage(Player player)
     {
         player.sendMessage(DynamicShop.dsPrefix(player) + t(player, "HELP.TITLE").replace("{command}", "log"));
-        player.sendMessage(" - " + t(player, "HELP.USAGE") + ": /ds shop <shop name> log <enable | disable | clear>");
-        player.sendMessage(" - " + t(player, "HELP.USAGE") + ": /ds shop <shop name> log <printToConsole | printToAdmin> <on | off>");
+        player.sendMessage(" - " + t(player, "HELP.USAGE") + ": ... log <enable | disable | clear>");
+        player.sendMessage(" - " + t(player, "HELP.USAGE") + ": ... log <printToConsole | printToAdmin> <on | off>");
 
         player.sendMessage("");
     }

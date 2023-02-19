@@ -27,8 +27,8 @@ public class StockStabilizing extends DSCMD
     public void SendHelpMessage(Player player)
     {
         player.sendMessage(DynamicShop.dsPrefix(player) + t(player, "HELP.TITLE").replace("{command}", "stockStabilizing"));
-        player.sendMessage(" - " + t(player, "HELP.USAGE") + ": /ds shop <shopname> stockStabilizing <interval> <strength>");
-        player.sendMessage(" - " + t(player, "HELP.USAGE") + ": /ds shop <shopname> stockStabilizing off");
+        player.sendMessage(" - " + t(player, "HELP.USAGE") + ": ... stockStabilizing <interval> <strength>");
+        player.sendMessage(" - " + t(player, "HELP.USAGE") + ": ... stockStabilizing off");
 
         player.sendMessage("");
     }

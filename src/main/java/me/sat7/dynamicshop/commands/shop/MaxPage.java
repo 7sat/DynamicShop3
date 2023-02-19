@@ -25,7 +25,7 @@ public class MaxPage extends DSCMD
     public void SendHelpMessage(Player player)
     {
         player.sendMessage(DynamicShop.dsPrefix(player) + t(player, "HELP.TITLE").replace("{command}", "maxpage"));
-        player.sendMessage(" - " + t(player, "HELP.USAGE") + ": /ds shop <shopname> maxpage <number>");
+        player.sendMessage(" - " + t(player, "HELP.USAGE") + ": ... maxpage <number>");
 
         player.sendMessage("");
     }
