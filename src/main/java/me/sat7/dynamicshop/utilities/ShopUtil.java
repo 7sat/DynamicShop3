@@ -1193,6 +1193,8 @@ public final class ShopUtil
             return;
 
         shopConf.set("command.sell." + idx, command);
+        CleanupCommandIndex(shopName, "sell");
+
         shopData.save();
     }
 
@@ -1207,6 +1209,29 @@ public final class ShopUtil
             return;
 
         shopConf.set("command.buy." + idx, command);
+        CleanupCommandIndex(shopName, "buy");
+
         shopData.save();
+    }
+
+    public static void CleanupCommandIndex(String shopName, String sellBuyString)
+    {
+        CustomConfig shopData = ShopUtil.shopConfigFiles.get(shopName);
+        if (shopData == null)
+            return;
+
+        ArrayList<Object> tempDatas = new ArrayList<>();
+        if (shopData.get().getConfigurationSection("Options.command." + sellBuyString) != null)
+        {
+            for (Map.Entry<String, Object> s : shopData.get().getConfigurationSection("Options.command." + sellBuyString).getValues(false).entrySet())
+            {
+                tempDatas.add(s.getValue());
+            }
+        }
+        shopData.get().set("Options.command." + sellBuyString, null);
+        for (int i = 0; i < tempDatas.size(); i++)
+        {
+            shopData.get().set("Options.command." + sellBuyString + "." + i, tempDatas.get(i));
+        }
     }
 }

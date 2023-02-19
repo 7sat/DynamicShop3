@@ -125,7 +125,7 @@ public class Command extends DSCMD
             }
 
             shopData.get().set("Options.command." + sellBuyString + "." + idx, null);
-            CleanupIndex(shopData, "sellBuyString");
+            ShopUtil.CleanupCommandIndex(Shop.GetShopName(args), sellBuyString);
             PrintCurrentState(sender, Shop.GetShopName(args), true, true);
         }
         else if(args[4].equalsIgnoreCase("add") && args.length >= 7)
@@ -153,29 +153,12 @@ public class Command extends DSCMD
             }
 
             shopData.get().set("Options.command." + sellBuyString + "." + idx, cmdString);
-            CleanupIndex(shopData, "sellBuyString");
+            ShopUtil.CleanupCommandIndex(Shop.GetShopName(args), sellBuyString);
             PrintCurrentState(sender, Shop.GetShopName(args), true, true);
         }
         else
         {
             sender.sendMessage(DynamicShop.dsPrefix(sender) + t(sender, "ERR.WRONG_USAGE"));
-        }
-    }
-
-    private void CleanupIndex(CustomConfig shopData, String sellBuyString)
-    {
-        ArrayList<Object> tempDatas = new ArrayList<>();
-        if (shopData.get().getConfigurationSection("Options.command." + sellBuyString) != null)
-        {
-            for (Map.Entry<String, Object> s : shopData.get().getConfigurationSection("Options.command." + sellBuyString).getValues(false).entrySet())
-            {
-                tempDatas.add(s.getValue());
-            }
-        }
-        shopData.get().set("Options.command." + sellBuyString, null);
-        for (int i = 0; i < tempDatas.size(); i++)
-        {
-            shopData.get().set("Options.command." + sellBuyString + "." + i, tempDatas.get(i));
         }
     }
 }
