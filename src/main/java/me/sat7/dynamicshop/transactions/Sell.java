@@ -276,7 +276,8 @@ public final class Sell
 
     private static void SendSellMessage(ItemTrade.CURRENCY currency, Economy econ, EconomyResponse r, Player player, int actualAmount, double priceSum, ItemStack tempIS)
     {
-        boolean useLocalizedName = DynamicShop.plugin.getConfig().getBoolean("UI.LocalizedItemName");
+        boolean itemHasCustomName = tempIS.getItemMeta() != null && tempIS.getItemMeta().hasDisplayName();
+        boolean useLocalizedName = !itemHasCustomName && DynamicShop.plugin.getConfig().getBoolean("UI.LocalizedItemName");
         String message = "";
         if (currency == ItemTrade.CURRENCY.VAULT)
         {
@@ -305,7 +306,8 @@ public final class Sell
             LangUtil.sendMessageWithLocalizedItemName(player, message, tempIS.getType());
         } else
         {
-            message = message.replace("{item}", ItemsUtil.getBeautifiedName(tempIS.getType()));
+            String itemNameFinal = itemHasCustomName ? tempIS.getItemMeta().getDisplayName() : ItemsUtil.getBeautifiedName(tempIS.getType());
+            message = message.replace("{item}", itemNameFinal);
             player.sendMessage(message);
         }
     }

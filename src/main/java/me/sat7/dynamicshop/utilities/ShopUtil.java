@@ -91,54 +91,60 @@ public final class ShopUtil
     // 상점에서 아이탬타입 찾기
     public static int findItemFromShop(String shopName, ItemStack item)
     {
-        try {
-            return asyncFindItem(shopName, item).get();
-        } catch (InterruptedException e) {
-            e.printStackTrace();
-        } catch (ExecutionException e) {
-            e.printStackTrace();
-        }
-        return -1;
+        return FindItem(shopName, item);
+        //try {
+        //    return asyncFindItem(shopName, item).get();
+        //} catch (InterruptedException e) {
+        //    e.printStackTrace();
+        //} catch (ExecutionException e) {
+        //    e.printStackTrace();
+        //}
+        //return -1;
     }
 
     public static CompletableFuture<Integer> asyncFindItem(String shopName, ItemStack item) {
         return CompletableFuture.supplyAsync(() -> {
-            if (item == null || item.getType().isAir())
-                return -1;
+            return FindItem(shopName, item);
+        });
+    }
 
-            CustomConfig data = shopConfigFiles.get(shopName);
-            if (data == null)
-                return -1;
+    public static Integer FindItem(String shopName, ItemStack item)
+    {
+        if (item == null || item.getType().isAir())
+            return -1;
 
-            for (String s : data.get().getKeys(false))
+        CustomConfig data = shopConfigFiles.get(shopName);
+        if (data == null)
+            return -1;
+
+        for (String s : data.get().getKeys(false))
+        {
+            try
             {
-                try
+                int i = Integer.parseInt(s);
+            } catch (Exception e)
+            {
+                continue;
+            }
+
+            if (!data.get().contains(s + ".value")) continue; // 장식용임
+
+            if (data.get().getString(s + ".mat").equals(item.getType().toString()))
+            {
+                String metaStr = data.get().getString(s + ".itemStack");
+
+                if (metaStr == null && !item.hasItemMeta())
                 {
-                    int i = Integer.parseInt(s);
-                } catch (Exception e)
-                {
-                    continue;
+                    return Integer.parseInt(s);
                 }
 
-                if (!data.get().contains(s + ".value")) continue; // 장식용임
-
-                if (data.get().getString(s + ".mat").equals(item.getType().toString()))
+                if (metaStr != null && metaStr.equals(item.getItemMeta().toString()))
                 {
-                    String metaStr = data.get().getString(s + ".itemStack");
-
-                    if (metaStr == null && !item.hasItemMeta())
-                    {
-                        return Integer.parseInt(s);
-                    }
-
-                    if (metaStr != null && metaStr.equals(item.getItemMeta().toString()))
-                    {
-                        return Integer.parseInt(s);
-                    }
+                    return Integer.parseInt(s);
                 }
             }
-            return -1;
-        });
+        }
+        return -1;
     }
 
     // 상점에 아이탬 추가

@@ -349,7 +349,7 @@ public final class Shop extends InGameUI
         // 권한
         String finalPermText = "";
         String perm = shopData.getString("Options.permission");
-        if (!(perm.length() == 0))
+        if (perm != null && perm.length() > 0)
         {
             finalPermText += t(player, "SHOP.PERMISSION") + "\n";
             finalPermText += t(player, "SHOP.PERMISSION_ITEM").replace("{permission}", perm) + "\n";
