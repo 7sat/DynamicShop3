@@ -130,8 +130,6 @@ public final class Sell
 
         if (player == null || r.transactionSuccess())
         {
-            Bukkit.getServer().getScheduler().runTaskAsynchronously(DynamicShop.plugin, () -> saveShopAsync(shopName));
-
             //로그 기록
             LogUtil.addLog(shopName, tempIS.getType().toString(), -tradeAmount, priceSum, "vault", player != null ? player.getName() : shopName);
 
@@ -153,6 +151,8 @@ public final class Sell
             // 커맨드 실행
             RunSellCommand(data, player, shopName, tempIS, tradeAmount, priceSum, calcResult[1]);
 
+            ShopUtil.shopDirty.put(shopName, true);
+
             // 이벤트 호출
             if (player != null)
             {
@@ -171,11 +171,6 @@ public final class Sell
         }
 
         return priceSum;
-    }
-
-    public static synchronized void saveShopAsync(String shopName) {
-        CustomConfig data = ShopUtil.shopConfigFiles.get(shopName);
-        data.save();
     }
 
     public static void sell(ItemTrade.CURRENCY currency, Player player, String shopName, String tradeIdx, ItemStack tempIS, double priceSum, boolean infiniteStock)
@@ -266,7 +261,7 @@ public final class Sell
         // 커맨드 실행
         RunSellCommand(data, player, shopName, tempIS, actualAmount, priceSum, calcResult[1]);
 
-        data.save();
+        ShopUtil.shopDirty.put(shopName, true);
         DynaShopAPI.openItemTradeGui(player, shopName, tradeIdx);
 
         // 이벤트 호출

@@ -85,6 +85,7 @@ public final class DynamicShop extends JavaPlugin implements Listener
     private BukkitTask periodicRepetitiveTask;
     private BukkitTask saveLogsTask;
     private BukkitTask cullLogsTask;
+    private BukkitTask shopSaveTask;
 
     public static boolean updateAvailable = false;
     public static String lastVersion = "";
@@ -105,20 +106,38 @@ public final class DynamicShop extends JavaPlugin implements Listener
 
         console.sendMessage("========== DEBUG LOG ==========");
 
-        console.sendMessage("userTempData: size" + userTempData.size());
+        console.sendMessage("userTempData: size: " + userTempData.size());
+        int idx = 0;
         for(Map.Entry<UUID, String> entry : userTempData.entrySet())
+        {
             console.sendMessage(entry.getKey() + ": " + entry.getValue());
+            idx++;
+            if (idx > 9)
+                break;
+        }
 
         console.sendMessage("---------------------");
 
-        console.sendMessage("userInteractItem: size" + userInteractItem.size());
+        console.sendMessage("userInteractItem: size: " + userInteractItem.size());
+        idx = 0;
         for(Map.Entry<UUID, String> entry : userInteractItem.entrySet())
+        {
+            console.sendMessage(entry.getKey() + ": " + entry.getValue());
+            idx++;
+            if (idx > 9)
+                break;
+        }
+
+        console.sendMessage("---------------------");
+
+        console.sendMessage("ShopUtil.shopConfigFiles: size: " + ShopUtil.shopConfigFiles.size());
+        for(Map.Entry<String, CustomConfig> entry : ShopUtil.shopConfigFiles.entrySet())
             console.sendMessage(entry.getKey() + ": " + entry.getValue());
 
         console.sendMessage("---------------------");
 
-        console.sendMessage("ShopUtil.shopConfigFiles: size" + ShopUtil.shopConfigFiles.size());
-        for(Map.Entry<String, CustomConfig> entry : ShopUtil.shopConfigFiles.entrySet())
+        console.sendMessage("ShopUtil.ShopUtil.shopDirty: size: " + ShopUtil.shopDirty.size());
+        for(Map.Entry<String, Boolean> entry : ShopUtil.shopDirty.entrySet())
             console.sendMessage(entry.getKey() + ": " + entry.getValue());
 
         console.sendMessage("---------------------");
@@ -156,6 +175,7 @@ public final class DynamicShop extends JavaPlugin implements Listener
         PeriodicRepetitiveTask();
         startSaveLogsTask();
         startCullLogsTask();
+        StartShopSaveTask();
         hookIntoJobs();
         hookIntoPlayerPoints();
         InitPapi();
@@ -344,6 +364,17 @@ public final class DynamicShop extends JavaPlugin implements Listener
         UIManager.RefreshUI();
     }
 
+    public void StartShopSaveTask()
+    {
+        if (shopSaveTask != null)
+        {
+            shopSaveTask.cancel();
+        }
+
+        long interval = (20L * 10L);
+        shopSaveTask = Bukkit.getScheduler().runTaskTimer(DynamicShop.plugin, ShopUtil::SaveDirtyShop, interval, interval);
+    }
+
     private void hookIntoJobs()
     {
         // Jobs
@@ -503,6 +534,7 @@ public final class DynamicShop extends JavaPlugin implements Listener
     public void onDisable()
     {
         DynamicShop.ccUser.save();
+        ShopUtil.ForceSaveAllShop();
 
         Bukkit.getScheduler().cancelTasks(this);
         console.sendMessage(Constants.DYNAMIC_SHOP_PREFIX + " Disabled");

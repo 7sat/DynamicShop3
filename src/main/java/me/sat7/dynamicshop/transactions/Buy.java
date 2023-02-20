@@ -194,7 +194,7 @@ public final class Buy
         // 커맨드 실행
         RunBuyCommand(data, player, shopName, tempIS, actualAmount, priceSum);
 
-        data.save();
+        ShopUtil.shopDirty.put(shopName, true);
         DynaShopAPI.openItemTradeGui(player, shopName, tradeIdx);
 
         // 이벤트 호출

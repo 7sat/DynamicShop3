@@ -26,6 +26,7 @@ import static me.sat7.dynamicshop.utilities.MathUtil.Clamp;
 public final class ShopUtil
 {
     public static final HashMap<String, CustomConfig> shopConfigFiles = new HashMap<>();
+    public static final HashMap<String, Boolean> shopDirty = new HashMap<>();
 
     private ShopUtil()
     {
@@ -43,6 +44,7 @@ public final class ShopUtil
     public static void ReloadAllShop()
     {
         shopConfigFiles.clear();
+        shopDirty.clear();
 
         File[] listOfFiles = new File(DynamicShop.plugin.getDataFolder() + "/Shop").listFiles();
         if(listOfFiles != null)
@@ -55,6 +57,7 @@ public final class ShopUtil
                 String shopName = f.getName().substring(0, idx );
                 shopCC.setup(shopName, "Shop");
                 shopConfigFiles.put(shopName, shopCC);
+                shopDirty.put(shopName, false);
             }
         }
     }
@@ -92,20 +95,6 @@ public final class ShopUtil
     public static int findItemFromShop(String shopName, ItemStack item)
     {
         return FindItem(shopName, item);
-        //try {
-        //    return asyncFindItem(shopName, item).get();
-        //} catch (InterruptedException e) {
-        //    e.printStackTrace();
-        //} catch (ExecutionException e) {
-        //    e.printStackTrace();
-        //}
-        //return -1;
-    }
-
-    public static CompletableFuture<Integer> asyncFindItem(String shopName, ItemStack item) {
-        return CompletableFuture.supplyAsync(() -> {
-            return FindItem(shopName, item);
-        });
     }
 
     public static Integer FindItem(String shopName, ItemStack item)
@@ -434,6 +423,8 @@ public final class ShopUtil
         data.get().set("Options.title", newName);
         shopConfigFiles.put(newName, data);
         shopConfigFiles.remove(shopName);
+        shopDirty.put(newName, false);
+        shopDirty.remove(shopName);
     }
 
     // 상점 병합
@@ -482,6 +473,7 @@ public final class ShopUtil
 
         dataB.delete();
         shopConfigFiles.remove(shopB);
+        shopDirty.remove(shopB);
 
         dataA.save();
         dataA.reload();
@@ -1014,6 +1006,7 @@ public final class ShopUtil
             data.get().set("1.stock", 10000);
 
             shopConfigFiles.put("SampleShop", data);
+            shopDirty.put("SampleShop", false);
 
             data.get().options().copyDefaults(true);
             data.save();
@@ -1059,6 +1052,7 @@ public final class ShopUtil
                 data.save();
 
                 ShopUtil.shopConfigFiles.put(oldShopName, data);
+                ShopUtil.shopDirty.put(oldShopName,false);
             }
 
             file.delete();
@@ -1238,6 +1232,31 @@ public final class ShopUtil
         for (int i = 0; i < tempDatas.size(); i++)
         {
             shopData.get().set("Options.command." + sellBuyString + "." + i, tempDatas.get(i));
+        }
+    }
+
+    public static void SaveDirtyShop()
+    {
+        for(Map.Entry<String, Boolean> entry : shopDirty.entrySet())
+        {
+            if(entry.getValue())
+            {
+                if(DynamicShop.DEBUG_MODE)
+                {
+                    DynamicShop.console.sendMessage("DirtyShop Saved: " + entry.getValue().toString());
+                }
+
+                shopDirty.put(entry.getKey(), false);
+                shopConfigFiles.get(entry.getKey()).save();
+            }
+        }
+    }
+
+    public static void ForceSaveAllShop()
+    {
+        for(Map.Entry<String, CustomConfig> entry : shopConfigFiles.entrySet())
+        {
+            entry.getValue().save();
         }
     }
 }

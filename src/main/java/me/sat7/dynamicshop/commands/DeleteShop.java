@@ -40,6 +40,8 @@ public final class DeleteShop extends DSCMD
             data.delete();
 
             ShopUtil.shopConfigFiles.remove(args[1]);
+            ShopUtil.shopDirty.remove(args[1]);
+
             sender.sendMessage(DynamicShop.dsPrefix(sender) + t(sender, "MESSAGE.SHOP_DELETED"));
         } else
         {

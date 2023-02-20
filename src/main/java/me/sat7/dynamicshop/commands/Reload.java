@@ -57,6 +57,7 @@ public final class Reload extends DSCMD
 
         DynamicShop.plugin.startSaveLogsTask();
         DynamicShop.plugin.startCullLogsTask();
+        DynamicShop.plugin.StartShopSaveTask();
 
         QuickSell.quickSellGui.reload();
         QuickSell.SetupQuickSellGUIFile();

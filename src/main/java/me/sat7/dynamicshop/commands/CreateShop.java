@@ -75,6 +75,7 @@ public final class CreateShop extends DSCMD
             data.save();
 
             ShopUtil.shopConfigFiles.put(shopname, data);
+            ShopUtil.shopDirty.put(shopname, false);
 
             sender.sendMessage(DynamicShop.dsPrefix(sender) + t(sender, "MESSAGE.SHOP_CREATED"));
 
