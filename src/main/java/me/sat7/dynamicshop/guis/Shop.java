@@ -255,7 +255,7 @@ public final class Shop extends InGameUI
                         {
                             itemMetaLoreText += tempLore + "\n";
                         }
-                        itemMetaLoreText = itemMetaLoreText.substring(0, itemMetaLoreText.length() - 2);
+                        itemMetaLoreText = itemMetaLoreText.substring(0, itemMetaLoreText.length() - 1);
                     }
 
                     lore = lore.replace("{\\nBuy}", buyText.isEmpty() ? "" : "\n" + buyText);
