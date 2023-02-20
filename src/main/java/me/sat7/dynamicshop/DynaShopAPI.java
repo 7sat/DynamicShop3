@@ -241,7 +241,7 @@ public final class DynaShopAPI
         if (validateShopName(shopName))
         {
             CustomConfig data = ShopUtil.shopConfigFiles.get(shopName);
-            
+
             ArrayList<ItemStack> list = new ArrayList<>();
             for (String s : data.get().getKeys(false))
             {
@@ -455,7 +455,7 @@ public final class DynaShopAPI
      * Quick Sell
      *
      * @param player seller. This can be null. If null, permission and time are not checked.
-     * @param itemStack Item to sell)
+     * @param itemStack Item to sell.
      * @return price sum.
      */
     public static double QuickSell(Player player, ItemStack itemStack)

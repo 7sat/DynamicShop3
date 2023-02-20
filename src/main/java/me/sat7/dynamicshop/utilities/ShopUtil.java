@@ -94,11 +94,6 @@ public final class ShopUtil
     // 상점에서 아이탬타입 찾기
     public static int findItemFromShop(String shopName, ItemStack item)
     {
-        return FindItem(shopName, item);
-    }
-
-    public static Integer FindItem(String shopName, ItemStack item)
-    {
         if (item == null || item.getType().isAir())
             return -1;
 
@@ -106,17 +101,17 @@ public final class ShopUtil
         if (data == null)
             return -1;
 
+        int idx = 0;
         for (String s : data.get().getKeys(false))
         {
-            try
+            if (idx == 0) //Just skips the first data. (=Options). At least it should be much faster than 'tryCatch+parseInt'.
             {
-                int i = Integer.parseInt(s);
-            } catch (Exception e)
-            {
+                idx++;
                 continue;
             }
 
-            if (!data.get().contains(s + ".value")) continue; // 장식용임
+            if (!data.get().contains(s + ".value"))
+                continue; // 장식용임
 
             if (data.get().getString(s + ".mat").equals(item.getType().toString()))
             {
@@ -626,98 +621,85 @@ public final class ShopUtil
 
     public static String[] FindTheBestShopToSell(Player player, ItemStack itemStack)
     {
-        try {
-            return asyncFindBestShoptoSell(player, itemStack).get();
-        } catch (InterruptedException e) {
-            e.printStackTrace();
-        } catch (ExecutionException e) {
-            e.printStackTrace();
-        }
-        return null;
-    }
+        String topShopName = "";
+        double bestPrice = -1;
+        int tradeIdx = -1;
 
-    public static CompletableFuture<String[]> asyncFindBestShoptoSell(Player player, ItemStack itemStack) {
-        return CompletableFuture.supplyAsync(() -> {
-            String topShopName = "";
-            double bestPrice = -1;
-            int tradeIdx = -1;
+        // 접근가능한 상점중 최고가 찾기
+        for(Map.Entry<String, CustomConfig> entry : shopConfigFiles.entrySet())
+        {
+            CustomConfig data = entry.getValue();
 
-            // 접근가능한 상점중 최고가 찾기
-            for(Map.Entry<String, CustomConfig> entry : shopConfigFiles.entrySet())
+            // 권한 없는 상점
+            if(player != null)
             {
-                CustomConfig data = entry.getValue();
-
-                // 권한 없는 상점
-                if(player != null)
+                String permission = data.get().getString("Options.permission");
+                if (permission != null && permission.length() > 0 && !player.hasPermission(permission) && !player.hasPermission(permission + ".sell"))
                 {
-                    String permission = data.get().getString("Options.permission");
-                    if (permission != null && permission.length() > 0 && !player.hasPermission(permission) && !player.hasPermission(permission + ".sell"))
-                    {
-                        continue;
-                    }
-                }
-
-                // 비활성화된 상점
-                boolean enable = data.get().getBoolean("Options.enable", true);
-                if (!enable)
                     continue;
-
-                // 표지판 전용 상점, 지역상점, 잡포인트 상점
-                boolean outside = !CheckShopLocation(entry.getKey(), player);
-                if (outside && data.get().contains("Options.flag.localshop") && !data.get().contains("Options.flag.deliverycharge")) {
-                    continue;
-                }
-
-                if (data.get().contains("Options.flag.signshop") ||
-                    data.get().contains("Options.flag.jobpoint") ||
-                    data.get().contains("Options.flag.playerpoint"))
-                    continue;
-
-                // 영업시간 확인
-                if (player != null && !CheckShopHour(entry.getKey(), player))
-                    continue;
-
-                double deliveryCosts = CalcShipping(entry.getKey(), player);
-
-                if (deliveryCosts == -1)
-                    continue;
-
-                int sameItemIdx = ShopUtil.findItemFromShop(entry.getKey(), itemStack);
-
-                if (sameItemIdx != -1)
-                {
-                    String tradeType = data.get().getString(sameItemIdx + ".tradeType");
-
-                    if (tradeType != null && tradeType.equalsIgnoreCase("BuyOnly")) continue; // 구매만 가능함
-
-                    // 상점에 돈이 없음
-                    if (ShopUtil.getShopBalance(entry.getKey()) != -1 &&
-                        ShopUtil.getShopBalance(entry.getKey()) < Calc.calcTotalCost(entry.getKey(), String.valueOf(sameItemIdx), itemStack.getAmount())[0])
-                    {
-                        continue;
-                    }
-
-                    // 최대 재고를 넘겨서 매입 거절
-                    int maxStock = data.get().getInt(sameItemIdx + ".maxStock", -1);
-                    int stock = data.get().getInt(sameItemIdx + ".stock");
-                    if (maxStock != -1 && maxStock <= stock)
-                        continue;
-
-                    double value = Calc.getCurrentPrice(entry.getKey(), String.valueOf(sameItemIdx), false);
-
-                    value -= deliveryCosts;
-
-                    if (topShopName.isEmpty() || bestPrice < value)
-                    {
-                        topShopName = entry.getKey();
-                        bestPrice = value;
-                        tradeIdx = sameItemIdx;
-                    }
                 }
             }
 
-            return new String[]{topShopName, Integer.toString(tradeIdx)};
-        });
+            // 비활성화된 상점
+            boolean enable = data.get().getBoolean("Options.enable", true);
+            if (!enable)
+                continue;
+
+            // 표지판 전용 상점, 지역상점, 잡포인트 상점
+            boolean outside = !CheckShopLocation(entry.getKey(), player);
+            if (outside && data.get().contains("Options.flag.localshop") && !data.get().contains("Options.flag.deliverycharge")) {
+                continue;
+            }
+
+            if (data.get().contains("Options.flag.signshop") ||
+                    data.get().contains("Options.flag.jobpoint") ||
+                    data.get().contains("Options.flag.playerpoint"))
+                continue;
+
+            // 영업시간 확인
+            if (player != null && !CheckShopHour(entry.getKey(), player))
+                continue;
+
+            double deliveryCosts = CalcShipping(entry.getKey(), player);
+
+            if (deliveryCosts == -1)
+                continue;
+
+            int sameItemIdx = ShopUtil.findItemFromShop(entry.getKey(), itemStack);
+
+            if (sameItemIdx != -1)
+            {
+                String tradeType = data.get().getString(sameItemIdx + ".tradeType");
+
+                if (tradeType != null && tradeType.equalsIgnoreCase("BuyOnly")) continue; // 구매만 가능함
+
+                // 상점에 돈이 없음
+                if (ShopUtil.getShopBalance(entry.getKey()) != -1 &&
+                        ShopUtil.getShopBalance(entry.getKey()) < Calc.calcTotalCost(entry.getKey(), String.valueOf(sameItemIdx), itemStack.getAmount())[0])
+                {
+                    continue;
+                }
+
+                // 최대 재고를 넘겨서 매입 거절
+                int maxStock = data.get().getInt(sameItemIdx + ".maxStock", -1);
+                int stock = data.get().getInt(sameItemIdx + ".stock");
+                if (maxStock != -1 && maxStock <= stock)
+                    continue;
+
+                double value = Calc.getCurrentPrice(entry.getKey(), String.valueOf(sameItemIdx), false);
+
+                value -= deliveryCosts;
+
+                if (topShopName.isEmpty() || bestPrice < value)
+                {
+                    topShopName = entry.getKey();
+                    bestPrice = value;
+                    tradeIdx = sameItemIdx;
+                }
+            }
+        }
+
+        return new String[]{topShopName, Integer.toString(tradeIdx)};
     }
 
     public static String[] FindTheBestShopToBuy(Player player, ItemStack itemStack)
