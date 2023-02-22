@@ -488,6 +488,7 @@ public final class Shop extends InGameUI
             {
                 if (player.hasPermission(P_ADMIN_SHOP_EDIT))
                 {
+                    ShopUtil.SortShopData(shopName);
                     DynaShopAPI.openPageEditor(player, shopName, page);
                     return;
                 }

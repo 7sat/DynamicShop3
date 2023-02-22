@@ -205,6 +205,7 @@ public final class LangUtil
             ccLang.get().addDefault("PAGE_EDITOR.STACKS", "§8{num} 스택");
             ccLang.get().addDefault("PAGE_EDITOR.STATIC_PRICE", "§8[고정 가격]");
             ccLang.get().addDefault("PAGE_EDITOR.EMPTY", "§8(비어있음)");
+            ccLang.get().addDefault("PAGE_EDITOR.EMPTY_SLOT_LORE", "§e좌,우클릭: 밀기\n§e+씨프트: 당기기");
 
             ccLang.get().addDefault("LOG_VIEWER_TITLE", "§3로그 뷰어");
             ccLang.get().addDefault("LOG_VIEWER.DATE", "§f날짜: ");
@@ -595,6 +596,7 @@ public final class LangUtil
             ccLang.get().addDefault("PAGE_EDITOR.STACKS", "§8{num} Stakcs");
             ccLang.get().addDefault("PAGE_EDITOR.STATIC_PRICE", "§8[Fixed price]");
             ccLang.get().addDefault("PAGE_EDITOR.EMPTY", "§8(empty)");
+            ccLang.get().addDefault("PAGE_EDITOR.EMPTY_SLOT_LORE", "§eLMB,RMB: Push\n§e+Shift: Pull");
 
             ccLang.get().addDefault("LOG_VIEWER_TITLE", "§3Log Viewer");
             ccLang.get().addDefault("LOG_VIEWER.DATE", "§fDate: ");

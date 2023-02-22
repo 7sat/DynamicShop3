@@ -16,6 +16,9 @@ import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.ItemMeta;
 
 import me.sat7.dynamicshop.DynamicShop;
+import org.bukkit.inventory.meta.PotionMeta;
+import org.bukkit.potion.PotionData;
+import org.bukkit.potion.PotionType;
 
 import static me.sat7.dynamicshop.utilities.LangUtil.t;
 import static me.sat7.dynamicshop.utilities.MathUtil.Clamp;
@@ -122,20 +125,19 @@ public final class ItemPalette extends InGameUI
 
         if (search.length() > 0)
         {
-            Material[] allMat = Material.values();
-            for (Material m : allMat)
+            for (ItemStack itemStack : sortedList)
             {
-                String target = m.name().toUpperCase();
+                String target = itemStack.getType().name().toUpperCase();
                 String[] temp = search.split(" ");
 
                 if (temp.length == 1)
                 {
                     if (target.contains(search.toUpperCase()))
                     {
-                        paletteList.add(new ItemStack(m));
+                        paletteList.add(itemStack);
                     } else if (target.contains(search.toUpperCase().replace(" ", "_")))
                     {
-                        paletteList.add(new ItemStack(m));
+                        paletteList.add(itemStack);
                     }
                 } else
                 {
@@ -153,7 +155,7 @@ public final class ItemPalette extends InGameUI
                             }
                         }
                         if (match)
-                            paletteList.add(new ItemStack(m));
+                            paletteList.add(itemStack);
                     }
                 }
             }
@@ -162,10 +164,10 @@ public final class ItemPalette extends InGameUI
             if (sortedList.isEmpty())
                 SortAllItems();
 
-            paletteList = sortedList;
+            paletteList = new ArrayList<>(sortedList);
         }
 
-        paletteList.removeIf(itemStack -> ShopUtil.findItemFromShop(this.shopName, new ItemStack(itemStack.getType())) != -1);
+        paletteList.removeIf(itemStack -> ShopUtil.findItemFromShop(this.shopName, CreateItemStackWithRef(itemStack)) != -1);
 
         return paletteList;
     }
@@ -208,6 +210,14 @@ public final class ItemPalette extends InGameUI
         }
     }
 
+    public ItemStack getPotionItemStack(Material potionMat, PotionType type, boolean extend, boolean upgraded){
+        ItemStack potion = new ItemStack(potionMat, 1);
+        PotionMeta meta = (PotionMeta) potion.getItemMeta();
+        meta.setBasePotionData(new PotionData(type, extend, upgraded));
+        potion.setItemMeta(meta);
+        return potion;
+    }
+
     private void SortAllItems()
     {
         ArrayList<ItemStack> allItems = new ArrayList<>();
@@ -218,6 +228,30 @@ public final class ItemPalette extends InGameUI
 
             if (m.isItem())
                 allItems.add(new ItemStack(m));
+        }
+
+        Material[] potionMat = {Material.POTION, Material.LINGERING_POTION, Material.SPLASH_POTION};
+        for (int i = 0; i < potionMat.length; i++)
+        {
+            Material mat = potionMat[i];
+            for (PotionType pt : PotionType.values())
+            {
+                if (pt.isExtendable() && pt.isUpgradeable())
+                {
+                    allItems.add(getPotionItemStack(mat, pt, true, false));
+                    allItems.add(getPotionItemStack(mat, pt, false, true));
+                }
+                else if (pt.isExtendable())
+                {
+                    allItems.add(getPotionItemStack(mat, pt, true, false));
+                }
+                else if (pt.isUpgradeable())
+                {
+                    allItems.add(getPotionItemStack(mat, pt, false, true));
+                }
+
+                allItems.add(getPotionItemStack(mat, pt, false, false));
+            }
         }
 
         allItems.sort(((Comparator<ItemStack>) (o1, o2) ->
@@ -237,12 +271,16 @@ public final class ItemPalette extends InGameUI
             if (isSolid != 0)
                 return isSolid;
 
+            int isInteractable = Boolean.compare(o2.getType().isInteractable(), o1.getType().isInteractable());
+            if (isInteractable != 0)
+                return isInteractable;
+
             int isRecord = Boolean.compare(o2.getType().isRecord(), o1.getType().isRecord());
             if (isRecord != 0)
                 return isRecord;
 
             return 0;
-        }).thenComparing(ItemPalette::GetArmorType).thenComparing(ItemPalette::GetSortName));
+        }).thenComparing(ItemPalette::GetArmorType).thenComparing(ItemPalette::GetPotionType).thenComparing(ItemPalette::GetSortName));
 
         sortedList = allItems;
     }
@@ -274,6 +312,18 @@ public final class ItemPalette extends InGameUI
             return 4;
 
         return 5;
+    }
+
+    private static int GetPotionType(ItemStack stack)
+    {
+        if (stack.getType() == Material.POTION)
+            return 0;
+        else if (stack.getType() == Material.SPLASH_POTION)
+            return 1;
+        else if (stack.getType() == Material.LINGERING_POTION)
+            return 2;
+        else
+            return 3;
     }
 
     private String GetItemLastName(ItemStack iStack)
@@ -338,16 +388,11 @@ public final class ItemPalette extends InGameUI
         {
             if (inventory.getItem(i) != null)
             {
-                //noinspection ConstantConditions
-                Material material = inventory.getItem(i).getType();
-                if (material == Material.AIR)
+                ItemStack original = inventory.getItem(i); // UI 요소가 추가된 상태임.
+                if (original == null || original.getType() == Material.AIR)
                     continue;
 
-                ItemStack itemStack = new ItemStack(material); // UI요소를 그대로 쓰는 대신 새로 생성.
-
-                int existSlot = ShopUtil.findItemFromShop(shopName, itemStack);
-                if (-1 != existSlot) // 이미 상점에 등록되어 있는 아이템 무시
-                    continue;
+                ItemStack itemStack = CreateItemStackWithRef(original);
 
                 targetSlotIdx = ShopUtil.findEmptyShopSlot(shopName, shopSlotIndex, true);
 
@@ -380,7 +425,7 @@ public final class ItemPalette extends InGameUI
             return;
 
         // 인자로 들어오는 item은 UI요소임
-        ItemStack itemStack = new ItemStack(item.getType());
+        ItemStack itemStack = CreateItemStackWithRef(item);
 
         if(uiSubType == 0)
         {
@@ -473,5 +518,21 @@ public final class ItemPalette extends InGameUI
                 DynaShopAPI.openStartPage(player);
             }
         }
+    }
+
+    private ItemStack CreateItemStackWithRef(ItemStack ref)
+    {
+        ItemStack newItem = new ItemStack(ref.getType());
+
+        if (ref.getType() == Material.POTION || ref.getType() == Material.LINGERING_POTION || ref.getType() == Material.SPLASH_POTION)
+        {
+            PotionMeta pmRef = (PotionMeta)ref.getItemMeta();
+            PotionMeta pmCopy = (PotionMeta)newItem.getItemMeta();
+
+            pmCopy.setBasePotionData(pmRef.getBasePotionData());
+            newItem.setItemMeta(pmCopy);
+        }
+
+        return newItem;
     }
 }

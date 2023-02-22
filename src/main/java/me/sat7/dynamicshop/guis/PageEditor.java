@@ -17,6 +17,7 @@ import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.ItemMeta;
 
 import java.util.ArrayList;
+import java.util.Collections;
 
 import static me.sat7.dynamicshop.constants.Constants.P_ADMIN_SHOP_EDIT;
 import static me.sat7.dynamicshop.utilities.LangUtil.n;
@@ -39,6 +40,7 @@ public final class PageEditor extends InGameUI
 
     private String shopName;
     private int page;
+    private int maxPage;
 
     public Inventory getGui(Player player, String shopName, int page)
     {
@@ -46,8 +48,8 @@ public final class PageEditor extends InGameUI
         this.page = page;
 
         CustomConfig data = ShopUtil.shopConfigFiles.get(shopName);
-        
-        page = Clamp(page, 1, GetShopMaxPage(shopName));
+        maxPage = GetShopMaxPage(shopName);
+        page = Clamp(page, 1, maxPage);
 
         inventory = Bukkit.createInventory(player, 54, t(player, "PAGE_EDITOR_TITLE") + "§7 | §8" + shopName + "§7 | §8" + page + "/" + GetShopMaxPage(shopName));
 
@@ -67,53 +69,17 @@ public final class PageEditor extends InGameUI
 
                 // 커스텀 메타 설정
                 ItemMeta meta = itemStack.getItemMeta();
-                ArrayList<String> lore = new ArrayList<>();
+                meta.setDisplayName("§8#" + s);
+                ArrayList<String> loreList = new ArrayList<>();
+                String[] tempLore = t(player, "PAGE_EDITOR.EMPTY_SLOT_LORE").split("\n");
+                Collections.addAll(loreList, tempLore);
+                meta.setLore(loreList);
 
-                if (data.get().contains(s + ".value"))
-                {
-                    String stockStr;
+                meta.addItemFlags(ItemFlag.HIDE_ATTRIBUTES);
+                meta.addItemFlags(ItemFlag.HIDE_POTION_EFFECTS);
+                meta.addItemFlags(ItemFlag.HIDE_DYE);
+                meta.addItemFlags(ItemFlag.HIDE_ENCHANTS);
 
-                    if (data.get().getInt(s + ".stock") <= 0)
-                    {
-                        stockStr = "INF";
-                    } else if (DynamicShop.plugin.getConfig().getBoolean("UI.DisplayStockAsStack"))
-                    {
-                        stockStr = t(player, "PAGE_EDITOR.STACKS").replace("{num}", n(data.get().getInt(s + ".stock") / 64));
-                    } else
-                    {
-                        stockStr = n(data.get().getInt(s + ".stock"));
-                    }
-
-                    double buyPrice = Calc.getCurrentPrice(shopName, s, true);
-                    double sellPrice = Calc.getCurrentPrice(shopName, s, false);
-
-                    String tradeType = "default";
-                    if (data.get().contains(s + ".tradeType"))
-                        tradeType = data.get().getString(s + ".tradeType");
-
-                    if (!tradeType.equalsIgnoreCase("SellOnly"))
-                        lore.add(t(player, "PAGE_EDITOR.PRICE").replace("{num}", n(buyPrice)));
-
-                    if (!tradeType.equalsIgnoreCase("BuyOnly"))
-                        lore.add(t(player, "PAGE_EDITOR.SELL_PRICE").replace("{num}", n(sellPrice)));
-
-                    if (data.get().getInt(s + ".stock") <= 0 || data.get().getInt(s + ".median") <= 0)
-                    {
-                        lore.add(t(player, "PAGE_EDITOR.STATIC_PRICE"));
-                    }
-                    lore.add(t(player, "PAGE_EDITOR.STOCK").replace("{num}", stockStr));
-                }
-                // 장식용
-                else
-                {
-                    meta.setDisplayName(" ");
-                    meta.addItemFlags(ItemFlag.HIDE_ATTRIBUTES);
-                    meta.addItemFlags(ItemFlag.HIDE_ENCHANTS);
-                    meta.addItemFlags(ItemFlag.HIDE_POTION_EFFECTS);
-                }
-                lore.add("§8#" + s);
-
-                meta.setLore(lore);
                 itemStack.setItemMeta(meta);
                 inventory.setItem(idx, itemStack);
             } catch (Exception e)
@@ -123,6 +89,19 @@ public final class PageEditor extends InGameUI
                     DynamicShop.console.sendMessage(Constants.DYNAMIC_SHOP_PREFIX + "ERR. incomplete data. check shop.yml");
                 }
             }
+        }
+
+        for (int i = 0; i < 45; i++)
+        {
+            ItemStack inventorySlot = inventory.getItem(i);
+            if(inventorySlot != null)
+                continue;
+
+            ArrayList<String> loreList = new ArrayList<>();
+            String[] tempLore = t(player, "PAGE_EDITOR.EMPTY_SLOT_LORE").split("\n");
+            Collections.addAll(loreList, tempLore);
+            int slotIdx = i + ((page - 1) * 45);
+            CreateButton(i, Material.LIGHT_GRAY_STAINED_GLASS_PANE, "§8#" + slotIdx, loreList);
         }
 
         CreateCloseButton(player, CLOSE);
@@ -143,13 +122,14 @@ public final class PageEditor extends InGameUI
         {
             DynaShopAPI.openShopGui(player, shopName, page);
         }
-        if (e.getCurrentItem() != null)
+        else if (e.getCurrentItem() != null)
         {
             if (e.getSlot() == PAGE_SCROLL_DOWN)
             {
                 if (e.isLeftClick())
                     DynaShopAPI.openPageEditor(player, shopName, page - pageButtonCount);
-            } else if (e.getSlot() >= PAGE_BUTTON_START && e.getSlot() <= PAGE_BUTTON_END)
+            }
+            else if (e.getSlot() >= PAGE_BUTTON_START && e.getSlot() <= PAGE_BUTTON_END)
             {
                 int selectedPage = e.getCurrentItem().getAmount();
 
@@ -172,12 +152,67 @@ public final class PageEditor extends InGameUI
                         SwapPage(player, shopName, selectedPage);
                     }
                 }
-            } else if (e.getSlot() == PAGE_SCROLL_UP)
+            }
+            else if (e.getSlot() == PAGE_SCROLL_UP)
             {
                 if (e.isLeftClick())
                     DynaShopAPI.openPageEditor(player, shopName, page + pageButtonCount);
             }
+            else if ((e.isLeftClick() || e.isRightClick()) && e.getSlot() < 45)
+            {
+                int clickedSlot = e.getSlot() + ((page - 1) * 45);
+                boolean isLeft = e.isLeftClick();
+                boolean isPull = e.isShiftClick();
+
+                CustomConfig data = ShopUtil.shopConfigFiles.get(shopName);
+                if(isPull)
+                {
+                    PullItem(data, clickedSlot, isLeft);
+                }
+                else
+                {
+                    PushItem(data, clickedSlot, isLeft);
+                }
+                DynaShopAPI.openPageEditor(player, shopName, page);
+            }
         }
+    }
+
+    private void PushItem(CustomConfig data, int index, boolean isLeft)
+    {
+        int dir = isLeft ? -1 : 1;
+        if((isLeft && index + dir > 0) || (!isLeft && index + dir < maxPage * 45 - 1))
+        {
+            PushItem(data, index + dir, isLeft);
+        }
+
+        String from = String.valueOf(index);
+        String to = String.valueOf(index + dir);
+        if(!data.get().contains(to))
+        {
+            data.get().set(to, data.get().get(from));
+            data.get().set(from, null);
+        }
+
+        ShopUtil.shopDirty.put(shopName, true);
+    }
+
+    private void PullItem(CustomConfig data, int index, boolean isLeft)
+    {
+        int dir = isLeft ? -1 : 1;
+        String from = String.valueOf(index + dir);
+        String to = String.valueOf(index);
+
+        if(!data.get().contains(to))
+        {
+            data.get().set(to, data.get().get(from));
+            data.get().set(from, null);
+        }
+
+        if ((index + dir >= 0 && isLeft) || (index + dir < maxPage * 45 - 1 && !isLeft))
+            PullItem(data, index + dir, isLeft);
+
+        ShopUtil.shopDirty.put(shopName, true);
     }
 
     private void SetupPageButtons(String shopName, int page)
