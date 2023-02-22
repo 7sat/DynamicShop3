@@ -13,7 +13,6 @@ import org.bukkit.entity.Player;
 import org.bukkit.inventory.Inventory;
 import org.bukkit.inventory.ItemStack;
 
-import java.text.DecimalFormat;
 import java.util.ArrayList;
 
 import static me.sat7.dynamicshop.constants.Constants.P_ADMIN_SHOP_EDIT;

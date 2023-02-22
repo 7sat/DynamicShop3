@@ -8,7 +8,6 @@ import me.sat7.dynamicshop.utilities.ShopUtil;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
 
-import java.util.ArrayList;
 import java.util.Map;
 
 import static me.sat7.dynamicshop.constants.Constants.P_ADMIN_SHOP_EDIT;
@@ -140,7 +139,7 @@ public class Command extends DSCMD
                 return;
             }
 
-            String cmdString = "";
+            StringBuilder cmdString = new StringBuilder();
             for (int i = 6; i < args.length; i++)
             {
                 if (i == 6 && args[i].startsWith("/"))
@@ -148,11 +147,11 @@ public class Command extends DSCMD
                     args[6] = args[6].replace("/","");
                 }
 
-                cmdString += args[i];
-                cmdString += " ";
+                cmdString.append(args[i]);
+                cmdString.append(" ");
             }
 
-            shopData.get().set("Options.command." + sellBuyString + "." + idx, cmdString);
+            shopData.get().set("Options.command." + sellBuyString + "." + idx, cmdString.toString());
             ShopUtil.CleanupCommandIndex(Shop.GetShopName(args), sellBuyString);
             PrintCurrentState(sender, Shop.GetShopName(args), true, true);
         }

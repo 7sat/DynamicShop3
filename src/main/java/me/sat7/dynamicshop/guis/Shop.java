@@ -5,7 +5,6 @@ import java.util.Arrays;
 import java.util.regex.Pattern;
 
 import me.sat7.dynamicshop.DynaShopAPI;
-import me.sat7.dynamicshop.events.OnChat;
 import me.sat7.dynamicshop.utilities.SoundUtil;
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
@@ -248,14 +247,14 @@ public final class Shop extends InGameUI
                     if (t(player, "SHOP.TRADE_LORE").length() > 0)
                         tradeLoreText = t(player, "SHOP.TRADE_LORE");
 
-                    String itemMetaLoreText = "";
+                    StringBuilder itemMetaLoreText = new StringBuilder();
                     if(meta != null && meta.hasLore())
                     {
                         for(String tempLore : meta.getLore())
                         {
-                            itemMetaLoreText += tempLore + "\n";
+                            itemMetaLoreText.append(tempLore).append("\n");
                         }
-                        itemMetaLoreText = itemMetaLoreText.substring(0, itemMetaLoreText.length() - 1);
+                        itemMetaLoreText = new StringBuilder(itemMetaLoreText.substring(0, itemMetaLoreText.length() - 1));
                     }
 
                     lore = lore.replace("{\\nBuy}", buyText.isEmpty() ? "" : "\n" + buyText);
@@ -263,14 +262,14 @@ public final class Shop extends InGameUI
                     lore = lore.replace("{\\nStock}", stockText.isEmpty() ? "" : "\n" + stockText);
                     lore = lore.replace("{\\nPricingType}", pricingTypeText.isEmpty() ? "" : "\n" + pricingTypeText);
                     lore = lore.replace("{\\nTradeLore}", tradeLoreText.isEmpty() ? "" : "\n" + tradeLoreText);
-                    lore = lore.replace("{\\nItemMetaLore}", itemMetaLoreText.isEmpty() ? "" : "\n" + itemMetaLoreText);
+                    lore = lore.replace("{\\nItemMetaLore}", (itemMetaLoreText.length() == 0) ? "" : "\n" + itemMetaLoreText);
 
                     lore = lore.replace("{Buy}", buyText);
                     lore = lore.replace("{Sell}", sellText);
                     lore = lore.replace("{Stock}", stockText);
                     lore = lore.replace("{PricingType}", pricingTypeText);
                     lore = lore.replace("{TradeLore}", tradeLoreText);
-                    lore = lore.replace("{ItemMetaLore}", itemMetaLoreText);
+                    lore = lore.replace("{ItemMetaLore}", itemMetaLoreText.toString());
 
                     String temp = lore.replace(" ","");
                     if(ChatColor.stripColor(temp).startsWith("\n"))
@@ -427,17 +426,17 @@ public final class Shop extends InGameUI
             shopLore += "\n";
 
         // 플래그
-        String finalFlagText = "";
+        StringBuilder finalFlagText = new StringBuilder();
         if (player.hasPermission(P_ADMIN_SHOP_EDIT))
         {
             if (shopData.contains("Options.flag") && shopData.getConfigurationSection("Options.flag").getKeys(false).size() > 0)
             {
-                finalFlagText = t(player, "SHOP.FLAGS") + "\n";
+                finalFlagText = new StringBuilder(t(player, "SHOP.FLAGS") + "\n");
                 for (String s : shopData.getConfigurationSection("Options.flag").getKeys(false))
                 {
-                    finalFlagText += t(player, "SHOP.FLAGS_ITEM").replace("{flag}", s) + "\n";
+                    finalFlagText.append(t(player, "SHOP.FLAGS_ITEM").replace("{flag}", s)).append("\n");
                 }
-                finalFlagText += "\n";
+                finalFlagText.append("\n");
             }
         }
         shopLore += finalFlagText;

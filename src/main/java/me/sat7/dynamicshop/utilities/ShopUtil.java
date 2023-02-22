@@ -2,12 +2,9 @@ package me.sat7.dynamicshop.utilities;
 
 import java.io.File;
 import java.util.*;
-import java.util.concurrent.CompletableFuture;
-import java.util.concurrent.ExecutionException;
 
 import me.sat7.dynamicshop.transactions.Calc;
 import org.bukkit.Bukkit;
-import org.bukkit.Material;
 import org.bukkit.Location;
 import org.bukkit.command.CommandSender;
 import org.bukkit.configuration.ConfigurationSection;
@@ -17,9 +14,7 @@ import org.bukkit.inventory.ItemStack;
 import me.sat7.dynamicshop.DynamicShop;
 import me.sat7.dynamicshop.constants.Constants;
 import me.sat7.dynamicshop.files.CustomConfig;
-import com.google.common.base.CaseFormat;
 
-import static me.sat7.dynamicshop.utilities.LangUtil.n;
 import static me.sat7.dynamicshop.utilities.LangUtil.t;
 import static me.sat7.dynamicshop.utilities.MathUtil.Clamp;
 
@@ -1225,7 +1220,7 @@ public final class ShopUtil
             {
                 if(DynamicShop.DEBUG_MODE)
                 {
-                    DynamicShop.console.sendMessage("DirtyShop Saved: " + entry.getValue().toString());
+                    DynamicShop.console.sendMessage("DirtyShop Saved: " + entry.getValue());
                 }
 
                 shopDirty.put(entry.getKey(), false);

@@ -28,7 +28,6 @@ import static me.sat7.dynamicshop.constants.Constants.P_ADMIN_SHOP_EDIT;
 import static me.sat7.dynamicshop.utilities.LangUtil.n;
 import static me.sat7.dynamicshop.utilities.LangUtil.t;
 import static me.sat7.dynamicshop.utilities.LayoutUtil.l;
-import static me.sat7.dynamicshop.utilities.MathUtil.Clamp;
 
 public final class ItemTrade extends InGameUI
 {
