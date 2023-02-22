@@ -75,6 +75,7 @@ public final class TabCompleteUtil
                     if (sender.hasPermission(P_ADMIN_DELETE_SHOP)) temp.add("deleteshop");
                     if (sender.hasPermission(P_ADMIN_MERGE_SHOP)) temp.add("mergeshop");
                     if (sender.hasPermission(P_ADMIN_RENAME_SHOP)) temp.add("renameshop");
+                    if (sender.hasPermission(P_ADMIN_COPY_SHOP)) temp.add("copyshop");
                     if (sender.hasPermission(P_ADMIN_OPEN_SHOP)) temp.add("openshop");
                     if (sender.hasPermission(P_ADMIN_SET_TAX)) temp.add("settax");
                     if (sender.hasPermission(P_ADMIN_SET_TAX)) temp.add("settax temp");
@@ -473,6 +474,16 @@ public final class TabCompleteUtil
                     }
 
                     Help.showHelp("rename_shop", (Player) sender, args);
+                } else if (args[0].equalsIgnoreCase("copyshop") && sender.hasPermission(P_ADMIN_COPY_SHOP))
+                {
+                    if (args.length == 2)
+                    {
+                        temp.addAll(ShopUtil.shopConfigFiles.keySet());
+
+                        AddToAutoCompleteIfValid(args[1]);
+                    }
+
+                    Help.showHelp("copy_shop", (Player) sender, args);
                 } else if (args[0].equalsIgnoreCase("cmdHelp"))
                 {
                     if (args.length == 2)

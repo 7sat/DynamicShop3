@@ -163,6 +163,9 @@ public final class Help
         } else if (helpcode.equals("rename_shop"))
         {
             CMDManager.renameShop.SendHelpMessage(player);
+        } else if (helpcode.equals("copy_shop"))
+        {
+            CMDManager.copyShop.SendHelpMessage(player);
         } else if (helpcode.equals("permission"))
         {
             CMDManager.permission.SendHelpMessage(player);

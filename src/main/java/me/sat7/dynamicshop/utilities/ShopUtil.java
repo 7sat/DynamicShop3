@@ -417,6 +417,18 @@ public final class ShopUtil
         shopDirty.remove(shopName);
     }
 
+    public static void copyShop(String shopName, String newName)
+    {
+        CustomConfig data = shopConfigFiles.get(shopName);
+        if (data == null)
+            return;
+
+        data.copy(newName);
+        data.get().set("Options.title", newName);
+        shopConfigFiles.put(newName, data);
+        shopDirty.put(newName, false);
+    }
+
     // 상점 병합
     public static void mergeShop(String shopA, String shopB)
     {

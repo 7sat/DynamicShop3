@@ -18,6 +18,7 @@ public final class Constants
     public static final String P_ADMIN_DELETE_SHOP = "dshop.admin.deleteshop";
     public static final String P_ADMIN_MERGE_SHOP = "dshop.admin.mergeshop";
     public static final String P_ADMIN_RENAME_SHOP = "dshop.admin.renameshop";
+    public static final String P_ADMIN_COPY_SHOP = "dshop.admin.copyshop";
     public static final String P_ADMIN_SHOP_EDIT = "dshop.admin.shopedit";
     public static final String P_ADMIN_OPEN_SHOP = "dshop.admin.openshop";
     public static final String P_ADMIN_EDIT_ALL = "dshop.admin.editall";

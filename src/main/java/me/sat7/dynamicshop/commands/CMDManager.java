@@ -17,6 +17,7 @@ public class CMDManager
     public static OpenShop openShop;
     public static Reload reload;
     public static RenameShop renameShop;
+    public static CopyShop copyShop;
     public static SetDefaultShop setDefaultShop;
     public static SetTax setTax;
 
@@ -52,6 +53,7 @@ public class CMDManager
         mergeShop = new MergeShop();
         openShop = new OpenShop();
         renameShop = new RenameShop();
+        copyShop = new CopyShop();
         reload = new Reload();
         setDefaultShop = new SetDefaultShop();
         setTax = new SetTax();
@@ -64,6 +66,7 @@ public class CMDManager
         CMDHashMap.put("mergeshop", mergeShop);
         CMDHashMap.put("openshop", openShop);
         CMDHashMap.put("renameshop", renameShop);
+        CMDHashMap.put("copyshop", copyShop);
         CMDHashMap.put("reload", reload);
         CMDHashMap.put("setdefaultshop", setDefaultShop);
         CMDHashMap.put("settax", setTax);

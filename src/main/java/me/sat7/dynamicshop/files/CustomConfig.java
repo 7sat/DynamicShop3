@@ -96,6 +96,22 @@ public class CustomConfig
         }
     }
 
+    public void copy(String newName)
+    {
+        if (!file.exists())
+            return;
+
+        try
+        {
+            File newFile = new File(file.toPath().resolveSibling(newName) + ".yml");
+            Files.copy(file.toPath(), newFile.toPath());
+        }
+        catch (Exception e)
+        {
+            System.out.println("copy fail :" + e);
+        }
+    }
+
     public void delete()
     {
         if (file.exists())

@@ -6,23 +6,23 @@ import org.bukkit.entity.Player;
 import me.sat7.dynamicshop.DynamicShop;
 import me.sat7.dynamicshop.utilities.ShopUtil;
 
-import static me.sat7.dynamicshop.constants.Constants.P_ADMIN_RENAME_SHOP;
+import static me.sat7.dynamicshop.constants.Constants.P_ADMIN_COPY_SHOP;
 import static me.sat7.dynamicshop.utilities.LangUtil.t;
 
-public final class RenameShop extends DSCMD
+public final class CopyShop extends DSCMD
 {
-    public RenameShop()
+    public CopyShop()
     {
         inGameUseOnly = false;
-        permission = P_ADMIN_RENAME_SHOP;
+        permission = P_ADMIN_COPY_SHOP;
         validArgCount.add(3);
     }
 
     @Override
     public void SendHelpMessage(Player player)
     {
-        player.sendMessage(DynamicShop.dsPrefix(player) + t(player, "HELP.TITLE").replace("{command}", "renameshop"));
-        player.sendMessage(" - " + t(player, "HELP.USAGE") + ": /ds renameshop <old name> <new name>");
+        player.sendMessage(DynamicShop.dsPrefix(player) + t(player, "HELP.TITLE").replace("{command}", "copyshop"));
+        player.sendMessage(" - " + t(player, "HELP.USAGE") + ": /ds copyshop <name> <new name>");
 
         player.sendMessage("");
     }
@@ -42,7 +42,7 @@ public final class RenameShop extends DSCMD
             }
 
             String newName = args[2].replace("/", "");
-            ShopUtil.renameShop(args[1], newName);
+            ShopUtil.copyShop(args[1], newName);
             sender.sendMessage(DynamicShop.dsPrefix(sender) + t(sender, "MESSAGE.CHANGES_APPLIED") + newName);
         } else
         {
