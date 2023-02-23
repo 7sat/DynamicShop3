@@ -436,7 +436,7 @@ public final class DynaShopAPI
      * Depending on the player's permission and the state of the store, there may not be an appropriate target.
      *
      * @param player seller
-     * @return [0]shopName. return "" if null. [1]tradeIdx. return -1 if null.
+     * @return [0]shopName. return "" if null. [1]tradeIdx. Return -1 if null. Returns -2 if selling in multiple currencies.
      */
     public static String[] FindTheBestShopToSell(Player player, ItemStack itemStack, boolean openTradeView)
     {
@@ -460,6 +460,9 @@ public final class DynaShopAPI
     public static double QuickSell(Player player, ItemStack itemStack)
     {
         String[] ret = ShopUtil.FindTheBestShopToSell(player, itemStack);
+
+        if (ret[1].equals("-2"))
+            return 0;
 
         if (!validateShopName(ret[0]))
             return 0;

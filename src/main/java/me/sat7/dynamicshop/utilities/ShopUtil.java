@@ -632,6 +632,8 @@ public final class ShopUtil
         double bestPrice = -1;
         int tradeIdx = -1;
 
+        int currencyInt = -1;
+
         // 접근가능한 상점중 최고가 찾기
         for(Map.Entry<String, CustomConfig> entry : shopConfigFiles.entrySet())
         {
@@ -658,9 +660,7 @@ public final class ShopUtil
                 continue;
             }
 
-            if (data.get().contains("Options.flag.signshop") ||
-                    data.get().contains("Options.flag.jobpoint") ||
-                    data.get().contains("Options.flag.playerpoint"))
+            if (data.get().contains("Options.flag.signshop"))
                 continue;
 
             // 영업시간 확인
@@ -677,8 +677,31 @@ public final class ShopUtil
             if (sameItemIdx != -1)
             {
                 String tradeType = data.get().getString(sameItemIdx + ".tradeType");
+                if (tradeType != null && tradeType.equalsIgnoreCase("BuyOnly"))
+                    continue; // 구매만 가능함
 
-                if (tradeType != null && tradeType.equalsIgnoreCase("BuyOnly")) continue; // 구매만 가능함
+                // 여러 재화로 취급중인 경우 지원 안함.
+                int tempCurrencyIndex = 0;
+                if (data.get().contains("Options.flag.jobpoint"))
+                {
+                    tempCurrencyIndex = 1;
+                }
+                else if (data.get().contains("Options.flag.playerpoint"))
+                {
+                    tempCurrencyIndex = 2;
+                }
+
+                if (currencyInt == -1)
+                {
+                    currencyInt = tempCurrencyIndex;
+                }
+                else if (currencyInt != tempCurrencyIndex)
+                {
+                    if(player != null)
+                        player.sendMessage(DynamicShop.dsPrefix(player) + t(player, "MESSAGE.Q_SEARCH_FAIL_CURRENCY"));
+
+                    return new String[]{"","-2"};
+                }
 
                 // 상점에 돈이 없음
                 if (ShopUtil.getShopBalance(entry.getKey()) != -1 &&
@@ -715,6 +738,8 @@ public final class ShopUtil
         double bestPrice = Double.MAX_VALUE;
         int tradeIdx = -1;
 
+        int currencyInt = -1;
+
         // 접근가능한 상점중 최저가 찾기
         for(Map.Entry<String, CustomConfig> entry : shopConfigFiles.entrySet())
         {
@@ -738,9 +763,7 @@ public final class ShopUtil
                 continue;
             }
 
-            if (data.get().contains("Options.flag.signshop") ||
-                data.get().contains("Options.flag.jobpoint") ||
-                data.get().contains("Options.flag.playerpoint"))
+            if (data.get().contains("Options.flag.signshop"))
                 continue;
 
             // 영업시간 확인
@@ -757,12 +780,36 @@ public final class ShopUtil
             {
                 String tradeType = data.get().getString(sameItemIdx + ".tradeType");
 
-                if (tradeType != null && tradeType.equalsIgnoreCase("SellOnly")) continue;
+                if (tradeType != null && tradeType.equalsIgnoreCase("SellOnly"))
+                    continue;
 
                 // 재고가 없음
                 int stock = data.get().getInt(sameItemIdx + ".stock");
                 if (stock != -1 && stock < 2)
                     continue;
+
+                // 여러 재화로 취급중인 경우 지원 안함.
+                int tempCurrencyIndex = 0;
+                if (data.get().contains("Options.flag.jobpoint"))
+                {
+                    tempCurrencyIndex = 1;
+                }
+                else if (data.get().contains("Options.flag.playerpoint"))
+                {
+                    tempCurrencyIndex = 2;
+                }
+
+                if (currencyInt == -1)
+                {
+                    currencyInt = tempCurrencyIndex;
+                }
+                else if (currencyInt != tempCurrencyIndex)
+                {
+                    if(player != null)
+                        player.sendMessage(DynamicShop.dsPrefix(player) + t(player, "MESSAGE.Q_SEARCH_FAIL_CURRENCY"));
+
+                    return new String[]{"","-2"};
+                }
 
                 double value = Calc.getCurrentPrice(entry.getKey(), String.valueOf(sameItemIdx), true);
 

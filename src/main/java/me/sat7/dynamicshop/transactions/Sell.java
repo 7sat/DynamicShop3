@@ -34,6 +34,24 @@ public final class Sell
     {
         CustomConfig data = ShopUtil.shopConfigFiles.get(shopName);
 
+        ItemTrade.CURRENCY currencyType;
+        String currencyString;
+        if(data.get().contains("Options.flag.jobpoint"))
+        {
+            currencyType = ItemTrade.CURRENCY.JOB_POINT;
+            currencyString = "jobPoint";
+        }
+        else if(data.get().contains("Options.flag.playerpoint"))
+        {
+            currencyType = ItemTrade.CURRENCY.PLAYER_POINT;
+            currencyString = "playerPoint";
+        }
+        else
+        {
+            currencyType = ItemTrade.CURRENCY.VAULT;
+            currencyString = "vault";
+        }
+
         double priceSellOld = DynaShopAPI.getSellPrice(shopName, tempIS);
         double priceBuyOld = Calc.getCurrentPrice(shopName, String.valueOf(tradeIdx), true);
         int stockOld = data.get().getInt(tradeIdx + ".stock");
@@ -123,51 +141,62 @@ public final class Sell
         }
 
         // 실제 거래부----------
-        Economy econ = DynamicShop.getEconomy();
+        Economy econ = null;
         EconomyResponse r = null;
-        if(player != null)
-            r = DynamicShop.getEconomy().depositPlayer(player, priceSum);
-
-        if (player == null || r.transactionSuccess())
+        if (currencyType == ItemTrade.CURRENCY.VAULT)
         {
-            //로그 기록
-            LogUtil.addLog(shopName, tempIS.getType().toString(), -tradeAmount, priceSum, "vault", player != null ? player.getName() : shopName);
-
+            econ = DynamicShop.getEconomy();
             if (player != null)
-            {
-                // 플레이어에게 메시지 출력
-                SendSellMessage(ItemTrade.CURRENCY.VAULT, econ, r, player, tradeAmount, priceSum, tempIS);
+                r = DynamicShop.getEconomy().depositPlayer(player, priceSum);
 
-                // 플레이어에게 소리 재생
-                player.playSound(player.getLocation(), Sound.valueOf("ENTITY_EXPERIENCE_ORB_PICKUP"), 1, 1);
-            }
-
-            // 상점 계좌 잔액 수정
-            if (data.get().contains("Options.Balance"))
-            {
-                ShopUtil.addShopBalance(shopName, priceSum * -1);
-            }
-
-            // 커맨드 실행
-            RunSellCommand(data, player, shopName, tempIS, tradeAmount, priceSum, calcResult[1]);
-
-            ShopUtil.shopDirty.put(shopName, true);
-
-            // 이벤트 호출
-            if (player != null)
-            {
-                ShopBuySellEvent event = new ShopBuySellEvent(false, priceBuyOld, Calc.getCurrentPrice(shopName, String.valueOf(tradeIdx), true),
-                        priceSellOld,
-                        DynaShopAPI.getSellPrice(shopName, tempIS),
-                        stockOld,
-                        DynaShopAPI.getStock(shopName, tempIS),
-                        DynaShopAPI.getMedian(shopName, tempIS),
-                        shopName, tempIS, player);
-                Bukkit.getPluginManager().callEvent(event);
-            }
-        } else
+            if (r != null && !r.transactionSuccess())
+                return 0;
+        }
+        else if (currencyType == ItemTrade.CURRENCY.JOB_POINT)
         {
-            player.sendMessage(String.format("[Vault] An error occured: %s", r.errorMessage));
+            if (!JobsHook.addJobsPoint(player, priceSum))
+                return 0;
+        }
+        else if (currencyType == ItemTrade.CURRENCY.PLAYER_POINT)
+        {
+            if (!PlayerpointHook.addPP(player, priceSum))
+                return 0;
+        }
+
+        //로그 기록
+        LogUtil.addLog(shopName, tempIS.getType().toString(), -tradeAmount, priceSum, currencyString, player != null ? player.getName() : shopName);
+
+        if (player != null)
+        {
+            // 플레이어에게 메시지 출력
+            SendSellMessage(currencyType, econ, r, player, tradeAmount, priceSum, tempIS);
+
+            // 플레이어에게 소리 재생
+            player.playSound(player.getLocation(), Sound.valueOf("ENTITY_EXPERIENCE_ORB_PICKUP"), 1, 1);
+        }
+
+        // 상점 계좌 잔액 수정
+        if (data.get().contains("Options.Balance"))
+        {
+            ShopUtil.addShopBalance(shopName, priceSum * -1);
+        }
+
+        // 커맨드 실행
+        RunSellCommand(data, player, shopName, tempIS, tradeAmount, priceSum, calcResult[1]);
+
+        ShopUtil.shopDirty.put(shopName, true);
+
+        // 이벤트 호출
+        if (player != null)
+        {
+            ShopBuySellEvent event = new ShopBuySellEvent(false, priceBuyOld, Calc.getCurrentPrice(shopName, String.valueOf(tradeIdx), true),
+                                                          priceSellOld,
+                                                          DynaShopAPI.getSellPrice(shopName, tempIS),
+                                                          stockOld,
+                                                          DynaShopAPI.getStock(shopName, tempIS),
+                                                          DynaShopAPI.getMedian(shopName, tempIS),
+                                                          shopName, tempIS, player);
+            Bukkit.getPluginManager().callEvent(event);
         }
 
         return priceSum;
@@ -238,7 +267,7 @@ public final class Sell
         }
         else if(currency == ItemTrade.CURRENCY.JOB_POINT)
         {
-            currencyString = "jobpoint";
+            currencyString = "jobPoint";
         }
         else if(currency == ItemTrade.CURRENCY.PLAYER_POINT)
         {

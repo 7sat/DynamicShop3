@@ -329,6 +329,7 @@ public final class LangUtil
             ccLang.get().addDefault("MESSAGE.ENTER_COMMAND_2", "'인덱스/명령어' 형태로 입력하세요.");
             ccLang.get().addDefault("MESSAGE.SELL_COMMAND_CUR", "현재 적용중인 판매 명령어:");
             ccLang.get().addDefault("MESSAGE.BUY_COMMAND_CUR", "현재 적용중인 구매 명령어:");
+            ccLang.get().addDefault("MESSAGE.Q_SEARCH_FAIL_CURRENCY", "해당 아이템은 여러 종류의 재화로 거래 중 입니다.");
 
             ccLang.get().addDefault("HELP.TITLE", "§f도움말: {command} --------------------");
             ccLang.get().addDefault("HELP.SHOP", "상점을 엽니다.");
@@ -718,6 +719,7 @@ public final class LangUtil
             ccLang.get().addDefault("MESSAGE.ENTER_COMMAND_2", "Enter in the form of 'index/command'.");
             ccLang.get().addDefault("MESSAGE.SELL_COMMAND_CUR", "Sell commands currently in effect:");
             ccLang.get().addDefault("MESSAGE.BUY_COMMAND_CUR", "Buy commands currently in effect:");
+            ccLang.get().addDefault("MESSAGE.Q_SEARCH_FAIL_CURRENCY", "This item is being traded in several currencies.");
 
             ccLang.get().addDefault("HELP.TITLE", "§fHelp: {command} --------------------");
             ccLang.get().addDefault("HELP.SHOP", "Open shop");

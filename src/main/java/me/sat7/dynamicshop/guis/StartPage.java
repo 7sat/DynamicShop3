@@ -250,6 +250,11 @@ public final class StartPage extends InGameUI
             ret = ShopUtil.FindTheBestShopToBuy(player, e.getCurrentItem());
         }
 
+        if(ret[1].equals("-2"))
+        {
+            return;
+        }
+
         if(ret[0].isEmpty())
             return;
 

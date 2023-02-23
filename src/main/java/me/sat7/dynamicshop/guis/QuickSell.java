@@ -74,6 +74,10 @@ public final class QuickSell extends InGameUI
 
         String topShopName = targetShopInfo[0];
         int tradeIdx = Integer.parseInt(targetShopInfo[1]);
+        if (tradeIdx == -2)
+        {
+            return;
+        }
 
         if (topShopName.length() > 0)
         {
