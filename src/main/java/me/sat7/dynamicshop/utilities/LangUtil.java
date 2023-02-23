@@ -342,7 +342,6 @@ public final class LangUtil
             ccLang.get().addDefault("HELP.PRICE", "§7가격은 다음과 같이 계산됩니다: median*value/stock");
             ccLang.get().addDefault("HELP.INF_STATIC", "§7median<0 == 고정가격     stock<0 == 무한재고");
             ccLang.get().addDefault("HELP.EDIT_ALL", "상점의 모든 아이탬을 한번에 수정합니다.");
-            ccLang.get().addDefault("HELP.EDIT_ALL_2", "§c주의. 값이 유효한지는 확인하지 않음.");
             ccLang.get().addDefault("HELP.RELOAD", "플러그인을 재시작 합니다.");
             ccLang.get().addDefault("HELP.RELOADED", "플러그인 리로드됨!");
             ccLang.get().addDefault("HELP.USAGE", "사용법");
@@ -732,7 +731,6 @@ public final class LangUtil
             ccLang.get().addDefault("HELP.PRICE", "§7Price calculation formula: median*value/stock");
             ccLang.get().addDefault("HELP.INF_STATIC", "§7median<0 == Fixed price     stock<0 == Infinite stock");
             ccLang.get().addDefault("HELP.EDIT_ALL", "Modify all items in the shop at once.");
-            ccLang.get().addDefault("HELP.EDIT_ALL_2", "§cCaution. Not checking if the value is valid.");
             ccLang.get().addDefault("HELP.RELOAD", "Reload the plugin.");
             ccLang.get().addDefault("HELP.RELOADED", "Plugin reloaded");
             ccLang.get().addDefault("HELP.USAGE", "Usage");
