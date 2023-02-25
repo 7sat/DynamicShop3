@@ -669,6 +669,11 @@ public final class ShopSettings extends InGameUI
                     return;
                 }
 
+                if (data.get().contains("Options.flag.playerpoint"))
+                {
+                    Bukkit.dispatchCommand(player, "DynamicShop shop " + shopName + " flag playerpoint unset");
+                }
+
                 Bukkit.dispatchCommand(player, "DynamicShop shop " + shopName + " flag jobPoint set");
             }
             DynaShopAPI.openShopSettingGui(player, shopName);
@@ -771,6 +776,11 @@ public final class ShopSettings extends InGameUI
                 {
                     player.sendMessage(DynamicShop.dsPrefix(player) + t(player, "ERR.PLAYER_POINTS_NOT_FOUND"));
                     return;
+                }
+
+                if (data.get().contains("Options.flag.jobpoint"))
+                {
+                    Bukkit.dispatchCommand(player, "DynamicShop shop " + shopName + " flag jobpoint unset");
                 }
 
                 Bukkit.dispatchCommand(player, "DynamicShop shop " + shopName + " flag integerOnly set");

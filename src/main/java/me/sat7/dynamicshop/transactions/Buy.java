@@ -171,7 +171,7 @@ public final class Buy
         }
         else if(currency == ItemTrade.CURRENCY.JOB_POINT)
         {
-            currencyString = "jobpoint";
+            currencyString = "jobPoint";
         }
         else if(currency == ItemTrade.CURRENCY.PLAYER_POINT)
         {
