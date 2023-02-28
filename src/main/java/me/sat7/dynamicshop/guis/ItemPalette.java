@@ -487,6 +487,7 @@ public final class ItemPalette extends InGameUI
         if (item == null || item.getType() == Material.AIR)
             return;
 
+        // 0 == Shop
         if (uiSubType == 0)
         {
             if (isLeft)
@@ -499,6 +500,7 @@ public final class ItemPalette extends InGameUI
                 DynaShopAPI.openShopGui(player, shopName, shopSlotIndex / 45 + 1);
             }
         }
+        // 1 == StartPage
         else
         {
             if (isLeft)
