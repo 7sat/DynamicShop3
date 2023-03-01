@@ -56,7 +56,7 @@ public final class ItemPalette extends InGameUI
         this.shopSlotIndex = targetSlot;
         this.search = search;
 
-        String title = "";
+        String title;
         if (uiSubType == 0)
         {
             title = t(player, "PALETTE_TITLE") + "§7 | §8" + shopName;
@@ -231,9 +231,8 @@ public final class ItemPalette extends InGameUI
         }
 
         Material[] potionMat = {Material.POTION, Material.LINGERING_POTION, Material.SPLASH_POTION};
-        for (int i = 0; i < potionMat.length; i++)
+        for (Material mat : potionMat)
         {
-            Material mat = potionMat[i];
             for (PotionType pt : PotionType.values())
             {
                 if (pt.isExtendable() && pt.isUpgradeable())

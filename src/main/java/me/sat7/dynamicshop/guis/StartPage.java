@@ -96,7 +96,7 @@ public final class StartPage extends InGameUI
                 }
 
                 ItemStack btn = new ItemStack(Material.getMaterial(cs.getConfigurationSection(s).getString("icon")));
-                ItemMeta meta = null;
+                ItemMeta meta;
 
                 if (cs.contains(s + ".itemStack"))
                 {

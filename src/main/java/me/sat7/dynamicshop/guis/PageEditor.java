@@ -5,7 +5,6 @@ import me.sat7.dynamicshop.DynamicShop;
 import me.sat7.dynamicshop.constants.Constants;
 import me.sat7.dynamicshop.events.OnChat;
 import me.sat7.dynamicshop.files.CustomConfig;
-import me.sat7.dynamicshop.transactions.Calc;
 import me.sat7.dynamicshop.utilities.ShopUtil;
 import org.bukkit.Bukkit;
 import org.bukkit.Material;
@@ -20,7 +19,6 @@ import java.util.ArrayList;
 import java.util.Collections;
 
 import static me.sat7.dynamicshop.constants.Constants.P_ADMIN_SHOP_EDIT;
-import static me.sat7.dynamicshop.utilities.LangUtil.n;
 import static me.sat7.dynamicshop.utilities.LangUtil.t;
 import static me.sat7.dynamicshop.utilities.MathUtil.Clamp;
 import static me.sat7.dynamicshop.utilities.ShopUtil.GetShopMaxPage;

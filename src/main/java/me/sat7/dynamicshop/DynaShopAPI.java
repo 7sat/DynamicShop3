@@ -257,7 +257,6 @@ public final class DynaShopAPI
                     continue; // 장식용임
                 }
 
-                Material m;
                 String itemName = data.get().getString(s + ".mat"); // 메테리얼
                 try
                 {

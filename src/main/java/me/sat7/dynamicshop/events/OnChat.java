@@ -142,7 +142,7 @@ public class OnChat implements Listener
             String[] input = e.getMessage().split("/");
             if(input.length == 2)
             {
-                int idx = 0;
+                int idx;
                 try
                 {
                     idx = Integer.parseInt(input[0]);

@@ -113,7 +113,7 @@ public class Command extends DSCMD
     {
         if(args[4].equalsIgnoreCase("delete") && args.length == 6)
         {
-            int idx = 0;
+            int idx;
             try
             {
                 idx = Integer.parseInt(args[5]);
@@ -129,7 +129,7 @@ public class Command extends DSCMD
         }
         else if(args[4].equalsIgnoreCase("add") && args.length >= 7)
         {
-            int idx = 0;
+            int idx;
             try
             {
                 idx = Integer.parseInt(args[5]);
