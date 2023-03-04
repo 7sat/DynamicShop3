@@ -157,23 +157,10 @@ public final class Buy
         }
 
         //로그 기록
-        String currencyString = "";
-        if (currency == ItemTrade.CURRENCY.VAULT)
-        {
-            currencyString = "vault";
-        }
-        else if (currency == ItemTrade.CURRENCY.JOB_POINT)
-        {
-            currencyString = "jobPoint";
-        }
-        else if (currency == ItemTrade.CURRENCY.PLAYER_POINT)
-        {
-            currencyString = "playerPoint";
-        }
-        LogUtil.addLog(shopName, itemStack.getType().toString(), actualAmount, priceSum, currencyString, player.getName());
+        LogUtil.addLog(shopName, itemStack.getType().toString(), actualAmount, priceSum, StringUtil.GetCurrencyString(currency), player.getName());
 
         // 메시지 출력
-        SendBuyMessage(currency, econ, r, player, actualAmount, priceSum, itemStack);
+        SendBuyMessage(currency, econ, player, actualAmount, priceSum, itemStack);
 
         // 플레이어에게 소리 재생
         SoundUtil.playerSoundEffect(player, "buy");
@@ -195,16 +182,16 @@ public final class Buy
         Bukkit.getPluginManager().callEvent(event);
     }
 
-    private static void SendBuyMessage(ItemTrade.CURRENCY currency, Economy econ, EconomyResponse r, Player player, int actualAmount, double priceSum, ItemStack tempIS)
+    private static void SendBuyMessage(ItemTrade.CURRENCY currency, Economy econ, Player player, int actualAmount, double priceSum, ItemStack itemStack)
     {
         String message = "";
-        boolean itemHasCustomName = tempIS.getItemMeta() != null && tempIS.getItemMeta().hasDisplayName();
+        boolean itemHasCustomName = itemStack.getItemMeta() != null && itemStack.getItemMeta().hasDisplayName();
         boolean useLocalizedName = !itemHasCustomName && ConfigUtil.GetLocalizedItemName();
         if (currency == ItemTrade.CURRENCY.VAULT)
         {
             message = DynamicShop.dsPrefix(player) + t(player, "MESSAGE.BUY_SUCCESS", !useLocalizedName)
                     .replace("{amount}", Integer.toString(actualAmount))
-                    .replace("{price}", n(r.amount))
+                    .replace("{price}", n(priceSum))
                     .replace("{bal}", n(econ.getBalance(player)));
         }
         else if (currency == ItemTrade.CURRENCY.JOB_POINT)
@@ -225,11 +212,11 @@ public final class Buy
         if (useLocalizedName)
         {
             message = message.replace("{item}", "<item>");
-            LangUtil.sendMessageWithLocalizedItemName(player, message, tempIS.getType());
+            LangUtil.sendMessageWithLocalizedItemName(player, message, itemStack.getType());
         }
         else
         {
-            String itemNameFinal = itemHasCustomName ? tempIS.getItemMeta().getDisplayName() : ItemsUtil.getBeautifiedName(tempIS.getType());
+            String itemNameFinal = itemHasCustomName ? itemStack.getItemMeta().getDisplayName() : ItemsUtil.getBeautifiedName(itemStack.getType());
             message = message.replace("{item}", itemNameFinal);
             player.sendMessage(message);
         }

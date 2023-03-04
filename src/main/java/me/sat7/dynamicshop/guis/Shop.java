@@ -5,6 +5,7 @@ import java.util.Arrays;
 import java.util.regex.Pattern;
 
 import me.sat7.dynamicshop.DynaShopAPI;
+import me.sat7.dynamicshop.economyhook.PlayerpointHook;
 import me.sat7.dynamicshop.utilities.ConfigUtil;
 import me.sat7.dynamicshop.utilities.SoundUtil;
 import org.bukkit.Bukkit;
@@ -53,10 +54,14 @@ public final class Shop extends InGameUI
     {
         shopData = ShopUtil.shopConfigFiles.get(shopName).get();
 
-        // jobreborn 플러그인 있는지 확인.
         if (!JobsHook.jobsRebornActive && shopData.contains("Options.flag.jobpoint"))
         {
             player.sendMessage(DynamicShop.dsPrefix(player) + t(player, "ERR.JOBS_REBORN_NOT_FOUND"));
+            return null;
+        }
+        if (!PlayerpointHook.isPPActive && shopData.contains("Options.flag.playerpoint"))
+        {
+            player.sendMessage(DynamicShop.dsPrefix(player) + t(player, "ERR.PLAYER_POINT_NOT_FOUND"));
             return null;
         }
 

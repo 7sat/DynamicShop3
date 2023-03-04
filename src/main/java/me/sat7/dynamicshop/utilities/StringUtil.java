@@ -1,5 +1,6 @@
 package me.sat7.dynamicshop.utilities;
 
+import me.sat7.dynamicshop.guis.ItemTrade;
 import org.bukkit.ChatColor;
 
 import java.util.Arrays;
@@ -144,5 +145,19 @@ public final class StringUtil {
             }
         }
         return String.join("", itemParts);
+    }
+
+    public static String GetCurrencyString (ItemTrade.CURRENCY currency)
+    {
+        if (currency == ItemTrade.CURRENCY.JOB_POINT)
+        {
+            return "jobPoint";
+        }
+        else if (currency == ItemTrade.CURRENCY.PLAYER_POINT)
+        {
+            return "playerPoint";
+        }
+
+        return "vault";
     }
 }
