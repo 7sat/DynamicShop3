@@ -1,5 +1,6 @@
 package me.sat7.dynamicshop.commands;
 
+import me.sat7.dynamicshop.utilities.ConfigUtil;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
 
@@ -35,8 +36,8 @@ public final class SetDefaultShop extends DSCMD
 
         if (ShopUtil.shopConfigFiles.containsKey(args[1]))
         {
-            DynamicShop.plugin.getConfig().set("Command.DefaultShopName", args[1]);
-            DynamicShop.plugin.saveConfig();
+            ConfigUtil.SetDefaultShopName(args[1]);
+            ConfigUtil.Save();
 
             sender.sendMessage(DynamicShop.dsPrefix(sender) + t(sender, "MESSAGE.CHANGES_APPLIED") + args[1]);
         } else

@@ -240,7 +240,7 @@ public final class ItemSettings extends InGameUI
             recommendLore = t(player, "ERR.NO_RECOMMEND_DATA");
         } else
         {
-            int sugMid = ShopUtil.CalcRecommendedMedian(worth, DynamicShop.plugin.getConfig().getInt("Shop.NumberOfPlayer"));
+            int sugMid = ShopUtil.CalcRecommendedMedian(worth, ConfigUtil.GetNumberOfPlayer());
 
             String worthChanged = (dsItem.getBuyValue() == worth) ? " ▶§f " : " ▶§a ";
             String worthChanged2 = (dsItem.getSellValue() == worth) ? " ▶§f " : " ▶§a ";
@@ -373,10 +373,9 @@ public final class ItemSettings extends InGameUI
             player.sendMessage(DynamicShop.dsPrefix(player) + t(player, "ERR.NO_RECOMMEND_DATA"));
         } else
         {
-            int numberOfPlayer = DynamicShop.plugin.getConfig().getInt("Shop.NumberOfPlayer");
-            int sugMid = ShopUtil.CalcRecommendedMedian(worth, numberOfPlayer);
+            int sugMid = ShopUtil.CalcRecommendedMedian(worth, ConfigUtil.GetNumberOfPlayer());
 
-            player.sendMessage(DynamicShop.dsPrefix(player) + t(player, "MESSAGE.RECOMMEND_APPLIED").replace("{playerNum}", numberOfPlayer + ""));
+            player.sendMessage(DynamicShop.dsPrefix(player) + t(player, "MESSAGE.RECOMMEND_APPLIED").replace("{playerNum}", ConfigUtil.GetNumberOfPlayer() + ""));
 
             DynaShopAPI.openItemSettingGui(player, shopName, shopSlotIndex, currentTab, inventory.getItem(SAMPLE_ITEM),
                     worth, worth, minValue, maxValue, sugMid, sugMid, maxStock);

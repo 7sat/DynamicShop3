@@ -1,6 +1,7 @@
 package me.sat7.dynamicshop.commands;
 
 import me.sat7.dynamicshop.files.CustomConfig;
+import me.sat7.dynamicshop.utilities.ConfigUtil;
 import org.bukkit.command.CommandSender;
 import org.bukkit.configuration.ConfigurationSection;
 import org.bukkit.entity.Player;
@@ -25,7 +26,7 @@ public final class Shop
     {
         if (args.length == 1)
         {
-            return DynamicShop.plugin.getConfig().getString("Command.DefaultShopName");
+            return ConfigUtil.GetDefaultShopName();
         }
         else if (args.length > 1)
         {
@@ -44,7 +45,7 @@ public final class Shop
         if(sender instanceof Player)
             player = (Player) sender;
 
-        if (player != null && args.length == 1 && DynamicShop.plugin.getConfig().getBoolean("Command.OpenStartPageInsteadOfDefaultShop"))
+        if (player != null && args.length == 1 && ConfigUtil.GetOpenStartPageInsteadOfDefaultShop())
         {
             DynaShopAPI.openStartPage(player);
             return;

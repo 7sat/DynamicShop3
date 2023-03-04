@@ -1,18 +1,15 @@
 Language: en-US
 Prefix: §3DShop3 §7| §f
-
 Command.UseShopCommand: true
 Command.OpenStartPageInsteadOfDefaultShop: true
 Command.DefaultShopName: SampleShop
 Command.PermissionCheckWhenCreatingAShopList: false
-
 Shop.SalesTax: 25
 Shop.DeliveryChargeScale: 0.3
 Shop.DeliveryChargeMin: 1
 Shop.DeliveryChargeMax: 25
 Shop.NumberOfPlayer: 10
 Shop.UseLegacyStockStabilization: false
-
 UI.DisplayStockAsStack: false
 UI.OpenStartPageWhenClickCloseButton: true
 UI.CloseButtonIcon : BARRIER
@@ -25,7 +22,6 @@ UI.UsePlaceholderAPI : true
 UI.UseHexColorCode : true
 UI.EnableInventoryClickSearch.StartPage: true
 UI.EnableInventoryClickSearch.Shop: true
-
 Log.SaveLogs: true
 Log.LogFileNameFormat: MM_dd_yyyy
 Log.CullLogs: true

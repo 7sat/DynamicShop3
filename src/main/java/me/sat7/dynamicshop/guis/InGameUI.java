@@ -1,6 +1,6 @@
 package me.sat7.dynamicshop.guis;
 
-import me.sat7.dynamicshop.DynamicShop;
+import me.sat7.dynamicshop.utilities.ConfigUtil;
 import me.sat7.dynamicshop.utilities.ItemsUtil;
 import org.bukkit.Material;
 import org.bukkit.entity.Player;
@@ -116,39 +116,39 @@ public class InGameUI
 
     public static Material GetCloseButtonIconMat()
     {
-        String iconName = DynamicShop.plugin.getConfig().getString("UI.CloseButtonIcon");
+        String iconName = ConfigUtil.GetCloseButtonIcon();
         Material mat = Material.getMaterial(iconName);
         if (mat == null)
         {
             mat = Material.BARRIER;
-            DynamicShop.plugin.getConfig().set("UI.CloseButtonIcon", "BARRIER");
-            DynamicShop.plugin.saveConfig();
+            ConfigUtil.SetCloseButtonIcon("BARRIER");
+            ConfigUtil.Save();
         }
         return mat;
     }
 
     public static Material GetPageButtonIconMat()
     {
-        String iconName = DynamicShop.plugin.getConfig().getString("UI.PageButtonIcon");
+        String iconName = ConfigUtil.GetPageButtonIcon();
         Material mat = Material.getMaterial(iconName);
         if (mat == null)
         {
             mat = Material.PAPER;
-            DynamicShop.plugin.getConfig().set("UI.PageButtonIcon", "PAPER");
-            DynamicShop.plugin.saveConfig();
+            ConfigUtil.SetPageButtonIcon("PAPER");
+            ConfigUtil.Save();
         }
         return mat;
     }
 
     public static Material GetShopInfoButtonIconMat()
     {
-        String iconName = DynamicShop.plugin.getConfig().getString("UI.ShopInfoButtonIcon");
+        String iconName = ConfigUtil.GetShopInfoButtonIcon();
         Material mat = Material.getMaterial(iconName);
         if (mat == null)
         {
             mat = Material.GOLD_BLOCK;
-            DynamicShop.plugin.getConfig().set("UI.ShopInfoButtonIcon", "GOLD_BLOCK");
-            DynamicShop.plugin.saveConfig();
+            ConfigUtil.SetShopInfoButtonIcon("GOLD_BLOCK");
+            ConfigUtil.Save();
         }
         return mat;
     }

@@ -857,7 +857,7 @@ public final class LangUtil
         if(temp == null || temp.isEmpty())
             return key;
 
-        if (hexConvert && DynamicShop.plugin.getConfig().getBoolean("UI.UseHexColorCode"))
+        if (hexConvert && ConfigUtil.GetUseHexColorCode())
         {
             Matcher matcher = HEX_PATTERN.matcher(temp);
             while (matcher.find())
@@ -866,7 +866,7 @@ public final class LangUtil
             }
         }
 
-        if(player != null && DynamicShop.isPapiExist && DynamicShop.plugin.getConfig().getBoolean("UI.UsePlaceholderAPI"))
+        if(player != null && DynamicShop.isPapiExist && ConfigUtil.GetUsePlaceholderAPI())
             return PlaceholderAPI.setPlaceholders(player, temp);
         else
             return temp;
@@ -893,7 +893,7 @@ public final class LangUtil
             }
 
             String[] splitByRegex = null;
-            if(DynamicShop.plugin.getConfig().getBoolean("UI.UseHexColorCode"))
+            if(ConfigUtil.GetUseHexColorCode())
                 splitByRegex = HEX_PATTERN.split(message);
 
             if(splitByRegex != null && splitByRegex.length > 1)
@@ -962,8 +962,8 @@ public final class LangUtil
 
     private static void ReloadNumberFormat()
     {
-        intFormat = new DecimalFormat(DynamicShop.plugin.getConfig().getString("UI.IntFormat", "###,###"));
-        doubleFormat = new DecimalFormat(DynamicShop.plugin.getConfig().getString("UI.DoubleFormat", "###,###.##"));
+        intFormat = new DecimalFormat(ConfigUtil.GetIntFormat());
+        doubleFormat = new DecimalFormat(ConfigUtil.GetDoubleFormat());
     }
 
     private static DecimalFormat intFormat;

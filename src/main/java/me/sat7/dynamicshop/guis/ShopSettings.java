@@ -208,7 +208,7 @@ public final class ShopSettings extends InGameUI
             CreateButton(STABLE_INTERVAL, Material.COMPARATOR, t(player, "FLUCTUATION.INTERVAL"), stable_interval_Lore, Clamp(stockStableConf.getInt("interval") / 2, 1, 64));
 
             ArrayList<String> stable_strength_Lore = new ArrayList<>(Arrays.asList(
-                    DynamicShop.plugin.getConfig().getBoolean("Shop.UseLegacyStockStabilization") ? t(player, "STOCK_STABILIZING.STRENGTH_LORE_A") : t(player, "STOCK_STABILIZING.STRENGTH_LORE_B"),
+                    ConfigUtil.GetUseLegacyStockStabilization() ? t(player, "STOCK_STABILIZING.STRENGTH_LORE_A") : t(player, "STOCK_STABILIZING.STRENGTH_LORE_B"),
                     "§9" + t(player, "CUR_STATE") + ": ~" + stockStableConf.get("strength") + "%",
                     "§e" + t(player, "CLICK") + ": " + t(player, "STOCK_STABILIZING.L_R_SHIFT")));
             CreateButton(STABLE_STRENGTH, Material.COMPARATOR, t(player, "FLUCTUATION.STRENGTH"), stable_strength_Lore, Clamp((int) (stockStableConf.getDouble("strength") * 10), 1, 64));
@@ -600,7 +600,7 @@ public final class ShopSettings extends InGameUI
                     data.get().set("Options.SalesTax", null);
                 } else
                 {
-                    data.get().set("Options.SalesTax", DynamicShop.plugin.getConfig().getInt("Shop.SalesTax"));
+                    data.get().set("Options.SalesTax", ConfigUtil.GetSalesTax());
                 }
 
                 DynaShopAPI.openShopSettingGui(player, shopName);

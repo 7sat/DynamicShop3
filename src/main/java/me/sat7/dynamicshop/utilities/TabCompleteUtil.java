@@ -42,7 +42,7 @@ public final class TabCompleteUtil
 
             if (cmd.getName().equalsIgnoreCase("shop") && args.length == 1)
             {
-                if (!dynamicShop.getConfig().getBoolean("Command.UseShopCommand")) return autoCompleteList;
+                if (!ConfigUtil.GetUseShopCommand()) return autoCompleteList;
 
                 for (Map.Entry<String, CustomConfig> entry : ShopUtil.shopConfigFiles.entrySet())
                 {
@@ -56,7 +56,7 @@ public final class TabCompleteUtil
 
                     String permission = options.getString("permission", "");
                     if (permission.isEmpty()
-                            || !DynamicShop.plugin.getConfig().getBoolean("Command.PermissionCheckWhenCreatingAShopList")
+                            || !ConfigUtil.GetPermissionCheckWhenCreatingAShopList()
                             || p.hasPermission(permission))
                         temp.add(entry.getKey());
                 }
@@ -109,7 +109,7 @@ public final class TabCompleteUtil
 
                             String permission = options.getString("permission", "");
                             if (permission.isEmpty()
-                                    || !DynamicShop.plugin.getConfig().getBoolean("Command.PermissionCheckWhenCreatingAShopList")
+                                    || !ConfigUtil.GetPermissionCheckWhenCreatingAShopList()
                                     || p.hasPermission(permission))
                                 temp.add(entry.getKey());
                         }

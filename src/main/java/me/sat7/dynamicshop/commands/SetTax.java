@@ -46,9 +46,8 @@ public final class SetTax extends DSCMD
             try
             {
                 int newValue = Clamp(Integer.parseInt(args[1]), 1, 99);
-
-                DynamicShop.plugin.getConfig().set("Shop.SalesTax", newValue);
-                DynamicShop.plugin.saveConfig();
+                ConfigUtil.SetSalesTax(newValue);
+                ConfigUtil.Save();
 
                 ConfigUtil.setCurrentTax(newValue);
 

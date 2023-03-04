@@ -5,6 +5,7 @@ import java.util.Arrays;
 import java.util.regex.Pattern;
 
 import me.sat7.dynamicshop.DynaShopAPI;
+import me.sat7.dynamicshop.utilities.ConfigUtil;
 import me.sat7.dynamicshop.utilities.SoundUtil;
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
@@ -109,7 +110,7 @@ public final class Shop extends InGameUI
         if(!CheckShopIsEnable())
             return;
 
-        if(!DynamicShop.plugin.getConfig().getBoolean("UI.EnableInventoryClickSearch.Shop"))
+        if(!ConfigUtil.GetEnableInventoryClickSearch_Shop())
             return;
 
         player = (Player) e.getWhoClicked();
@@ -156,7 +157,7 @@ public final class Shop extends InGameUI
                     if (stock <= 0)
                     {
                         stockStr = t(player, "SHOP.INF_STOCK");
-                    } else if (DynamicShop.plugin.getConfig().getBoolean("UI.DisplayStockAsStack"))
+                    } else if (ConfigUtil.GetDisplayStockAsStack())
                     {
                         stockStr = t(player, "SHOP.STACKS").replace("{num}", n(stock / 64));
                     } else
@@ -166,7 +167,7 @@ public final class Shop extends InGameUI
 
                     if (maxStock != -1)
                     {
-                        if (DynamicShop.plugin.getConfig().getBoolean("UI.DisplayStockAsStack"))
+                        if (ConfigUtil.GetDisplayStockAsStack())
                         {
                             maxStockStr = t(player, "SHOP.STACKS").replace("{num}", n(maxStock / 64));
                         }
@@ -459,7 +460,7 @@ public final class Shop extends InGameUI
         }
         else
         {
-            if (DynamicShop.plugin.getConfig().getBoolean("UI.OpenStartPageWhenClickCloseButton"))
+            if (ConfigUtil.GetOpenStartPageWhenClickCloseButton())
             {
                 DynaShopAPI.openStartPage(player);
             } else

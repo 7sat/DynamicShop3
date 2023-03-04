@@ -4,6 +4,7 @@ import java.util.ArrayList;
 import java.util.Arrays;
 
 import me.sat7.dynamicshop.DynaShopAPI;
+import me.sat7.dynamicshop.utilities.ConfigUtil;
 import me.sat7.dynamicshop.utilities.ItemsUtil;
 import me.sat7.dynamicshop.utilities.LangUtil;
 import me.sat7.dynamicshop.utilities.ShopUtil;
@@ -222,7 +223,7 @@ public final class StartPage extends InGameUI
     @Override
     public void OnClickLowerInventory(InventoryClickEvent e)
     {
-        if(!DynamicShop.plugin.getConfig().getBoolean("UI.EnableInventoryClickSearch.StartPage"))
+        if(!ConfigUtil.GetEnableInventoryClickSearch_StartPage())
             return;
 
         Player player = (Player) e.getWhoClicked();
@@ -260,7 +261,7 @@ public final class StartPage extends InGameUI
 
         DynaShopAPI.openShopGui(player, ret[0], Integer.parseInt(ret[1]) / 45 + 1);
 
-        boolean useLocalizedName = DynamicShop.plugin.getConfig().getBoolean("UI.LocalizedItemName");
+        boolean useLocalizedName = ConfigUtil.GetLocalizedItemName();
         String message;
         if(isSell)
         {

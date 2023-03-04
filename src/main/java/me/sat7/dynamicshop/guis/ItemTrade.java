@@ -8,6 +8,7 @@ import me.sat7.dynamicshop.economyhook.PlayerpointHook;
 import me.sat7.dynamicshop.files.CustomConfig;
 import me.sat7.dynamicshop.transactions.Buy;
 import me.sat7.dynamicshop.transactions.Sell;
+import me.sat7.dynamicshop.utilities.ConfigUtil;
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
 import org.bukkit.Material;
@@ -291,7 +292,7 @@ public final class ItemTrade extends InGameUI
                 if (stock <= 0)
                 {
                     stockText = t(player, "TRADE.INF_STOCK");
-                } else if (DynamicShop.plugin.getConfig().getBoolean("UI.DisplayStockAsStack"))
+                } else if (ConfigUtil.GetDisplayStockAsStack())
                 {
                     stockText = t(player, "TRADE.STACKS").replace("{num}", n(stock / 64));
                 } else
@@ -303,7 +304,7 @@ public final class ItemTrade extends InGameUI
             String maxStockText;
             if (shopData.contains("Options.flag.showmaxstock") && maxStock != -1)
             {
-                if (DynamicShop.plugin.getConfig().getBoolean("UI.DisplayStockAsStack"))
+                if (ConfigUtil.GetDisplayStockAsStack())
                 {
                     maxStockText = t(player, "TRADE.STACKS").replace("{num}", n(maxStock / 64));
                 } else

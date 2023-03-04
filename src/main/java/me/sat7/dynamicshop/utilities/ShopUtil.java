@@ -606,8 +606,7 @@ public final class ShopUtil
 
                 if (worth != 0)
                 {
-                    int numberOfPlayer = DynamicShop.plugin.getConfig().getInt("Shop.NumberOfPlayer");
-                    int sugMid = CalcRecommendedMedian(worth, numberOfPlayer);
+                    int sugMid = CalcRecommendedMedian(worth, ConfigUtil.GetNumberOfPlayer());
 
                     ShopUtil.editShopItem(shop, i, worth, worth, 0.01f, -1, sugMid, sugMid);
                 } else
@@ -839,7 +838,7 @@ public final class ShopUtil
     private static int randomStockTimer = 1;
     public static void randomChange(Random generator)
     {
-        boolean legacyStabilizer = DynamicShop.plugin.getConfig().getBoolean("Shop.UseLegacyStockStabilization");
+        boolean legacyStabilizer = ConfigUtil.GetUseLegacyStockStabilization();
 
         // 인게임 30분마다 실행됨 (500틱)
         randomStockTimer += 1;
@@ -1010,8 +1009,8 @@ public final class ShopUtil
             } else if (outside)
             {
                 Location lo = new Location(player.getWorld(), x1, y1, z1);
-                int dist = (int) (player.getLocation().distance(lo) * 0.1 * DynamicShop.plugin.getConfig().getDouble("Shop.DeliveryChargeScale"));
-                deliverycharge = Clamp(dist, DynamicShop.plugin.getConfig().getInt("Shop.DeliveryChargeMin"), DynamicShop.plugin.getConfig().getInt("Shop.DeliveryChargeMax"));
+                int dist = (int) (player.getLocation().distance(lo) * 0.1 * ConfigUtil.GetDeliveryChargeScale());
+                deliverycharge = Clamp(dist, ConfigUtil.GetDeliveryChargeMin(), ConfigUtil.GetDeliveryChargeMax());
             }
         }
 

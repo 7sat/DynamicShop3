@@ -39,7 +39,6 @@ import org.bukkit.scheduler.BukkitTask;
 import java.io.File;
 import java.util.*;
 
-import static me.sat7.dynamicshop.utilities.ConfigUtil.configVersion;
 import static me.sat7.dynamicshop.utilities.LangUtil.t;
 
 public final class DynamicShop extends JavaPlugin implements Listener
@@ -68,10 +67,10 @@ public final class DynamicShop extends JavaPlugin implements Listener
     {
         String temp = dsPrefix_;
 
-        if(plugin.getConfig().getBoolean("UI.UseHexColorCode"))
+        if(ConfigUtil.GetUseHexColorCode())
             temp = LangUtil.TranslateHexColor(temp);
 
-        if(isPapiExist && player != null && plugin.getConfig().getBoolean("UI.UsePlaceholderAPI"))
+        if(isPapiExist && player != null && ConfigUtil.GetUsePlaceholderAPI())
             return PlaceholderAPI.setPlaceholders(player, temp);
 
         return temp;
@@ -316,7 +315,7 @@ public final class DynamicShop extends JavaPlugin implements Listener
 
     public void startSaveLogsTask()
     {
-        if (getConfig().getBoolean("Log.SaveLogs"))
+        if (ConfigUtil.GetSaveLogs())
         {
             if (saveLogsTask != null)
             {
@@ -328,13 +327,15 @@ public final class DynamicShop extends JavaPlugin implements Listener
 
     public void startCullLogsTask()
     {
-        if (getConfig().getBoolean("Log.CullLogs"))
+        if (ConfigUtil.GetCullLogs())
         {
             if (cullLogsTask != null)
             {
                 cullLogsTask.cancel();
             }
-            cullLogsTask = Bukkit.getScheduler().runTaskTimerAsynchronously(this, LogUtil::cullLogs, 0L, (20L * 60L * (long) getConfig().getInt("Log.LogCullTimeMinutes")));
+            cullLogsTask = Bukkit.getScheduler().runTaskTimerAsynchronously(
+                    this, LogUtil::cullLogs, 0L, (20L * 60L * (long) ConfigUtil.GetLogCullTimeMinutes())
+            );
         }
     }
 
@@ -449,9 +450,9 @@ public final class DynamicShop extends JavaPlugin implements Listener
 
         ShopUtil.Reload();
 
-        ConfigUtil.configSetup(this);
+        ConfigUtil.Load();
 
-        LangUtil.setupLangFile(getConfig().getString("Language"));
+        LangUtil.setupLangFile(ConfigUtil.GetLanguage());
         LayoutUtil.Setup();
 
         setupUserFile();
@@ -462,40 +463,6 @@ public final class DynamicShop extends JavaPlugin implements Listener
 
         QuickSell.quickSellGui = new CustomConfig();
         QuickSell.SetupQuickSellGUIFile();
-
-        ConfigUpdate();
-
-        getConfig().set("Version", configVersion);
-        saveConfig();
-    }
-
-    private void ConfigUpdate()
-    {
-        int userVersion = getConfig().getInt("Version");
-        if (userVersion == 3)
-        {
-            for(Map.Entry<String, CustomConfig> entry : ShopUtil.shopConfigFiles.entrySet())
-            {
-                ConfigurationSection cmdCS = entry.getValue().get().getConfigurationSection("Options.command");
-                if(cmdCS == null)
-                    continue;
-
-                boolean somethingChanged = false;
-                if(cmdCS.contains("sell"))
-                {
-                    cmdCS.set("sell.0", cmdCS.get("sell"));
-                    somethingChanged = true;
-                }
-                if(cmdCS.contains("buy"))
-                {
-                    cmdCS.set("buy.0", cmdCS.get("buy"));
-                    somethingChanged = true;
-                }
-
-                if(somethingChanged)
-                    entry.getValue().save();
-            }
-        }
     }
 
     private void setupUserFile()
@@ -503,7 +470,7 @@ public final class DynamicShop extends JavaPlugin implements Listener
         ccUser.setup("User", null);
         ccUser.get().options().copyDefaults(true);
 
-        int userVersion = getConfig().getInt("Version");
+        int userVersion = ConfigUtil.GetConfigVersion();
         if (userVersion < 3)
         {
             for (String s : ccUser.get().getKeys(false))

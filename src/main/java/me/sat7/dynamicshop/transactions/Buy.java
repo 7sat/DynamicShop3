@@ -199,7 +199,7 @@ public final class Buy
     {
         String message = "";
         boolean itemHasCustomName = tempIS.getItemMeta() != null && tempIS.getItemMeta().hasDisplayName();
-        boolean useLocalizedName = !itemHasCustomName && DynamicShop.plugin.getConfig().getBoolean("UI.LocalizedItemName");
+        boolean useLocalizedName = !itemHasCustomName && ConfigUtil.GetLocalizedItemName();
         if (currency == ItemTrade.CURRENCY.VAULT)
         {
             message = DynamicShop.dsPrefix(player) + t(player, "MESSAGE.BUY_SUCCESS", !useLocalizedName)
