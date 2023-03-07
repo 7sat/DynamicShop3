@@ -4,6 +4,7 @@ import lombok.Getter;
 import lombok.Setter;
 import me.sat7.dynamicshop.DynamicShop;
 import me.sat7.dynamicshop.files.CustomConfig;
+import org.bukkit.Bukkit;
 import org.bukkit.configuration.ConfigurationSection;
 import org.bukkit.configuration.file.FileConfiguration;
 
@@ -41,7 +42,26 @@ public final class ConfigUtil
 
         DynamicShop.plugin.saveDefaultConfig();
         DynamicShop.plugin.reloadConfig();
-        DynamicShop.plugin.getConfig().options().setHeader(header);
+
+        try
+        {
+            if(Bukkit.getVersion().contains("1.16") || Bukkit.getVersion().contains("1.17"))
+            {
+                StringBuilder temp = new StringBuilder();
+                for (String s:header)
+                {
+                    temp.append(s);
+                    temp.append("\n");
+                }
+                DynamicShop.plugin.getConfig().options().header(temp.toString());
+            }
+            else
+            {
+                DynamicShop.plugin.getConfig().options().setHeader(header);
+            }
+        }
+        catch (Exception ignore){}
+
 
         ConvertV2toV3();
         ShopYMLUpdate();
