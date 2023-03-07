@@ -260,6 +260,24 @@ public final class ShopUtil
         data.save();
     }
 
+    public static void setDiscount(String shopName, int idx, int discount)
+    {
+        CustomConfig data = shopConfigFiles.get(shopName);
+        if (data == null)
+            return;
+
+        if (discount == 0)
+        {
+            data.get().set(idx + ".discount", null);
+        }
+        else
+        {
+            data.get().set(idx + ".discount", discount);
+        }
+
+        data.save();
+    }
+
     // 상점에서 아이탬 제거
     public static void removeItemFromShop(String shopName, int idx)
     {
@@ -360,15 +378,15 @@ public final class ShopUtil
         }
 
         tempA.forEach((key, value) ->
-        {
-            key += (pageB - pageA) * 45;
-            data.get().set(String.valueOf(key), value);
-        });
+                      {
+                          key += (pageB - pageA) * 45;
+                          data.get().set(String.valueOf(key), value);
+                      });
         tempB.forEach((key, value) ->
-        {
-            key += (pageA - pageB) * 45;
-            data.get().set(String.valueOf(key), value);
-        });
+                      {
+                          key += (pageA - pageB) * 45;
+                          data.get().set(String.valueOf(key), value);
+                      });
 
         tempA.clear();
         tempB.clear();
@@ -526,8 +544,8 @@ public final class ShopUtil
             } catch (Exception e)
             {
                 DynamicShop.console.sendMessage(Constants.DYNAMIC_SHOP_PREFIX +
-                        shopName + ", " + linkedShop + "/ " +
-                        t(null, "ERR.SHOP_LINK_TARGET_ERR"));
+                                                        shopName + ", " + linkedShop + "/ " +
+                                                        t(null, "ERR.SHOP_LINK_TARGET_ERR"));
 
                 data.get().set("Options.Balance", null);
                 data.save();

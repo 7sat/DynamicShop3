@@ -270,14 +270,44 @@ public final class ItemTrade extends InGameUI
             double price = Calc.calcTotalCost(shopName, tradeIdx, sell ? -amount : amount)[0];
             String lore;
             String priceText;
+
+            String currencyKey = "";
+            if (shopData.contains("Options.flag.jobpoint"))
+            {
+                currencyKey = "_JP";
+            }
+            else if (shopData.contains("Options.flag.playerpoint"))
+            {
+                currencyKey = "_PP";
+            }
+
             if (sell)
             {
                 lore = l("TRADE_VIEW.SELL");
-                priceText = t(player, "TRADE.SELL_PRICE").replace("{num}", n(price));
-            } else
+
+                if (shopData.contains(tradeIdx + ".discount"))
+                {
+                    String original = n(price * 100 / (double) (100 - shopData.getInt(tradeIdx + ".discount")));
+                    priceText = t(player, "TRADE.SELL_PRICE_DISCOUNTED" + currencyKey).replace("{num}", original).replace("{num2}", n(price));
+                }
+                else
+                {
+                    priceText = t(player, "TRADE.SELL_PRICE" + currencyKey).replace("{num}", n(price));
+                }
+            }
+            else
             {
                 lore = l("TRADE_VIEW.BUY");
-                priceText = t(player, "TRADE.PRICE").replace("{num}", n(price));
+
+                if (shopData.contains(tradeIdx + ".discount"))
+                {
+                    String original = n(price * 100 / (double) (100 - shopData.getInt(tradeIdx + ".discount")));
+                    priceText = t(player, "TRADE.PRICE_DISCOUNTED" + currencyKey).replace("{num}", original).replace("{num2}", n(price));
+                }
+                else
+                {
+                    priceText = t(player, "TRADE.PRICE" + currencyKey).replace("{num}", n(price));
+                }
             }
 
             if (!sell)
@@ -299,23 +329,23 @@ public final class ItemTrade extends InGameUI
                 {
                     stockText = n(stock);
                 }
-            }
 
-            String maxStockText;
-            if (shopData.contains("Options.flag.showmaxstock") && maxStock != -1)
-            {
-                if (ConfigUtil.GetDisplayStockAsStack())
+                String maxStockText;
+                if (shopData.contains("Options.flag.showmaxstock") && maxStock != -1)
                 {
-                    maxStockText = t(player, "TRADE.STACKS").replace("{num}", n(maxStock / 64));
+                    if (ConfigUtil.GetDisplayStockAsStack())
+                    {
+                        maxStockText = t(player, "TRADE.STACKS").replace("{num}", n(maxStock / 64));
+                    } else
+                    {
+                        maxStockText = n(maxStock);
+                    }
+
+                    stockText = t(player, "SHOP.STOCK_2").replace("{stock}", stockText).replace("{max_stock}", maxStockText);
                 } else
                 {
-                    maxStockText = n(maxStock);
+                    stockText = t(player, "SHOP.STOCK").replace("{num}", stockText);
                 }
-
-                stockText = t(player, "SHOP.STOCK_2").replace("{stock}", stockText).replace("{max_stock}", maxStockText);
-            } else
-            {
-                stockText = t(player, "SHOP.STOCK").replace("{num}", stockText);
             }
 
             String deliveryChargeText = "";

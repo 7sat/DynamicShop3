@@ -135,8 +135,7 @@ public final class Sell
         priceSum += calcResult[0];
 
         Economy econ = DynamicShop.getEconomy();
-        EconomyResponse r = null;
-        if (!CheckTransactionSuccess(currencyType, r, player, priceSum))
+        if (!CheckTransactionSuccess(currencyType, player, priceSum))
             return 0;
 
         //로그 기록
@@ -217,8 +216,7 @@ public final class Sell
         priceSum += calcResult[0];
 
         Economy econ = DynamicShop.getEconomy();
-        EconomyResponse r = null;
-        if (!CheckTransactionSuccess(currency, r, player, priceSum))
+        if (!CheckTransactionSuccess(currency, player, priceSum))
             return;
 
         //로그 기록
@@ -252,10 +250,11 @@ public final class Sell
         Bukkit.getPluginManager().callEvent(event);
     }
 
-    private static boolean CheckTransactionSuccess(ItemTrade.CURRENCY currencyType, EconomyResponse r, Player player, double priceSum)
+    private static boolean CheckTransactionSuccess(ItemTrade.CURRENCY currencyType, Player player, double priceSum)
     {
         if (currencyType == ItemTrade.CURRENCY.VAULT)
         {
+            EconomyResponse r = null;
             if (player != null)
                 r = DynamicShop.getEconomy().depositPlayer(player, priceSum);
 

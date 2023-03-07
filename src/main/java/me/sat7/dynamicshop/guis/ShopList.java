@@ -5,9 +5,12 @@ import me.sat7.dynamicshop.utilities.MathUtil;
 import me.sat7.dynamicshop.utilities.ShopUtil;
 import org.bukkit.Bukkit;
 import org.bukkit.Material;
+import org.bukkit.configuration.ConfigurationSection;
 import org.bukkit.entity.Player;
 import org.bukkit.event.inventory.InventoryClickEvent;
 import org.bukkit.inventory.Inventory;
+
+import java.util.ArrayList;
 
 import static me.sat7.dynamicshop.utilities.LangUtil.t;
 
@@ -33,11 +36,12 @@ public class ShopList extends InGameUI
         this.page = MathUtil.Clamp(page, 1, maxPage);
         this.slotIndex = slotIndex;
 
+        CreateExistShopList();
         CreateShopButtons();
         CreateCloseButton(player, CLOSE);
         CreateButton(PAGE, GetPageButtonIconMat(),
-                t(player, "START_PAGE.SHOP_LIST.PAGE_TITLE").replace("{curPage}", String.valueOf(this.page)).replace("{maxPage}", String.valueOf(this.maxPage)),
-                t(player, "START_PAGE.SHOP_LIST.PAGE_LORE"));
+                     t(player, "START_PAGE.SHOP_LIST.PAGE_TITLE").replace("{curPage}", String.valueOf(this.page)).replace("{maxPage}", String.valueOf(this.maxPage)),
+                     t(player, "START_PAGE.SHOP_LIST.PAGE_LORE"));
 
         return inventory;
     }
@@ -65,7 +69,8 @@ public class ShopList extends InGameUI
             }
 
             DynaShopAPI.openShopListUI(player, page, slotIndex);
-        } else if (e.getCurrentItem() != null && e.getCurrentItem().getType() == Material.CHEST)
+        } else if (e.getCurrentItem() != null &&
+                (e.getCurrentItem().getType() == Material.GREEN_STAINED_GLASS || e.getCurrentItem().getType() == Material.GRAY_STAINED_GLASS))
         {
             String shopName = e.getCurrentItem().getItemMeta().getDisplayName();
             StartPage.ccStartPage.get().set("Buttons." + slotIndex + ".displayName", "§3" + shopName);
@@ -88,11 +93,29 @@ public class ShopList extends InGameUI
 
             if (idx >= (page - 1) * 45)
             {
-                CreateButton(slotIdx, Material.CHEST, shopName, "");
+                CreateButton(slotIdx, existShopList.contains(shopName) ? Material.GREEN_STAINED_GLASS : Material.GRAY_STAINED_GLASS, shopName, "");
                 slotIdx++;
             }
 
             idx++;
+        }
+    }
+
+    ArrayList<String> existShopList = new ArrayList<>();
+    private void CreateExistShopList()
+    {
+        existShopList.clear();
+        ConfigurationSection cs = StartPage.ccStartPage.get().getConfigurationSection("Buttons");
+        if (cs != null)
+        {
+            for (String c : cs.getKeys(false))
+            {
+                String actionString = cs.getString(c + ".action");
+                if (actionString == null || !actionString.contains("ds shop"))
+                    continue;
+
+                existShopList.add(actionString.replace("ds shop ", ""));
+            }
         }
     }
 }

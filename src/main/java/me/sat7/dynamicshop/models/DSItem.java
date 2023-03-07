@@ -17,8 +17,9 @@ public class DSItem
     private int median;
     private int stock;
     private int maxStock;
+    private int discount;
 
-    public DSItem(ItemStack itemStack, double buyValue, double sellValue, double minPrice, double maxPrice, int median, int stock, int maxStock)
+    public DSItem(ItemStack itemStack, double buyValue, double sellValue, double minPrice, double maxPrice, int median, int stock, int maxStock, int discount)
     {
         setItemStack(itemStack);
         setBuyValue(Math.round(buyValue * 100) / 100.0);
@@ -28,5 +29,6 @@ public class DSItem
         setMedian(median);
         setStock(stock);
         setMaxStock(maxStock);
+        setDiscount(discount);
     }
 }

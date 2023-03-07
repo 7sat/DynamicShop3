@@ -432,7 +432,7 @@ public final class ItemPalette extends InGameUI
             {
                 if (isShift)
                 {
-                    DynaShopAPI.openItemSettingGui(player, shopName, shopSlotIndex,0, itemStack, 10, 10, 0.01, -1, 10000, 10000, -1);
+                    DynaShopAPI.openItemSettingGui(player, shopName, shopSlotIndex,0, itemStack, 10, 10, 0.01, -1, 10000, 10000, -1, 0);
                 } else
                 {
                     int targetSlotIdx = ShopUtil.findEmptyShopSlot(shopName, shopSlotIndex, true);
@@ -491,7 +491,7 @@ public final class ItemPalette extends InGameUI
         {
             if (isLeft)
             {
-                DynaShopAPI.openItemSettingGui(player, shopName, shopSlotIndex, 0, item, 10, 10, 0.01, -1, 10000, 10000, -1);
+                DynaShopAPI.openItemSettingGui(player, shopName, shopSlotIndex, 0, item, 10, 10, 0.01, -1, 10000, 10000, -1, 0);
             } else if (isRight)
             {
                 ShopUtil.addItemToShop(shopName, shopSlotIndex, item, -1, -1, -1, -1, -1, -1);

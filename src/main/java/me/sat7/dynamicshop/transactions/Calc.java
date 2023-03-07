@@ -57,6 +57,13 @@ public final class Calc
             price = max;
         }
 
+        // 할인
+        if (data.contains(idx + ".discount"))
+        {
+            int discount = data.getInt(idx + ".discount");
+            price = price * (100 - discount) / 100;
+        }
+
         // 판매세 계산 (임의 지정된 판매가치가 없는 경우에만)
         if (!buy && !data.contains(idx + ".value2"))
         {
@@ -130,6 +137,13 @@ public final class Calc
                     }
                 }
             }
+        }
+
+        // 할인
+        if (data.contains(idx + ".discount"))
+        {
+            int discount = data.getInt(idx + ".discount");
+            total = total * (100 - discount) / 100;
         }
 
         // 세금 적용 (판매가 별도지정시 세금계산 안함)

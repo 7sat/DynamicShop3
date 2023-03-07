@@ -228,6 +228,7 @@ public final class TabCompleteUtil
                                 temp.add("stock");
                                 temp.add("median");
                                 temp.add("maxStock");
+                                temp.add("discount");
 
                                 AddToAutoCompleteIfValid(args[3]);
                             } else if (args.length == 5)
@@ -241,7 +242,7 @@ public final class TabCompleteUtil
                                 AddToAutoCompleteIfValid(args[4]);
                             } else if (args.length == 6)
                             {
-                                if (args[4].equals("="))
+                                if (args[4].equals("=") && !args[3].equals("discount"))
                                 {
                                     temp.add("purchaseValue");
                                     temp.add("salesValue");
@@ -250,6 +251,7 @@ public final class TabCompleteUtil
                                     temp.add("stock");
                                     temp.add("median");
                                     temp.add("maxStock");
+                                    temp.add("discount");
 
                                     AddToAutoCompleteIfValid(args[5]);
                                 }

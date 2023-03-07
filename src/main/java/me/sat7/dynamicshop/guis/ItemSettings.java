@@ -31,9 +31,10 @@ public final class ItemSettings extends InGameUI
     private final int SAMPLE_ITEM = 0;
 
     private final int DONE = 8;
-    private final int CLOSE = 27;
-    private final int RECOMMEND = 31;
-    private final int REMOVE = 35;
+    private final int CLOSE = 45;
+    private final int DISCOUNT = 47;
+    private final int RECOMMEND = 49;
+    private final int REMOVE = 53;
 
     private final int BUY_VALUE = 1;
     private final int SELL_VALUE = 2;
@@ -45,12 +46,12 @@ public final class ItemSettings extends InGameUI
     private final int TAB_START = BUY_VALUE;
     private final int TAB_END = MAX_STOCK;
 
-    private final int RESET = 13;
-    private final int ROUND_DOWN = 20;
-    private final int DIVIDE = 21;
-    private final int SHIFT = 22;
-    private final int MULTIPLY = 23;
-    private final int SET_TO_OTHER = 24;
+    private final int RESET = 22;
+    private final int ROUND_DOWN = 29;
+    private final int DIVIDE = 30;
+    private final int SHIFT = 31;
+    private final int MULTIPLY = 32;
+    private final int SET_TO_OTHER = 33;
 
     private Player player;
     private String shopName;
@@ -65,6 +66,7 @@ public final class ItemSettings extends InGameUI
     private int median;
     private int stock;
     private int maxStock;
+    private int discount;
 
     private boolean oldSbSame;
 
@@ -76,7 +78,7 @@ public final class ItemSettings extends InGameUI
         this.dsItem = dsItem;
         this.currentTab = Clamp(tab, TAB_START, TAB_END);
 
-        inventory = Bukkit.createInventory(player, 36, t(player, "ITEM_SETTING_TITLE") + "§7 | §8" + shopName);
+        inventory = Bukkit.createInventory(player, 54, t(player, "ITEM_SETTING_TITLE") + "§7 | §8" + shopName);
 
         String buyValueStr = t(null, "ITEM_SETTING.VALUE_BUY") + n(dsItem.getBuyValue());
         String sellValueStr = t(null, "ITEM_SETTING.VALUE_SELL") + n(dsItem.getSellValue());
@@ -204,26 +206,26 @@ public final class ItemSettings extends InGameUI
 
         if (currentTab <= MAX_VALUE)
         {
-            CreateButton(9, white, "-100", editBtnLore);
-            CreateButton(10, white, "-10", editBtnLore);
-            CreateButton(11, white, "-1", editBtnLore);
-            CreateButton(12, white, "-0.1", editBtnLore);
-            CreateButton(14, white, "+0.1", editBtnLore);
-            CreateButton(15, white, "+1", editBtnLore);
-            CreateButton(16, white, "+10", editBtnLore);
-            CreateButton(17, white, "+100", editBtnLore);
+            CreateButton(18, white, "-100", editBtnLore);
+            CreateButton(19, white, "-10", editBtnLore);
+            CreateButton(20, white, "-1", editBtnLore);
+            CreateButton(21, white, "-0.1", editBtnLore);
+            CreateButton(23, white, "+0.1", editBtnLore);
+            CreateButton(24, white, "+1", editBtnLore);
+            CreateButton(25, white, "+10", editBtnLore);
+            CreateButton(26, white, "+100", editBtnLore);
 
             if (currentTab >= SELL_VALUE) CreateButton(SET_TO_OTHER, yellow, t(null, "ITEM_SETTING.SET_TO_VALUE"), editBtnLore);
         } else
         {
-            CreateButton(9, white, "-1000", editBtnLore);
-            CreateButton(10, white, "-100", editBtnLore);
-            CreateButton(11, white, "-10", editBtnLore);
-            CreateButton(12, white, "-1", editBtnLore);
-            CreateButton(14, white, "+1", editBtnLore);
-            CreateButton(15, white, "+10", editBtnLore);
-            CreateButton(16, white, "+100", editBtnLore);
-            CreateButton(17, white, "+1000", editBtnLore);
+            CreateButton(18, white, "-1000", editBtnLore);
+            CreateButton(19, white, "-100", editBtnLore);
+            CreateButton(20, white, "-10", editBtnLore);
+            CreateButton(21, white, "-1", editBtnLore);
+            CreateButton(23, white, "+1", editBtnLore);
+            CreateButton(24, white, "+10", editBtnLore);
+            CreateButton(25, white, "+100", editBtnLore);
+            CreateButton(26, white, "+1000", editBtnLore);
 
             if (currentTab == MEDIAN) CreateButton(SET_TO_OTHER, yellow, t(null, "ITEM_SETTING.SET_TO_STOCK"), editBtnLore);
             else if (currentTab == STOCK) CreateButton(SET_TO_OTHER, yellow, t(null, "ITEM_SETTING.SET_TO_MEDIAN"), editBtnLore);
@@ -263,6 +265,12 @@ public final class ItemSettings extends InGameUI
                     + "§7 " + dsItem.getStock() + stockChanged + sugMid;
         }
 
+        discount = dsItem.getDiscount();
+        Material discountMat = discount == 0 ? Material.IRON_NUGGET : Material.GOLD_NUGGET;
+        int discountMatAmount = discount/10;
+        if (discountMatAmount < 1)
+            discountMatAmount = 1;
+        CreateButton(DISCOUNT, discountMat, t(player, "ITEM_SETTING.DISCOUNT"), t(player, "ITEM_SETTING.DISCOUNT_LORE").replace("{num}", discount+""), discountMatAmount);
         CreateButton(RECOMMEND, Material.NETHER_STAR, t(player, "ITEM_SETTING.RECOMMEND"), recommendLore); // 추천 버튼
         CreateButton(DONE, Material.STRUCTURE_VOID, t(player, "ITEM_SETTING.DONE"), t(player, "ITEM_SETTING.DONE_LORE")); // 완료 버튼
         CreateButton(CLOSE, Material.BARRIER, t(player, "ITEM_SETTING.CLOSE"), t(player, "ITEM_SETTING.CLOSE_LORE")); // 닫기 버튼
@@ -294,9 +302,10 @@ public final class ItemSettings extends InGameUI
         if (e.getSlot() == CLOSE) DynaShopAPI.openShopGui(player, shopName, shopSlotIndex / 45 + 1);
         else if (e.getSlot() == REMOVE) RemoveItem();
         else if (e.getSlot() == RECOMMEND) SetToRecommend();
+        else if (e.getSlot() == DISCOUNT) OnDiscountButtonClick(e.isLeftClick());
         else if (e.getSlot() >= TAB_START && e.getSlot() <= TAB_END) ChangeTab(e.getSlot());
         else if (e.getSlot() == RESET) Reset();
-        else if (e.getSlot() >= 9 && e.getSlot() < 18) PlusMinus(e.isShiftClick(), e.getCurrentItem()); // RESET 이 13인것에 주의
+        else if (e.getSlot() >= 18 && e.getSlot() < 27) PlusMinus(e.isShiftClick(), e.getCurrentItem()); // RESET 이 22인것에 주의
         else if (e.getSlot() == DIVIDE) Divide(e.isShiftClick());
         else if (e.getSlot() == MULTIPLY) Multiply(e.isShiftClick());
         else if (e.getSlot() == ROUND_DOWN) RoundDown();
@@ -338,6 +347,7 @@ public final class ItemSettings extends InGameUI
         if (-1 != existSlot)
         {
             ShopUtil.editShopItem(shopName, existSlot, buyValue, sellValue, minValue, maxValue, median, stock, maxStock);
+            ShopUtil.setDiscount(shopName,existSlot, discount);
             DynaShopAPI.openShopGui(player, shopName, existSlot / 45 + 1);
             SoundUtil.playerSoundEffect(player, "addItem");
         } else
@@ -350,6 +360,7 @@ public final class ItemSettings extends InGameUI
             if (idx != -1)
             {
                 ShopUtil.addItemToShop(shopName, idx, inventory.getItem(SAMPLE_ITEM), buyValue, sellValue, minValue, maxValue, median, stock, maxStock);
+                ShopUtil.setDiscount(shopName,existSlot, discount);
                 DynaShopAPI.openShopGui(player, shopName, shopSlotIndex / 45 + 1);
                 SoundUtil.playerSoundEffect(player, "addItem");
             }
@@ -362,6 +373,16 @@ public final class ItemSettings extends InGameUI
         player.sendMessage(DynamicShop.dsPrefix(player) + t(player, "MESSAGE.ITEM_DELETED"));
         DynaShopAPI.openShopGui(player, shopName, shopSlotIndex / 45 + 1);
         SoundUtil.playerSoundEffect(player, "deleteItem");
+    }
+
+    private void OnDiscountButtonClick(boolean isLeftClick)
+    {
+        if (isLeftClick)
+            discount += 10;
+        else
+            discount -= 10;
+
+        RefreshWindow();
     }
 
     private void SetToRecommend()
@@ -378,7 +399,7 @@ public final class ItemSettings extends InGameUI
             player.sendMessage(DynamicShop.dsPrefix(player) + t(player, "MESSAGE.RECOMMEND_APPLIED").replace("{playerNum}", ConfigUtil.GetNumberOfPlayer() + ""));
 
             DynaShopAPI.openItemSettingGui(player, shopName, shopSlotIndex, currentTab, inventory.getItem(SAMPLE_ITEM),
-                    worth, worth, minValue, maxValue, sugMid, sugMid, maxStock);
+                                           worth, worth, minValue, maxValue, sugMid, sugMid, maxStock, discount);
         }
     }
 
@@ -612,12 +633,16 @@ public final class ItemSettings extends InGameUI
             stock = -1;
         if (maxStock < -1)
             maxStock = -1;
+        if (discount < 0)
+            discount = 0;
+        if (discount > 90)
+            discount = 90;
     }
 
     private void RefreshWindow()
     {
         ValueValidation();
-        DynaShopAPI.openItemSettingGui(player, shopName, shopSlotIndex, currentTab, inventory.getItem(SAMPLE_ITEM), buyValue, sellValue, minValue, maxValue, median, stock, maxStock);
+        DynaShopAPI.openItemSettingGui(player, shopName, shopSlotIndex, currentTab, inventory.getItem(SAMPLE_ITEM), buyValue, sellValue, minValue, maxValue, median, stock, maxStock, discount);
         SoundUtil.playerSoundEffect(player, "editItem");
     }
 }

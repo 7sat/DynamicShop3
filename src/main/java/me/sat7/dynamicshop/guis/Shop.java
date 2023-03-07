@@ -217,17 +217,44 @@ public final class Shop extends InGameUI
 
                     boolean showValueChange = shopData.contains("Options.flag.showvaluechange");
 
+                    String currencyKey = "";
+                    if (DynaShopAPI.isJobsPointShop(shopName))
+                    {
+                        currencyKey = "_JP";
+                    }
+                    else if (DynaShopAPI.isPlayerPointShop(shopName))
+                    {
+                        currencyKey = "_PP";
+                    }
+
                     String buyText = "";
                     String sellText = "";
                     if (!tradeType.equalsIgnoreCase("SellOnly"))
                     {
-                        buyText = t(player, "SHOP.BUY_PRICE").replace("{num}", n(buyPrice));
+                        if(shopData.contains(s + ".discount"))
+                        {
+                            String original = n(buyPrice * 100 / (double) (100 - shopData.getInt(s + ".discount")));
+                            buyText = t(player, "SHOP.BUY_PRICE_DISCOUNTED" + currencyKey).replace("{num}", original).replace("{num2}", n(buyPrice));
+                        }
+                        else
+                        {
+                            buyText = t(player, "SHOP.BUY_PRICE" + currencyKey).replace("{num}", n(buyPrice));
+                        }
                         buyText += showValueChange ? " " + valueChanged_Buy : "";
                     }
 
                     if (!tradeType.equalsIgnoreCase("BuyOnly"))
                     {
-                        sellText = t(player, "SHOP.SELL_PRICE").replace("{num}", n(sellPrice));
+                        if(shopData.contains(s + ".discount"))
+                        {
+                            String original = n(sellPrice * 100 / (double) (100 - shopData.getInt(s + ".discount")));
+                            sellText = t(player, "SHOP.SELL_PRICE_DISCOUNTED" + currencyKey).replace("{num}", original).replace("{num2}", n(sellPrice));
+                        }
+                        else
+                        {
+                            sellText = t(player, "SHOP.SELL_PRICE" + currencyKey).replace("{num}", n(sellPrice));
+                        }
+
                         sellText += showValueChange ? " " + valueChanged_Sell : "";
                     }
 
@@ -548,11 +575,12 @@ public final class Shop extends InGameUI
                         int median = shopData.getInt(idx + ".median");
                         int stock = shopData.getInt(idx + ".stock");
                         int maxStock = shopData.getInt(idx + ".maxStock", -1);
+                        int discount = shopData.getInt(idx + ".discount", 0);
 
                         ItemStack iStack = new ItemStack(e.getCurrentItem().getType());
                         iStack.setItemMeta((ItemMeta) shopData.get(idx + ".itemStack"));
 
-                        DynaShopAPI.openItemSettingGui(player, shopName, idx, 0, iStack, buyValue, sellValue, valueMin, valueMax, median, stock, maxStock);
+                        DynaShopAPI.openItemSettingGui(player, shopName, idx, 0, iStack, buyValue, sellValue, valueMin, valueMax, median, stock, maxStock, discount);
                     } else
                     {
                         ShopUtil.removeItemFromShop(shopName, idx);

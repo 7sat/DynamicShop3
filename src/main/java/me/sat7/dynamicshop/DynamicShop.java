@@ -452,7 +452,7 @@ public final class DynamicShop extends JavaPlugin implements Listener
 
         ConfigUtil.Load();
 
-        LangUtil.setupLangFile(ConfigUtil.GetLanguage());
+        LangUtil.setupLangFile(ConfigUtil.GetLanguage());  // ConfigUtil.Load() 보다 밑에 있어야함.
         LayoutUtil.Setup();
 
         setupUserFile();

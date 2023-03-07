@@ -51,6 +51,7 @@ public final class Reload extends DSCMD
         SoundUtil.setupSoundFile();
 
         ConfigUtil.Load();
+
         DynamicShop.plugin.PeriodicRepetitiveTask();
 
         DynamicShop.plugin.startSaveLogsTask();
@@ -60,7 +61,7 @@ public final class Reload extends DSCMD
         QuickSell.quickSellGui.reload();
         QuickSell.SetupQuickSellGUIFile();
 
-        LangUtil.setupLangFile(ConfigUtil.GetLanguage());
+        LangUtil.setupLangFile(ConfigUtil.GetLanguage()); // ConfigUtil.Load() 보다 밑에 있어야함.
 
         sender.sendMessage(DynamicShop.dsPrefix(sender) + t(sender, "HELP.RELOADED"));
     }

@@ -24,7 +24,7 @@ public class EditAll extends DSCMD
     public void SendHelpMessage(Player player)
     {
         player.sendMessage(DynamicShop.dsPrefix(player) + t(player, "HELP.TITLE").replace("{command}", "editall"));
-        player.sendMessage(" - " + t(player, "HELP.USAGE") + ": ... editall <purchaseValue | salesValue | valueMin | valueMax | median | stock | max stock> <= | + | - | * | /> <amount>");
+        player.sendMessage(" - " + t(player, "HELP.USAGE") + ": ... editall <purchaseValue | salesValue | valueMin | valueMax | median | stock | max stock | discount> <= | + | - | * | /> <amount>");
         player.sendMessage(" - " + t(player, "HELP.EDIT_ALL"));
 
         player.sendMessage("");
@@ -52,7 +52,7 @@ public class EditAll extends DSCMD
         try
         {
             dataType = args[3];
-            if (!dataType.equals("stock") && !dataType.equals("median") && !dataType.equals("purchaseValue") && !dataType.equals("salesValue") && !dataType.equals("valueMin") && !dataType.equals("valueMax") && !dataType.equals("maxStock"))
+            if (!dataType.equals("stock") && !dataType.equals("median") && !dataType.equals("purchaseValue") && !dataType.equals("salesValue") && !dataType.equals("valueMin") && !dataType.equals("valueMax") && !dataType.equals("maxStock") && !dataType.equals("discount"))
             {
                 sender.sendMessage(DynamicShop.dsPrefix(sender) + t(sender, "ERR.WRONG_DATATYPE"));
                 return;
@@ -72,6 +72,12 @@ public class EditAll extends DSCMD
 
             if (!args[5].equals("stock") && !args[5].equals("median") && !args[5].equals("purchaseValue") && !args[5].equals("salesValue") && !args[5].equals("valueMin") && !args[5].equals("valueMax") && !args[5].equals("maxStock"))
                 newValue = Double.parseDouble(args[5]);
+
+            if (args[3].equals("discount") && args[5].length() > 3)
+            {
+                sender.sendMessage(DynamicShop.dsPrefix(sender) + t(sender, "ERR.WRONG_DATATYPE"));
+                return;
+            }
         }
         catch (Exception e)
         {
@@ -115,6 +121,9 @@ public class EditAll extends DSCMD
                 case "maxStock":
                     newValue = shopData.get().getInt(s + ".maxStock", -1);
                     break;
+                case "discount":
+                    newValue = shopData.get().getInt(s + ".discount", 0);
+                    break;
             }
 
             if (newValue < 0)
@@ -149,7 +158,7 @@ public class EditAll extends DSCMD
                 result = 0.01;
             }
 
-            if (dataType.equals("stock") || dataType.equals("median") || dataType.equals("maxStock"))
+            if (dataType.equals("stock") || dataType.equals("median") || dataType.equals("maxStock") || dataType.equals("discount"))
             {
                 int intResult = (int)result;
                 shopData.get().set(s + "." + dataType, intResult);
@@ -171,6 +180,14 @@ public class EditAll extends DSCMD
             if (shopData.get().getDouble(s + ".maxStock") < 1)
             {
                 shopData.get().set(s + ".maxStock", null);
+            }
+            if (shopData.get().getDouble(s + ".discount") > 90)
+            {
+                shopData.get().set(s + ".discount", 90);
+            }
+            if (shopData.get().getDouble(s + ".discount") <= 0)
+            {
+                shopData.get().set(s + ".discount", null);
             }
 
             Double value2 = shopData.get().getDouble(s + ".value2");
