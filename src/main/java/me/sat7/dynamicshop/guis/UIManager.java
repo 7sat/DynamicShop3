@@ -102,7 +102,8 @@ public class UIManager implements Listener
 
     public static void RefreshUI()
     {
-        for (Map.Entry<Player, InGameUI> entry : currentUI.entrySet())
+        HashMap<Player, InGameUI> clone = (HashMap<Player, InGameUI>)currentUI.clone();
+        for (Map.Entry<Player, InGameUI> entry : clone.entrySet())
         {
             Player p = entry.getKey();
             InGameUI ui = entry.getValue();

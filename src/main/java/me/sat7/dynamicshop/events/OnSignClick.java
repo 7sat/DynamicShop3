@@ -120,7 +120,16 @@ public class OnSignClick implements Listener
         {
             if (e.getClickedBlock().getType().toString().contains("WALL_SIGN"))
             {
-                Sign s = (Sign) e.getClickedBlock().getState();
+                Sign s = null;
+                try
+                {
+                    s = (Sign) e.getClickedBlock().getState();
+                }
+                catch (Exception ignored){}
+
+                if (s == null)
+                    return;
+
                 String signId = CreateID(e.getClickedBlock());
 
                 // 정보가 없음
