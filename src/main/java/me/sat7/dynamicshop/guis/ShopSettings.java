@@ -12,6 +12,7 @@ import me.sat7.dynamicshop.events.OnChat;
 import me.sat7.dynamicshop.files.CustomConfig;
 import me.sat7.dynamicshop.economyhook.JobsHook;
 import me.sat7.dynamicshop.utilities.ConfigUtil;
+import me.sat7.dynamicshop.utilities.UserUtil;
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
 import org.bukkit.Material;
@@ -848,7 +849,7 @@ public final class ShopSettings extends InGameUI
                 player.closeInventory();
                 player.sendMessage(DynamicShop.dsPrefix(player) + t(player, "MESSAGE.ENTER_COMMAND_2"));
 
-                DynamicShop.userTempData.put(player.getUniqueId(), "sellCmd");
+                UserUtil.userTempData.put(player.getUniqueId(), "sellCmd");
                 Command.PrintCurrentState(player, shopName, true, false);
                 OnChat.WaitForInput(player);
             }
@@ -870,7 +871,7 @@ public final class ShopSettings extends InGameUI
                 player.closeInventory();
                 player.sendMessage(DynamicShop.dsPrefix(player) + t(player, "MESSAGE.ENTER_COMMAND_2"));
 
-                DynamicShop.userTempData.put(player.getUniqueId(), "buyCmd");
+                UserUtil.userTempData.put(player.getUniqueId(), "buyCmd");
                 Command.PrintCurrentState(player, shopName, false, true);
                 OnChat.WaitForInput(player);
             }

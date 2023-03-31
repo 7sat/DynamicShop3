@@ -18,7 +18,7 @@ import java.util.regex.Pattern;
 
 public final class LangUtil
 {
-    public static CustomConfig ccLang;
+    public static CustomConfig ccLang = new CustomConfig();
 
     private LangUtil()
     {
@@ -95,6 +95,8 @@ public final class LangUtil
             ccLang.get().addDefault("SHOP.DISABLED", "§c비활성§8|§f");
             ccLang.get().addDefault("SHOP.INCOMPLETE_DATA", "불완전한 데이터");
             ccLang.get().addDefault("SHOP.INCOMPLETE_DATA_Lore", "이 아이템은 어드민이 아닌\n유저에게는 보이지 않습니다.\nIndex: ");
+            ccLang.get().addDefault("SHOP.PURCHASE_LIMIT_PER_PLAYER", "§a구매량 제한 : {num} 남음\n§a다음 리셋: {time}");
+            ccLang.get().addDefault("SHOP.SALES_LIMIT_PER_PLAYER", "§a판매량 제한 : {num} 남음\n§a다음 리셋: {time}");
 
             ccLang.get().addDefault("SHOP_SETTING_TITLE", "§3상점 설정");
             ccLang.get().addDefault("SHOP_SETTING.LOG_TOGGLE_LORE", "§e우클릭: 로그 뷰어");
@@ -185,6 +187,12 @@ public final class LangUtil
             ccLang.get().addDefault("ITEM_SETTING.REMOVE_LORE", "§f이 아이탬을 상점에서 제거합니다.");
             ccLang.get().addDefault("ITEM_SETTING.BUY", "§3§l구매: {num}");
             ccLang.get().addDefault("ITEM_SETTING.SELL", "§3§l판매: {num}");
+            ccLang.get().addDefault("ITEM_SETTING.TRADE_LIMIT_AMOUNT", "§f플레이어 당 거래량 제한");
+            ccLang.get().addDefault("ITEM_SETTING.TRADE_LIMIT_AMOUNT_LORE", "§f{num}\n§e좌클릭: +1, 우클릭: -1, 씨프트 = x10");
+            ccLang.get().addDefault("ITEM_SETTING.TRADE_LIMIT_INTERVAL", "§f거래량 제한 리셋 주기");
+            ccLang.get().addDefault("ITEM_SETTING.TRADE_LIMIT_INTERVAL_LORE", "§f주기: {interval}\n§f다음 리셋: {time}\n§e좌클릭: +1시간, 우클릭: -1시간, 씨프트 = x12");
+            ccLang.get().addDefault("ITEM_SETTING.TRADE_LIMIT_TIMER", "§f타이머 조정");
+            ccLang.get().addDefault("ITEM_SETTING.TRADE_LIMIT_TIMER_LORE", "§f{num}\n§f다음 리셋: {time}\n§e좌클릭: +1시간, 우클릭: -1시간, 씨프트 = x12");
 
             ccLang.get().addDefault("TRADE_TITLE", "§3아이탬 거래");
             ccLang.get().addDefault("TRADE.TOGGLE_SELLABLE", "§e클릭: 판매전용 토글");
@@ -213,6 +221,8 @@ public final class LangUtil
             ccLang.get().addDefault("TRADE.SHOP_BAL", "§3상점 계좌 잔액 \n§f{num}");
             ccLang.get().addDefault("TRADE.CLICK_TO_BUY", "§c§n클릭: {amount}개 구매");
             ccLang.get().addDefault("TRADE.CLICK_TO_SELL", "§2§n클릭: {amount}개 판매");
+            ccLang.get().addDefault("TRADE.PURCHASE_LIMIT_PER_PLAYER", "§a구매량 제한 : {num} 남음\n§a다음 리셋: {time}");
+            ccLang.get().addDefault("TRADE.SALES_LIMIT_PER_PLAYER", "§a판매량 제한 : {num} 남음\n§a다음 리셋: {time}");
 
             ccLang.get().addDefault("PAGE_EDITOR_TITLE", "§3페이지 편집");
             ccLang.get().addDefault("PAGE_EDITOR.PREV", "§f<<");
@@ -508,6 +518,8 @@ public final class LangUtil
             ccLang.get().addDefault("SHOP.DISABLED", "§cDisabled§8|§f");
             ccLang.get().addDefault("SHOP.INCOMPLETE_DATA", "INCOMPLETE DATA");
             ccLang.get().addDefault("SHOP.INCOMPLETE_DATA_Lore", "This item is not visible\nto non-op users.\nIndex: ");
+            ccLang.get().addDefault("SHOP.PURCHASE_LIMIT_PER_PLAYER", "§aPurchase limit: {num}left\n§aNext reset: {time}");
+            ccLang.get().addDefault("SHOP.SALES_LIMIT_PER_PLAYER", "§aSales limit: {num}left\n§aNext reset: {time}");
 
             ccLang.get().addDefault("SHOP_SETTING_TITLE", "§3Shop Settings");
             ccLang.get().addDefault("SHOP_SETTING.LOG_TOGGLE_LORE", "§eRMB: Log Viewer");
@@ -598,6 +610,12 @@ public final class LangUtil
             ccLang.get().addDefault("ITEM_SETTING.REMOVE_LORE", "§fRemove this item from the shop.");
             ccLang.get().addDefault("ITEM_SETTING.BUY", "§3§lBuy: {num}");
             ccLang.get().addDefault("ITEM_SETTING.SELL", "§3§lSell: {num}");
+            ccLang.get().addDefault("ITEM_SETTING.TRADE_LIMIT_AMOUNT", "§fTrading volume limit per player");
+            ccLang.get().addDefault("ITEM_SETTING.TRADE_LIMIT_AMOUNT_LORE", "§f{num}\n§eLMB: +1, RMB: -1, Shift = x10");
+            ccLang.get().addDefault("ITEM_SETTING.TRADE_LIMIT_INTERVAL", "§fTrading volume limit reset cycle");
+            ccLang.get().addDefault("ITEM_SETTING.TRADE_LIMIT_INTERVAL_LORE", "§fInterval: {interval}\n§fNext reset: {time}\n§eLMB: +1h, RMB: -1h, Shift = x12");
+            ccLang.get().addDefault("ITEM_SETTING.TRADE_LIMIT_TIMER", "§fAdjust Timer");
+            ccLang.get().addDefault("ITEM_SETTING.TRADE_LIMIT_TIMER_LORE", "§f{num}\n§fNext reset: {time}\n§eLMB: +1h, RMB: -1h, Shift = x12");
 
             ccLang.get().addDefault("TRADE_TITLE", "§3Trade");
             ccLang.get().addDefault("TRADE.TOGGLE_SELLABLE", "§eClick: Sale only toggle");
@@ -626,6 +644,8 @@ public final class LangUtil
             ccLang.get().addDefault("TRADE.SHOP_BAL", "§3Shop account balance \n§f{num}");
             ccLang.get().addDefault("TRADE.CLICK_TO_BUY", "§c§nClick: Buy {amount}");
             ccLang.get().addDefault("TRADE.CLICK_TO_SELL", "§2§nClick: Sell {amount}");
+            ccLang.get().addDefault("TRADE.PURCHASE_LIMIT_PER_PLAYER", "§aPurchase limit: {num}left\n§aNext reset: {time}");
+            ccLang.get().addDefault("TRADE.SALES_LIMIT_PER_PLAYER", "§aSales limit: {num}left\n§aNext reset: {time}");
 
             ccLang.get().addDefault("PAGE_EDITOR_TITLE", "§3Page Editor");
             ccLang.get().addDefault("PAGE_EDITOR.PREV", "§f<<");

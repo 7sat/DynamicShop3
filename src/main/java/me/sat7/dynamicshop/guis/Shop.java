@@ -6,8 +6,8 @@ import java.util.regex.Pattern;
 
 import me.sat7.dynamicshop.DynaShopAPI;
 import me.sat7.dynamicshop.economyhook.PlayerpointHook;
-import me.sat7.dynamicshop.utilities.ConfigUtil;
-import me.sat7.dynamicshop.utilities.SoundUtil;
+import me.sat7.dynamicshop.models.DSItem;
+import me.sat7.dynamicshop.utilities.*;
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
 import org.bukkit.Material;
@@ -22,7 +22,6 @@ import org.bukkit.inventory.meta.ItemMeta;
 import me.sat7.dynamicshop.DynamicShop;
 import me.sat7.dynamicshop.economyhook.JobsHook;
 import me.sat7.dynamicshop.transactions.Calc;
-import me.sat7.dynamicshop.utilities.ShopUtil;
 
 import static me.sat7.dynamicshop.constants.Constants.P_ADMIN_SHOP_EDIT;
 import static me.sat7.dynamicshop.utilities.LangUtil.n;
@@ -73,7 +72,7 @@ public final class Shop extends InGameUI
         maxPage = GetShopMaxPage(shopName);
         this.page = Clamp(page,1,maxPage);
 
-        DynamicShop.userInteractItem.put(player.getUniqueId(), shopName + "/" + this.page);
+        UserUtil.userInteractItem.put(player.getUniqueId(), shopName + "/" + this.page);
 
         String uiName = shopData.getBoolean("Options.enable", true) ? "" : t(player, "SHOP.DISABLED");
         uiName += "§3" + shopData.getString("Options.title", shopName);
@@ -254,7 +253,7 @@ public final class Shop extends InGameUI
                         {
                             sellText = t(player, "SHOP.SELL_PRICE" + currencyKey).replace("{num}", n(sellPrice));
                         }
-
+                        
                         sellText += showValueChange ? " " + valueChanged_Sell : "";
                     }
 
@@ -274,6 +273,18 @@ public final class Shop extends InGameUI
                             stockText = t(player, "SHOP.STOCK_2").replace("{stock}", stockStr).replace("{max_stock}", maxStockStr);
                         else
                             stockText = t(player, "SHOP.STOCK").replace("{num}", stockStr);
+                    }
+
+                    int tradeLimitLeft = UserUtil.GetTradingLimitLeft(player, shopName, idx, HashUtil.GetItemHash(itemStack));
+                    if (tradeLimitLeft != Integer.MAX_VALUE)
+                    {
+                        int limit = ShopUtil.GetTradeLimitPerPlayer(shopName, idx);
+                        String limitString = limit > 0 ? t(player, "SHOP.PURCHASE_LIMIT_PER_PLAYER") : t(player, "SHOP.SALES_LIMIT_PER_PLAYER");
+                        String tradeLimitResetTime = ShopUtil.GetTradeLimitNextResetTime(shopName, idx);
+
+                        if (!stockText.isEmpty())
+                            stockText += "\n";
+                        stockText += limitString.replace("{num}", tradeLimitLeft + "").replace("{time}", tradeLimitResetTime);
                     }
 
                     String tradeLoreText = "";
@@ -337,6 +348,14 @@ public final class Shop extends InGameUI
                 if (!s.equalsIgnoreCase("Options") && player.hasPermission(P_ADMIN_SHOP_EDIT) && idx != -1)
                 {
                     CreateButton(idx, Material.BARRIER, t(player, "SHOP.INCOMPLETE_DATA"), t(null, "SHOP.INCOMPLETE_DATA_Lore") + idx);
+
+                    if(DynamicShop.DEBUG_MODE)
+                    {
+                        for (StackTraceElement stackTraceElement : e.getStackTrace())
+                        {
+                            DynamicShop.console.sendMessage(stackTraceElement.toString());
+                        }
+                    }
                 }
             }
         }
@@ -485,9 +504,9 @@ public final class Shop extends InGameUI
     private void CloseUI()
     {
         // 표지판으로 접근한 경우에는 그냥 창을 닫음
-        if (DynamicShop.userTempData.get(player.getUniqueId()).equalsIgnoreCase("sign"))
+        if (UserUtil.userTempData.get(player.getUniqueId()).equalsIgnoreCase("sign"))
         {
-            DynamicShop.userTempData.put(player.getUniqueId(), "");
+            UserUtil.userTempData.put(player.getUniqueId(), "");
             player.closeInventory();
         }
         else
@@ -576,11 +595,16 @@ public final class Shop extends InGameUI
                         int stock = shopData.getInt(idx + ".stock");
                         int maxStock = shopData.getInt(idx + ".maxStock", -1);
                         int discount = shopData.getInt(idx + ".discount", 0);
+                        int tradeLimit = shopData.getInt(idx + ".tradeLimitPerPlayer.value", 0);
+                        long tradeLimitInterval = shopData.getLong(idx + ".tradeLimitPerPlayer.interval", MathUtil.dayInMilliSeconds);
+                        long tradeLimitNextTimer = shopData.getLong(idx + ".tradeLimitPerPlayer.nextTimer");
 
                         ItemStack iStack = new ItemStack(e.getCurrentItem().getType());
                         iStack.setItemMeta((ItemMeta) shopData.get(idx + ".itemStack"));
 
-                        DynaShopAPI.openItemSettingGui(player, shopName, idx, 0, iStack, buyValue, sellValue, valueMin, valueMax, median, stock, maxStock, discount);
+                        DSItem dsItem = new DSItem(iStack, buyValue, sellValue, valueMin, valueMax, median, stock, maxStock, discount,
+                                                   tradeLimit, tradeLimitInterval, tradeLimitNextTimer);
+                        DynaShopAPI.openItemSettingGui(player, shopName, idx, 0, dsItem);
                     } else
                     {
                         ShopUtil.removeItemFromShop(shopName, idx);

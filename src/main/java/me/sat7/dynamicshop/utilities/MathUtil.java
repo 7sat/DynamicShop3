@@ -2,6 +2,10 @@ package me.sat7.dynamicshop.utilities;
 
 public final class MathUtil
 {
+    public static final long hourInMilliSeconds = 1000 * 60 * 60;
+    public static final long dayInMilliSeconds = 1000 * 60 * 60 * 24;
+    public static final long dayInTick = 20 * 60 * 60 * 24;
+
     private MathUtil()
     {
 
@@ -83,5 +87,18 @@ public final class MathUtil
     public static long MilliSecondsToTick(long ms)
     {
         return ms / 50;
+    }
+
+    public static long RoundDown_Time_Min(long value)
+    {
+        value = value / 1000 / 60;
+        value = value * 1000 * 60;
+        return  value;
+    }
+    public static long RoundDown_Time_Hour(long value)
+    {
+        value = value / 1000 / 60 / 60;
+        value = value * 1000 * 60 * 60;
+        return  value;
     }
 }

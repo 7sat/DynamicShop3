@@ -1,8 +1,10 @@
 package me.sat7.dynamicshop.utilities;
 
 import java.io.File;
+import java.text.SimpleDateFormat;
 import java.util.*;
 
+import me.sat7.dynamicshop.models.DSItem;
 import me.sat7.dynamicshop.transactions.Calc;
 import org.bukkit.Bukkit;
 import org.bukkit.Location;
@@ -126,12 +128,39 @@ public final class ShopUtil
         return -1;
     }
 
-    // 상점에 아이탬 추가
-    public static boolean addItemToShop(String shopName, int idx, ItemStack item, double buyValue, double sellValue, double minValue, double maxValue, int median, int stock)
+    public static boolean hashExist(String shopName, String hash)
     {
-        return addItemToShop(shopName, idx, item, buyValue, sellValue, minValue, maxValue, median, stock, -1);
+        if (hash == null || hash.isEmpty())
+            return false;
+
+        CustomConfig data = shopConfigFiles.get(shopName);
+        if (data == null)
+            return false;
+
+        int idx = 0;
+        for (String s : data.get().getKeys(false))
+        {
+            if (idx == 0)
+            {
+                idx++;
+                continue;
+            }
+
+            if (!data.get().contains(s + ".value"))
+                continue; // 장식용임
+
+            String compare = HashUtil.CreateHashString(data.get().getString(s + ".mat"), data.get().getString(s + ".itemStack"));
+            if (hash.equals(compare))
+            {
+                return true;
+            }
+        }
+
+        return false;
     }
-    public static boolean addItemToShop(String shopName, int idx, ItemStack item, double buyValue, double sellValue, double minValue, double maxValue, int median, int stock, int maxStock)
+
+    // 상점에 아이탬 추가
+    public static boolean addItemToShop(String shopName, int idx, DSItem dsItem)
     {
         CustomConfig data = shopConfigFiles.get(shopName);
         if (data == null)
@@ -139,56 +168,80 @@ public final class ShopUtil
 
         try
         {
-            data.get().set(idx + ".mat", item.getType().toString());
+            data.get().set(idx + ".mat", dsItem.itemStack.getType().toString());
 
-            if (item.hasItemMeta())
+            if (dsItem.itemStack.hasItemMeta())
             {
-                data.get().set(idx + ".itemStack", item.getItemMeta());
-            } else
+                data.get().set(idx + ".itemStack", dsItem.itemStack.getItemMeta());
+            }
+            else
             {
                 data.get().set(idx + ".itemStack", null);
             }
 
-            if (buyValue > 0)
+            if (dsItem.buyValue > 0)
             {
-                data.get().set(idx + ".value", buyValue);
-                if (buyValue == sellValue)
+                data.get().set(idx + ".value", dsItem.buyValue);
+                if (dsItem.buyValue == dsItem.sellValue)
                 {
                     data.get().set(idx + ".value2", null);
-                } else
+                }
+                else
                 {
-                    data.get().set(idx + ".value2", sellValue);
+                    data.get().set(idx + ".value2", dsItem.sellValue);
                 }
 
-                if (minValue > 0.01)
+                if (dsItem.minPrice > 0.01)
                 {
-                    data.get().set(idx + ".valueMin", minValue);
-                } else
+                    data.get().set(idx + ".valueMin", dsItem.minPrice);
+                }
+                else
                 {
                     data.get().set(idx + ".valueMin", null);
                 }
 
-                if (maxValue > 0.01)
+                if (dsItem.maxPrice > 0.01)
                 {
-                    data.get().set(idx + ".valueMax", maxValue);
-                } else
+                    data.get().set(idx + ".valueMax", dsItem.maxPrice);
+                }
+                else
                 {
                     data.get().set(idx + ".valueMax", null);
                 }
 
-                data.get().set(idx + ".median", median);
-                data.get().set(idx + ".stock", stock);
+                data.get().set(idx + ".median", dsItem.median);
+                data.get().set(idx + ".stock", dsItem.stock);
 
-                if(maxStock > 0)
+                if (dsItem.maxStock > 0)
                 {
-                    data.get().set(idx + ".maxStock", maxStock);
+                    data.get().set(idx + ".maxStock", dsItem.maxStock);
                 }
                 else
                 {
                     data.get().set(idx + ".maxStock", null);
                 }
 
-            } else
+                if (dsItem.discount > 0)
+                {
+                    data.get().set(idx + ".discount", dsItem.discount);
+                }
+                else
+                {
+                    data.get().set(idx + ".discount", null);
+                }
+
+                if (dsItem.tradeLimit != 0)
+                {
+                    data.get().set(idx + ".tradeLimitPerPlayer.value", dsItem.tradeLimit);
+                    data.get().set(idx + ".tradeLimitPerPlayer.interval", dsItem.tradeLimitInterval);
+                    data.get().set(idx + ".tradeLimitPerPlayer.nextTimer", dsItem.tradeLimitNextTimer);
+                }
+                else
+                {
+                    data.get().set(idx + ".tradeLimitPerPlayer", null);
+                }
+            }
+            else
             {
                 // idx,null하면 안됨. 존재는 하되 하위 데이터만 없어야함.
                 data.get().set(idx + ".value", null);
@@ -198,12 +251,15 @@ public final class ShopUtil
                 data.get().set(idx + ".median", null);
                 data.get().set(idx + ".stock", null);
                 data.get().set(idx + ".maxStock", null);
+                data.get().set(idx + ".discount", null);
+                data.get().set(idx + ".tradeLimitPerPlayer", null);
             }
 
             data.save();
 
             return true;
-        } catch (Exception e)
+        }
+        catch (Exception e)
         {
             DynamicShop.console.sendMessage(Constants.DYNAMIC_SHOP_PREFIX + " ERR.AddItemToShop.");
             for (StackTraceElement s : e.getStackTrace())
@@ -215,64 +271,67 @@ public final class ShopUtil
     }
 
     // 상점 아이탬의 value, median, stock을 수정
-    public static void editShopItem(String shopName, int idx, double buyValue, double sellValue, double minValue, double maxValue, int median, int stock)
-    {
-        editShopItem(shopName, idx, buyValue, sellValue, minValue, maxValue, median, stock, -1);
-    }
-    public static void editShopItem(String shopName, int idx, double buyValue, double sellValue, double minValue, double maxValue, int median, int stock, int maxStock)
+    public static void editShopItem(String shopName, int idx, DSItem dsItem)
     {
         CustomConfig data = shopConfigFiles.get(shopName);
         if (data == null)
             return;
 
-        data.get().set(idx + ".value", buyValue);
-        if (buyValue == sellValue)
+        data.get().set(idx + ".value", dsItem.buyValue);
+        if (dsItem.buyValue == dsItem.sellValue)
         {
             data.get().set(idx + ".value2", null);
-        } else
-        {
-            data.get().set(idx + ".value2", sellValue);
         }
-        if (minValue > 0.01)
+        else
         {
-            data.get().set(idx + ".valueMin", minValue);
-        } else
+            data.get().set(idx + ".value2", dsItem.sellValue);
+        }
+
+        if (dsItem.minPrice > 0.01)
+        {
+            data.get().set(idx + ".valueMin", dsItem.minPrice);
+        }
+        else
         {
             data.get().set(idx + ".valueMin", null);
         }
-        if (maxValue > 0.01)
+
+        if (dsItem.maxPrice > 0.01)
         {
-            data.get().set(idx + ".valueMax", maxValue);
-        } else
+            data.get().set(idx + ".valueMax", dsItem.maxPrice);
+        }
+        else
         {
             data.get().set(idx + ".valueMax", null);
         }
-        if(maxStock > 0)
+
+        if (dsItem.maxStock > 0)
         {
-            data.get().set(idx + ".maxStock", maxStock);
+            data.get().set(idx + ".maxStock", dsItem.maxStock);
         }
         else
         {
             data.get().set(idx + ".maxStock", null);
         }
-        data.get().set(idx + ".median", median);
-        data.get().set(idx + ".stock", stock);
-        data.save();
-    }
 
-    public static void setDiscount(String shopName, int idx, int discount)
-    {
-        CustomConfig data = shopConfigFiles.get(shopName);
-        if (data == null)
-            return;
+        data.get().set(idx + ".median", dsItem.median);
+        data.get().set(idx + ".stock", dsItem.stock);
 
-        if (discount == 0)
-        {
+        if (dsItem.discount > 0)
+            data.get().set(idx + ".discount", dsItem.discount);
+        else
             data.get().set(idx + ".discount", null);
+
+        if (dsItem.tradeLimit != 0)
+        {
+            data.get().set(idx + ".tradeLimitPerPlayer.value", dsItem.tradeLimit);
+            data.get().set(idx + ".tradeLimitPerPlayer.interval", dsItem.tradeLimitInterval);
+            data.get().set(idx + ".tradeLimitPerPlayer.nextTimer", dsItem.tradeLimitNextTimer);
         }
         else
         {
-            data.get().set(idx + ".discount", discount);
+            data.get().set(idx + ".tradeLimitPerPlayer", null);
+            UserUtil.ClearTradeLimitData(shopName, idx);
         }
 
         data.save();
@@ -284,6 +343,8 @@ public final class ShopUtil
         CustomConfig data = shopConfigFiles.get(shopName);
         if (data == null)
             return;
+
+        UserUtil.ClearTradeLimitData(shopName, idx); // 상점에서 데이터 지우기 전에 실행.
 
         data.get().set(String.valueOf(idx), null);
         data.save();
@@ -378,15 +439,15 @@ public final class ShopUtil
         }
 
         tempA.forEach((key, value) ->
-                      {
-                          key += (pageB - pageA) * 45;
-                          data.get().set(String.valueOf(key), value);
-                      });
+        {
+            key += (pageB - pageA) * 45;
+            data.get().set(String.valueOf(key), value);
+        });
         tempB.forEach((key, value) ->
-                      {
-                          key += (pageA - pageB) * 45;
-                          data.get().set(String.valueOf(key), value);
-                      });
+        {
+            key += (pageA - pageB) * 45;
+            data.get().set(String.valueOf(key), value);
+        });
 
         tempA.clear();
         tempB.clear();
@@ -433,6 +494,8 @@ public final class ShopUtil
         shopConfigFiles.remove(shopName);
         shopDirty.put(newName, false);
         shopDirty.remove(shopName);
+
+        UserUtil.OnRenameShop(shopName, newName);
     }
 
     public static void copyShop(String shopName, String newName)
@@ -491,6 +554,8 @@ public final class ShopUtil
             }
         }
 
+        UserUtil.OnMergeShop(shopA, shopB);
+
         dataB.delete();
         shopConfigFiles.remove(shopB);
         shopDirty.remove(shopB);
@@ -544,8 +609,8 @@ public final class ShopUtil
             } catch (Exception e)
             {
                 DynamicShop.console.sendMessage(Constants.DYNAMIC_SHOP_PREFIX +
-                                                        shopName + ", " + linkedShop + "/ " +
-                                                        t(null, "ERR.SHOP_LINK_TARGET_ERR"));
+                        shopName + ", " + linkedShop + "/ " +
+                        t(null, "ERR.SHOP_LINK_TARGET_ERR"));
 
                 data.get().set("Options.Balance", null);
                 data.save();
@@ -624,9 +689,15 @@ public final class ShopUtil
 
                 if (worth != 0)
                 {
-                    int sugMid = CalcRecommendedMedian(worth, ConfigUtil.GetNumberOfPlayer());
+                    int discount = data.get().getInt(itemIndex + ".discount");
+                    int tradeLimit = data.get().getInt(itemIndex + ".tradeLimitPerPlayer.value");
+                    long tradeLimitInterval = data.get().getLong(itemIndex + ".tradeLimitPerPlayer.interval");
+                    long tradeLimitNextTimer = data.get().getLong(itemIndex + ".tradeLimitPerPlayer.nextTimer");
 
-                    ShopUtil.editShopItem(shop, i, worth, worth, 0.01f, -1, sugMid, sugMid);
+                    int sugMid = CalcRecommendedMedian(worth, ConfigUtil.GetNumberOfPlayer());
+                    DSItem temp = new DSItem(null, worth, worth, 0.01f, -1, sugMid, sugMid, -1, discount,
+                                             tradeLimit, tradeLimitInterval, tradeLimitNextTimer);
+                    ShopUtil.editShopItem(shop, i, temp);
                 } else
                 {
                     if (sender != null)
@@ -733,6 +804,15 @@ public final class ShopUtil
                 if (maxStock != -1 && maxStock <= stock)
                     continue;
 
+                // 플레이어 당 거래량 제한 확인
+                int sellLimit = ShopUtil.GetTradeLimitPerPlayer(entry.getKey(), sameItemIdx);
+                if (player != null && sellLimit != 0)
+                {
+                    int tradeAmount = UserUtil.CheckTradeLimitPerPlayer(player, entry.getKey(), sameItemIdx, HashUtil.GetItemHash(itemStack), itemStack.getAmount(), true);
+                    if (tradeAmount == 0)
+                        continue;
+                }
+
                 double value = Calc.getCurrentPrice(entry.getKey(), String.valueOf(sameItemIdx), false);
 
                 value -= deliveryCosts;
@@ -826,6 +906,15 @@ public final class ShopUtil
                         player.sendMessage(DynamicShop.dsPrefix(player) + t(player, "MESSAGE.Q_SEARCH_FAIL_CURRENCY"));
 
                     return new String[]{"","-2"};
+                }
+
+                // 플레이어 당 거래량 제한 확인
+                int buyLimit = ShopUtil.GetTradeLimitPerPlayer(entry.getKey(), sameItemIdx);
+                if (player != null && buyLimit != 0)
+                {
+                    int tradeAmount = UserUtil.CheckTradeLimitPerPlayer(player, entry.getKey(), sameItemIdx, HashUtil.GetItemHash(itemStack), itemStack.getAmount(), false);
+                    if (tradeAmount == 0)
+                        continue;
                 }
 
                 double value = Calc.getCurrentPrice(entry.getKey(), String.valueOf(sameItemIdx), true);
@@ -998,6 +1087,9 @@ public final class ShopUtil
 
     public static int CalcShipping(String shopName, Player player)
     {
+        if (player == null)
+            return 0;
+
         int deliverycharge = 0;
 
         CustomConfig shopData = ShopUtil.shopConfigFiles.get(shopName);
@@ -1311,5 +1403,58 @@ public final class ShopUtil
         {
             entry.getValue().save();
         }
+    }
+
+    public static int GetTradeLimitPerPlayer(String shopName, int idx)
+    {
+        CustomConfig data = ShopUtil.shopConfigFiles.get(shopName);
+
+        if (!data.get().contains(idx + ".tradeLimitPerPlayer"))
+        {
+            return 0;
+        }
+
+        return data.get().getInt(idx + ".tradeLimitPerPlayer.value");
+    }
+
+    private final static SimpleDateFormat sdf = new SimpleDateFormat("MM.dd.yyyy HH:mm:ss");
+    public static String GetTradeLimitNextResetTime(String shopName, int idx)
+    {
+        CustomConfig data = ShopUtil.shopConfigFiles.get(shopName);
+
+        boolean somethingChanged = false;
+
+        long interval = data.get().getLong(idx + ".tradeLimitPerPlayer.interval");
+        if (interval == 0)
+        {
+            interval = MathUtil.dayInMilliSeconds;
+            data.get().set(idx + ".tradeLimitPerPlayer.interval", interval);
+            somethingChanged = true;
+        }
+
+        long next = data.get().getLong(idx + ".tradeLimitPerPlayer.nextTimer");
+        if (next == 0)
+        {
+            next = System.currentTimeMillis();
+            next = MathUtil.RoundDown_Time_Hour(next);
+            data.get().set(idx + ".tradeLimitPerPlayer.nextTimer", next);
+
+            somethingChanged = true;
+        }
+
+        if (System.currentTimeMillis() > next)
+        {
+            next += interval;
+            next = MathUtil.RoundDown_Time_Hour(next);
+            data.get().set(idx + ".tradeLimitPerPlayer.nextTimer", next);
+
+            UserUtil.ClearTradeLimitData(shopName, idx);
+            somethingChanged = true;
+        }
+
+        if (somethingChanged)
+            ShopUtil.shopDirty.put(shopName, true);
+
+        return sdf.format(next);
     }
 }

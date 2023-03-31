@@ -35,9 +35,7 @@ public final class PlayerpointHook
             return false;
         }
 
-        boolean result = DynamicShop.ppAPI.give(uuid, amount);
-
-        return result;
+        return DynamicShop.ppAPI.give(uuid, amount);
     }
 
     public static int getCurrentPP(Player p)

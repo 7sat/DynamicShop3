@@ -38,7 +38,7 @@ public final class Buy
             econ = DynamicShop.getEconomy();
         }
 
-        int actualAmount = 0;
+        int tradeAmount = 0;
         int stockOld = data.get().getInt(tradeIdx + ".stock");
         double priceBuyOld = Calc.getCurrentPrice(shopName, tradeIdx, true);
         double priceSellOld = DynaShopAPI.getSellPrice(shopName, itemStack);
@@ -57,9 +57,24 @@ public final class Buy
             playerBalance = PlayerpointHook.getCurrentPP(player);
         }
 
+        // 플레이어 당 거래량 제한 확인
+        int tradeIdxInt = Integer.parseInt(tradeIdx);
+        int tradeLimitPerPlayer = ShopUtil.GetTradeLimitPerPlayer(shopName, tradeIdxInt);
+        int playerTradingVolume = UserUtil.GetPlayerTradingVolume(player, shopName, HashUtil.GetItemHash(itemStack));
+
         for (int i = 0; i < itemStack.getAmount(); i++)
         {
-            if (!infiniteStock && stockOld <= actualAmount + 1)
+            if (tradeLimitPerPlayer > 0 && tradeLimitPerPlayer <= playerTradingVolume + tradeAmount)
+            {
+                if (tradeAmount == 0)
+                {
+                    return;
+                }
+
+                break;
+            }
+
+            if (!infiniteStock && stockOld <= tradeAmount + 1)
                 break;
 
             double price = Calc.getCurrentPrice(shopName, tradeIdx, true, true);
@@ -73,11 +88,11 @@ public final class Buy
                 data.get().set(tradeIdx + ".stock", data.get().getInt(tradeIdx + ".stock") - 1);
             }
 
-            actualAmount++;
+            tradeAmount++;
         }
 
         // 실 구매 가능량이 0이다 = 돈이 없다.
-        if (actualAmount <= 0)
+        if (tradeAmount <= 0)
         {
             String message = "";
             if (currency == ItemTrade.CURRENCY.VAULT)
@@ -99,7 +114,7 @@ public final class Buy
         }
 
         // 상점 재고 부족
-        if (!infiniteStock && stockOld <= actualAmount)
+        if (!infiniteStock && stockOld <= tradeAmount)
         {
             player.sendMessage(DynamicShop.dsPrefix(player) + t(player, "MESSAGE.OUT_OF_STOCK"));
             data.get().set(tradeIdx + ".stock", stockOld);
@@ -132,7 +147,7 @@ public final class Buy
                 return;
         }
 
-        int leftAmount = actualAmount;
+        int leftAmount = tradeAmount;
         int maxStackSize = itemStack.getType().getMaxStackSize();
         while (leftAmount > 0)
         {
@@ -156,11 +171,17 @@ public final class Buy
             leftAmount -= giveAmount;
         }
 
+        // 플레이어 당 거래량 제한 아이템에 대한 처리.
+        if (tradeLimitPerPlayer < Integer.MAX_VALUE)
+        {
+            UserUtil.OnPlayerTradeLimitedItem(player, shopName, HashUtil.GetItemHash(itemStack), tradeAmount, false);
+        }
+
         //로그 기록
-        LogUtil.addLog(shopName, itemStack.getType().toString(), actualAmount, priceSum, StringUtil.GetCurrencyString(currency), player.getName());
+        LogUtil.addLog(shopName, itemStack.getType().toString(), tradeAmount, priceSum, StringUtil.GetCurrencyString(currency), player.getName());
 
         // 메시지 출력
-        SendBuyMessage(currency, econ, player, actualAmount, priceSum, itemStack);
+        SendBuyMessage(currency, econ, player, tradeAmount, priceSum, itemStack);
 
         // 플레이어에게 소리 재생
         SoundUtil.playerSoundEffect(player, "buy");
@@ -172,7 +193,7 @@ public final class Buy
         }
 
         // 커맨드 실행
-        RunBuyCommand(data, player, shopName, itemStack, actualAmount, priceSum);
+        RunBuyCommand(data, player, shopName, itemStack, tradeAmount, priceSum);
 
         ShopUtil.shopDirty.put(shopName, true);
         DynaShopAPI.openItemTradeGui(player, shopName, tradeIdx);

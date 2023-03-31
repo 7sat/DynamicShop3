@@ -6,6 +6,7 @@ import me.sat7.dynamicshop.constants.Constants;
 import me.sat7.dynamicshop.events.OnChat;
 import me.sat7.dynamicshop.files.CustomConfig;
 import me.sat7.dynamicshop.utilities.ShopUtil;
+import me.sat7.dynamicshop.utilities.UserUtil;
 import org.bukkit.Bukkit;
 import org.bukkit.Material;
 import org.bukkit.entity.Player;
@@ -240,15 +241,15 @@ public final class PageEditor extends InGameUI
 
     private void SwapPage(Player player, String shopName, int selectedPage)
     {
-        if (DynamicShop.userTempData.get(player.getUniqueId()).contains("swapPage"))
+        if (UserUtil.userTempData.get(player.getUniqueId()).contains("swapPage"))
         {
-            String[] pageSwapData = DynamicShop.userTempData.get(player.getUniqueId()).split("/");
+            String[] pageSwapData = UserUtil.userTempData.get(player.getUniqueId()).split("/");
 
             int pageTarget = Integer.parseInt(pageSwapData[1]);
             if (selectedPage != pageTarget)
             {
                 boolean result = ShopUtil.SwapPage(shopName, selectedPage, pageTarget);
-                DynamicShop.userTempData.put(player.getUniqueId(), "");
+                UserUtil.userTempData.put(player.getUniqueId(), "");
 
                 DynaShopAPI.openPageEditor(player, shopName, selectedPage);
 
@@ -259,7 +260,7 @@ public final class PageEditor extends InGameUI
             }
         } else
         {
-            DynamicShop.userTempData.put(player.getUniqueId(), "swapPage/" + selectedPage);
+            UserUtil.userTempData.put(player.getUniqueId(), "swapPage/" + selectedPage);
             player.sendMessage(DynamicShop.dsPrefix(player) + t(player, "PAGE_EDITOR.PAGE_SWAP_SELECTED"));
         }
     }
@@ -285,8 +286,8 @@ public final class PageEditor extends InGameUI
             {
                 ShopUtil.closeInventoryWithDelay(player);
 
-                DynamicShop.userInteractItem.put(player.getUniqueId(), shopName + "/" + page); // 삭제 확인을 위해 필요.
-                DynamicShop.userTempData.put(player.getUniqueId(), "waitforPageDelete");
+                UserUtil.userInteractItem.put(player.getUniqueId(), shopName + "/" + page); // 삭제 확인을 위해 필요.
+                UserUtil.userTempData.put(player.getUniqueId(), "waitforPageDelete");
                 OnChat.WaitForInput(player);
 
                 player.sendMessage(DynamicShop.dsPrefix(player) + t(player, "MESSAGE.DELETE_CONFIRM"));

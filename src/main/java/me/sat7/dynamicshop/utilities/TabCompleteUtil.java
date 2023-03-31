@@ -174,7 +174,7 @@ public final class TabCompleteUtil
                             } else if (args.length == 5)
                             {
                                 String mat = args[3].toUpperCase();
-                                String userTempStr = DynamicShop.userTempData.get(uuid);
+                                String userTempStr = UserUtil.userTempData.get(uuid);
 
                                 if (!(userTempStr.contains("add") && userTempStr.length() > 3))
                                 {

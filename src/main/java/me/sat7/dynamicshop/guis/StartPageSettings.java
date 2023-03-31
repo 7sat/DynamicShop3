@@ -5,6 +5,7 @@ import java.util.UUID;
 import me.sat7.dynamicshop.DynaShopAPI;
 import me.sat7.dynamicshop.events.OnChat;
 import me.sat7.dynamicshop.utilities.ShopUtil;
+import me.sat7.dynamicshop.utilities.UserUtil;
 import org.bukkit.Bukkit;
 import org.bukkit.Material;
 import org.bukkit.entity.Player;
@@ -36,7 +37,7 @@ public final class StartPageSettings extends InGameUI
     public Inventory getGui(Player player, int slotIndex)
     {
         this.slotIndex = slotIndex;
-        DynamicShop.userInteractItem.put(player.getUniqueId(), "startPage/" + slotIndex);
+        UserUtil.userInteractItem.put(player.getUniqueId(), "startPage/" + slotIndex);
 
         inventory = Bukkit.createInventory(player, 9, t(player, "START_PAGE.EDITOR_TITLE"));
 
@@ -81,7 +82,7 @@ public final class StartPageSettings extends InGameUI
         {
             player.sendMessage(DynamicShop.dsPrefix(player) + t(player, "START_PAGE.ENTER_NAME"));
             ShopUtil.closeInventoryWithDelay(player);
-            DynamicShop.userTempData.put(uuid,"waitforInput" + "btnName");
+            UserUtil.userTempData.put(uuid,"waitforInput" + "btnName");
             OnChat.WaitForInput(player);
         }
         //설명
@@ -89,13 +90,13 @@ public final class StartPageSettings extends InGameUI
         {
             player.sendMessage(DynamicShop.dsPrefix(player) + t(player, "START_PAGE.ENTER_LORE"));
             ShopUtil.closeInventoryWithDelay(player);
-            DynamicShop.userTempData.put(uuid,"waitforInput" + "btnLore");
+            UserUtil.userTempData.put(uuid,"waitforInput" + "btnLore");
             OnChat.WaitForInput(player);
         }
         //아이콘
         else if (e.getSlot() == ICON)
         {
-            DynamicShop.userInteractItem.put(player.getUniqueId(), "startPage/" + slotIndex);
+            UserUtil.userInteractItem.put(player.getUniqueId(), "startPage/" + slotIndex);
             DynaShopAPI.openItemPalette(player, 1, "", slotIndex, 1, "");
         }
         //액션
@@ -103,7 +104,7 @@ public final class StartPageSettings extends InGameUI
         {
             player.sendMessage(DynamicShop.dsPrefix(player) + t(player, "START_PAGE.ENTER_ACTION"));
             ShopUtil.closeInventoryWithDelay(player);
-            DynamicShop.userTempData.put(uuid,"waitforInput" + "btnAction");
+            UserUtil.userTempData.put(uuid,"waitforInput" + "btnAction");
             OnChat.WaitForInput(player);
         }
         // 상점 숏컷

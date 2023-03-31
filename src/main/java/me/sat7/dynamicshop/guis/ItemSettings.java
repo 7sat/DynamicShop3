@@ -1,5 +1,6 @@
 package me.sat7.dynamicshop.guis;
 
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 
 import me.sat7.dynamicshop.DynaShopAPI;
@@ -28,12 +29,17 @@ public final class ItemSettings extends InGameUI
         uiType = UI_TYPE.ItemSettings;
     }
 
+    private final SimpleDateFormat sdf = new SimpleDateFormat("MM.dd.yyyy HH:mm:ss");
+
     private final int SAMPLE_ITEM = 0;
 
     private final int DONE = 8;
     private final int CLOSE = 45;
-    private final int DISCOUNT = 47;
+    private final int TRADE_LIMIT_AMOUNT = 46;
+    private final int TRADE_LIMIT_INTERVAL = 47;
+    private final int TRADE_LIMIT_INTERVAL_TIMER = 48;
     private final int RECOMMEND = 49;
+    private final int DISCOUNT = 50;
     private final int REMOVE = 53;
 
     private final int BUY_VALUE = 1;
@@ -59,24 +65,18 @@ public final class ItemSettings extends InGameUI
     private DSItem dsItem;
     private int currentTab;
 
-    private double buyValue;
-    private double sellValue;
-    private double minValue;
-    private double maxValue;
-    private int median;
-    private int stock;
-    private int maxStock;
-    private int discount;
+    private int timerOffset;
 
     private boolean oldSbSame;
 
-    public Inventory getGui(Player player, String shopName, int shopSlotIndex, int tab, DSItem dsItem)
+    public Inventory getGui(Player player, String shopName, int shopSlotIndex, int tab, DSItem dsItem, int timerOffset)
     {
         this.player = player;
         this.shopName = shopName;
         this.shopSlotIndex = shopSlotIndex;
         this.dsItem = dsItem;
         this.currentTab = Clamp(tab, TAB_START, TAB_END);
+        this.timerOffset = timerOffset;
 
         inventory = Bukkit.createInventory(player, 54, t(player, "ITEM_SETTING_TITLE") + "§7 | §8" + shopName);
 
@@ -265,13 +265,31 @@ public final class ItemSettings extends InGameUI
                     + "§7 " + dsItem.getStock() + stockChanged + sugMid;
         }
 
-        discount = dsItem.getDiscount();
-        Material discountMat = discount == 0 ? Material.IRON_NUGGET : Material.GOLD_NUGGET;
-        int discountMatAmount = discount/10;
+        Material discountMat = dsItem.discount == 0 ? Material.IRON_NUGGET : Material.GOLD_NUGGET;
+        int discountMatAmount = dsItem.discount/10;
         if (discountMatAmount < 1)
             discountMatAmount = 1;
-        CreateButton(DISCOUNT, discountMat, t(player, "ITEM_SETTING.DISCOUNT"), t(player, "ITEM_SETTING.DISCOUNT_LORE").replace("{num}", discount+""), discountMatAmount);
+        CreateButton(DISCOUNT, discountMat, t(player, "ITEM_SETTING.DISCOUNT"), t(player, "ITEM_SETTING.DISCOUNT_LORE").replace("{num}", dsItem.discount+""), discountMatAmount);
+
+        String tradeLimitIntervalString = dsItem.tradeLimitInterval / 1000 / 60 / 60 + "";
+        String tradeLimitNextTimerString = sdf.format(dsItem.tradeLimitNextTimer);
+        CreateButton(TRADE_LIMIT_AMOUNT, Material.PLAYER_HEAD,
+                     t(player, "ITEM_SETTING.TRADE_LIMIT_AMOUNT"),
+                     t(player, "ITEM_SETTING.TRADE_LIMIT_AMOUNT_LORE").replace("{num}", dsItem.tradeLimit + ""));
+
+        if (dsItem.tradeLimit != 0)
+        {
+            CreateButton(TRADE_LIMIT_INTERVAL, Material.CLOCK,
+                         t(player, "ITEM_SETTING.TRADE_LIMIT_INTERVAL"),
+                         t(player, "ITEM_SETTING.TRADE_LIMIT_INTERVAL_LORE").replace("{interval}", tradeLimitIntervalString).replace("{time}", tradeLimitNextTimerString));
+
+            CreateButton(TRADE_LIMIT_INTERVAL_TIMER, Material.CLOCK,
+                         t(player, "ITEM_SETTING.TRADE_LIMIT_TIMER"),
+                         t(player, "ITEM_SETTING.TRADE_LIMIT_TIMER_LORE").replace("{num}", timerOffset / 1000 / 60 / 60 + "").replace("{time}", tradeLimitNextTimerString));
+        }
+
         CreateButton(RECOMMEND, Material.NETHER_STAR, t(player, "ITEM_SETTING.RECOMMEND"), recommendLore); // 추천 버튼
+
         CreateButton(DONE, Material.STRUCTURE_VOID, t(player, "ITEM_SETTING.DONE"), t(player, "ITEM_SETTING.DONE_LORE")); // 완료 버튼
         CreateButton(CLOSE, Material.BARRIER, t(player, "ITEM_SETTING.CLOSE"), t(player, "ITEM_SETTING.CLOSE_LORE")); // 닫기 버튼
         CreateButton(REMOVE, Material.BONE, t(player, "ITEM_SETTING.REMOVE"), t(player, "ITEM_SETTING.REMOVE_LORE")); // 삭제 버튼
@@ -287,22 +305,18 @@ public final class ItemSettings extends InGameUI
         if (e.getCurrentItem() == null)
             return;
 
-        buyValue = dsItem.getBuyValue();
-        sellValue = dsItem.getSellValue();
-        minValue = dsItem.getMinPrice();
-        if(minValue <= 0) minValue = 0.01;
-        maxValue = dsItem.getMaxPrice();
-        if(maxValue <= 0) maxValue = -1;
-        median = dsItem.getMedian();
-        stock = dsItem.getStock();
-        maxStock = dsItem.getMaxStock();
+        if(dsItem.minPrice <= 0) dsItem.minPrice = 0.01;
+        if(dsItem.maxPrice <= 0) dsItem.maxPrice = -1;
 
-        oldSbSame = sellValue == buyValue;
+        oldSbSame = dsItem.sellValue == dsItem.buyValue;
 
         if (e.getSlot() == CLOSE) DynaShopAPI.openShopGui(player, shopName, shopSlotIndex / 45 + 1);
         else if (e.getSlot() == REMOVE) RemoveItem();
         else if (e.getSlot() == RECOMMEND) SetToRecommend();
         else if (e.getSlot() == DISCOUNT) OnDiscountButtonClick(e.isLeftClick());
+        else if (e.getSlot() == TRADE_LIMIT_AMOUNT) OnTradeLimitAmountButtonClick(e.isLeftClick(), e.isShiftClick());
+        else if (e.getSlot() == TRADE_LIMIT_INTERVAL) OnTradeLimitIntervalButtonClick(e.isLeftClick(), e.isShiftClick());
+        else if (e.getSlot() == TRADE_LIMIT_INTERVAL_TIMER) OnTradeLimitTimerAdjustButtonClick(e.isLeftClick(), e.isShiftClick());
         else if (e.getSlot() >= TAB_START && e.getSlot() <= TAB_END) ChangeTab(e.getSlot());
         else if (e.getSlot() == RESET) Reset();
         else if (e.getSlot() >= 18 && e.getSlot() < 27) PlusMinus(e.isShiftClick(), e.getCurrentItem()); // RESET 이 22인것에 주의
@@ -316,27 +330,27 @@ public final class ItemSettings extends InGameUI
     private void SaveSetting()
     {
         // 유효성 검사
-        if (maxValue > 0 && buyValue > maxValue)
+        if (dsItem.maxPrice > 0 && dsItem.buyValue > dsItem.maxPrice)
         {
             player.sendMessage(DynamicShop.dsPrefix(player) + t(player, "ERR.DEFAULT_VALUE_OUT_OF_RANGE"));
             return;
         }
-        if (minValue > 0 && buyValue < minValue)
+        if (dsItem.minPrice > 0 && dsItem.buyValue < dsItem.minPrice)
         {
             player.sendMessage(DynamicShop.dsPrefix(player) + t(player, "ERR.DEFAULT_VALUE_OUT_OF_RANGE"));
             return;
         }
-        if (maxValue > 0 && sellValue > maxValue)
+        if (dsItem.maxPrice > 0 && dsItem.sellValue > dsItem.maxPrice)
         {
             player.sendMessage(DynamicShop.dsPrefix(player) + t(player, "ERR.DEFAULT_VALUE_OUT_OF_RANGE"));
             return;
         }
-        if (minValue > 0 && sellValue < minValue)
+        if (dsItem.minPrice > 0 && dsItem.sellValue < dsItem.minPrice)
         {
             player.sendMessage(DynamicShop.dsPrefix(player) + t(player, "ERR.DEFAULT_VALUE_OUT_OF_RANGE"));
             return;
         }
-        if (maxValue > 0 && minValue > 0 && minValue >= maxValue)
+        if (dsItem.maxPrice > 0 && dsItem.minPrice > 0 && dsItem.minPrice >= dsItem.maxPrice)
         {
             player.sendMessage(DynamicShop.dsPrefix(player) + t(player, "ERR.MAX_LOWER_THAN_MIN"));
             return;
@@ -346,8 +360,7 @@ public final class ItemSettings extends InGameUI
 
         if (-1 != existSlot)
         {
-            ShopUtil.editShopItem(shopName, existSlot, buyValue, sellValue, minValue, maxValue, median, stock, maxStock);
-            ShopUtil.setDiscount(shopName,existSlot, discount);
+            ShopUtil.editShopItem(shopName, existSlot, dsItem);
             DynaShopAPI.openShopGui(player, shopName, existSlot / 45 + 1);
             SoundUtil.playerSoundEffect(player, "addItem");
         } else
@@ -359,8 +372,7 @@ public final class ItemSettings extends InGameUI
 
             if (idx != -1)
             {
-                ShopUtil.addItemToShop(shopName, idx, inventory.getItem(SAMPLE_ITEM), buyValue, sellValue, minValue, maxValue, median, stock, maxStock);
-                ShopUtil.setDiscount(shopName,existSlot, discount);
+                ShopUtil.addItemToShop(shopName, idx, dsItem);
                 DynaShopAPI.openShopGui(player, shopName, shopSlotIndex / 45 + 1);
                 SoundUtil.playerSoundEffect(player, "addItem");
             }
@@ -378,11 +390,84 @@ public final class ItemSettings extends InGameUI
     private void OnDiscountButtonClick(boolean isLeftClick)
     {
         if (isLeftClick)
-            discount += 10;
+            dsItem.discount += 10;
         else
-            discount -= 10;
+            dsItem.discount -= 10;
 
         RefreshWindow();
+    }
+
+    private void OnTradeLimitAmountButtonClick(boolean isLeftClick, boolean isShift)
+    {
+        int mod;
+        if (isLeftClick)
+        {
+            mod = 1;
+        }
+        else
+        {
+            mod = -1;
+        }
+
+        if (isShift)
+            mod *= 10;
+
+        dsItem.tradeLimit += mod;
+        if (dsItem.tradeLimit != 0 && dsItem.tradeLimitNextTimer == 0)
+        {
+            CalcTradeLimitNextTimer();
+        }
+        RefreshWindow();
+    }
+
+    private void OnTradeLimitIntervalButtonClick(boolean isLeftClick, boolean isShift)
+    {
+        if (dsItem.tradeLimit == 0)
+            return;
+
+        long mod = 1000 * 60 * 60;
+        if (!isLeftClick)
+        {
+            mod *= -1;
+        }
+        if (isShift)
+        {
+            mod *= 12;
+        }
+
+        dsItem.tradeLimitInterval += mod; // (ms)
+        if (dsItem.tradeLimitInterval < 1000 * 60 * 60)
+        {
+            dsItem.tradeLimitInterval = 1000 * 60 * 60;
+        }
+        CalcTradeLimitNextTimer();
+        RefreshWindow();
+    }
+
+    private void OnTradeLimitTimerAdjustButtonClick(boolean isLeftClick, boolean isShift)
+    {
+        if (dsItem.tradeLimit == 0)
+            return;
+
+        long mod = 1000 * 60 * 60;
+        if (!isLeftClick)
+        {
+            mod *= -1;
+        }
+        if (isShift)
+        {
+            mod *= 12;
+        }
+
+        timerOffset += mod;
+        CalcTradeLimitNextTimer();
+        RefreshWindow();
+    }
+
+    private void CalcTradeLimitNextTimer()
+    {
+        dsItem.tradeLimitNextTimer = System.currentTimeMillis() + dsItem.tradeLimitInterval + timerOffset;
+        dsItem.tradeLimitNextTimer = MathUtil.RoundDown_Time_Hour(dsItem.tradeLimitNextTimer);
     }
 
     private void SetToRecommend()
@@ -395,11 +480,11 @@ public final class ItemSettings extends InGameUI
         } else
         {
             int sugMid = ShopUtil.CalcRecommendedMedian(worth, ConfigUtil.GetNumberOfPlayer());
+            DSItem newDSItem = new DSItem(inventory.getItem(SAMPLE_ITEM), worth, worth, dsItem.minPrice, dsItem.maxPrice, sugMid, sugMid, dsItem.maxStock, dsItem.discount,
+                                          dsItem.tradeLimit, dsItem.tradeLimitInterval, dsItem.tradeLimitNextTimer);
+            DynaShopAPI.openItemSettingGui(player, shopName, shopSlotIndex, currentTab, newDSItem, timerOffset);
 
             player.sendMessage(DynamicShop.dsPrefix(player) + t(player, "MESSAGE.RECOMMEND_APPLIED").replace("{playerNum}", ConfigUtil.GetNumberOfPlayer() + ""));
-
-            DynaShopAPI.openItemSettingGui(player, shopName, shopSlotIndex, currentTab, inventory.getItem(SAMPLE_ITEM),
-                                           worth, worth, minValue, maxValue, sugMid, sugMid, maxStock, discount);
         }
     }
 
@@ -420,18 +505,18 @@ public final class ItemSettings extends InGameUI
 
     private void ChangeTab(int tabIndex)
     {
-        DynaShopAPI.openItemSettingGui(player, shopName, shopSlotIndex, tabIndex, dsItem);
+        DynaShopAPI.openItemSettingGui(player, shopName, shopSlotIndex, tabIndex, dsItem, timerOffset);
     }
 
     private void Reset()
     {
-        if (currentTab == BUY_VALUE) buyValue = 10;
-        else if (currentTab == SELL_VALUE) sellValue = 10;
-        else if (currentTab == MIN_VALUE) minValue = 0.01;
-        else if (currentTab == MAX_VALUE) maxValue = -1;
-        else if (currentTab == MEDIAN) median = 10000;
-        else if (currentTab == STOCK) stock = 10000;
-        else if (currentTab == MAX_STOCK) maxStock = -1;
+        if (currentTab == BUY_VALUE) dsItem.buyValue = 10;
+        else if (currentTab == SELL_VALUE) dsItem.sellValue = 10;
+        else if (currentTab == MIN_VALUE) dsItem.minPrice = 0.01;
+        else if (currentTab == MAX_VALUE) dsItem.maxPrice = -1;
+        else if (currentTab == MEDIAN) dsItem.median = 10000;
+        else if (currentTab == STOCK) dsItem.stock = 10000;
+        else if (currentTab == MAX_STOCK) dsItem.maxStock = -1;
 
         RefreshWindow();
     }
@@ -444,70 +529,70 @@ public final class ItemSettings extends InGameUI
 
         if (currentTab == BUY_VALUE)
         {
-            buyValue += editNum;
-            if (buyValue < 0.01) buyValue = 0.01f;
+            dsItem.buyValue += editNum;
+            if (dsItem.buyValue < 0.01) dsItem.buyValue = 0.01f;
 
             if(oldSbSame)
-                sellValue = buyValue;
+                dsItem.sellValue = dsItem.buyValue;
         } else if (currentTab == SELL_VALUE)
         {
-            sellValue += editNum;
-            if (sellValue < 0.01) sellValue = 0.01f;
+            dsItem.sellValue += editNum;
+            if (dsItem.sellValue < 0.01) dsItem.sellValue = 0.01f;
         } else if (currentTab == MIN_VALUE)
         {
-            minValue += editNum;
-            if (minValue < 0.01) minValue = 0.01f;
+            dsItem.minPrice += editNum;
+            if (dsItem.minPrice < 0.01) dsItem.minPrice = 0.01f;
         } else if (currentTab == MAX_VALUE)
         {
-            if (maxValue <= 0 && editNum > 0)
-                maxValue = editNum;
+            if (dsItem.maxPrice <= 0 && editNum > 0)
+                dsItem.maxPrice = editNum;
             else
             {
-                maxValue += editNum;
-                if (maxValue < 0.01)
-                    maxValue = -1;
+                dsItem.maxPrice += editNum;
+                if (dsItem.maxPrice < 0.01)
+                    dsItem.maxPrice = -1;
             }
         } else if (currentTab == MEDIAN)
         {
-            if(median <= 0 && editNum > 0)
+            if(dsItem.median <= 0 && editNum > 0)
             {
-                median = (int)editNum;
-                if(stock == -1)
-                    stock = 1;
+                dsItem.median = (int)editNum;
+                if(dsItem.stock == -1)
+                    dsItem.stock = 1;
             }
             else
             {
-                median += editNum;
-                if(median < 1)
-                    median = -1;
+                dsItem.median += editNum;
+                if(dsItem.median < 1)
+                    dsItem.median = -1;
             }
         } else if (currentTab == STOCK)
         {
-            if (stock <= 0 && editNum > 0)
+            if (dsItem.stock <= 0 && editNum > 0)
             {
-                stock = (int)editNum;
+                dsItem.stock = (int)editNum;
             }
             else
             {
-                stock += editNum;
-                if(stock < 1)
+                dsItem.stock += editNum;
+                if(dsItem.stock < 1)
                 {
-                    stock = -1;
-                    median = -1;
-                    maxStock = -1;
+                    dsItem.stock = -1;
+                    dsItem.median = -1;
+                    dsItem.maxStock = -1;
                 }
             }
         } else if (currentTab == MAX_STOCK)
         {
-            if(maxStock <= 0 && editNum > 0)
+            if(dsItem.maxStock <= 0 && editNum > 0)
             {
-                maxStock = (int)editNum;
+                dsItem.maxStock = (int)editNum;
             }
             else
             {
-                maxStock += editNum;
-                if(maxStock < 1)
-                    maxStock = -1;
+                dsItem.maxStock += editNum;
+                if(dsItem.maxStock < 1)
+                    dsItem.maxStock = -1;
             }
         }
 
@@ -521,43 +606,43 @@ public final class ItemSettings extends InGameUI
 
         if (currentTab == BUY_VALUE)
         {
-            buyValue /= div;
-            if(buyValue < 0.01) buyValue = 0.01;
+            dsItem.buyValue /= div;
+            if(dsItem.buyValue < 0.01) dsItem.buyValue = 0.01;
 
             if(oldSbSame)
-                sellValue = buyValue;
+                dsItem.sellValue = dsItem.buyValue;
         } else if (currentTab == SELL_VALUE)
         {
-            sellValue /= div;
-            if(sellValue < 0.01) sellValue = 0.01;
+            dsItem.sellValue /= div;
+            if(dsItem.sellValue < 0.01) dsItem.sellValue = 0.01;
         } else if (currentTab == MIN_VALUE)
         {
-            minValue /= div;
-            if(minValue < 0.01) minValue = 0.01;
+            dsItem.minPrice /= div;
+            if(dsItem.minPrice < 0.01) dsItem.minPrice = 0.01;
         } else if (currentTab == MAX_VALUE)
         {
-            maxValue /= div;
-            if(maxValue < 0.01) maxValue = 0.01;
+            dsItem.maxPrice /= div;
+            if(dsItem.maxPrice < 0.01) dsItem.maxPrice = 0.01;
         } else if (currentTab == MEDIAN)
         {
-            if(median > 1)
+            if(dsItem.median > 1)
             {
-                median /= div;
-                if(median < 1) median = 1;
+                dsItem.median /= div;
+                if(dsItem.median < 1) dsItem.median = 1;
             }
         } else if (currentTab == STOCK)
         {
-            if (stock > 1)
+            if (dsItem.stock > 1)
             {
-                stock /= div;
-                if (stock < 1) stock = 1;
+                dsItem.stock /= div;
+                if (dsItem.stock < 1) dsItem.stock = 1;
             }
         } else if (currentTab == MAX_STOCK)
         {
-            if (maxStock > 1)
+            if (dsItem.maxStock > 1)
             {
-                maxStock /= div;
-                if(maxStock < 1) maxStock = 1;
+                dsItem.maxStock /= div;
+                if(dsItem.maxStock < 1) dsItem.maxStock = 1;
             }
         }
 
@@ -571,17 +656,17 @@ public final class ItemSettings extends InGameUI
 
         if (currentTab == BUY_VALUE)
         {
-            buyValue *= mul;
+            dsItem.buyValue *= mul;
 
             if(oldSbSame)
-                sellValue = buyValue;
+                dsItem.sellValue = dsItem.buyValue;
         }
-        else if (currentTab == SELL_VALUE) sellValue *= mul;
-        else if (currentTab == MIN_VALUE) minValue *= mul;
-        else if (currentTab == MAX_VALUE) maxValue *= mul;
-        else if (currentTab == MEDIAN) median *= mul;
-        else if (currentTab == STOCK) stock *= mul;
-        else if (currentTab == MAX_STOCK) maxStock *= mul;
+        else if (currentTab == SELL_VALUE) dsItem.sellValue *= mul;
+        else if (currentTab == MIN_VALUE) dsItem.minPrice *= mul;
+        else if (currentTab == MAX_VALUE) dsItem.maxPrice *= mul;
+        else if (currentTab == MEDIAN) dsItem.median *= mul;
+        else if (currentTab == STOCK) dsItem.stock *= mul;
+        else if (currentTab == MAX_STOCK) dsItem.maxStock *= mul;
 
         RefreshWindow();
     }
@@ -590,59 +675,59 @@ public final class ItemSettings extends InGameUI
     {
         if (currentTab == BUY_VALUE)
         {
-            buyValue = MathUtil.RoundDown(buyValue);
+            dsItem.buyValue = MathUtil.RoundDown(dsItem.buyValue);
 
             if(oldSbSame)
-                sellValue = buyValue;
+                dsItem.sellValue = dsItem.buyValue;
         }
-        else if (currentTab == SELL_VALUE) sellValue = MathUtil.RoundDown(sellValue);
-        else if (currentTab == MIN_VALUE) minValue = MathUtil.RoundDown(minValue);
-        else if (currentTab == MAX_VALUE) maxValue = MathUtil.RoundDown(maxValue);
-        else if (currentTab == MEDIAN) median = MathUtil.RoundDown(median);
-        else if (currentTab == STOCK) stock = MathUtil.RoundDown(stock);
-        else if (currentTab == MAX_STOCK) maxStock = MathUtil.RoundDown(maxStock);
+        else if (currentTab == SELL_VALUE) dsItem.sellValue = MathUtil.RoundDown(dsItem.sellValue);
+        else if (currentTab == MIN_VALUE) dsItem.minPrice = MathUtil.RoundDown(dsItem.minPrice);
+        else if (currentTab == MAX_VALUE) dsItem.maxPrice = MathUtil.RoundDown(dsItem.maxPrice);
+        else if (currentTab == MEDIAN) dsItem.median = MathUtil.RoundDown(dsItem.median);
+        else if (currentTab == STOCK) dsItem.stock = MathUtil.RoundDown(dsItem.stock);
+        else if (currentTab == MAX_STOCK) dsItem.maxStock = MathUtil.RoundDown(dsItem.maxStock);
 
         RefreshWindow();
     }
 
     private void SetEqualToOther()
     {
-        if (currentTab == SELL_VALUE) sellValue = buyValue;
-        else if (currentTab == MIN_VALUE) minValue = buyValue;
-        else if (currentTab == MAX_VALUE) maxValue = buyValue;
-        else if (currentTab == MEDIAN) median = stock;
-        else if (currentTab == STOCK) stock = median;
-        else if (currentTab == MAX_STOCK) maxStock = stock;
+        if (currentTab == SELL_VALUE) dsItem.sellValue = dsItem.buyValue;
+        else if (currentTab == MIN_VALUE) dsItem.minPrice = dsItem.buyValue;
+        else if (currentTab == MAX_VALUE) dsItem.maxPrice = dsItem.buyValue;
+        else if (currentTab == MEDIAN) dsItem.median = dsItem.stock;
+        else if (currentTab == STOCK) dsItem.stock = dsItem.median;
+        else if (currentTab == MAX_STOCK) dsItem.maxStock = dsItem.stock;
 
         RefreshWindow();
     }
 
     private void ValueValidation()
     {
-        if (buyValue < 0.01)
-            buyValue = 0.01;
-        if (sellValue < 0.01)
-            sellValue = 0.01;
-        if (minValue < 0.01)
-            minValue = 0.01;
-        if (maxValue < -1)
-            maxValue = -1;
-        if (median < -1)
-            median = -1;
-        if (stock < -1)
-            stock = -1;
-        if (maxStock < -1)
-            maxStock = -1;
-        if (discount < 0)
-            discount = 0;
-        if (discount > 90)
-            discount = 90;
+        if (dsItem.buyValue < 0.01)
+            dsItem.buyValue = 0.01;
+        if (dsItem.sellValue < 0.01)
+            dsItem.sellValue = 0.01;
+        if (dsItem.minPrice < 0.01)
+            dsItem.minPrice = 0.01;
+        if (dsItem.maxPrice < -1)
+            dsItem.maxPrice = -1;
+        if (dsItem.median < -1)
+            dsItem.median = -1;
+        if (dsItem.stock < -1)
+            dsItem.stock = -1;
+        if (dsItem.maxStock < -1)
+            dsItem.maxStock = -1;
+        if (dsItem.discount < 0)
+            dsItem.discount = 0;
+        if (dsItem.discount > 90)
+            dsItem.discount = 90;
     }
 
     private void RefreshWindow()
     {
         ValueValidation();
-        DynaShopAPI.openItemSettingGui(player, shopName, shopSlotIndex, currentTab, inventory.getItem(SAMPLE_ITEM), buyValue, sellValue, minValue, maxValue, median, stock, maxStock, discount);
+        DynaShopAPI.openItemSettingGui(player, shopName, shopSlotIndex, currentTab, dsItem, timerOffset);
         SoundUtil.playerSoundEffect(player, "editItem");
     }
 }

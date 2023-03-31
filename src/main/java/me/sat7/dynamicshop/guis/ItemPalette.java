@@ -6,7 +6,9 @@ import java.util.Comparator;
 
 import me.sat7.dynamicshop.DynaShopAPI;
 import me.sat7.dynamicshop.events.OnChat;
+import me.sat7.dynamicshop.models.DSItem;
 import me.sat7.dynamicshop.utilities.ShopUtil;
+import me.sat7.dynamicshop.utilities.UserUtil;
 import org.bukkit.Bukkit;
 import org.bukkit.Material;
 import org.bukkit.entity.Player;
@@ -395,7 +397,8 @@ public final class ItemPalette extends InGameUI
 
                 targetSlotIdx = ShopUtil.findEmptyShopSlot(shopName, shopSlotIndex, true);
 
-                ShopUtil.addItemToShop(shopName, targetSlotIdx, itemStack, 1, 1, 0.01, -1, 10000, 10000);
+                DSItem temp = new DSItem(itemStack, 1, 1, 0.01, -1, 10000, 10000);
+                ShopUtil.addItemToShop(shopName, targetSlotIdx, temp);
             }
         }
         DynaShopAPI.openShopGui(player, shopName, 1);
@@ -407,7 +410,7 @@ public final class ItemPalette extends InGameUI
         {
             player.closeInventory();
 
-            DynamicShop.userTempData.put(player.getUniqueId(), "waitforPalette" + uiSubType);
+            UserUtil.userTempData.put(player.getUniqueId(), "waitforPalette" + uiSubType);
             OnChat.WaitForInput(player);
 
             player.sendMessage(DynamicShop.dsPrefix(player) + t(player, "MESSAGE.SEARCH_ITEM"));
@@ -432,11 +435,13 @@ public final class ItemPalette extends InGameUI
             {
                 if (isShift)
                 {
-                    DynaShopAPI.openItemSettingGui(player, shopName, shopSlotIndex,0, itemStack, 10, 10, 0.01, -1, 10000, 10000, -1, 0);
+                    DSItem dsItem = new DSItem(itemStack, 10, 10, 0.01, -1, 10000, 10000);
+                    DynaShopAPI.openItemSettingGui(player, shopName, shopSlotIndex,0, dsItem);
                 } else
                 {
                     int targetSlotIdx = ShopUtil.findEmptyShopSlot(shopName, shopSlotIndex, true);
-                    ShopUtil.addItemToShop(shopName, targetSlotIdx, itemStack, 1, 1, 0.01, -1, 10000, 10000);
+                    DSItem temp = new DSItem(itemStack, 1, 1, 0.01, -1, 10000, 10000);
+                    ShopUtil.addItemToShop(shopName, targetSlotIdx, temp);
                     player.sendMessage(DynamicShop.dsPrefix(player) + t(player, "MESSAGE.ITEM_ADDED"));
 
                     DynaShopAPI.openItemPalette(player, uiSubType, shopName, shopSlotIndex, currentPage, search);
@@ -449,8 +454,8 @@ public final class ItemPalette extends InGameUI
                 } else
                 {
                     int targetSlotIdx = ShopUtil.findEmptyShopSlot(shopName, shopSlotIndex, true);
-                    //DynamicShop.userInteractItem.put(player.getUniqueId(), shopName + "/" + targetSlotIdx + 1);
-                    ShopUtil.addItemToShop(shopName, targetSlotIdx, itemStack, -1, -1, -1, -1, -1, -1);
+                    DSItem temp = new DSItem(itemStack, -1, -1, -1, -1, -1, -1);
+                    ShopUtil.addItemToShop(shopName, targetSlotIdx, temp);
                     DynaShopAPI.openShopGui(player, shopName, targetSlotIdx / 45 + 1);
                 }
             }
@@ -491,10 +496,12 @@ public final class ItemPalette extends InGameUI
         {
             if (isLeft)
             {
-                DynaShopAPI.openItemSettingGui(player, shopName, shopSlotIndex, 0, item, 10, 10, 0.01, -1, 10000, 10000, -1, 0);
+                DSItem dsItem = new DSItem(item, 10, 10, 0.01, -1, 10000, 10000);
+                DynaShopAPI.openItemSettingGui(player, shopName, shopSlotIndex, 0, dsItem);
             } else if (isRight)
             {
-                ShopUtil.addItemToShop(shopName, shopSlotIndex, item, -1, -1, -1, -1, -1, -1);
+                DSItem temp = new DSItem(item, -1, -1, -1, -1, -1, -1);
+                ShopUtil.addItemToShop(shopName, shopSlotIndex, temp);
 
                 DynaShopAPI.openShopGui(player, shopName, shopSlotIndex / 45 + 1);
             }

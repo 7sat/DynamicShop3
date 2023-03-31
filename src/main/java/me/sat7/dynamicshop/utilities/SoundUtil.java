@@ -9,7 +9,7 @@ import me.sat7.dynamicshop.files.CustomConfig;
 
 public final class SoundUtil
 {
-    public static CustomConfig ccSound;
+    public static CustomConfig ccSound = new CustomConfig();
 
     private SoundUtil()
     {

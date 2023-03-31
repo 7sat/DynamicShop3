@@ -24,7 +24,6 @@ import net.milkbowl.vault.economy.Economy;
 import org.black_ixx.playerpoints.PlayerPoints;
 import org.black_ixx.playerpoints.PlayerPointsAPI;
 import org.bstats.bukkit.Metrics;
-import org.bukkit.configuration.ConfigurationSection;
 import org.bukkit.entity.Player;
 import org.bukkit.plugin.java.JavaPlugin;
 
@@ -78,21 +77,19 @@ public final class DynamicShop extends JavaPlugin implements Listener
 
     public static String dsPrefix_ = "§3DShop3 §7| §f";
 
-    public static CustomConfig ccUser;
-    public static CustomConfig ccSign;
+    public static CustomConfig ccSign = new CustomConfig();
 
     private BukkitTask periodicRepetitiveTask;
     private BukkitTask saveLogsTask;
     private BukkitTask cullLogsTask;
     private BukkitTask shopSaveTask;
+    private BukkitTask userDataRepetitiveTask;
 
     public static boolean updateAvailable = false;
     public static String lastVersion = "";
     public static String yourVersion = "";
 
     public static UIManager uiManager;
-    public static final HashMap<UUID, String> userTempData = new HashMap<>();
-    public static final HashMap<UUID, String> userInteractItem = new HashMap<>();
 
     public static final LocaleManager localeManager = new LocaleManager();
     public static boolean isPapiExist;
@@ -105,9 +102,9 @@ public final class DynamicShop extends JavaPlugin implements Listener
 
         console.sendMessage("========== DEBUG LOG ==========");
 
-        console.sendMessage("userTempData: size: " + userTempData.size());
+        console.sendMessage("userTempData: size: " + UserUtil.userTempData.size());
         int idx = 0;
-        for(Map.Entry<UUID, String> entry : userTempData.entrySet())
+        for(Map.Entry<UUID, String> entry : UserUtil.userTempData.entrySet())
         {
             console.sendMessage(entry.getKey() + ": " + entry.getValue());
             idx++;
@@ -117,9 +114,9 @@ public final class DynamicShop extends JavaPlugin implements Listener
 
         console.sendMessage("---------------------");
 
-        console.sendMessage("userInteractItem: size: " + userInteractItem.size());
+        console.sendMessage("userInteractItem: size: " + UserUtil.userInteractItem.size());
         idx = 0;
-        for(Map.Entry<UUID, String> entry : userInteractItem.entrySet())
+        for(Map.Entry<UUID, String> entry : UserUtil.userInteractItem.entrySet())
         {
             console.sendMessage(entry.getKey() + ": " + entry.getValue());
             idx++;
@@ -149,6 +146,21 @@ public final class DynamicShop extends JavaPlugin implements Listener
         //for(Map.Entry<String, Integer> entry : RotationUtil.RotationTaskMap.entrySet())
         //    console.sendMessage(entry.getKey() + ": " + entry.getValue());
 
+        console.sendMessage("---------------------");
+
+        for (Map.Entry<String, HashMap<String, HashMap<UUID, Integer>>> entry : UserUtil.tradingVolume.entrySet())
+        {
+            console.sendMessage(entry.getKey());
+            for (Map.Entry<String, HashMap<UUID, Integer>> entry1 : UserUtil.tradingVolume.get(entry.getKey()).entrySet())
+            {
+                console.sendMessage(" - " + entry1.getKey());
+                for (Map.Entry<UUID, Integer> entry2 : UserUtil.tradingVolume.get(entry.getKey()).get(entry1.getKey()).entrySet())
+                {
+                    console.sendMessage(" --- " + entry2.getKey() + " : " + entry2.getValue());
+                }
+            }
+        }
+
         console.sendMessage("========== DEBUG LOG END ==========");
     }
 
@@ -175,6 +187,7 @@ public final class DynamicShop extends JavaPlugin implements Listener
         startSaveLogsTask();
         startCullLogsTask();
         StartShopSaveTask();
+        StartUserDataTask();
         hookIntoJobs();
         hookIntoPlayerPoints();
         InitPapi();
@@ -339,13 +352,26 @@ public final class DynamicShop extends JavaPlugin implements Listener
         }
     }
 
+    public void StartUserDataTask()
+    {
+        if (userDataRepetitiveTask != null)
+            userDataRepetitiveTask.cancel();
+
+        userDataRepetitiveTask = Bukkit.getScheduler().runTaskTimerAsynchronously(
+                this, UserUtil::RepetitiveTask, 0L, 20L * 60L * 60L
+        );
+    }
+
     public void PeriodicRepetitiveTask()
     {
         if (periodicRepetitiveTask != null)
         {
             periodicRepetitiveTask.cancel();
         }
-        periodicRepetitiveTask = Bukkit.getScheduler().runTaskTimer(DynamicShop.plugin, this::RepeatAction, 100, 100); // 1000틱 = 50초/25/12.5
+
+        // 1000틱 = 50초 = 마인크래프트 1시간
+        // 20틱 = 현실시간 1초
+        periodicRepetitiveTask = Bukkit.getScheduler().runTaskTimer(DynamicShop.plugin, this::RepeatAction, 20, 20); 
     }
 
     private int repeatTaskCount = 0;
@@ -357,7 +383,7 @@ public final class DynamicShop extends JavaPlugin implements Listener
         //String time = sdf.format(System.currentTimeMillis());
         //console.sendMessage(time + " / " + repeatTaskCount);
 
-        if(repeatTaskCount == 5)
+        if (repeatTaskCount == 25) // 25초 = 500틱 = 마인크래프트 30분
         {
             ShopUtil.randomChange(new Random());
             repeatTaskCount = 0;
@@ -440,22 +466,13 @@ public final class DynamicShop extends JavaPlugin implements Listener
 
     private void InitConfig()
     {
-        LangUtil.ccLang = new CustomConfig();
-        LayoutUtil.ccLayout = new CustomConfig();
-        ccUser = new CustomConfig();
-        StartPage.ccStartPage = new CustomConfig();
-        ccSign = new CustomConfig();
-        WorthUtil.ccWorth = new CustomConfig();
-        SoundUtil.ccSound = new CustomConfig();
-
+        UserUtil.Init();
         ShopUtil.Reload();
-
         ConfigUtil.Load();
 
         LangUtil.setupLangFile(ConfigUtil.GetLanguage());  // ConfigUtil.Load() 보다 밑에 있어야함.
         LayoutUtil.Setup();
 
-        setupUserFile();
         StartPage.setupStartPageFile();
         setupSignFile();
         WorthUtil.setupWorthFile();
@@ -463,24 +480,6 @@ public final class DynamicShop extends JavaPlugin implements Listener
 
         QuickSell.quickSellGui = new CustomConfig();
         QuickSell.SetupQuickSellGUIFile();
-    }
-
-    private void setupUserFile()
-    {
-        ccUser.setup("User", null);
-        ccUser.get().options().copyDefaults(true);
-
-        int userVersion = ConfigUtil.GetConfigVersion();
-        if (userVersion < 3)
-        {
-            for (String s : ccUser.get().getKeys(false))
-            {
-                ccUser.get().getConfigurationSection(s).set("tmpString", null);
-                ccUser.get().getConfigurationSection(s).set("interactItem", null);
-            }
-        }
-
-        ccUser.save();
     }
 
     private void setupSignFile()
@@ -500,7 +499,7 @@ public final class DynamicShop extends JavaPlugin implements Listener
     @Override
     public void onDisable()
     {
-        DynamicShop.ccUser.save();
+        UserUtil.OnPluginDisable();
         ShopUtil.ForceSaveAllShop();
 
         Bukkit.getScheduler().cancelTasks(this);

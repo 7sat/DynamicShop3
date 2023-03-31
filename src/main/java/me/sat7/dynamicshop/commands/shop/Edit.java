@@ -4,6 +4,7 @@ import me.sat7.dynamicshop.DynamicShop;
 import me.sat7.dynamicshop.commands.DSCMD;
 import me.sat7.dynamicshop.commands.Shop;
 import me.sat7.dynamicshop.files.CustomConfig;
+import me.sat7.dynamicshop.models.DSItem;
 import me.sat7.dynamicshop.utilities.ItemsUtil;
 import me.sat7.dynamicshop.utilities.ShopUtil;
 import org.bukkit.command.CommandSender;
@@ -52,7 +53,7 @@ public class Edit extends DSCMD
         double valueMax = -1;
         int median;
         int stock;
-        int maxStock = -1;
+        int maxStock;
 
         try
         {
@@ -77,6 +78,7 @@ public class Edit extends DSCMD
                 {
                     median = Integer.parseInt(args[5]);
                     stock = Integer.parseInt(args[6]);
+                    maxStock = shopData.get().getInt(idx + ".maxStock", -1);
                 } else
                 {
                     valueMin = Integer.parseInt(args[5]);
@@ -86,8 +88,8 @@ public class Edit extends DSCMD
 
                     if (args.length == 10)
                         maxStock = Integer.parseInt(args[9]);
-                    if (maxStock < 1)
-                        maxStock = -1;
+                    else
+                        maxStock = shopData.get().getInt(idx + ".maxStock", -1);
 
                     // 유효성 검사
                     if (valueMax > 0 && valueMin > 0 && valueMin >= valueMax)
@@ -114,7 +116,14 @@ public class Edit extends DSCMD
         }
 
         // 수정
-        ShopUtil.editShopItem(shopName, idx, buyValue, buyValue, valueMin, valueMax, median, stock, maxStock);
+        int discount = shopData.get().getInt(idx + ".discount");
+        int tradeLimit = shopData.get().getInt(idx + ".tradeLimitPerPlayer.value");
+        long tradeLimitInterval = shopData.get().getLong(idx + ".tradeLimitPerPlayer.interval");
+        long tradeLimitNextTimer = shopData.get().getLong(idx + ".tradeLimitPerPlayer.nextTimer");
+
+        DSItem temp = new DSItem(null, buyValue, buyValue, valueMin, valueMax, median, stock, maxStock, discount,
+                                 tradeLimit, tradeLimitInterval, tradeLimitNextTimer);
+        ShopUtil.editShopItem(shopName, idx, temp);
         sender.sendMessage(DynamicShop.dsPrefix(sender) + t(sender, "MESSAGE.ITEM_UPDATED"));
         ItemsUtil.sendItemInfo(sender, shopName, idx, "HELP.ITEM_INFO");
     }

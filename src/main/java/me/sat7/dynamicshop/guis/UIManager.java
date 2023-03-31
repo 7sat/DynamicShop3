@@ -112,7 +112,8 @@ public class UIManager implements Listener
                 continue;
 
             if (ui.uiType == InGameUI.UI_TYPE.ItemTrade
-                || ui.uiType == InGameUI.UI_TYPE.Shop)
+                || ui.uiType == InGameUI.UI_TYPE.Shop
+                || ui.uiType == InGameUI.UI_TYPE.RotationEditor)
             {
                 ui.RefreshUI();
             }

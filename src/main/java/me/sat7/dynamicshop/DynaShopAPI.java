@@ -8,6 +8,7 @@ import me.sat7.dynamicshop.transactions.Calc;
 import me.sat7.dynamicshop.transactions.Sell;
 import me.sat7.dynamicshop.utilities.ConfigUtil;
 import me.sat7.dynamicshop.utilities.ShopUtil;
+import me.sat7.dynamicshop.utilities.UserUtil;
 import org.bukkit.Material;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.Inventory;
@@ -102,17 +103,15 @@ public final class DynaShopAPI
         UIManager.Open(player, inventory, uiClass);
     }
 
-    // 아이탬 셋팅창
-    public static void openItemSettingGui(Player player, String shopName, int shopSlotIndex, int tab, ItemStack itemStack, double buyValue, double sellValue, double minPrice, double maxPrice, int median, int stock, int maxStock, int discount)
-    {
-        DSItem dsItem = new DSItem(itemStack, buyValue, sellValue, minPrice, maxPrice, median, stock, maxStock, discount);
-        openItemSettingGui(player, shopName, shopSlotIndex, tab, dsItem);
-    }
-
     public static void openItemSettingGui(Player player, String shopName, int shopSlotIndex, int tab, DSItem dsItem)
     {
+        openItemSettingGui(player, shopName, shopSlotIndex, tab, dsItem, 0);
+    }
+
+    public static void openItemSettingGui(Player player, String shopName, int shopSlotIndex, int tab, DSItem dsItem, int timerOffset)
+    {
         ItemSettings uiClass = new ItemSettings();
-        Inventory inventory = uiClass.getGui(player, shopName, shopSlotIndex, tab, dsItem);
+        Inventory inventory = uiClass.getGui(player, shopName, shopSlotIndex, tab, dsItem, timerOffset);
         UIManager.Open(player, inventory, uiClass);
     }
 
@@ -171,18 +170,7 @@ public final class DynaShopAPI
     // 유저 데이터를 다시 만들고 만들어졌는지 확인함.
     public static boolean recreateUserData(Player player)
     {
-        if (DynamicShop.ccUser.get().contains(player.getUniqueId().toString()))
-        {
-            return true;
-        }
-
-        DynamicShop.userTempData.put(player.getUniqueId(), "");
-        DynamicShop.userInteractItem.put(player.getUniqueId(), "");
-        DynamicShop.ccUser.get().set(player.getUniqueId() + ".cmdHelp", true);
-        DynamicShop.ccUser.get().set(player.getUniqueId() + ".lastJoin", System.currentTimeMillis());
-        DynamicShop.ccUser.save();
-
-        return DynamicShop.ccUser.get().contains(player.getUniqueId().toString());
+        return UserUtil.RecreateUserData(player);
     }
 
     // 스타트페이지 셋팅창
@@ -240,7 +228,7 @@ public final class DynaShopAPI
         if (validateShopName(shopName))
         {
             CustomConfig data = ShopUtil.shopConfigFiles.get(shopName);
-
+            
             ArrayList<ItemStack> list = new ArrayList<>();
             for (String s : data.get().getKeys(false))
             {

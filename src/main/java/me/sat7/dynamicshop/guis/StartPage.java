@@ -32,7 +32,7 @@ public final class StartPage extends InGameUI
         uiType = UI_TYPE.StartPage;
     }
 
-    public static CustomConfig ccStartPage;
+    public static CustomConfig ccStartPage = new CustomConfig();
 
     public static void setupStartPageFile()
     {

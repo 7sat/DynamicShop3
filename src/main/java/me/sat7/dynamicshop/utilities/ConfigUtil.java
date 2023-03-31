@@ -62,7 +62,6 @@ public final class ConfigUtil
         }
         catch (Exception ignore){}
 
-
         ConvertV2toV3();
         ShopYMLUpdate();
         ValidateAndApply();

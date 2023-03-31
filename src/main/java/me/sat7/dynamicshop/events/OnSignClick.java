@@ -7,6 +7,7 @@ import me.sat7.dynamicshop.utilities.ItemsUtil;
 import me.sat7.dynamicshop.utilities.ShopUtil;
 
 import me.sat7.dynamicshop.utilities.StringUtil;
+import me.sat7.dynamicshop.utilities.UserUtil;
 import org.bukkit.ChatColor;
 import org.bukkit.GameMode;
 import org.bukkit.Material;
@@ -41,7 +42,6 @@ public class OnSignClick implements Listener
     public void onSignChange(SignChangeEvent e) {
         if (!e.getPlayer().hasPermission(P_ADMIN_CREATE_SIGN)) return;
 
-        //noinspection ConstantConditions
         if (e.getLine(0).equalsIgnoreCase("[dshop]")
                 || e.getLine(0).equalsIgnoreCase("[ds]")
                 || e.getLine(0).equalsIgnoreCase("[dynamicshop]")) {
@@ -224,17 +224,17 @@ public class OnSignClick implements Listener
 
                         if (idx != -1)
                         {
-                            DynamicShop.userTempData.put(p.getUniqueId(), "sign");
+                            UserUtil.userTempData.put(p.getUniqueId(), "sign");
 
                             DynaShopAPI.openItemTradeGui(p, shopName, String.valueOf(idx));
                         } else
                         {
-                            DynamicShop.userTempData.put(p.getUniqueId(), "sign");
+                            UserUtil.userTempData.put(p.getUniqueId(), "sign");
                             DynaShopAPI.openShopGui(p, shopName, 1);
                         }
                     } catch (Exception exception)
                     {
-                        DynamicShop.userTempData.put(p.getUniqueId(), "sign");
+                        UserUtil.userTempData.put(p.getUniqueId(), "sign");
                         DynaShopAPI.openShopGui(p, shopName, 1);
                     }
                 }

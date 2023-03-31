@@ -40,8 +40,8 @@ public class ShopList extends InGameUI
         CreateShopButtons();
         CreateCloseButton(player, CLOSE);
         CreateButton(PAGE, GetPageButtonIconMat(),
-                     t(player, "START_PAGE.SHOP_LIST.PAGE_TITLE").replace("{curPage}", String.valueOf(this.page)).replace("{maxPage}", String.valueOf(this.maxPage)),
-                     t(player, "START_PAGE.SHOP_LIST.PAGE_LORE"));
+                t(player, "START_PAGE.SHOP_LIST.PAGE_TITLE").replace("{curPage}", String.valueOf(this.page)).replace("{maxPage}", String.valueOf(this.maxPage)),
+                t(player, "START_PAGE.SHOP_LIST.PAGE_LORE"));
 
         return inventory;
     }

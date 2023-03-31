@@ -9,6 +9,8 @@ import me.sat7.dynamicshop.files.CustomConfig;
 import me.sat7.dynamicshop.transactions.Buy;
 import me.sat7.dynamicshop.transactions.Sell;
 import me.sat7.dynamicshop.utilities.ConfigUtil;
+import me.sat7.dynamicshop.utilities.HashUtil;
+import me.sat7.dynamicshop.utilities.UserUtil;
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
 import org.bukkit.Material;
@@ -65,7 +67,7 @@ public final class ItemTrade extends InGameUI
         this.material = shopData.getString(tradeIdx + ".mat");
         this.itemMeta = (ItemMeta) shopData.get(tradeIdx + ".itemStack");
 
-        DynamicShop.userInteractItem.put(player.getUniqueId(), shopName + "/" + tradeIdx);
+        UserUtil.userInteractItem.put(player.getUniqueId(), shopName + "/" + tradeIdx);
 
         String uiTitle = shopData.getBoolean("Options.enable", true) ? "" : t(player, "SHOP.DISABLED");
         uiTitle += t(player, "TRADE_TITLE");
@@ -94,9 +96,9 @@ public final class ItemTrade extends InGameUI
             if (e.getSlot() == CLOSE)
             {
                 // 표지판을 클릭해서 거래화면에 진입한 경우에는 상점UI로 돌아가는 대신 인벤토리를 닫음
-                if (DynamicShop.userTempData.get(player.getUniqueId()).equalsIgnoreCase("sign"))
+                if (UserUtil.userTempData.get(player.getUniqueId()).equalsIgnoreCase("sign"))
                 {
-                    DynamicShop.userTempData.put(player.getUniqueId(), "");
+                    UserUtil.userTempData.put(player.getUniqueId(), "");
                     player.closeInventory();
                 } else
                 {
@@ -256,6 +258,18 @@ public final class ItemTrade extends InGameUI
 
     private void CreateTradeButtons(boolean sell)
     {
+        // 플레이어당 거래 제한
+        String tradeLimitString = "";
+        int tradeIdxInt = Integer.parseInt(tradeIdx);
+        int tradeLimitLeft = UserUtil.GetTradingLimitLeft(player, shopName, tradeIdxInt, HashUtil.GetItemHash(new ItemStack(Material.getMaterial(material))));
+        if (tradeLimitLeft != Integer.MAX_VALUE)
+        {
+            int limit = ShopUtil.GetTradeLimitPerPlayer(shopName, tradeIdxInt);
+            String limitString = limit > 0 ? t(player, "SHOP.PURCHASE_LIMIT_PER_PLAYER") : t(player, "SHOP.SALES_LIMIT_PER_PLAYER");
+            String tradeLimitResetTime = ShopUtil.GetTradeLimitNextResetTime(shopName, tradeIdxInt);
+            tradeLimitString = limitString.replace("{num}", tradeLimitLeft + "").replace("{time}", tradeLimitResetTime);
+        }
+
         int amount = 1;
         int idx = sell ? 2 : 11;
         for (int i = 1; i < 8; i++)
@@ -348,6 +362,15 @@ public final class ItemTrade extends InGameUI
                 }
             }
 
+            // 플레이어당 거래 제한
+            if (tradeLimitLeft != Integer.MAX_VALUE)
+            {
+                if (!stockText.isEmpty())
+                    stockText += "\n";
+                stockText += tradeLimitString;
+            }
+
+            // 배달비
             String deliveryChargeText = "";
             if (deliveryCharge > 0)
             {
@@ -401,15 +424,6 @@ public final class ItemTrade extends InGameUI
         if (permission != null && permission.length() > 0 && !player.hasPermission(permission) && !player.hasPermission(permission + ".sell"))
         {
             player.sendMessage(DynamicShop.dsPrefix(player) + t(player, "ERR.NO_PERMISSION"));
-            return;
-        }
-
-        // 상점이 매입을 거절.
-        int stock = shopData.getInt(tradeIdx + ".stock");
-        int maxStock = shopData.getInt(tradeIdx + ".maxStock", -1);
-        if (maxStock != -1 && maxStock < stock + itemStack.getAmount())
-        {
-            player.sendMessage(DynamicShop.dsPrefix(player) + t(player, "MESSAGE.PURCHASE_REJECTED"));
             return;
         }
 

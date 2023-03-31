@@ -62,64 +62,22 @@ public final class Sell
         {
             if (isShiftClick)
             {
-                int amount = 0;
-                for (ItemStack item : player.getInventory().getStorageContents())
-                {
-                    if (item == null)
-                        continue;
-
-                    if (item.isSimilar(itemStack))
-                    {
-                        if (maxStock == -1)
-                        {
-                            amount += item.getAmount();
-                            player.getInventory().removeItem(item);
-                        }
-                        else
-                        {
-                            int tempAmount = Clamp(itemStack.getAmount(), 0, maxStock - stockOld);
-                            int itemLeft = item.getAmount() - tempAmount;
-                            if (itemLeft <= 0)
-                            {
-                                player.getInventory().removeItem(item);
-                            }
-                            else
-                            {
-                                item.setAmount(itemLeft);
-                            }
-                            amount += tempAmount;
-                        }
-                    }
-
-                    if (maxStock != -1 && amount + stockOld <= maxStock)
-                        break;
-                }
-                tradeAmount = amount;
+                tradeAmount = GetPlayerItemCount(player, itemStack);
             }
             else
             {
-                if (maxStock == -1)
-                {
-                    tradeAmount = player.getInventory().getItem(slot).getAmount();
-                    player.getInventory().setItem(slot, null);
-                }
-                else
-                {
-                    tradeAmount = Clamp(itemStack.getAmount(), 0, maxStock - stockOld);
-                    int itemAmountOld = player.getInventory().getItem(slot).getAmount();
-                    int itemLeft = itemAmountOld - tradeAmount;
-
-                    if (itemLeft <= 0)
-                        player.getInventory().setItem(slot, null);
-                    else
-                        player.getInventory().getItem(slot).setAmount(itemLeft);
-                }
+                tradeAmount = player.getInventory().getItem(slot).getAmount();
             }
-            player.updateInventory();
         }
         else
         {
             tradeAmount = itemStack.getAmount();
+        }
+
+        if (maxStock != -1 && stockOld + tradeAmount > maxStock)
+        {
+            tradeAmount -= stockOld + tradeAmount - maxStock;
+            tradeAmount = Math.max(0, tradeAmount);
         }
 
         // 판매할 아이탬이 없음
@@ -131,14 +89,80 @@ public final class Sell
             return 0;
         }
 
+        // 플레이어 당 거래량 제한 확인
+        int sellLimit = ShopUtil.GetTradeLimitPerPlayer(shopName, tradeIdx);
+        if (player != null && sellLimit != 0)
+        {
+            tradeAmount = UserUtil.CheckTradeLimitPerPlayer(player, shopName, tradeIdx, HashUtil.GetItemHash(itemStack), tradeAmount, true);
+            if (tradeAmount == 0)
+                return 0;
+        }
+
+        // 비용 계산
         double[] calcResult = Calc.calcTotalCost(shopName, String.valueOf(tradeIdx), -tradeAmount);
         priceSum += calcResult[0];
 
+        // 계산된 비용에 대한 처리 시도
         Economy econ = DynamicShop.getEconomy();
         if (!CheckTransactionSuccess(currencyType, player, priceSum))
             return 0;
 
-        //로그 기록
+        // 플레이어 인벤토리에서 아이템 제거
+        if (player != null)
+        {
+            if (isShiftClick)
+            {
+                int tempCount = 0;
+                for (ItemStack item : player.getInventory().getStorageContents())
+                {
+                    if (item == null)
+                        continue;
+
+                    if (item.isSimilar(itemStack))
+                    {
+                        if (tempCount + item.getAmount() > tradeAmount)
+                        {
+                            int itemLeft = item.getAmount() - (tradeAmount - tempCount);
+                            if (itemLeft <= 0)
+                            {
+                                player.getInventory().removeItem(item);
+                            }
+                            else
+                            {
+                                item.setAmount(itemLeft);
+                            }
+                            break;
+                        }
+                        else
+                        {
+                            player.getInventory().removeItem(item);
+                        }
+
+                        tempCount += item.getAmount();
+                    }
+                }
+            }
+            else
+            {
+                int itemAmountOld = player.getInventory().getItem(slot).getAmount();
+                int itemLeft = itemAmountOld - tradeAmount;
+
+                if (itemLeft <= 0)
+                    player.getInventory().setItem(slot, null);
+                else
+                    player.getInventory().getItem(slot).setAmount(itemLeft);
+            }
+
+            player.updateInventory();
+        }
+
+        // 플레이어 당 거래량 제한 아이템에 대한 처리.
+        if (player != null & sellLimit != Integer.MIN_VALUE)
+        {
+            UserUtil.OnPlayerTradeLimitedItem(player, shopName, HashUtil.GetItemHash(itemStack), tradeAmount, true);
+        }
+
+        // 로그 기록
         LogUtil.addLog(shopName, itemStack.getType().toString(), -tradeAmount, priceSum, StringUtil.GetCurrencyString(currencyType), player != null ? player.getName() : shopName);
 
         if (player != null)
@@ -164,6 +188,7 @@ public final class Sell
         // 커맨드 실행
         RunSellCommand(data, player, shopName, itemStack, tradeAmount, priceSum, calcResult[1]);
 
+        // 더티
         ShopUtil.shopDirty.put(shopName, true);
 
         // 이벤트 호출
@@ -196,34 +221,72 @@ public final class Sell
             return;
         }
 
-        // 실제 판매 가능량 확인
-        int actualAmount = itemStack.getAmount();
-        HashMap<Integer, ItemStack> hashMap = player.getInventory().removeItem(itemStack);
-        player.updateInventory();
-        if (!hashMap.isEmpty())
+        // 상점이 매입을 거절.
+        int stock = data.get().getInt(tradeIdx + ".stock");
+        int maxStock = data.get().getInt(tradeIdx + ".maxStock", -1);
+        if (maxStock != -1 && maxStock <= stock)
         {
-            actualAmount -= hashMap.get(0).getAmount();
+            player.sendMessage(DynamicShop.dsPrefix(player) + t(player, "MESSAGE.PURCHASE_REJECTED"));
+            return;
+        }
+
+        // 실제 판매 가능량 확인
+        int tradeAmount = itemStack.getAmount();
+        int playerHas = GetPlayerItemCount(player, itemStack);
+        if (tradeAmount > playerHas)
+        {
+            tradeAmount = playerHas;
         }
 
         // 판매할 아이탬이 없음
-        if (actualAmount == 0)
+        if (tradeAmount == 0)
         {
             player.sendMessage(DynamicShop.dsPrefix(player) + t(player, "MESSAGE.NO_ITEM_TO_SELL"));
             return;
         }
 
-        double[] calcResult = Calc.calcTotalCost(shopName, tradeIdx, -actualAmount);
+        if (maxStock != -1 && stock + tradeAmount > maxStock)
+        {
+            tradeAmount = maxStock - stock;
+            tradeAmount = Math.max(0, tradeAmount);
+        }
+
+        // 플레이어 당 거래량 제한 확인
+        int tradeIdxInt = Integer.parseInt(tradeIdx);
+        int tradeLimitPerPlayer = ShopUtil.GetTradeLimitPerPlayer(shopName, tradeIdxInt);
+        if (tradeLimitPerPlayer != 0)
+        {
+            tradeAmount = UserUtil.CheckTradeLimitPerPlayer(player, shopName, tradeIdxInt, HashUtil.GetItemHash(itemStack), tradeAmount, true);
+            if (tradeAmount == 0)
+                return;
+        }
+
+        // 비용 계산
+        double[] calcResult = Calc.calcTotalCost(shopName, tradeIdx, -tradeAmount);
         priceSum += calcResult[0];
 
+        // 계산된 비용에 대한 처리 시도
         Economy econ = DynamicShop.getEconomy();
         if (!CheckTransactionSuccess(currency, player, priceSum))
             return;
 
-        //로그 기록
-        LogUtil.addLog(shopName, itemStack.getType().toString(), -actualAmount, priceSum, StringUtil.GetCurrencyString(currency), player.getName());
+        // 플레이어 인벤토리에서 아이템 제거
+        ItemStack delete = new ItemStack(itemStack);
+        delete.setAmount(tradeAmount);
+        player.getInventory().removeItem(delete);
+        player.updateInventory();
+
+        // 플레이어 당 거래량 제한 아이템에 대한 처리.
+        if (tradeLimitPerPlayer != Integer.MIN_VALUE)
+        {
+            UserUtil.OnPlayerTradeLimitedItem(player, shopName, HashUtil.GetItemHash(itemStack), tradeAmount, true);
+        }
+
+        // 로그 기록
+        LogUtil.addLog(shopName, itemStack.getType().toString(), -tradeAmount, priceSum, StringUtil.GetCurrencyString(currency), player.getName());
 
         // 메시지 출력
-        SendSellMessage(currency, econ, player, actualAmount, priceSum, itemStack);
+        SendSellMessage(currency, econ, player, tradeAmount, priceSum, itemStack);
 
         // 플레이어에게 소리 재생
         SoundUtil.playerSoundEffect(player, "sell");
@@ -236,18 +299,21 @@ public final class Sell
         // 상점 재고 증가
         if (!infiniteStock)
         {
-            data.get().set(tradeIdx + ".stock", MathUtil.SafeAdd(stockOld, actualAmount));
+            data.get().set(tradeIdx + ".stock", MathUtil.SafeAdd(stockOld, tradeAmount));
         }
 
         // 커맨드 실행
-        RunSellCommand(data, player, shopName, itemStack, actualAmount, priceSum, calcResult[1]);
+        RunSellCommand(data, player, shopName, itemStack, tradeAmount, priceSum, calcResult[1]);
 
+        // 더티
         ShopUtil.shopDirty.put(shopName, true);
-        DynaShopAPI.openItemTradeGui(player, shopName, tradeIdx);
 
         // 이벤트 호출
-        ShopBuySellEvent event = new ShopBuySellEvent(false, priceBuyOld, Calc.getCurrentPrice(shopName, String.valueOf(tradeIdx), true), priceSellOld, DynaShopAPI.getSellPrice(shopName, itemStack), stockOld, DynaShopAPI.getStock(shopName, itemStack), DynaShopAPI.getMedian(shopName, itemStack), shopName, itemStack, player);
+        ShopBuySellEvent event = new ShopBuySellEvent(false, priceBuyOld, Calc.getCurrentPrice(shopName, tradeIdx, true), priceSellOld, DynaShopAPI.getSellPrice(shopName, itemStack), stockOld, DynaShopAPI.getStock(shopName, itemStack), DynaShopAPI.getMedian(shopName, itemStack), shopName, itemStack, player);
         Bukkit.getPluginManager().callEvent(event);
+        
+        // UI 갱신
+        DynaShopAPI.openItemTradeGui(player, shopName, tradeIdx);
     }
 
     private static boolean CheckTransactionSuccess(ItemTrade.CURRENCY currencyType, Player player, double priceSum)
@@ -335,5 +401,20 @@ public final class Sell
                 }
             }
         }
+    }
+
+    private static int GetPlayerItemCount(Player player, ItemStack itemStack)
+    {
+        int count = 0;
+
+        for (ItemStack stack : player.getInventory().getStorageContents())
+        {
+            if (stack != null && stack.isSimilar(itemStack))
+            {
+                count += stack.getAmount();
+            }
+        }
+
+        return count;
     }
 }

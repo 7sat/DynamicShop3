@@ -4,7 +4,7 @@ import me.sat7.dynamicshop.files.CustomConfig;
 
 public final class WorthUtil
 {
-    public static CustomConfig ccWorth;
+    public static CustomConfig ccWorth = new CustomConfig();
 
     private WorthUtil()
     {

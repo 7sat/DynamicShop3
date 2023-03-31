@@ -9,17 +9,31 @@ import lombok.Setter;
 @Setter
 public class DSItem
 {
-    private ItemStack itemStack;
-    private double buyValue;
-    private double sellValue;
-    private double minPrice;
-    private double maxPrice;
-    private int median;
-    private int stock;
-    private int maxStock;
-    private int discount;
+    public ItemStack itemStack;
+    public double buyValue;
+    public double sellValue;
+    public double minPrice;
+    public double maxPrice;
+    public int median;
+    public int stock;
+    public int maxStock;
+    public int discount;
+    public int tradeLimit;
+    public long tradeLimitInterval; // ms
+    public long tradeLimitNextTimer;
 
-    public DSItem(ItemStack itemStack, double buyValue, double sellValue, double minPrice, double maxPrice, int median, int stock, int maxStock, int discount)
+    public DSItem(ItemStack itemStack, double buyValue, double sellValue, double minPrice, double maxPrice, int median, int stock)
+    {
+        setItemStack(itemStack);
+        setBuyValue(Math.round(buyValue * 100) / 100.0);
+        setSellValue(Math.round(sellValue * 100) / 100.0);
+        setMinPrice(Math.round(minPrice * 100) / 100.0);
+        setMaxPrice(Math.round(maxPrice * 100) / 100.0);
+        setMedian(median);
+        setStock(stock);
+        maxStock = -1;
+    }
+    public DSItem(ItemStack itemStack, double buyValue, double sellValue, double minPrice, double maxPrice, int median, int stock, int maxStock, int discount, int tradeLimit, long tradeLimitInterval, long tradeLimitNextTimer)
     {
         setItemStack(itemStack);
         setBuyValue(Math.round(buyValue * 100) / 100.0);
@@ -30,5 +44,8 @@ public class DSItem
         setStock(stock);
         setMaxStock(maxStock);
         setDiscount(discount);
+        setTradeLimit(tradeLimit);
+        setTradeLimitInterval(tradeLimitInterval);
+        setTradeLimitNextTimer(tradeLimitNextTimer);
     }
 }

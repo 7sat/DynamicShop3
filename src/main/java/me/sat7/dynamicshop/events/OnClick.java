@@ -5,6 +5,7 @@ import me.sat7.dynamicshop.DynamicShop;
 import me.sat7.dynamicshop.guis.InGameUI;
 import me.sat7.dynamicshop.guis.UIManager;
 
+import me.sat7.dynamicshop.utilities.UserUtil;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
@@ -31,13 +32,13 @@ public class OnClick implements Listener
 
         Player player = (Player) e.getWhoClicked();
 
-        // 위쪽 인벤토리를 클릭함 (= 내 인벤이 아님)
+        // 위쪽 인벤토리를 클릭함 (= 내 인벤토리가 아님)
         if (e.getClickedInventory() != player.getInventory())
         {
-            // UUID 확인 // todo 이게 왜 필요하지?
+            // UUID 확인되지 않는 경우 플러그인 사용을 막음. (이게 실질적으로 의미가 있는지는 모르겠음)
             String pUuid = player.getUniqueId().toString();
 
-            if (DynamicShop.ccUser.get().getConfigurationSection(pUuid) == null)
+            if (UserUtil.ccUser.get().getConfigurationSection(pUuid) == null)
             {
                 if (!DynaShopAPI.recreateUserData(player))
                 {

@@ -3,6 +3,7 @@ package me.sat7.dynamicshop.files;
 import me.sat7.dynamicshop.DynamicShop;
 import me.sat7.dynamicshop.constants.Constants;
 
+import org.apache.commons.io.FilenameUtils;
 import org.bukkit.Bukkit;
 import org.bukkit.configuration.file.FileConfiguration;
 import org.bukkit.configuration.file.YamlConfiguration;
@@ -140,5 +141,15 @@ public class CustomConfig
         }
 
         return YamlConfiguration.loadConfiguration(tempFile);
+    }
+
+    public String GetFileName()
+    {
+        return file.getName();
+    }
+
+    public String GetFileNameWithoutExtension()
+    {
+        return FilenameUtils.getBaseName(file.getName());
     }
 }

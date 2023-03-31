@@ -3,6 +3,7 @@ package me.sat7.dynamicshop.commands.shop;
 import me.sat7.dynamicshop.DynamicShop;
 import me.sat7.dynamicshop.commands.DSCMD;
 import me.sat7.dynamicshop.commands.Shop;
+import me.sat7.dynamicshop.models.DSItem;
 import me.sat7.dynamicshop.utilities.ItemsUtil;
 import me.sat7.dynamicshop.utilities.ShopUtil;
 import org.bukkit.Material;
@@ -116,6 +117,8 @@ public class Add extends DSCMD
         }
 
         int idx = ShopUtil.findItemFromShop(shopName, itemStack);
+        DSItem temp = new DSItem(itemStack, buyValue, buyValue, valueMin, valueMax, median, stock);
+
         // 상점에 새 아이탬 추가
         if (idx == -1)
         {
@@ -123,7 +126,7 @@ public class Add extends DSCMD
             if (idx == -1)
             {
                 sender.sendMessage(DynamicShop.dsPrefix(sender) + t(sender, "ERR.NO_EMPTY_SLOT"));
-            } else if (ShopUtil.addItemToShop(shopName, idx, itemStack, buyValue, buyValue, valueMin, valueMax, median, stock)) // 아이탬 추가
+            } else if (ShopUtil.addItemToShop(shopName, idx, temp)) // 아이탬 추가
             {
                 sender.sendMessage(DynamicShop.dsPrefix(sender) + t(sender, "MESSAGE.ITEM_ADDED"));
                 ItemsUtil.sendItemInfo(sender, shopName, idx, "HELP.ITEM_INFO");
@@ -132,7 +135,7 @@ public class Add extends DSCMD
         // 기존 아이탬 수정
         else
         {
-            ShopUtil.editShopItem(shopName, idx, buyValue, buyValue, valueMin, valueMax, median, stock);
+            ShopUtil.editShopItem(shopName, idx, temp);
             sender.sendMessage(DynamicShop.dsPrefix(sender) + t(sender, "MESSAGE.ITEM_UPDATED"));
             ItemsUtil.sendItemInfo(sender, shopName, idx, "HELP.ITEM_INFO");
         }

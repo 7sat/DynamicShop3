@@ -2,6 +2,7 @@ package me.sat7.dynamicshop.commands;
 
 import java.util.UUID;
 
+import me.sat7.dynamicshop.utilities.UserUtil;
 import org.bukkit.Bukkit;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
@@ -55,19 +56,19 @@ public final class DeleteUser extends DSCMD
         }
 
         int count = 0;
-        for (String s : DynamicShop.ccUser.get().getKeys(false))
+        for (String s : UserUtil.ccUser.get().getKeys(false))
         {
             try
             {
-                long lastJoinLong = DynamicShop.ccUser.get().getLong(s + ".lastJoin");
+                long lastJoinLong = UserUtil.ccUser.get().getLong(s + ".lastJoin");
 
                 long dayPassed = (System.currentTimeMillis() - lastJoinLong) / 86400000L;
 
                 // 마지막으로 접속한지 입력한 일보다 더 지남.
                 if (dayPassed > day)
                 {
-                    sender.sendMessage(DynamicShop.dsPrefix(sender) + Bukkit.getOfflinePlayer(UUID.fromString(s)).getName() + " Deleted");
-                    DynamicShop.ccUser.get().set(s, null);
+                    //sender.sendMessage(DynamicShop.dsPrefix(sender) + Bukkit.getOfflinePlayer(UUID.fromString(s)).getName() + " Deleted");
+                    UserUtil.ccUser.get().set(s, null);
                     count += 1;
                 }
             } catch (Exception e)
@@ -75,7 +76,7 @@ public final class DeleteUser extends DSCMD
                 sender.sendMessage(DynamicShop.dsPrefix(sender) + e + "/" + s);
             }
 
-            DynamicShop.ccUser.save();
+            UserUtil.ccUser.save();
         }
 
         sender.sendMessage(DynamicShop.dsPrefix(sender) + count + " Items Removed");
