@@ -7,6 +7,7 @@ import org.bukkit.entity.Player;
 
 import java.util.HashMap;
 import java.util.Map;
+import java.util.Random;
 import java.util.UUID;
 
 public final class UserUtil
@@ -50,6 +51,38 @@ public final class UserUtil
         userInteractItem.put(uuid, "");
         ccUser.get().set(uuid + ".lastJoin", System.currentTimeMillis());
         ccUser.get().set(uuid + ".cmdHelp", true);
+    }
+
+    public static void CreateDummyPlayerData(Player sender, int count)
+    {
+        if (!DynamicShop.DEBUG_MODE)
+            return;
+
+        sender.sendMessage(DynamicShop.dsPrefix(sender) + "Start creating dummy data...");
+
+        Random generator = new Random();
+        Object tradingVolumeData = ccUser.get().get(sender.getUniqueId() + ".tradingVolume");
+
+        for (int i = 0; i < count; i++)
+        {
+            UUID uuid = UUID.randomUUID();
+            userTempData.put(uuid, "");
+            userInteractItem.put(uuid, "");
+
+            int old = (generator.nextInt() % 100) + 3;
+            ccUser.get().set(uuid + ".lastJoin", System.currentTimeMillis() - ((long) old * 1000 * 60 * 60 * 24));
+
+            ccUser.get().set(uuid + ".cmdHelp", true);
+
+            if (i % 5 == 0)
+            {
+                ccUser.get().set(uuid + ".tradingVolume", tradingVolumeData);
+            }
+        }
+
+        ccUser.save();
+
+        sender.sendMessage(DynamicShop.dsPrefix(sender) + "Dummy Player Data Created x " + count);
     }
 
     public static boolean RecreateUserData(Player player)
@@ -159,13 +192,16 @@ public final class UserUtil
         if (!tradingVolume.get(shopName).containsKey(hash))
             tradingVolume.get(shopName).put(hash, new HashMap<>());
 
+        if (isSell)
+            amount *= -1;
+
         if (!tradingVolume.get(shopName).get(hash).containsKey(uuid))
         {
             tradingVolume.get(shopName).get(hash).put(uuid, amount);
         }
         else
         {
-            tradingVolume.get(shopName).get(hash).put(uuid, tradingVolume.get(shopName).get(hash).get(uuid) + (isSell ? amount * -1 : amount));
+            tradingVolume.get(shopName).get(hash).put(uuid, tradingVolume.get(shopName).get(hash).get(uuid) + amount);
         }
     }
 

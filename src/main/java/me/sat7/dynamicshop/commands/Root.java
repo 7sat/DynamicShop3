@@ -4,6 +4,7 @@ import me.sat7.dynamicshop.DynaShopAPI;
 import me.sat7.dynamicshop.DynamicShop;
 import me.sat7.dynamicshop.constants.Constants;
 
+import me.sat7.dynamicshop.utilities.UserUtil;
 import org.bukkit.GameMode;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandExecutor;
@@ -65,13 +66,24 @@ public class Root implements CommandExecutor
                     return true;
                 }
             }
+            else if (args[0].equalsIgnoreCase("dummyUUID") && DynamicShop.DEBUG_MODE)
+            {
+                UserUtil.CreateDummyPlayerData(player, 1000);
+                return true;
+            }
         }
         // 콘솔에서 실행했음.
         else
         {
             if (args.length > 0)
             {
-                if (args[0].equalsIgnoreCase("debug"))
+                if (args[0].equalsIgnoreCase("dbgToggle"))
+                {
+                    DynamicShop.DEBUG_MODE = !DynamicShop.DEBUG_MODE;
+                    sender.sendMessage(Constants.DYNAMIC_SHOP_PREFIX + "DebugMode " + DynamicShop.DEBUG_MODE);
+                    return true;
+                }
+                else if (args[0].equalsIgnoreCase("dbg") && DynamicShop.DEBUG_MODE)
                 {
                     DynamicShop.DebugLog();
                     return true;

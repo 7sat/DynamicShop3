@@ -56,28 +56,27 @@ public final class DeleteUser extends DSCMD
         }
 
         int count = 0;
+        long currentTime = System.currentTimeMillis();
+        long target = day * 86400000L;
+
         for (String s : UserUtil.ccUser.get().getKeys(false))
         {
-            try
-            {
-                long lastJoinLong = UserUtil.ccUser.get().getLong(s + ".lastJoin");
+            long lastJoinLong = UserUtil.ccUser.get().getLong(s + ".lastJoin");
+            if (lastJoinLong == 0)
+                continue;
 
-                long dayPassed = (System.currentTimeMillis() - lastJoinLong) / 86400000L;
-
-                // 마지막으로 접속한지 입력한 일보다 더 지남.
-                if (dayPassed > day)
-                {
-                    //sender.sendMessage(DynamicShop.dsPrefix(sender) + Bukkit.getOfflinePlayer(UUID.fromString(s)).getName() + " Deleted");
-                    UserUtil.ccUser.get().set(s, null);
-                    count += 1;
-                }
-            } catch (Exception e)
+            // 마지막으로 접속한지 입력한 일보다 더 지남.
+            long dayPassed = currentTime - lastJoinLong;
+            if (dayPassed > target)
             {
-                sender.sendMessage(DynamicShop.dsPrefix(sender) + e + "/" + s);
+                //sender.sendMessage(DynamicShop.dsPrefix(sender) + Bukkit.getOfflinePlayer(UUID.fromString(s)).getName() + " Deleted");
+                UserUtil.ccUser.get().set(s, null);
+                count += 1;
             }
-
-            UserUtil.ccUser.save();
         }
+
+        if (count > 0)
+            UserUtil.ccUser.save();
 
         sender.sendMessage(DynamicShop.dsPrefix(sender) + count + " Items Removed");
     }
