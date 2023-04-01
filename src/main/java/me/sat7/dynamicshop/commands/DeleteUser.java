@@ -1,9 +1,6 @@
 package me.sat7.dynamicshop.commands;
 
-import java.util.UUID;
-
 import me.sat7.dynamicshop.utilities.UserUtil;
-import org.bukkit.Bukkit;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
 
