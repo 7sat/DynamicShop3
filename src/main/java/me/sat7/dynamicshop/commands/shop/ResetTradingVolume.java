@@ -3,8 +3,6 @@ package me.sat7.dynamicshop.commands.shop;
 import me.sat7.dynamicshop.DynamicShop;
 import me.sat7.dynamicshop.commands.DSCMD;
 import me.sat7.dynamicshop.commands.Shop;
-import me.sat7.dynamicshop.files.CustomConfig;
-import me.sat7.dynamicshop.utilities.ShopUtil;
 import me.sat7.dynamicshop.utilities.UserUtil;
 import org.bukkit.Bukkit;
 import org.bukkit.OfflinePlayer;

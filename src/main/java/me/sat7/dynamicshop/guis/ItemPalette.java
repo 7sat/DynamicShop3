@@ -276,11 +276,7 @@ public final class ItemPalette extends InGameUI
             if (isInteractable != 0)
                 return isInteractable;
 
-            int isRecord = Boolean.compare(o2.getType().isRecord(), o1.getType().isRecord());
-            if (isRecord != 0)
-                return isRecord;
-
-            return 0;
+            return Boolean.compare(o2.getType().isRecord(), o1.getType().isRecord());
         }).thenComparing(ItemPalette::GetArmorType).thenComparing(ItemPalette::GetPotionType).thenComparing(ItemPalette::GetSortName));
 
         sortedList = allItems;

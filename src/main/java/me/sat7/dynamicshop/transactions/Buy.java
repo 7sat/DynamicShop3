@@ -126,7 +126,7 @@ public final class Buy
             priceSum = Math.ceil(priceSum);
         }
 
-        EconomyResponse r = null;
+        EconomyResponse r;
         if (currency == ItemTrade.CURRENCY.VAULT)
         {
             r = DynamicShop.getEconomy().withdrawPlayer(player, priceSum);
@@ -258,8 +258,8 @@ public final class Buy
                             .replace("{player}", player.getName())
                             .replace("{shop}", shopName)
                             .replace("{itemType}", tempIS.getType().toString())
-                            .replace("{amount}", actualAmount + "")
-                            .replace("{priceSum}", priceSum + "");
+                            .replace("{amount}", String.valueOf(actualAmount))
+                            .replace("{priceSum}", String.valueOf(priceSum));
                     Bukkit.dispatchCommand(Bukkit.getConsoleSender(), buyCmd);
                 }
             }

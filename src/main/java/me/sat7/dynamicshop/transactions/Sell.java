@@ -1,6 +1,5 @@
 package me.sat7.dynamicshop.transactions;
 
-import java.util.HashMap;
 import java.util.Map;
 
 import me.sat7.dynamicshop.economyhook.PlayerpointHook;
@@ -21,7 +20,6 @@ import net.milkbowl.vault.economy.EconomyResponse;
 
 import static me.sat7.dynamicshop.utilities.LangUtil.n;
 import static me.sat7.dynamicshop.utilities.LangUtil.t;
-import static me.sat7.dynamicshop.utilities.MathUtil.Clamp;
 
 public final class Sell
 {
@@ -394,9 +392,9 @@ public final class Sell
                             .replace("{player}", player.getName())
                             .replace("{shop}", shopName)
                             .replace("{itemType}", tempIS.getType().toString())
-                            .replace("{amount}", actualAmount + "")
-                            .replace("{priceSum}", priceSum + "")
-                            .replace("{tax}", tax + "");
+                            .replace("{amount}", String.valueOf(actualAmount))
+                            .replace("{priceSum}", String.valueOf(priceSum))
+                            .replace("{tax}", String.valueOf(tax));
                     Bukkit.dispatchCommand(Bukkit.getConsoleSender(), sellCmd);
                 }
             }

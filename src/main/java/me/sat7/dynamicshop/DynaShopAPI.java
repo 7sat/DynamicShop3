@@ -78,11 +78,7 @@ public final class DynaShopAPI
     {
         if(!IsShopEnable(shopName))
         {
-            if(player.hasPermission(P_ADMIN_SHOP_EDIT))
-            {
-                //player.sendMessage(DynamicShop.dsPrefix(player) + t(player, "MESSAGE.SHOP_DISABLED"));
-            }
-            else
+            if(!player.hasPermission(P_ADMIN_SHOP_EDIT))
             {
                 player.sendMessage(DynamicShop.dsPrefix(player) + t(player, "MESSAGE.SHOP_IS_CLOSED_BY_ADMIN"));
                 return;

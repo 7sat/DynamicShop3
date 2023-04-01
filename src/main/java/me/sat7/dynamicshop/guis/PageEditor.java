@@ -229,7 +229,7 @@ public final class PageEditor extends InGameUI
             String pageLore = ShopUtil.IsPageEmpty(shopName, pageNum) ? t(null, "PAGE_EDITOR.EMPTY") + "\n" : "";
             pageLore += t(null, "PAGE_EDITOR.PAGE_LORE_PREMIUM");
 
-            CreateButton(PAGE_BUTTON_START + i, InGameUI.GetPageButtonIconMat(), pageNum + "", pageLore, pageNum);
+            CreateButton(PAGE_BUTTON_START + i, InGameUI.GetPageButtonIconMat(), String.valueOf(pageNum), pageLore, pageNum);
         }
 
         if (temp > 0)

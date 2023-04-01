@@ -286,7 +286,7 @@ public final class Shop extends InGameUI
 
                         if (!stockText.isEmpty())
                             stockText += "\n";
-                        stockText += limitString.replace("{num}", tradeLimitLeft + "").replace("{time}", tradeLimitResetTime);
+                        stockText += limitString.replace("{num}", String.valueOf(tradeLimitLeft)).replace("{time}", tradeLimitResetTime);
                     }
 
                     String tradeLoreText = "";
@@ -366,8 +366,8 @@ public final class Shop extends InGameUI
     private String CreatePageButtonName()
     {
         String pageString = t(player, "SHOP.PAGE_TITLE");
-        pageString = pageString.replace("{curPage}", page + "");
-        pageString = pageString.replace("{maxPage}", maxPage + "");
+        pageString = pageString.replace("{curPage}", String.valueOf(page));
+        pageString = pageString.replace("{maxPage}", String.valueOf(maxPage));
         return pageString;
     }
 

@@ -269,13 +269,13 @@ public final class ItemSettings extends InGameUI
         int discountMatAmount = dsItem.discount/10;
         if (discountMatAmount < 1)
             discountMatAmount = 1;
-        CreateButton(DISCOUNT, discountMat, t(player, "ITEM_SETTING.DISCOUNT"), t(player, "ITEM_SETTING.DISCOUNT_LORE_2").replace("{num}", dsItem.discount+""), discountMatAmount);
+        CreateButton(DISCOUNT, discountMat, t(player, "ITEM_SETTING.DISCOUNT"), t(player, "ITEM_SETTING.DISCOUNT_LORE_2").replace("{num}", String.valueOf(dsItem.discount)), discountMatAmount);
 
-        String tradeLimitIntervalString = dsItem.tradeLimitInterval / 1000 / 60 / 60 + "";
+        String tradeLimitIntervalString = String.valueOf(dsItem.tradeLimitInterval / 1000 / 60 / 60);
         String tradeLimitNextTimerString = sdf.format(dsItem.tradeLimitNextTimer);
         CreateButton(TRADE_LIMIT_AMOUNT, Material.PLAYER_HEAD,
                      t(player, "ITEM_SETTING.TRADE_LIMIT_AMOUNT"),
-                     t(player, "ITEM_SETTING.TRADE_LIMIT_AMOUNT_LORE").replace("{num}", dsItem.tradeLimit + ""));
+                     t(player, "ITEM_SETTING.TRADE_LIMIT_AMOUNT_LORE").replace("{num}", String.valueOf(dsItem.tradeLimit)));
 
         if (dsItem.tradeLimit != 0)
         {
@@ -285,7 +285,7 @@ public final class ItemSettings extends InGameUI
 
             CreateButton(TRADE_LIMIT_INTERVAL_TIMER, Material.CLOCK,
                          t(player, "ITEM_SETTING.TRADE_LIMIT_TIMER"),
-                         t(player, "ITEM_SETTING.TRADE_LIMIT_TIMER_LORE").replace("{num}", timerOffset / 1000 / 60 / 60 + "").replace("{time}", tradeLimitNextTimerString));
+                         t(player, "ITEM_SETTING.TRADE_LIMIT_TIMER_LORE").replace("{num}", String.valueOf(timerOffset / 1000 / 60 / 60)).replace("{time}", tradeLimitNextTimerString));
         }
 
         CreateButton(RECOMMEND, Material.NETHER_STAR, t(player, "ITEM_SETTING.RECOMMEND"), recommendLore); // 추천 버튼
@@ -484,7 +484,7 @@ public final class ItemSettings extends InGameUI
                                           dsItem.tradeLimit, dsItem.tradeLimitInterval, dsItem.tradeLimitNextTimer);
             DynaShopAPI.openItemSettingGui(player, shopName, shopSlotIndex, currentTab, newDSItem, timerOffset);
 
-            player.sendMessage(DynamicShop.dsPrefix(player) + t(player, "MESSAGE.RECOMMEND_APPLIED").replace("{playerNum}", ConfigUtil.GetNumberOfPlayer() + ""));
+            player.sendMessage(DynamicShop.dsPrefix(player) + t(player, "MESSAGE.RECOMMEND_APPLIED").replace("{playerNum}", String.valueOf(ConfigUtil.GetNumberOfPlayer())));
         }
     }
 

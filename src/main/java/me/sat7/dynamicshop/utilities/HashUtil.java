@@ -1,6 +1,5 @@
 package me.sat7.dynamicshop.utilities;
 
-import me.sat7.dynamicshop.DynamicShop;
 import org.bukkit.inventory.ItemStack;
 
 import java.math.BigInteger;

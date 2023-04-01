@@ -45,7 +45,7 @@ public final class ItemsUtil
         StringBuilder finalStr = new StringBuilder();
         for (String s : temparr)
         {
-            s = ("" + s.charAt(0)).toUpperCase() + s.substring(1);
+            s = (String.valueOf(s.charAt(0))).toUpperCase() + s.substring(1);
             finalStr.append(s).append(" ");
         }
         finalStr = new StringBuilder(finalStr.substring(0, finalStr.length() - 1));

@@ -928,7 +928,7 @@ public final class LangUtil
             Matcher matcher = HEX_PATTERN.matcher(temp);
             while (matcher.find())
             {
-                temp = temp.replace(matcher.group(), "" + ChatColor.of(matcher.group()));
+                temp = temp.replace(matcher.group(), String.valueOf(ChatColor.of(matcher.group())));
             }
         }
 
@@ -943,7 +943,7 @@ public final class LangUtil
         Matcher matcher = HEX_PATTERN.matcher(message);
         while (matcher.find())
         {
-            message = message.replace(matcher.group(), "" + ChatColor.of(matcher.group()));
+            message = message.replace(matcher.group(), String.valueOf(ChatColor.of(matcher.group())));
         }
         return message;
     }

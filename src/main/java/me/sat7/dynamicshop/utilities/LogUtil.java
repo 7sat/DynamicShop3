@@ -1,18 +1,20 @@
 package me.sat7.dynamicshop.utilities;
 
-import java.io.File;
-import java.io.FileWriter;
-import java.io.IOException;
-import java.text.SimpleDateFormat;
-import java.util.*;
-import java.util.concurrent.ConcurrentHashMap;
-
 import com.opencsv.CSVWriter;
 import me.sat7.dynamicshop.DynamicShop;
 import me.sat7.dynamicshop.constants.Constants;
 import me.sat7.dynamicshop.files.CustomConfig;
 import org.apache.commons.io.FileUtils;
 import org.bukkit.Bukkit;
+
+import java.io.File;
+import java.io.FileWriter;
+import java.io.IOException;
+import java.text.SimpleDateFormat;
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.Map;
+import java.util.concurrent.ConcurrentHashMap;
 
 import static me.sat7.dynamicshop.utilities.LangUtil.t;
 
@@ -58,7 +60,7 @@ public final class LogUtil
                         .replace("{player}", player)
                         .replace("{shop}", shopName)
                         .replace("{item}", ItemsUtil.getBeautifiedName( itemName))
-                        .replace("{amount}", Math.abs(amount) + "");
+                        .replace("{amount}", String.valueOf(Math.abs(amount)));
 
                 if(data.get().contains("Options.log.printToConsole") && data.get().getBoolean("Options.log.printToConsole"))
                 {

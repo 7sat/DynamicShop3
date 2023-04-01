@@ -267,7 +267,7 @@ public final class ItemTrade extends InGameUI
             int limit = ShopUtil.GetTradeLimitPerPlayer(shopName, tradeIdxInt);
             String limitString = limit > 0 ? t(player, "SHOP.PURCHASE_LIMIT_PER_PLAYER") : t(player, "SHOP.SALES_LIMIT_PER_PLAYER");
             String tradeLimitResetTime = ShopUtil.GetTradeLimitNextResetTime(shopName, tradeIdxInt);
-            tradeLimitString = limitString.replace("{num}", tradeLimitLeft + "").replace("{time}", tradeLimitResetTime);
+            tradeLimitString = limitString.replace("{num}", String.valueOf(tradeLimitLeft)).replace("{time}", tradeLimitResetTime);
         }
 
         int amount = 1;

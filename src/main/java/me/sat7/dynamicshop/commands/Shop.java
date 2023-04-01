@@ -116,7 +116,7 @@ public final class Shop
                     int open = Integer.parseInt(temp[0]);
 
                     player.sendMessage(DynamicShop.dsPrefix(player) + t(player, "TIME.SHOP_IS_CLOSED").
-                            replace("{time}", open + "").replace("{curTime}", curTime + ""));
+                            replace("{time}", String.valueOf(open)).replace("{curTime}", String.valueOf(curTime)));
                     return;
                 }
             }

@@ -139,7 +139,7 @@ public final class ShopSettings extends InGameUI
             int close = Integer.parseInt(temp[1]);
 
             ArrayList<String> shopHourLore = new ArrayList<>(Arrays.asList(
-                    t(player, "TIME.CUR").replace("{time}", curTime + ""),
+                    t(player, "TIME.CUR").replace("{time}", String.valueOf(curTime)),
                     "§9" + t(player, "CUR_STATE") + ": ",
                     "§9 - " + t(player, "TIME.OPEN") + ": " + open,
                     "§9 - " + t(player, "TIME.CLOSE") + ": " + close,
@@ -150,7 +150,7 @@ public final class ShopSettings extends InGameUI
         } else
         {
             ArrayList<String> shopHourLore = new ArrayList<>(Arrays.asList(
-                    t(player, "TIME.CUR").replace("{time}", curTime + ""),
+                    t(player, "TIME.CUR").replace("{time}", String.valueOf(curTime)),
                     "§9" + t(player, "CUR_STATE") + ": " + t(player, "TIME.OPEN24"),
                     "§e" + t(player, "CLICK") + ": " + t(player, "TIME.SET_SHOPHOURS")));
             CreateButton(SHOP_HOUR, Material.CLOCK, t(player, "TIME.SHOPHOURS"), shopHourLore);
@@ -284,7 +284,7 @@ public final class ShopSettings extends InGameUI
             ArrayList<String> taxLore = new ArrayList<>(Arrays.asList(
                     "§9" + t(player, "CUR_STATE") + ": " + t(player, "TAX.USE_LOCAL"),
                     "§e" + t(player, "CLICK") + ": " +
-                            t(player, "TAX.USE_GLOBAL").replace("{tax}", globalTax + "")));
+                            t(player, "TAX.USE_GLOBAL").replace("{tax}", String.valueOf(globalTax))));
             CreateButton(TAX_TOGGLE, Material.IRON_INGOT, t(player, "TAX.SALES_TAX"), taxLore);
 
             ArrayList<String> taxLore2 = new ArrayList<>(Arrays.asList(
@@ -295,7 +295,7 @@ public final class ShopSettings extends InGameUI
         {
             ArrayList<String> taxLore = new ArrayList<>(Arrays.asList(
                     "§9" + t(player, "CUR_STATE") + ": " +
-                            t(player, "TAX.USE_GLOBAL").replace("{tax}", globalTax + ""),
+                            t(player, "TAX.USE_GLOBAL").replace("{tax}", String.valueOf(globalTax)),
                     "§e" + t(player, "CLICK") + ": " + t(player, "TAX.USE_LOCAL")));
             CreateButton(TAX_TOGGLE, Material.IRON_INGOT, t(player, "TAX.SALES_TAX"), taxLore);
         }

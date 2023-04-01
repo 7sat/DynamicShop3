@@ -6,7 +6,6 @@ import me.sat7.dynamicshop.DynamicShop;
 import me.sat7.dynamicshop.files.CustomConfig;
 import org.bukkit.Bukkit;
 import org.bukkit.configuration.ConfigurationSection;
-import org.bukkit.configuration.file.FileConfiguration;
 
 import java.util.ArrayList;
 import java.util.Map;
