@@ -55,7 +55,7 @@ public final class Help
             if (player.hasPermission(P_ADMIN_SHOP_EDIT) || player.hasPermission(P_ADMIN_EDIT_ALL))
             {
                 player.sendMessage(" - " + t(player, "HELP.USAGE")
-                        + ": /ds shop <shopname> <enable | addhand | add | edit | editall | setToRecAll | sellbuy | permission | maxpage | flag | position | shophours | fluctuation | stockStabilizing | command | account | log>");
+                                           + ": /ds shop <shopname> <enable | addhand | add | edit | editall | setToRecAll | sellbuy | permission | maxpage | flag | position | shophours | fluctuation | stockStabilizing | command | account | log | resetTradingVolume>");
             }
 
             if (player.hasPermission(P_ADMIN_SHOP_EDIT))
@@ -210,6 +210,10 @@ public final class Help
         } else if (helpcode.equals("log"))
         {
             CMDManager.log.SendHelpMessage(player);
+        }
+        else if (helpcode.equals("resetTradingVolume"))
+        {
+            CMDManager.resetTradingVolume.SendHelpMessage(player);
         }
     }
 }

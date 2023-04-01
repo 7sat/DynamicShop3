@@ -145,19 +145,19 @@ public final class UserUtil
             ccUser.get().set(uuid + ".tradingVolume", null);
         }
 
-        for (Map.Entry<String, HashMap<String, HashMap<UUID, Integer>>> shopMap : UserUtil.tradingVolume.entrySet())
+        for (Map.Entry<String, HashMap<String, HashMap<UUID, Integer>>> shopMap : tradingVolume.entrySet())
         {
             CustomConfig data = ShopUtil.shopConfigFiles.get(shopMap.getKey());
             if (data == null)
                 continue;
 
-            for (Map.Entry<String, HashMap<UUID, Integer>> itemMap : UserUtil.tradingVolume.get(shopMap.getKey()).entrySet())
+            for (Map.Entry<String, HashMap<UUID, Integer>> itemMap : tradingVolume.get(shopMap.getKey()).entrySet())
             {
                 String hash = itemMap.getKey();
                 if (!ShopUtil.hashExist(shopMap.getKey(), hash))
                     continue;
 
-                for (Map.Entry<UUID, Integer> uuidMap : UserUtil.tradingVolume.get(shopMap.getKey()).get(itemMap.getKey()).entrySet())
+                for (Map.Entry<UUID, Integer> uuidMap : tradingVolume.get(shopMap.getKey()).get(itemMap.getKey()).entrySet())
                 {
                     ccUser.get().set(uuidMap.getKey() + ".tradingVolume." + shopMap.getKey() + "." + itemMap.getKey(), uuidMap.getValue());
                 }
@@ -250,6 +250,26 @@ public final class UserUtil
             return;
 
         tradingVolume.remove(shopName);
+    }
+
+    public static void ClearTradeLimitData(UUID player, String shopName)
+    {
+        for (Map.Entry<String, HashMap<String, HashMap<UUID, Integer>>> shopMap : tradingVolume.entrySet())
+        {
+            if (!shopMap.getKey().equals(shopName))
+                continue;
+
+            for (Map.Entry<String, HashMap<UUID, Integer>> itemMap : tradingVolume.get(shopMap.getKey()).entrySet())
+            {
+                for (Map.Entry<UUID, Integer> uuidMap : tradingVolume.get(shopMap.getKey()).get(itemMap.getKey()).entrySet())
+                {
+                    if (uuidMap.getKey().equals(player))
+                    {
+                        tradingVolume.get(shopMap.getKey()).get(itemMap.getKey()).remove(player);
+                    }
+                }
+            }
+        }
     }
 
     public static void ClearTradeLimitData(String shopName, int idx)

@@ -269,7 +269,7 @@ public final class ItemSettings extends InGameUI
         int discountMatAmount = dsItem.discount/10;
         if (discountMatAmount < 1)
             discountMatAmount = 1;
-        CreateButton(DISCOUNT, discountMat, t(player, "ITEM_SETTING.DISCOUNT"), t(player, "ITEM_SETTING.DISCOUNT_LORE").replace("{num}", dsItem.discount+""), discountMatAmount);
+        CreateButton(DISCOUNT, discountMat, t(player, "ITEM_SETTING.DISCOUNT"), t(player, "ITEM_SETTING.DISCOUNT_LORE_2").replace("{num}", dsItem.discount+""), discountMatAmount);
 
         String tradeLimitIntervalString = dsItem.tradeLimitInterval / 1000 / 60 / 60 + "";
         String tradeLimitNextTimerString = sdf.format(dsItem.tradeLimitNextTimer);
@@ -390,9 +390,9 @@ public final class ItemSettings extends InGameUI
     private void OnDiscountButtonClick(boolean isLeftClick)
     {
         if (isLeftClick)
-            dsItem.discount += 10;
-        else
             dsItem.discount -= 10;
+        else
+            dsItem.discount += 10;
 
         RefreshWindow();
     }
@@ -402,11 +402,11 @@ public final class ItemSettings extends InGameUI
         int mod;
         if (isLeftClick)
         {
-            mod = 1;
+            mod = -1;
         }
         else
         {
-            mod = -1;
+            mod = 1;
         }
 
         if (isShift)
@@ -426,7 +426,7 @@ public final class ItemSettings extends InGameUI
             return;
 
         long mod = 1000 * 60 * 60;
-        if (!isLeftClick)
+        if (isLeftClick)
         {
             mod *= -1;
         }
@@ -450,7 +450,7 @@ public final class ItemSettings extends InGameUI
             return;
 
         long mod = 1000 * 60 * 60;
-        if (!isLeftClick)
+        if (isLeftClick)
         {
             mod *= -1;
         }

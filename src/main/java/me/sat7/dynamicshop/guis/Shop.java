@@ -151,6 +151,8 @@ public final class Shop extends InGameUI
                 // 상품
                 if (shopData.contains(s + ".value"))
                 {
+                    int tradeIdx = Integer.parseInt(s);
+
                     lore = l("SHOP.ITEM_INFO");
 
                     int stock = shopData.getInt(s + ".stock");
@@ -253,7 +255,7 @@ public final class Shop extends InGameUI
                         {
                             sellText = t(player, "SHOP.SELL_PRICE" + currencyKey).replace("{num}", n(sellPrice));
                         }
-                        
+
                         sellText += showValueChange ? " " + valueChanged_Sell : "";
                     }
 
@@ -275,12 +277,12 @@ public final class Shop extends InGameUI
                             stockText = t(player, "SHOP.STOCK").replace("{num}", stockStr);
                     }
 
-                    int tradeLimitLeft = UserUtil.GetTradingLimitLeft(player, shopName, idx, HashUtil.GetItemHash(itemStack));
+                    int tradeLimitLeft = UserUtil.GetTradingLimitLeft(player, shopName, tradeIdx, HashUtil.GetItemHash(itemStack));
                     if (tradeLimitLeft != Integer.MAX_VALUE)
                     {
-                        int limit = ShopUtil.GetTradeLimitPerPlayer(shopName, idx);
+                        int limit = ShopUtil.GetTradeLimitPerPlayer(shopName, tradeIdx);
                         String limitString = limit > 0 ? t(player, "SHOP.PURCHASE_LIMIT_PER_PLAYER") : t(player, "SHOP.SALES_LIMIT_PER_PLAYER");
-                        String tradeLimitResetTime = ShopUtil.GetTradeLimitNextResetTime(shopName, idx);
+                        String tradeLimitResetTime = ShopUtil.GetTradeLimitNextResetTime(shopName, tradeIdx);
 
                         if (!stockText.isEmpty())
                             stockText += "\n";

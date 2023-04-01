@@ -6,6 +6,7 @@ import java.util.stream.Collectors;
 import me.sat7.dynamicshop.files.CustomConfig;
 import org.bukkit.Bukkit;
 import org.bukkit.Material;
+import org.bukkit.OfflinePlayer;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandSender;
 import org.bukkit.configuration.ConfigurationSection;
@@ -120,7 +121,6 @@ public final class TabCompleteUtil
                         return null;
                     } else if (args.length == 3)
                     {
-                        //add,addhand,edit,editall,permission,maxpage,flag
                         if (sender.hasPermission(P_ADMIN_SHOP_EDIT))
                         {
                             temp.add("enable");
@@ -140,6 +140,7 @@ public final class TabCompleteUtil
                             temp.add("account");
                             temp.add("sellbuy");
                             temp.add("log");
+                            temp.add("resetTradingVolume");
                         }
 
                         AddToAutoCompleteIfValid(args[2]);
@@ -420,6 +421,19 @@ public final class TabCompleteUtil
                                 temp.add("off");
 
                                 AddToAutoCompleteIfValid(args[4]);
+                            }
+                        } else if (args[2].equalsIgnoreCase("resetTradingVolume") && sender.hasPermission(P_ADMIN_SHOP_EDIT))
+                        {
+                            if (args.length == 4)
+                            {
+                                for (OfflinePlayer players : Bukkit.getServer().getOfflinePlayers())
+                                {
+                                    temp.add(players.getName());
+                                }
+
+                                AddToAutoCompleteIfValid(args[3]);
+
+                                Help.showHelp("resetTradingVolume", (Player) sender, args);
                             }
                         }
                     }

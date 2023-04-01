@@ -175,6 +175,7 @@ public final class LangUtil
             ccLang.get().addDefault("ITEM_SETTING.RECOMMEND", "§f추천 값 적용");
             ccLang.get().addDefault("ITEM_SETTING.DISCOUNT", "§f할인");
             ccLang.get().addDefault("ITEM_SETTING.DISCOUNT_LORE", "§f할인율: {num}%\n§e좌클릭: +10, 우클릭: -10");
+            ccLang.get().addDefault("ITEM_SETTING.DISCOUNT_LORE_2", "§f할인율: {num}%\n§e좌클릭: -10, 우클릭: +10");
             ccLang.get().addDefault("ITEM_SETTING.DONE", "§f완료");
             ccLang.get().addDefault("ITEM_SETTING.DONE_LORE", "§f완료!");
             ccLang.get().addDefault("ITEM_SETTING.ROUND_DOWN", "§f내림");
@@ -188,11 +189,11 @@ public final class LangUtil
             ccLang.get().addDefault("ITEM_SETTING.BUY", "§3§l구매: {num}");
             ccLang.get().addDefault("ITEM_SETTING.SELL", "§3§l판매: {num}");
             ccLang.get().addDefault("ITEM_SETTING.TRADE_LIMIT_AMOUNT", "§f플레이어 당 거래량 제한");
-            ccLang.get().addDefault("ITEM_SETTING.TRADE_LIMIT_AMOUNT_LORE", "§f{num}\n§e좌클릭: +1, 우클릭: -1, 씨프트 = x10");
+            ccLang.get().addDefault("ITEM_SETTING.TRADE_LIMIT_AMOUNT_LORE", "§f{num}\n§e좌클릭: -1, 우클릭: +1, 씨프트 = x10");
             ccLang.get().addDefault("ITEM_SETTING.TRADE_LIMIT_INTERVAL", "§f거래량 제한 리셋 주기");
-            ccLang.get().addDefault("ITEM_SETTING.TRADE_LIMIT_INTERVAL_LORE", "§f주기: {interval}\n§f다음 리셋: {time}\n§e좌클릭: +1시간, 우클릭: -1시간, 씨프트 = x12");
+            ccLang.get().addDefault("ITEM_SETTING.TRADE_LIMIT_INTERVAL_LORE", "§f주기: {interval}\n§f다음 리셋: {time}\n§e좌클릭: -1시간, 우클릭: +1시간, 씨프트 = x12");
             ccLang.get().addDefault("ITEM_SETTING.TRADE_LIMIT_TIMER", "§f타이머 조정");
-            ccLang.get().addDefault("ITEM_SETTING.TRADE_LIMIT_TIMER_LORE", "§f{num}\n§f다음 리셋: {time}\n§e좌클릭: +1시간, 우클릭: -1시간, 씨프트 = x12");
+            ccLang.get().addDefault("ITEM_SETTING.TRADE_LIMIT_TIMER_LORE", "§f{num}\n§f다음 리셋: {time}\n§e좌클릭: -1시간, 우클릭: +1시간, 씨프트 = x12");
 
             ccLang.get().addDefault("TRADE_TITLE", "§3아이탬 거래");
             ccLang.get().addDefault("TRADE.TOGGLE_SELLABLE", "§e클릭: 판매전용 토글");
@@ -598,6 +599,7 @@ public final class LangUtil
             ccLang.get().addDefault("ITEM_SETTING.RECOMMEND", "§fApply recommended values");
             ccLang.get().addDefault("ITEM_SETTING.DISCOUNT", "§fDiscount");
             ccLang.get().addDefault("ITEM_SETTING.DISCOUNT_LORE", "§fDiscount rate: {num}%\n§eLMB: +10, RMB: -10");
+            ccLang.get().addDefault("ITEM_SETTING.DISCOUNT_LORE_2", "§fDiscount rate: {num}%\n§eLMB: -10, RMB: +10");
             ccLang.get().addDefault("ITEM_SETTING.DONE", "§fDone");
             ccLang.get().addDefault("ITEM_SETTING.DONE_LORE", "§fDone!");
             ccLang.get().addDefault("ITEM_SETTING.ROUND_DOWN", "§fRound down");
@@ -611,11 +613,11 @@ public final class LangUtil
             ccLang.get().addDefault("ITEM_SETTING.BUY", "§3§lBuy: {num}");
             ccLang.get().addDefault("ITEM_SETTING.SELL", "§3§lSell: {num}");
             ccLang.get().addDefault("ITEM_SETTING.TRADE_LIMIT_AMOUNT", "§fTrading volume limit per player");
-            ccLang.get().addDefault("ITEM_SETTING.TRADE_LIMIT_AMOUNT_LORE", "§f{num}\n§eLMB: +1, RMB: -1, Shift = x10");
+            ccLang.get().addDefault("ITEM_SETTING.TRADE_LIMIT_AMOUNT_LORE", "§f{num}\n§eLMB: -1, RMB: +1, Shift = x10");
             ccLang.get().addDefault("ITEM_SETTING.TRADE_LIMIT_INTERVAL", "§fTrading volume limit reset cycle");
-            ccLang.get().addDefault("ITEM_SETTING.TRADE_LIMIT_INTERVAL_LORE", "§fInterval: {interval}\n§fNext reset: {time}\n§eLMB: +1h, RMB: -1h, Shift = x12");
+            ccLang.get().addDefault("ITEM_SETTING.TRADE_LIMIT_INTERVAL_LORE", "§fInterval: {interval}\n§fNext reset: {time}\n§eLMB: -1h, RMB: +1h, Shift = x12");
             ccLang.get().addDefault("ITEM_SETTING.TRADE_LIMIT_TIMER", "§fAdjust Timer");
-            ccLang.get().addDefault("ITEM_SETTING.TRADE_LIMIT_TIMER_LORE", "§f{num}\n§fNext reset: {time}\n§eLMB: +1h, RMB: -1h, Shift = x12");
+            ccLang.get().addDefault("ITEM_SETTING.TRADE_LIMIT_TIMER_LORE", "§f{num}\n§fNext reset: {time}\n§eLMB: -1h, RMB: +1h, Shift = x12");
 
             ccLang.get().addDefault("TRADE_TITLE", "§3Trade");
             ccLang.get().addDefault("TRADE.TOGGLE_SELLABLE", "§eClick: Sale only toggle");

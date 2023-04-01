@@ -1442,9 +1442,14 @@ public final class ShopUtil
             somethingChanged = true;
         }
 
-        if (System.currentTimeMillis() > next)
+        long currentTime = System.currentTimeMillis();
+        if (currentTime > next)
         {
-            next += interval;
+            while (currentTime > next)
+            {
+                next += interval;
+            }
+
             next = MathUtil.RoundDown_Time_Hour(next);
             data.get().set(idx + ".tradeLimitPerPlayer.nextTimer", next);
 
