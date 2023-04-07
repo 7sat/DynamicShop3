@@ -59,7 +59,7 @@ public final class Buy
 
         // 플레이어 당 거래량 제한 확인
         int tradeIdxInt = Integer.parseInt(tradeIdx);
-        int tradeLimitPerPlayer = ShopUtil.GetTradeLimitPerPlayer(shopName, tradeIdxInt);
+        int tradeLimitPerPlayer = ShopUtil.GetBuyLimitPerPlayer(shopName, tradeIdxInt);
         int playerTradingVolume = UserUtil.GetPlayerTradingVolume(player, shopName, HashUtil.GetItemHash(itemStack));
 
         for (int i = 0; i < itemStack.getAmount(); i++)

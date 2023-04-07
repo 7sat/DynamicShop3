@@ -5,6 +5,7 @@ import me.pikamug.localelib.LocaleManager;
 import me.sat7.dynamicshop.commands.CMDManager;
 import me.sat7.dynamicshop.commands.Optional;
 import me.sat7.dynamicshop.commands.Root;
+import me.sat7.dynamicshop.commands.Sell;
 import me.sat7.dynamicshop.constants.Constants;
 import me.sat7.dynamicshop.economyhook.JobsHook;
 import me.sat7.dynamicshop.economyhook.PlayerpointHook;
@@ -438,10 +439,12 @@ public final class DynamicShop extends JavaPlugin implements Listener
         // 명령어 등록 (개별 클레스로 되어있는것들)
         getCommand("DynamicShop").setExecutor(new Root());
         getCommand("shop").setExecutor(new Optional());
+        getCommand("sell").setExecutor(new Sell());
 
         // 자동완성
         getCommand("DynamicShop").setTabCompleter(this);
         getCommand("shop").setTabCompleter(this);
+        getCommand("sell").setTabCompleter(this);
     }
 
     private void registerEvents()

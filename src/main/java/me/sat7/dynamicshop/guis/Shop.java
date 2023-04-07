@@ -255,7 +255,7 @@ public final class Shop extends InGameUI
                         {
                             sellText = t(player, "SHOP.SELL_PRICE" + currencyKey).replace("{num}", n(sellPrice));
                         }
-
+                        
                         sellText += showValueChange ? " " + valueChanged_Sell : "";
                     }
 
@@ -277,16 +277,25 @@ public final class Shop extends InGameUI
                             stockText = t(player, "SHOP.STOCK").replace("{num}", stockStr);
                     }
 
-                    int tradeLimitLeft = UserUtil.GetTradingLimitLeft(player, shopName, tradeIdx, HashUtil.GetItemHash(itemStack));
-                    if (tradeLimitLeft != Integer.MAX_VALUE)
+                    int sellLimitLeft = UserUtil.GetTradingLimitLeft(player, shopName, tradeIdx, HashUtil.GetItemHash(itemStack), true);
+                    if (sellLimitLeft != Integer.MAX_VALUE)
                     {
-                        int limit = ShopUtil.GetTradeLimitPerPlayer(shopName, tradeIdx);
-                        String limitString = limit > 0 ? t(player, "SHOP.PURCHASE_LIMIT_PER_PLAYER") : t(player, "SHOP.SALES_LIMIT_PER_PLAYER");
-                        String tradeLimitResetTime = ShopUtil.GetTradeLimitNextResetTime(shopName, tradeIdx);
-
                         if (!stockText.isEmpty())
                             stockText += "\n";
-                        stockText += limitString.replace("{num}", String.valueOf(tradeLimitLeft)).replace("{time}", tradeLimitResetTime);
+                        stockText += t(player, "SHOP.TRADE_LIMIT_SELL").replace("{num}", String.valueOf(sellLimitLeft));
+                    }
+                    int buyLimitLeft = UserUtil.GetTradingLimitLeft(player, shopName, tradeIdx, HashUtil.GetItemHash(itemStack), false);
+                    if (buyLimitLeft != Integer.MAX_VALUE)
+                    {
+                        if (!stockText.isEmpty())
+                            stockText += "\n";
+                        stockText += t(player, "SHOP.TRADE_LIMIT_BUY").replace("{num}", String.valueOf(buyLimitLeft));
+                    }
+
+                    if (sellLimitLeft != Integer.MAX_VALUE || buyLimitLeft != Integer.MAX_VALUE)
+                    {
+                        String tradeLimitResetTime = ShopUtil.GetTradeLimitNextResetTime(shopName, tradeIdx);
+                        stockText += "\n" + t(player, "SHOP.TRADE_LIMIT_TIMER").replace("{time}", tradeLimitResetTime);
                     }
 
                     String tradeLoreText = "";
@@ -597,7 +606,8 @@ public final class Shop extends InGameUI
                         int stock = shopData.getInt(idx + ".stock");
                         int maxStock = shopData.getInt(idx + ".maxStock", -1);
                         int discount = shopData.getInt(idx + ".discount", 0);
-                        int tradeLimit = shopData.getInt(idx + ".tradeLimitPerPlayer.value", 0);
+                        int sellLimit = shopData.getInt(idx + ".tradeLimitPerPlayer.sell", 0);
+                        int buyLimit = shopData.getInt(idx + ".tradeLimitPerPlayer.buy", 0);
                         long tradeLimitInterval = shopData.getLong(idx + ".tradeLimitPerPlayer.interval", MathUtil.dayInMilliSeconds);
                         long tradeLimitNextTimer = shopData.getLong(idx + ".tradeLimitPerPlayer.nextTimer");
 
@@ -605,7 +615,7 @@ public final class Shop extends InGameUI
                         iStack.setItemMeta((ItemMeta) shopData.get(idx + ".itemStack"));
 
                         DSItem dsItem = new DSItem(iStack, buyValue, sellValue, valueMin, valueMax, median, stock, maxStock, discount,
-                                                   tradeLimit, tradeLimitInterval, tradeLimitNextTimer);
+                                                   sellLimit, buyLimit, tradeLimitInterval, tradeLimitNextTimer);
                         DynaShopAPI.openItemSettingGui(player, shopName, idx, 0, dsItem);
                     } else
                     {

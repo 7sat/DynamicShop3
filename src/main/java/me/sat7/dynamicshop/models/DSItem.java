@@ -18,7 +18,8 @@ public class DSItem
     public int stock;
     public int maxStock;
     public int discount;
-    public int tradeLimit;
+    public int sellLimit;
+    public int buyLimit;
     public long tradeLimitInterval; // ms
     public long tradeLimitNextTimer;
 
@@ -33,7 +34,7 @@ public class DSItem
         setStock(stock);
         maxStock = -1;
     }
-    public DSItem(ItemStack itemStack, double buyValue, double sellValue, double minPrice, double maxPrice, int median, int stock, int maxStock, int discount, int tradeLimit, long tradeLimitInterval, long tradeLimitNextTimer)
+    public DSItem(ItemStack itemStack, double buyValue, double sellValue, double minPrice, double maxPrice, int median, int stock, int maxStock, int discount, int sellLimit, int buyLimit, long tradeLimitInterval, long tradeLimitNextTimer)
     {
         setItemStack(itemStack);
         setBuyValue(Math.round(buyValue * 100) / 100.0);
@@ -44,7 +45,8 @@ public class DSItem
         setStock(stock);
         setMaxStock(maxStock);
         setDiscount(discount);
-        setTradeLimit(tradeLimit);
+        setSellLimit(sellLimit);
+        setBuyLimit(buyLimit);
         setTradeLimitInterval(tradeLimitInterval);
         setTradeLimitNextTimer(tradeLimitNextTimer);
     }

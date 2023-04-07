@@ -102,6 +102,8 @@ public final class UserUtil
         ccUser.save();
     }
 
+    // ----------------------------------------------------------------------
+
     // 구매 & 판매 수량 제한
     // - 상점의 데이터는 [상점+idx] 로 관리.
     // - 유저의 데이터는 [상점+hash] 로 관리.
@@ -207,41 +209,31 @@ public final class UserUtil
 
     public static int CheckTradeLimitPerPlayer(Player player, String shopName, int tradeIdx, String hash, int tradeAmount, boolean isSell)
     {
-        int limit = ShopUtil.GetTradeLimitPerPlayer(shopName, tradeIdx);
-        int userData = GetPlayerTradingVolume(player, shopName, hash);
+        int limit = isSell ? ShopUtil.GetSellLimitPerPlayer(shopName, tradeIdx) : ShopUtil.GetBuyLimitPerPlayer(shopName, tradeIdx);
+        if (limit == 0)
+            return tradeAmount;
 
-        if (isSell && limit < 0 && limit > userData - tradeAmount)
-        {
-            tradeAmount = (limit - userData) * -1;
-        }
-        else if (!isSell && limit > 0 && limit < userData + tradeAmount)
-        {
-            tradeAmount = limit - userData;
-        }
-
-        return tradeAmount;
+        int left = GetTradingLimitLeft(player, shopName, tradeIdx, hash, isSell);
+        return Math.min(left, tradeAmount);
     }
 
-    public static int GetTradingLimitLeft(Player player, String shopName, int itemIdx, String hash)
+    public static int GetTradingLimitLeft(Player player, String shopName, int itemIdx, String hash, boolean isSell)
     {
         int playerCurrent = GetPlayerTradingVolume(player, shopName, hash);
-        int limit = ShopUtil.GetTradeLimitPerPlayer(shopName, itemIdx);
+        int limit = isSell ? ShopUtil.GetSellLimitPerPlayer(shopName, itemIdx) : ShopUtil.GetBuyLimitPerPlayer(shopName, itemIdx);
+        if (limit == 0)
+            return Integer.MAX_VALUE;
 
-        if (limit < 0)
+        if (isSell)
         {
-            int temp = limit - playerCurrent;
-            temp *= -1;
-
+            int temp = limit + playerCurrent;
             return Math.max(0, temp);
         }
-        else if (limit > 0)
+        else
         {
             int temp = limit - playerCurrent;
-
             return Math.max(0, temp);
         }
-
-        return Integer.MAX_VALUE;
     }
 
     public static void ClearTradeLimitData(String shopName)
@@ -251,7 +243,6 @@ public final class UserUtil
 
         tradingVolume.remove(shopName);
     }
-
     public static void ClearTradeLimitData(UUID player, String shopName)
     {
         for (Map.Entry<String, HashMap<String, HashMap<UUID, Integer>>> shopMap : tradingVolume.entrySet())
@@ -271,7 +262,6 @@ public final class UserUtil
             }
         }
     }
-
     public static void ClearTradeLimitData(String shopName, int idx)
     {
         CustomConfig data = ShopUtil.shopConfigFiles.get(shopName);
@@ -299,7 +289,6 @@ public final class UserUtil
         tradingVolume.put(newName, tradingVolume.get(shopName));
         tradingVolume.remove(shopName);
     }
-
     public static void OnMergeShop(String shopA, String shopB)
     {
         if (!tradingVolume.containsKey(shopB) || tradingVolume.get(shopB) == null)

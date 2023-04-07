@@ -12,6 +12,8 @@ commands:
     aliases: [ds]
   shop:
     description: "Open shop menu"
+  sell:
+      description: "Sell items"
 permissions:
   dshop.use:
     description: Allows use of the /ds command

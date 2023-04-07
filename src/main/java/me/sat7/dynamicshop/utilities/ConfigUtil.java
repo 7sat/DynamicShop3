@@ -14,7 +14,7 @@ import static me.sat7.dynamicshop.utilities.MathUtil.Clamp;
 
 public final class ConfigUtil
 {
-    public final static int PluginConfigVersion = 4;
+    public final static int PluginConfigVersion = 5;
 
     public static int GetConfigVersion()
     {

@@ -41,7 +41,16 @@ public final class TabCompleteUtil
             temp.clear();
             autoCompleteList.clear();
 
-            if (cmd.getName().equalsIgnoreCase("shop") && args.length == 1)
+            if (cmd.getName().equalsIgnoreCase("sell") && args.length == 1)
+            {
+                temp.add("hand");
+                temp.add("handall");
+                temp.add("all");
+                AddToAutoCompleteIfValid(args[0]);
+
+                return autoCompleteList;
+            }
+            else if (cmd.getName().equalsIgnoreCase("shop") && args.length == 1)
             {
                 if (!ConfigUtil.GetUseShopCommand()) return autoCompleteList;
 

@@ -35,7 +35,8 @@ public final class ItemSettings extends InGameUI
 
     private final int DONE = 8;
     private final int CLOSE = 45;
-    private final int TRADE_LIMIT_AMOUNT = 46;
+    private final int TRADE_LIMIT_SELL = 37;
+    private final int TRADE_LIMIT_BUY = 46;
     private final int TRADE_LIMIT_INTERVAL = 47;
     private final int TRADE_LIMIT_INTERVAL_TIMER = 48;
     private final int RECOMMEND = 49;
@@ -273,11 +274,14 @@ public final class ItemSettings extends InGameUI
 
         String tradeLimitIntervalString = String.valueOf(dsItem.tradeLimitInterval / 1000 / 60 / 60);
         String tradeLimitNextTimerString = sdf.format(dsItem.tradeLimitNextTimer);
-        CreateButton(TRADE_LIMIT_AMOUNT, Material.PLAYER_HEAD,
-                     t(player, "ITEM_SETTING.TRADE_LIMIT_AMOUNT"),
-                     t(player, "ITEM_SETTING.TRADE_LIMIT_AMOUNT_LORE").replace("{num}", String.valueOf(dsItem.tradeLimit)));
+        CreateButton(TRADE_LIMIT_SELL, Material.PLAYER_HEAD,
+                     t(player, "ITEM_SETTING.TRADE_LIMIT_SELL"),
+                     t(player, "ITEM_SETTING.TRADE_LIMIT_SELL_LORE").replace("{num}", String.valueOf(dsItem.sellLimit)));
+        CreateButton(TRADE_LIMIT_BUY, Material.PLAYER_HEAD,
+                     t(player, "ITEM_SETTING.TRADE_LIMIT_BUY"),
+                     t(player, "ITEM_SETTING.TRADE_LIMIT_BUY_LORE").replace("{num}", String.valueOf(dsItem.buyLimit)));
 
-        if (dsItem.tradeLimit != 0)
+        if (dsItem.sellLimit != 0 || dsItem.buyLimit != 0)
         {
             CreateButton(TRADE_LIMIT_INTERVAL, Material.CLOCK,
                          t(player, "ITEM_SETTING.TRADE_LIMIT_INTERVAL"),
@@ -314,7 +318,8 @@ public final class ItemSettings extends InGameUI
         else if (e.getSlot() == REMOVE) RemoveItem();
         else if (e.getSlot() == RECOMMEND) SetToRecommend();
         else if (e.getSlot() == DISCOUNT) OnDiscountButtonClick(e.isLeftClick());
-        else if (e.getSlot() == TRADE_LIMIT_AMOUNT) OnTradeLimitAmountButtonClick(e.isLeftClick(), e.isShiftClick());
+        else if (e.getSlot() == TRADE_LIMIT_SELL) OnSellLimitAmountButtonClick(e.isLeftClick(), e.isShiftClick());
+        else if (e.getSlot() == TRADE_LIMIT_BUY) OnBuyLimitAmountButtonClick(e.isLeftClick(), e.isShiftClick());
         else if (e.getSlot() == TRADE_LIMIT_INTERVAL) OnTradeLimitIntervalButtonClick(e.isLeftClick(), e.isShiftClick());
         else if (e.getSlot() == TRADE_LIMIT_INTERVAL_TIMER) OnTradeLimitTimerAdjustButtonClick(e.isLeftClick(), e.isShiftClick());
         else if (e.getSlot() >= TAB_START && e.getSlot() <= TAB_END) ChangeTab(e.getSlot());
@@ -397,7 +402,7 @@ public final class ItemSettings extends InGameUI
         RefreshWindow();
     }
 
-    private void OnTradeLimitAmountButtonClick(boolean isLeftClick, boolean isShift)
+    private void OnSellLimitAmountButtonClick(boolean isLeftClick, boolean isShift)
     {
         int mod;
         if (isLeftClick)
@@ -412,8 +417,39 @@ public final class ItemSettings extends InGameUI
         if (isShift)
             mod *= 10;
 
-        dsItem.tradeLimit += mod;
-        if (dsItem.tradeLimit != 0 && dsItem.tradeLimitNextTimer == 0)
+        dsItem.sellLimit += mod;
+
+        if (dsItem.sellLimit < 0)
+            dsItem.sellLimit = 0;
+
+        if (dsItem.sellLimit != 0 && dsItem.tradeLimitNextTimer == 0)
+        {
+            CalcTradeLimitNextTimer();
+        }
+        RefreshWindow();
+    }
+
+    private void OnBuyLimitAmountButtonClick(boolean isLeftClick, boolean isShift)
+    {
+        int mod;
+        if (isLeftClick)
+        {
+            mod = -1;
+        }
+        else
+        {
+            mod = 1;
+        }
+
+        if (isShift)
+            mod *= 10;
+
+        dsItem.buyLimit += mod;
+
+        if (dsItem.buyLimit < 0)
+            dsItem.buyLimit = 0;
+
+        if (dsItem.buyLimit != 0 && dsItem.tradeLimitNextTimer == 0)
         {
             CalcTradeLimitNextTimer();
         }
@@ -422,7 +458,7 @@ public final class ItemSettings extends InGameUI
 
     private void OnTradeLimitIntervalButtonClick(boolean isLeftClick, boolean isShift)
     {
-        if (dsItem.tradeLimit == 0)
+        if (dsItem.sellLimit == 0 && dsItem.buyLimit == 0)
             return;
 
         long mod = 1000 * 60 * 60;
@@ -446,7 +482,7 @@ public final class ItemSettings extends InGameUI
 
     private void OnTradeLimitTimerAdjustButtonClick(boolean isLeftClick, boolean isShift)
     {
-        if (dsItem.tradeLimit == 0)
+        if (dsItem.sellLimit == 0 && dsItem.buyLimit == 0)
             return;
 
         long mod = 1000 * 60 * 60;
@@ -481,7 +517,7 @@ public final class ItemSettings extends InGameUI
         {
             int sugMid = ShopUtil.CalcRecommendedMedian(worth, ConfigUtil.GetNumberOfPlayer());
             DSItem newDSItem = new DSItem(inventory.getItem(SAMPLE_ITEM), worth, worth, dsItem.minPrice, dsItem.maxPrice, sugMid, sugMid, dsItem.maxStock, dsItem.discount,
-                                          dsItem.tradeLimit, dsItem.tradeLimitInterval, dsItem.tradeLimitNextTimer);
+                                          dsItem.sellLimit, dsItem.buyLimit, dsItem.tradeLimitInterval, dsItem.tradeLimitNextTimer);
             DynaShopAPI.openItemSettingGui(player, shopName, shopSlotIndex, currentTab, newDSItem, timerOffset);
 
             player.sendMessage(DynamicShop.dsPrefix(player) + t(player, "MESSAGE.RECOMMEND_APPLIED").replace("{playerNum}", String.valueOf(ConfigUtil.GetNumberOfPlayer())));

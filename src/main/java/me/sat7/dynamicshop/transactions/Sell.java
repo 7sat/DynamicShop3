@@ -88,7 +88,7 @@ public final class Sell
         }
 
         // 플레이어 당 거래량 제한 확인
-        int sellLimit = ShopUtil.GetTradeLimitPerPlayer(shopName, tradeIdx);
+        int sellLimit = ShopUtil.GetSellLimitPerPlayer(shopName, tradeIdx);
         if (player != null && sellLimit != 0)
         {
             tradeAmount = UserUtil.CheckTradeLimitPerPlayer(player, shopName, tradeIdx, HashUtil.GetItemHash(itemStack), tradeAmount, true);
@@ -251,7 +251,7 @@ public final class Sell
 
         // 플레이어 당 거래량 제한 확인
         int tradeIdxInt = Integer.parseInt(tradeIdx);
-        int tradeLimitPerPlayer = ShopUtil.GetTradeLimitPerPlayer(shopName, tradeIdxInt);
+        int tradeLimitPerPlayer = ShopUtil.GetSellLimitPerPlayer(shopName, tradeIdxInt);
         if (tradeLimitPerPlayer != 0)
         {
             tradeAmount = UserUtil.CheckTradeLimitPerPlayer(player, shopName, tradeIdxInt, HashUtil.GetItemHash(itemStack), tradeAmount, true);

@@ -117,12 +117,13 @@ public class Edit extends DSCMD
 
         // 수정
         int discount = shopData.get().getInt(idx + ".discount");
-        int tradeLimit = shopData.get().getInt(idx + ".tradeLimitPerPlayer.value");
+        int sellLimit = shopData.get().getInt(idx + ".tradeLimitPerPlayer.sell");
+        int buyLimit = shopData.get().getInt(idx + ".tradeLimitPerPlayer.buy");
         long tradeLimitInterval = shopData.get().getLong(idx + ".tradeLimitPerPlayer.interval");
         long tradeLimitNextTimer = shopData.get().getLong(idx + ".tradeLimitPerPlayer.nextTimer");
 
         DSItem temp = new DSItem(null, buyValue, buyValue, valueMin, valueMax, median, stock, maxStock, discount,
-                                 tradeLimit, tradeLimitInterval, tradeLimitNextTimer);
+                                 sellLimit, buyLimit, tradeLimitInterval, tradeLimitNextTimer);
         ShopUtil.editShopItem(shopName, idx, temp);
         sender.sendMessage(DynamicShop.dsPrefix(sender) + t(sender, "MESSAGE.ITEM_UPDATED"));
         ItemsUtil.sendItemInfo(sender, shopName, idx, "HELP.ITEM_INFO");
