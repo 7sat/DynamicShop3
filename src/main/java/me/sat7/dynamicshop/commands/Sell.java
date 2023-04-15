@@ -55,17 +55,42 @@ public class Sell implements CommandExecutor
 
         if (args[0].equalsIgnoreCase("hand"))
         {
-            DynaShopAPI.QuickSell(player, player.getInventory().getItemInMainHand(), player.getInventory().getHeldItemSlot());
+            ItemStack itemStack = player.getInventory().getItemInMainHand();
+            if (itemStack == null || itemStack.getType().isAir())
+            {
+                player.sendMessage(DynamicShop.dsPrefix(player) + t(player, "ERR.HAND_EMPTY"));
+                return false;
+            }
+
+            if (0 == DynaShopAPI.QuickSell(player, itemStack, player.getInventory().getHeldItemSlot()))
+            {
+                player.sendMessage(DynamicShop.dsPrefix(player) + t(player, "MESSAGE.NO_ITEM_TO_SELL_2"));
+                return false;
+            }
+
             return true;
         }
         else if (args[0].equalsIgnoreCase("handall"))
         {
-            DynaShopAPI.QuickSell(player, player.getInventory().getItemInMainHand());
+            ItemStack itemStack = player.getInventory().getItemInMainHand();
+            if (itemStack == null || itemStack.getType().isAir())
+            {
+                player.sendMessage(DynamicShop.dsPrefix(player) + t(player, "ERR.HAND_EMPTY"));
+                return false;
+            }
+
+            if (0 == DynaShopAPI.QuickSell(player, itemStack))
+            {
+                player.sendMessage(DynamicShop.dsPrefix(player) + t(player, "MESSAGE.NO_ITEM_TO_SELL_2"));
+                return false;
+            }
+
             return true;
         }
         else if (args[0].equalsIgnoreCase("all"))
         {
             ArrayList<String> temp = new ArrayList<>();
+            double sum = 0;
 
             for (ItemStack stack : player.getInventory().getStorageContents())
             {
@@ -76,8 +101,14 @@ public class Sell implements CommandExecutor
                 if (temp.contains(hash))
                     continue;
 
-                DynaShopAPI.QuickSell(player, stack);
+                sum += DynaShopAPI.QuickSell(player, stack);
                 temp.add(hash);
+            }
+
+            if (sum == 0)
+            {
+                player.sendMessage(DynamicShop.dsPrefix(player) + t(player, "MESSAGE.NO_ITEM_TO_SELL_2"));
+                return false;
             }
 
             return true;

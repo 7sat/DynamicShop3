@@ -186,7 +186,7 @@ public final class LangUtil
             ccLang.get().addDefault("ITEM_SETTING.CLOSE", "§f닫기");
             ccLang.get().addDefault("ITEM_SETTING.CLOSE_LORE", "§f§n클릭: 닫기");
             ccLang.get().addDefault("ITEM_SETTING.REMOVE", "§c제거");
-            ccLang.get().addDefault("ITEM_SETTING.REMOVE_LORE", "§f이 아이탬을 상점에서 제거합니다.");
+            ccLang.get().addDefault("ITEM_SETTING.REMOVE_LORE", "§f이 아이템을 상점에서 제거합니다.");
             ccLang.get().addDefault("ITEM_SETTING.BUY", "§3§l구매: {num}");
             ccLang.get().addDefault("ITEM_SETTING.SELL", "§3§l판매: {num}");
             ccLang.get().addDefault("ITEM_SETTING.TRADE_LIMIT_SELL", "§f플레이어 당 판매량 제한");
@@ -198,11 +198,11 @@ public final class LangUtil
             ccLang.get().addDefault("ITEM_SETTING.TRADE_LIMIT_TIMER", "§f타이머 조정");
             ccLang.get().addDefault("ITEM_SETTING.TRADE_LIMIT_TIMER_LORE", "§f{num}\n§f다음 리셋: {time}\n§e좌클릭: -1시간, 우클릭: +1시간, 씨프트 = x12");
 
-            ccLang.get().addDefault("TRADE_TITLE", "§3아이탬 거래");
+            ccLang.get().addDefault("TRADE_TITLE", "§3아이템 거래");
             ccLang.get().addDefault("TRADE.TOGGLE_SELLABLE", "§e클릭: 판매전용 토글");
             ccLang.get().addDefault("TRADE.TOGGLE_BUYABLE", "§e클릭: 구매전용 토글");
-            ccLang.get().addDefault("TRADE.BUY_ONLY_LORE", "§f구매만 가능한 아이탬");
-            ccLang.get().addDefault("TRADE.SELL_ONLY_LORE", "§f판매만 가능한 아이탬");
+            ccLang.get().addDefault("TRADE.BUY_ONLY_LORE", "§f구매만 가능한 아이템");
+            ccLang.get().addDefault("TRADE.SELL_ONLY_LORE", "§f판매만 가능한 아이템");
             ccLang.get().addDefault("TRADE.BALANCE", "§3내 잔액");
             ccLang.get().addDefault("TRADE.PRICE", "§f구매: {num}");
             ccLang.get().addDefault("TRADE.SELL_PRICE", "§f판매: {num}");
@@ -277,8 +277,8 @@ public final class LangUtil
             ccLang.get().addDefault("STOCK_SIMULATOR.MEDIAN", "§f중앙값: {num}");
             ccLang.get().addDefault("STOCK_SIMULATOR.STOCK", "§f재고: {num}");
 
-            ccLang.get().addDefault("PALETTE_TITLE", "§3판매할 아이탬 선택");
-            ccLang.get().addDefault("PALETTE_TITLE2", "§3아이탬 선택");
+            ccLang.get().addDefault("PALETTE_TITLE", "§3판매할 아이템 선택");
+            ccLang.get().addDefault("PALETTE_TITLE2", "§3아이템 선택");
             ccLang.get().addDefault("PALETTE.LORE_PREMIUM", "§e좌클릭: 추가\n§e씨프트 좌클릭: 설정 후 추가\n§e우클릭: 장식으로 추가\n§e씨프트 우클릭: '{item}' 를 검색");
             ccLang.get().addDefault("PALETTE.LORE2", "§e좌클릭: 선택\n§e씨프트 우클릭: '{item}' 를 검색");
             ccLang.get().addDefault("PALETTE.SEARCH", "§f찾기");
@@ -291,7 +291,7 @@ public final class LangUtil
 
             ccLang.get().addDefault("QUICK_SELL_TITLE", "§3빠른 판매");
             ccLang.get().addDefault("QUICK_SELL.GUIDE_TITLE", "§3§l빠른 판매 도움말");
-            ccLang.get().addDefault("QUICK_SELL.GUIDE_LORE", "§a판매할 아이탬을 좌클릭 하세요.\n§a씨프트 좌클릭으로 같은 유형의 아이탬을 모두 팝니다.\n§a우클릭으로 해당 아이탬 상점으로 이동합니다.");
+            ccLang.get().addDefault("QUICK_SELL.GUIDE_LORE", "§a판매할 아이템을 좌클릭 하세요.\n§a씨프트 좌클릭으로 같은 유형의 아이템을 모두 팝니다.\n§a우클릭으로 해당 아이템 상점으로 이동합니다.");
 
             ccLang.get().addDefault("ARROW.UP", "§a⬆");
             ccLang.get().addDefault("ARROW.DOWN", "§c⬇");
@@ -338,18 +338,19 @@ public final class LangUtil
             ccLang.get().addDefault("MESSAGE.SELL_SUCCESS_JP", "§f{item} {amount}개를 {price}포인트에 판매함. 남은포인트: {bal}");
             ccLang.get().addDefault("MESSAGE.BUY_SUCCESS_PP", "§f{item} {amount}개를 {price}포인트에 구매함. 남은포인트: {bal}");
             ccLang.get().addDefault("MESSAGE.SELL_SUCCESS_PP", "§f{item} {amount}개를 {price}포인트에 판매함. 남은포인트: {bal}");
-            ccLang.get().addDefault("MESSAGE.QSELL_NA", "§f해당 아이탬을 취급하는 상점이 없습니다.");
+            ccLang.get().addDefault("MESSAGE.QSELL_NA", "§f해당 아이템을 취급하는 상점이 없습니다.");
             ccLang.get().addDefault("MESSAGE.DELIVERY_CHARGE", "§f배달비: {fee}");
             ccLang.get().addDefault("MESSAGE.DELIVERY_CHARGE_NA", "§f다른 월드로 배달할 수 없습니다.");
             ccLang.get().addDefault("MESSAGE.NOT_ENOUGH_MONEY", "§f돈이 부족합니다. 잔액: {bal}");
             ccLang.get().addDefault("MESSAGE.NOT_ENOUGH_POINT", "§f포인트가 부족합니다. 잔액: {bal}");
             ccLang.get().addDefault("MESSAGE.NOT_ENOUGH_PLAYER_POINT", "§f플레이어 포인트가 부족합니다. 잔액: {bal}");
-            ccLang.get().addDefault("MESSAGE.NO_ITEM_TO_SELL", "§f판매 할 아이탬이 없습니다.");
+            ccLang.get().addDefault("MESSAGE.NO_ITEM_TO_SELL", "§f판매 할 아이템이 없습니다.");
+            ccLang.get().addDefault("MESSAGE.NO_ITEM_TO_SELL_2", "§f판매 가능 한 아이템이 없습니다.");
             ccLang.get().addDefault("MESSAGE.INVENTORY_FULL", "§4인벤토리에 빈 공간이 없습니다!");
             ccLang.get().addDefault("MESSAGE.IRREVERSIBLE", "§f이 행동은 되돌릴 수 없습니다!");
-            ccLang.get().addDefault("MESSAGE.ITEM_ADDED", "아이탬 추가됨!");
-            ccLang.get().addDefault("MESSAGE.ITEM_UPDATED", "아이탬 수정됨!");
-            ccLang.get().addDefault("MESSAGE.ITEM_DELETED", "아이탬 제거됨!");
+            ccLang.get().addDefault("MESSAGE.ITEM_ADDED", "아이템 추가됨!");
+            ccLang.get().addDefault("MESSAGE.ITEM_UPDATED", "아이템 수정됨!");
+            ccLang.get().addDefault("MESSAGE.ITEM_DELETED", "아이템 제거됨!");
             ccLang.get().addDefault("MESSAGE.CHANGES_APPLIED", "변경사항 적용됨. 새로운 값: ");
             ccLang.get().addDefault("MESSAGE.CHANGES_APPLIED_2", "변경사항 적용됨");
             ccLang.get().addDefault("MESSAGE.RECOMMEND_APPLIED", "추천 값 적용됨. {playerNum}명 기준입니다. config파일에서 이 값을 바꿀 수 있습니다.");
@@ -373,35 +374,35 @@ public final class LangUtil
             ccLang.get().addDefault("HELP.CREATE_SHOP", "상점을 새로 만듭니다.");
             ccLang.get().addDefault("HELP.CREATE_SHOP_2", "퍼미션(나중에 바꿀 수 있습니다.)\n   true: dshop.user.shop.상점이름\n   false: 아무나 접근가능(기본값)\n   임의 입력: 해당 퍼미션 필요");
             ccLang.get().addDefault("HELP.DELETE_SHOP", "기존의 상점을 제거합니다.");
-            ccLang.get().addDefault("HELP.SHOP_ADD_HAND", "손에 들고 있는 아이탬을 상점에 추가합니다.");
-            ccLang.get().addDefault("HELP.SHOP_ADD_ITEM", "상점에 아이탬을 추가합니다.");
-            ccLang.get().addDefault("HELP.SHOP_EDIT", "상점에 있는 아이탬을 수정합니다.");
+            ccLang.get().addDefault("HELP.SHOP_ADD_HAND", "손에 들고 있는 아이템을 상점에 추가합니다.");
+            ccLang.get().addDefault("HELP.SHOP_ADD_ITEM", "상점에 아이템을 추가합니다.");
+            ccLang.get().addDefault("HELP.SHOP_EDIT", "상점에 있는 아이템을 수정합니다.");
             ccLang.get().addDefault("HELP.PRICE", "§7가격은 다음과 같이 계산됩니다: median*value/stock");
             ccLang.get().addDefault("HELP.INF_STATIC", "§7median<0 == 고정가격     stock<0 == 무한재고");
-            ccLang.get().addDefault("HELP.EDIT_ALL", "상점의 모든 아이탬을 한번에 수정합니다.");
+            ccLang.get().addDefault("HELP.EDIT_ALL", "상점의 모든 아이템을 한번에 수정합니다.");
             ccLang.get().addDefault("HELP.RELOAD", "플러그인을 재시작 합니다.");
             ccLang.get().addDefault("HELP.RELOADED", "플러그인 리로드됨!");
             ccLang.get().addDefault("HELP.USAGE", "사용법");
             ccLang.get().addDefault("HELP.ITEM_ALREADY_EXIST", "§7§o{item}(은)는 이미 판매중임.\n   {info}\n   명령어를 입력하면 값이 수정됩니다.");
             ccLang.get().addDefault("HELP.ITEM_INFO", "§7§o{item}의 현재 설정:\n   {info}");
-            ccLang.get().addDefault("HELP.REMOVE_ITEM", "§f인자를 0으로 입력하면 이 아이탬을 상점에서 §4제거§f합니다.");
-            ccLang.get().addDefault("HELP.QSELL", "§f빠르게 아이탬을 판매합니다.");
+            ccLang.get().addDefault("HELP.REMOVE_ITEM", "§f인자를 0으로 입력하면 이 아이템을 상점에서 §4제거§f합니다.");
+            ccLang.get().addDefault("HELP.QSELL", "§f빠르게 아이템을 판매합니다.");
             ccLang.get().addDefault("HELP.DELETE_OLD_USER", "장기간 접속하지 않은 유저의 데이터를 삭제합니다.");
             ccLang.get().addDefault("HELP.ACCOUNT", "상점의 계좌 잔액을 설정합니다. -1 = 무제한");
             ccLang.get().addDefault("HELP.SET_TO_REC_ALL", "§e상점의 모든 아이템 설정값을 권장값으로 §c초기화§e합니다.");
             ccLang.get().addDefault("HELP.SHOP_ENABLE", "상점을 활성화 또는 비활성화 합니다.");
 
             ccLang.get().addDefault("ERR.NO_USER_ID", "§6플레이어 uuid를 찾을 수 없습니다. 상점 이용 불가능.");
-            ccLang.get().addDefault("ERR.ITEM_NOT_EXIST", "상점에 해당 아이탬이 존재하지 않습니다.");
-            ccLang.get().addDefault("ERR.ITEM_FORBIDDEN", "사용할 수 없는 아이탬 입니다.");
+            ccLang.get().addDefault("ERR.ITEM_NOT_EXIST", "상점에 해당 아이템이 존재하지 않습니다.");
+            ccLang.get().addDefault("ERR.ITEM_FORBIDDEN", "사용할 수 없는 아이템 입니다.");
             ccLang.get().addDefault("ERR.NO_PERMISSION", "§e권한이 없습니다.");
             ccLang.get().addDefault("ERR.WRONG_USAGE", "잘못된 명령어 사용법. 도움말을 확인하세요.");
             ccLang.get().addDefault("ERR.NO_EMPTY_SLOT", "상점에 빈 공간이 없습니다.");
             ccLang.get().addDefault("ERR.WRONG_DATATYPE", "인자의 유형이 잘못 입력되었습니다.");
             ccLang.get().addDefault("ERR.VALUE_ZERO", "인자값이 0보다 커야 합니다.");
-            ccLang.get().addDefault("ERR.WRONG_ITEM_NAME", "유효하지 않은 아이탬 이름입니다.");
-            ccLang.get().addDefault("ERR.HAND_EMPTY", "아이탬을 손에 들고 있어야 합니다.");
-            ccLang.get().addDefault("ERR.HAND_EMPTY2", "§c§o아이탬을 손에 들고 있어야 합니다!");
+            ccLang.get().addDefault("ERR.WRONG_ITEM_NAME", "유효하지 않은 아이템 이름입니다.");
+            ccLang.get().addDefault("ERR.HAND_EMPTY", "아이템을 손에 들고 있어야 합니다.");
+            ccLang.get().addDefault("ERR.HAND_EMPTY2", "§c§o아이템을 손에 들고 있어야 합니다!");
             ccLang.get().addDefault("ERR.SHOP_NOT_FOUND", "§f해당 상점을 찾을 수 없습니다.");
             ccLang.get().addDefault("ERR.SHOP_EXIST", "해당 이름을 가진 상점이 이미 존재합니다.");
             ccLang.get().addDefault("ERR.SHOP_NOT_EXIST", "그런 이름을 가진 상점이 없습니다.");
@@ -409,7 +410,7 @@ public final class LangUtil
             ccLang.get().addDefault("ERR.LOCAL_SHOP_REMOTE_ACCESS", "해당 상점은 직접 방문해야만 사용할 수 있습니다.");
             ccLang.get().addDefault("ERR.MAX_LOWER_THAN_MIN", "최대 가격은 최소 가격보다 커야합니다.");
             ccLang.get().addDefault("ERR.DEFAULT_VALUE_OUT_OF_RANGE", "기본 가격은 최소 가격과 최대 가격 사이의 값이어야 합니다.");
-            ccLang.get().addDefault("ERR.NO_RECOMMEND_DATA", "Worth.yml 파일에 이 아이탬의 정보가 없습니다.");
+            ccLang.get().addDefault("ERR.NO_RECOMMEND_DATA", "Worth.yml 파일에 이 아이템의 정보가 없습니다.");
             ccLang.get().addDefault("ERR.JOBS_REBORN_NOT_FOUND", "Jobs reborn 플러그인을 찾을 수 없습니다.");
             ccLang.get().addDefault("ERR.PLAYER_POINTS_NOT_FOUND", "Player points 플러그인을 찾을 수 없습니다.");
             ccLang.get().addDefault("ERR.SHOP_HAS_INF_BAL", "{shop} 상점은 무한계좌 상점입니다.");
@@ -771,6 +772,7 @@ public final class LangUtil
             ccLang.get().addDefault("MESSAGE.NOT_ENOUGH_POINT", "§fNot enough points. balance: {bal}");
             ccLang.get().addDefault("MESSAGE.NOT_ENOUGH_PLAYER_POINT", "§fNot enough player points. balance: {bal}");
             ccLang.get().addDefault("MESSAGE.NO_ITEM_TO_SELL", "§fThere are no items for sale.");
+            ccLang.get().addDefault("MESSAGE.NO_ITEM_TO_SELL_2", "§fThere are no items available for sale.");
             ccLang.get().addDefault("MESSAGE.INVENTORY_FULL", "§4There are no empty spaces in your inventory!");
             ccLang.get().addDefault("MESSAGE.IRREVERSIBLE", "§fThis action is irreversible!");
             ccLang.get().addDefault("MESSAGE.ITEM_ADDED", "Item added!");
