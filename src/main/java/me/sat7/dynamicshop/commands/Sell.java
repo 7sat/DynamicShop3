@@ -34,7 +34,7 @@ public class Sell implements CommandExecutor
 
         Player player = (Player) sender;
 
-        if (!player.hasPermission(Constants.P_USE))
+        if (!player.hasPermission(Constants.P_SELL))
         {
             player.sendMessage(DynamicShop.dsPrefix(player) + t(player, "ERR.NO_PERMISSION"));
             return true;
