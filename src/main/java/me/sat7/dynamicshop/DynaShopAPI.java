@@ -377,7 +377,7 @@ public final class DynaShopAPI
         if (validateShopName(shopName))
         {
             CustomConfig data = ShopUtil.shopConfigFiles.get(shopName);
-            return data.get().contains("Options.flag.jobpoint");
+            return data.get().getString("Options.currency","").equalsIgnoreCase("jobpoint");
         } else
         {
             throw new IllegalArgumentException("Shop: " + shopName + " does not exist");
@@ -396,7 +396,7 @@ public final class DynaShopAPI
         if (validateShopName(shopName))
         {
             CustomConfig data = ShopUtil.shopConfigFiles.get(shopName);
-            return data.get().contains("Options.flag.playerpoint");
+            return data.get().getString("Options.currency","").equalsIgnoreCase("playerpoint");
         } else
         {
             throw new IllegalArgumentException("Shop: " + shopName + " does not exist");

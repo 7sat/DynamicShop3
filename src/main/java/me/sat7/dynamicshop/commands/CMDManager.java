@@ -28,6 +28,7 @@ public class CMDManager
     public static EditAll editAll;
     public static Enable enable;
     public static Flag flag;
+    public static Currency currency;
     public static Fluctuation fluctuation;
     public static Log log;
     public static MaxPage maxPage;
@@ -79,6 +80,7 @@ public class CMDManager
         edit = new Edit();
         editAll = new EditAll();
         enable = new Enable();
+        currency = new Currency();
         flag = new Flag();
         fluctuation = new Fluctuation();
         log = new Log();
@@ -98,6 +100,7 @@ public class CMDManager
         CMDHashMap.put("edit", edit);
         CMDHashMap.put("editall", editAll);
         CMDHashMap.put("enable", enable);
+        CMDHashMap.put("currency", currency);
         CMDHashMap.put("flag", flag);
         CMDHashMap.put("fluctuation", fluctuation);
         CMDHashMap.put("log", log);

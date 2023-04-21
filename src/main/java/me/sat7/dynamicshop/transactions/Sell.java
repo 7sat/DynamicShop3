@@ -33,13 +33,17 @@ public final class Sell
         CustomConfig data = ShopUtil.shopConfigFiles.get(shopName);
 
         ItemTrade.CURRENCY currencyType;
-        if (data.get().contains("Options.flag.jobpoint"))
+        if (data.get().getString("Options.currency","").equalsIgnoreCase("jobpoint"))
         {
             currencyType = ItemTrade.CURRENCY.JOB_POINT;
         }
-        else if (data.get().contains("Options.flag.playerpoint"))
+        else if (data.get().getString("Options.currency","").equalsIgnoreCase("playerpoint"))
         {
             currencyType = ItemTrade.CURRENCY.PLAYER_POINT;
+        }
+        else if (data.get().getString("Options.currency","").equalsIgnoreCase("exp"))
+        {
+            currencyType = ItemTrade.CURRENCY.EXP;
         }
         else
         {
@@ -332,6 +336,11 @@ public final class Sell
         {
             return PlayerpointHook.addPP(player, priceSum);
         }
+        else if (currencyType == ItemTrade.CURRENCY.EXP)
+        {
+            player.giveExp((int)priceSum);
+            return true;
+        }
 
         return false;
     }
@@ -359,8 +368,15 @@ public final class Sell
         {
             message = DynamicShop.dsPrefix(player) + t(player, "MESSAGE.SELL_SUCCESS_PP", !useLocalizedName)
                     .replace("{amount}", Integer.toString(actualAmount))
-                    .replace("{price}", n(priceSum))
+                    .replace("{price}", n(priceSum, true))
                     .replace("{bal}", n(PlayerpointHook.getCurrentPP(player)));
+        }
+        else if (currency == ItemTrade.CURRENCY.EXP)
+        {
+            message = DynamicShop.dsPrefix(player) + t(player, "MESSAGE.SELL_SUCCESS_EXP", !useLocalizedName)
+                    .replace("{amount}", Integer.toString(actualAmount))
+                    .replace("{price}", n(priceSum, true))
+                    .replace("{bal}", n(player.getTotalExperience()));
         }
 
         if (useLocalizedName)

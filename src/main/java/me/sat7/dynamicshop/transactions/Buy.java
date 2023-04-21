@@ -48,6 +48,10 @@ public final class Buy
         {
             playerBalance = econ.getBalance(player);
         }
+        else if (currency == ItemTrade.CURRENCY.EXP)
+        {
+            playerBalance = player.getTotalExperience();
+        }
         else if (currency == ItemTrade.CURRENCY.JOB_POINT)
         {
             playerBalance = JobsHook.getCurJobPoints(player);
@@ -107,6 +111,10 @@ public final class Buy
             {
                 message = DynamicShop.dsPrefix(player) + t(player, "MESSAGE.NOT_ENOUGH_PLAYER_POINT").replace("{bal}", n(playerBalance));
             }
+            else if (currency == ItemTrade.CURRENCY.EXP)
+            {
+                message = DynamicShop.dsPrefix(player) + t(player, "MESSAGE.NOT_ENOUGH_EXP_POINT").replace("{bal}", n(playerBalance));
+            }
 
             player.sendMessage(message);
             data.get().set(tradeIdx + ".stock", stockOld);
@@ -145,6 +153,10 @@ public final class Buy
         {
             if (!PlayerpointHook.addPP(player, priceSum * -1))
                 return;
+        }
+        else if (currency == ItemTrade.CURRENCY.EXP)
+        {
+            player.giveExp((int)(priceSum * -1));
         }
 
         int leftAmount = tradeAmount;
@@ -215,6 +227,13 @@ public final class Buy
                     .replace("{price}", n(priceSum))
                     .replace("{bal}", n(econ.getBalance(player)));
         }
+        else if (currency == ItemTrade.CURRENCY.EXP)
+        {
+            message = DynamicShop.dsPrefix(player) + t(player, "MESSAGE.BUY_SUCCESS_EXP", !useLocalizedName)
+                    .replace("{amount}", Integer.toString(actualAmount))
+                    .replace("{price}", n(priceSum, true))
+                    .replace("{bal}", n(player.getTotalExperience()));
+        }
         else if (currency == ItemTrade.CURRENCY.JOB_POINT)
         {
             message = DynamicShop.dsPrefix(player) + t(player, "MESSAGE.BUY_SUCCESS_JP", !useLocalizedName)
@@ -226,7 +245,7 @@ public final class Buy
         {
             message = DynamicShop.dsPrefix(player) + t(player, "MESSAGE.BUY_SUCCESS_PP", !useLocalizedName)
                     .replace("{amount}", Integer.toString(actualAmount))
-                    .replace("{price}", n(priceSum))
+                    .replace("{price}", n(priceSum, true))
                     .replace("{bal}", n(PlayerpointHook.getCurrentPP(player)));
         }
 

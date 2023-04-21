@@ -117,8 +117,7 @@ public class Account extends DSCMD
                 }
 
                 // 출발 상점과 도착 상점의 통화 유형이 다름
-                if ((shopData.get().contains("Options.flag.jobpoint") != targetShopData.get().contains("Options.flag.jobpoint")) ||
-                    (shopData.get().contains("Options.flag.playerpoint") != targetShopData.get().contains("Options.flag.playerpoint")) )
+                if (!shopData.get().getString("Options.currency", "").equals(targetShopData.get().getString("Options.currency", "")))
                 {
                     sender.sendMessage(DynamicShop.dsPrefix(sender) + t(sender, "ERR.SHOP_DIFF_CURRENCY"));
                     return;
@@ -157,14 +156,19 @@ public class Account extends DSCMD
                 // 출발 상점에 돈이 부족
                 if (ShopUtil.getShopBalance(args[1]) < amount)
                 {
-                    if (shopData.get().contains("Options.flag.jobpoint"))
+                    if (shopData.get().getString("Options.currency","").equalsIgnoreCase("jobpoint"))
                     {
                         sender.sendMessage(DynamicShop.dsPrefix(sender) + t(sender, "MESSAGE.NOT_ENOUGH_POINT").
                                 replace("{bal}", n(ShopUtil.getShopBalance(args[1]))));
                     }
-                    else if (shopData.get().contains("Options.flag.playerpoint"))
+                    else if (shopData.get().getString("Options.currency","").equalsIgnoreCase("playerpoint"))
                     {
                         sender.sendMessage(DynamicShop.dsPrefix(sender) + t(sender, "MESSAGE.NOT_ENOUGH_PLAYER_POINT").
+                                replace("{bal}", n(ShopUtil.getShopBalance(args[1]))));
+                    }
+                    else if (shopData.get().getString("Options.currency","").equalsIgnoreCase("exp"))
+                    {
+                        sender.sendMessage(DynamicShop.dsPrefix(sender) + t(sender, "MESSAGE.NOT_ENOUGH_EXP_POINT").
                                 replace("{bal}", n(ShopUtil.getShopBalance(args[1]))));
                     }
                     else
@@ -193,8 +197,7 @@ public class Account extends DSCMD
                     }
 
                     // 출발 상점과 도착 상점의 통화 유형이 다름
-                    if ((shopData.get().contains("Options.flag.jobpoint") != targetShopData.get().contains("Options.flag.jobpoint")) ||
-                        (shopData.get().contains("Options.flag.playerpoint") != targetShopData.get().contains("Options.flag.playerpoint")) )
+                    if (!shopData.get().getString("Options.currency", "").equals(targetShopData.get().getString("Options.currency", "")))
                     {
                         sender.sendMessage(DynamicShop.dsPrefix(sender) + t(sender, "ERR.SHOP_DIFF_CURRENCY"));
                         return;
@@ -222,7 +225,7 @@ public class Account extends DSCMD
                             return;
                         }
 
-                        if (shopData.get().contains("Options.flag.jobpoint"))
+                        if (shopData.get().getString("Options.currency","").equalsIgnoreCase("jobpoint"))
                         {
                             JobsHook.addJobsPoint(target, amount);
                             ShopUtil.addShopBalance(args[1], amount * -1);
@@ -230,9 +233,17 @@ public class Account extends DSCMD
 
                             sender.sendMessage(DynamicShop.dsPrefix(sender) + t(sender, "MESSAGE.TRANSFER_SUCCESS"));
                         }
-                        else if (shopData.get().contains("Options.flag.playerpoint"))
+                        else if (shopData.get().getString("Options.currency","").equalsIgnoreCase("playerpoint"))
                         {
                             PlayerpointHook.addPP(target, amount);
+                            ShopUtil.addShopBalance(args[1], amount * -1);
+                            shopData.save();
+
+                            sender.sendMessage(DynamicShop.dsPrefix(sender) + t(sender, "MESSAGE.TRANSFER_SUCCESS"));
+                        }
+                        else if (shopData.get().getString("Options.currency","").equalsIgnoreCase("exp"))
+                        {
+                            target.giveExp((int)amount);
                             ShopUtil.addShopBalance(args[1], amount * -1);
                             shopData.save();
 

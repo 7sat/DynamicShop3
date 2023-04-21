@@ -157,6 +157,10 @@ public final class StringUtil {
         {
             return "playerPoint";
         }
+        else if (currency == ItemTrade.CURRENCY.EXP)
+        {
+            return "exp";
+        }
 
         return "vault";
     }

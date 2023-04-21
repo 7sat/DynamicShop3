@@ -64,6 +64,10 @@ public final class LangUtil
             ccLang.get().addDefault("SHOP.SELL_PRICE_DISCOUNTED", "§f판매: §8§m{num}§r §c{num2}");
             ccLang.get().addDefault("SHOP.BUY_PRICE_PP", "§f구매: {num}PP");
             ccLang.get().addDefault("SHOP.SELL_PRICE_PP", "§f판매: {num}PP");
+            ccLang.get().addDefault("SHOP.BUY_PRICE_EXP", "§f구매: {num}Exp");
+            ccLang.get().addDefault("SHOP.SELL_PRICE_EXP", "§f판매: {num}Exp");
+            ccLang.get().addDefault("SHOP.BUY_PRICE_DISCOUNTED_EXP", "§f구매: §8§m{num}Exp§r §a{num2}Exp");
+            ccLang.get().addDefault("SHOP.SELL_PRICE_DISCOUNTED_EXP", "§f판매: §8§m{num}Exp§r §c{num2}Exp");
             ccLang.get().addDefault("SHOP.BUY_PRICE_DISCOUNTED_PP", "§f구매: §8§m{num}PP§r §a{num2}PP");
             ccLang.get().addDefault("SHOP.SELL_PRICE_DISCOUNTED_PP", "§f판매: §8§m{num}PP§r §c{num2}PP");
             ccLang.get().addDefault("SHOP.BUY_PRICE_JP", "§f구매: {num}JP");
@@ -111,6 +115,10 @@ public final class LangUtil
             ccLang.get().addDefault("SHOP_SETTING.SIGN_SHOP_LORE", "§f표지판을 통해서만 접근할 수 있습니다.");
             ccLang.get().addDefault("SHOP_SETTING.LOCAL_SHOP_LORE", "§f실제 상점 위치를 방문해야 합니다.\n§f상점의 위치를 설정해야만 합니다.");
             ccLang.get().addDefault("SHOP_SETTING.DELIVERY_CHARGE_LORE", "§f배달비를 지불하고 localshop에서 원격으로 거래합니다.");
+            ccLang.get().addDefault("SHOP_SETTING.SELECTED", "§2선택됨");
+            ccLang.get().addDefault("SHOP_SETTING.CURRENCY", "§f화폐 유형: ");
+            ccLang.get().addDefault("SHOP_SETTING.VAULT_LORE", "§f기본값 입니다.");
+            ccLang.get().addDefault("SHOP_SETTING.EXP_LORE", "§f플레이어의 경험치로 거래합니다.");
             ccLang.get().addDefault("SHOP_SETTING.JOB_POINT_LORE", "§fJobs 플러그인의 job point로 거래합니다.");
             ccLang.get().addDefault("SHOP_SETTING.PLAYER_POINT_LORE", "§fPlayerPoint 플러그인의 point로 거래합니다.");
             ccLang.get().addDefault("SHOP_SETTING.SHOW_VALUE_CHANGE_LORE", "§f가격 변화량을 표시합니다.");
@@ -208,6 +216,10 @@ public final class LangUtil
             ccLang.get().addDefault("TRADE.SELL_PRICE", "§f판매: {num}");
             ccLang.get().addDefault("TRADE.PRICE_DISCOUNTED", "§f구매: §8§m{num}§r §a{num2}");
             ccLang.get().addDefault("TRADE.SELL_PRICE_DISCOUNTED", "§f판매: §8§m{num}§r §c{num2}");
+            ccLang.get().addDefault("TRADE.PRICE_EXP", "§f구매: {num}EXP");
+            ccLang.get().addDefault("TRADE.SELL_PRICE_EXP", "§f판매: {num}EXP");
+            ccLang.get().addDefault("TRADE.PRICE_DISCOUNTED_EXP", "§f구매: §8§m{num}EXP§r §a{num2}EXP");
+            ccLang.get().addDefault("TRADE.SELL_PRICE_DISCOUNTED_EXP", "§f판매: §8§m{num}EXP§r §c{num2}EXP");
             ccLang.get().addDefault("TRADE.PRICE_PP", "§f구매: {num}PP");
             ccLang.get().addDefault("TRADE.SELL_PRICE_PP", "§f판매: {num}PP");
             ccLang.get().addDefault("TRADE.PRICE_DISCOUNTED_PP", "§f구매: §8§m{num}PP§r §a{num2}PP");
@@ -334,6 +346,8 @@ public final class LangUtil
             ccLang.get().addDefault("MESSAGE.OUT_OF_STOCK", "§f재고 없음!");
             ccLang.get().addDefault("MESSAGE.BUY_SUCCESS", "§f{item} {amount}개를 {price}에 구매함. 잔액: {bal}");
             ccLang.get().addDefault("MESSAGE.SELL_SUCCESS", "§f{item} {amount}개를 {price}에 판매함. 잔액: {bal}");
+            ccLang.get().addDefault("MESSAGE.BUY_SUCCESS_EXP", "§f{item} {amount}개를 {price}경험치 포인트에 구매함. 잔액: {bal}");
+            ccLang.get().addDefault("MESSAGE.SELL_SUCCESS_EXP", "§f{item} {amount}개를 {price}경험치 포인트에 판매함. 잔액: {bal}");
             ccLang.get().addDefault("MESSAGE.BUY_SUCCESS_JP", "§f{item} {amount}개를 {price}포인트에 구매함. 남은포인트: {bal}");
             ccLang.get().addDefault("MESSAGE.SELL_SUCCESS_JP", "§f{item} {amount}개를 {price}포인트에 판매함. 남은포인트: {bal}");
             ccLang.get().addDefault("MESSAGE.BUY_SUCCESS_PP", "§f{item} {amount}개를 {price}포인트에 구매함. 남은포인트: {bal}");
@@ -344,6 +358,7 @@ public final class LangUtil
             ccLang.get().addDefault("MESSAGE.NOT_ENOUGH_MONEY", "§f돈이 부족합니다. 잔액: {bal}");
             ccLang.get().addDefault("MESSAGE.NOT_ENOUGH_POINT", "§f포인트가 부족합니다. 잔액: {bal}");
             ccLang.get().addDefault("MESSAGE.NOT_ENOUGH_PLAYER_POINT", "§f플레이어 포인트가 부족합니다. 잔액: {bal}");
+            ccLang.get().addDefault("MESSAGE.NOT_ENOUGH_EXP_POINT", "§f경험치 포인트가 부족합니다. 잔액: {bal}");
             ccLang.get().addDefault("MESSAGE.NO_ITEM_TO_SELL", "§f판매 할 아이템이 없습니다.");
             ccLang.get().addDefault("MESSAGE.NO_ITEM_TO_SELL_2", "§f판매 가능 한 아이템이 없습니다.");
             ccLang.get().addDefault("MESSAGE.INVENTORY_FULL", "§4인벤토리에 빈 공간이 없습니다!");
@@ -445,6 +460,7 @@ public final class LangUtil
             ccLang.get().addDefault("CLOSE", "§f닫기");
             ccLang.get().addDefault("CLOSE_LORE", "§f§n클릭: 닫기");
 
+            ccLang.get().addDefault("EXP_POINTS", "Exp");
             ccLang.get().addDefault("JOB_POINTS", "Job Points");
             ccLang.get().addDefault("PLAYER_POINTS", "Player Points");
 
@@ -490,6 +506,10 @@ public final class LangUtil
             ccLang.get().addDefault("SHOP.SELL_PRICE", "§fSell: {num}");
             ccLang.get().addDefault("SHOP.BUY_PRICE_DISCOUNTED", "§fBuy: §8§m{num}§r §a{num2}");
             ccLang.get().addDefault("SHOP.SELL_PRICE_DISCOUNTED", "§fSell: §8§m{num}§r §c{num2}");
+            ccLang.get().addDefault("SHOP.BUY_PRICE_EXP", "§fBuy: {num}Exp");
+            ccLang.get().addDefault("SHOP.SELL_PRICE_EXP", "§fSell: {num}Exp");
+            ccLang.get().addDefault("SHOP.BUY_PRICE_DISCOUNTED_EXP", "§fBuy: §8§m{num}Exp§r §a{num2}Exp");
+            ccLang.get().addDefault("SHOP.SELL_PRICE_DISCOUNTED_EXP", "§fSell: §8§m{num}Exp§r §c{num2}Exp");
             ccLang.get().addDefault("SHOP.BUY_PRICE_PP", "§fBuy: {num}PP");
             ccLang.get().addDefault("SHOP.SELL_PRICE_PP", "§fSell: {num}PP");
             ccLang.get().addDefault("SHOP.BUY_PRICE_DISCOUNTED_PP", "§fBuy: §8§m{num}PP§r §a{num2}PP");
@@ -539,6 +559,10 @@ public final class LangUtil
             ccLang.get().addDefault("SHOP_SETTING.SIGN_SHOP_LORE", "§fOnly accessible via sign.");
             ccLang.get().addDefault("SHOP_SETTING.LOCAL_SHOP_LORE", "§fMust visit actual store locations.");
             ccLang.get().addDefault("SHOP_SETTING.DELIVERY_CHARGE_LORE", "§fYou can pay for delivery without \n§fhaving to go to the shop location to transact.");
+            ccLang.get().addDefault("SHOP_SETTING.SELECTED", "§2Selected");
+            ccLang.get().addDefault("SHOP_SETTING.CURRENCY", "§fCurrency Type: ");
+            ccLang.get().addDefault("SHOP_SETTING.VAULT_LORE", "§fThis is the default.");
+            ccLang.get().addDefault("SHOP_SETTING.EXP_LORE", "§fTrade with the player's experience points.");
             ccLang.get().addDefault("SHOP_SETTING.JOB_POINT_LORE", "§fTrade with job points. \n§fRequires 'Jobs Reborn' plugin");
             ccLang.get().addDefault("SHOP_SETTING.PLAYER_POINT_LORE", "§fTrade with player points. \n§fRequires 'Player point' plugin");
             ccLang.get().addDefault("SHOP_SETTING.SHOW_VALUE_CHANGE_LORE", "§fShows the amount of change in price.");
@@ -636,6 +660,10 @@ public final class LangUtil
             ccLang.get().addDefault("TRADE.SELL_PRICE", "§fSell: {num}");
             ccLang.get().addDefault("TRADE.PRICE_DISCOUNTED", "§fBuy: §8§m{num}§r §a{num2}");
             ccLang.get().addDefault("TRADE.SELL_PRICE_DISCOUNTED", "§fSell: §8§m{num}§r §c{num2}");
+            ccLang.get().addDefault("TRADE.PRICE_EXP", "§fBuy: {num}EXP");
+            ccLang.get().addDefault("TRADE.SELL_PRICE_EXP", "§fSell: {num}EXP");
+            ccLang.get().addDefault("TRADE.PRICE_DISCOUNTED_EXP", "§fBuy: §8§m{num}EXP§r §a{num2}EXP");
+            ccLang.get().addDefault("TRADE.SELL_PRICE_DISCOUNTED_EXP", "§fSell: §8§m{num}EXP§r §c{num2}EXP");
             ccLang.get().addDefault("TRADE.PRICE_PP", "§fBuy: {num}PP");
             ccLang.get().addDefault("TRADE.SELL_PRICE_PP", "§fSell: {num}PP");
             ccLang.get().addDefault("TRADE.PRICE_DISCOUNTED_PP", "§fBuy: §8§m{num}PP§r §a{num2}PP");
@@ -761,6 +789,8 @@ public final class LangUtil
             ccLang.get().addDefault("MESSAGE.OUT_OF_STOCK", "§fOut of stock!");
             ccLang.get().addDefault("MESSAGE.BUY_SUCCESS", "§fBought {item} x{amount} for {price}. Balance: {bal}");
             ccLang.get().addDefault("MESSAGE.SELL_SUCCESS", "§fSold {item} x{amount} for {price}. Balance: {bal}");
+            ccLang.get().addDefault("MESSAGE.BUY_SUCCESS_EXP", "§fBought {item} x{amount} for {price}Exp Points. Balance: {bal}");
+            ccLang.get().addDefault("MESSAGE.SELL_SUCCESS_EXP", "§fSold {item} x{amount} for {price}Exp Points. Balance: {bal}");
             ccLang.get().addDefault("MESSAGE.BUY_SUCCESS_JP", "§fBought {item} x{amount} for {price}points. Remaining points: {bal}");
             ccLang.get().addDefault("MESSAGE.SELL_SUCCESS_JP", "§fSold {item} x{amount} for {price}points. Remaining points: {bal}");
             ccLang.get().addDefault("MESSAGE.BUY_SUCCESS_PP", "§fBought {item} x{amount} for {price}points. Remaining points: {bal}");
@@ -771,6 +801,7 @@ public final class LangUtil
             ccLang.get().addDefault("MESSAGE.NOT_ENOUGH_MONEY", "§fNot enough money. balance: {bal}");
             ccLang.get().addDefault("MESSAGE.NOT_ENOUGH_POINT", "§fNot enough points. balance: {bal}");
             ccLang.get().addDefault("MESSAGE.NOT_ENOUGH_PLAYER_POINT", "§fNot enough player points. balance: {bal}");
+            ccLang.get().addDefault("MESSAGE.NOT_ENOUGH_EXP_POINT", "§fNot enough Exp points. balance: {bal}");
             ccLang.get().addDefault("MESSAGE.NO_ITEM_TO_SELL", "§fThere are no items for sale.");
             ccLang.get().addDefault("MESSAGE.NO_ITEM_TO_SELL_2", "§fThere are no items available for sale.");
             ccLang.get().addDefault("MESSAGE.INVENTORY_FULL", "§4There are no empty spaces in your inventory!");
@@ -872,6 +903,7 @@ public final class LangUtil
             ccLang.get().addDefault("CLOSE", "§fClose");
             ccLang.get().addDefault("CLOSE_LORE", "§f§nClick: Close");
 
+            ccLang.get().addDefault("EXP_POINTS", "Exp Points");
             ccLang.get().addDefault("JOB_POINTS", "Job Points");
             ccLang.get().addDefault("PLAYER_POINTS", "Player Points");
 
@@ -1051,5 +1083,13 @@ public final class LangUtil
     public static String n(double i)
     {
         return doubleFormat.format(i);
+    }
+
+    public static String n(double i, boolean toInt)
+    {
+        if (toInt)
+            return intFormat.format((int)i);
+        else
+            return doubleFormat.format(i);
     }
 }

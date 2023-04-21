@@ -53,12 +53,12 @@ public final class Shop extends InGameUI
     {
         shopData = ShopUtil.shopConfigFiles.get(shopName).get();
 
-        if (!JobsHook.jobsRebornActive && shopData.contains("Options.flag.jobpoint"))
+        if (!JobsHook.jobsRebornActive && shopData.getString("Options.currency","").equalsIgnoreCase("jobpoint"))
         {
             player.sendMessage(DynamicShop.dsPrefix(player) + t(player, "ERR.JOBS_REBORN_NOT_FOUND"));
             return null;
         }
-        if (!PlayerpointHook.isPPActive && shopData.contains("Options.flag.playerpoint"))
+        if (!PlayerpointHook.isPPActive && shopData.getString("Options.currency","").equalsIgnoreCase("playerpoint"))
         {
             player.sendMessage(DynamicShop.dsPrefix(player) + t(player, "ERR.PLAYER_POINT_NOT_FOUND"));
             return null;
@@ -218,6 +218,7 @@ public final class Shop extends InGameUI
 
                     boolean showValueChange = shopData.contains("Options.flag.showvaluechange");
 
+                    boolean isIntTypeCurrency = false;
                     String currencyKey = "";
                     if (DynaShopAPI.isJobsPointShop(shopName))
                     {
@@ -226,6 +227,12 @@ public final class Shop extends InGameUI
                     else if (DynaShopAPI.isPlayerPointShop(shopName))
                     {
                         currencyKey = "_PP";
+                        isIntTypeCurrency = true;
+                    }
+                    else if (shopData.getString("Options.currency","").equalsIgnoreCase("exp"))
+                    {
+                        currencyKey = "_EXP";
+                        isIntTypeCurrency = true;
                     }
 
                     String buyText = "";
@@ -234,12 +241,12 @@ public final class Shop extends InGameUI
                     {
                         if(shopData.contains(s + ".discount"))
                         {
-                            String original = n(buyPrice * 100 / (double) (100 - shopData.getInt(s + ".discount")));
-                            buyText = t(player, "SHOP.BUY_PRICE_DISCOUNTED" + currencyKey).replace("{num}", original).replace("{num2}", n(buyPrice));
+                            String original = n(buyPrice * 100 / (double) (100 - shopData.getInt(s + ".discount")),isIntTypeCurrency);
+                            buyText = t(player, "SHOP.BUY_PRICE_DISCOUNTED" + currencyKey).replace("{num}", original).replace("{num2}", n(buyPrice,isIntTypeCurrency));
                         }
                         else
                         {
-                            buyText = t(player, "SHOP.BUY_PRICE" + currencyKey).replace("{num}", n(buyPrice));
+                            buyText = t(player, "SHOP.BUY_PRICE" + currencyKey).replace("{num}", n(buyPrice,isIntTypeCurrency));
                         }
                         buyText += showValueChange ? " " + valueChanged_Buy : "";
                     }
@@ -248,12 +255,12 @@ public final class Shop extends InGameUI
                     {
                         if(shopData.contains(s + ".discount"))
                         {
-                            String original = n(sellPrice * 100 / (double) (100 - shopData.getInt(s + ".discount")));
-                            sellText = t(player, "SHOP.SELL_PRICE_DISCOUNTED" + currencyKey).replace("{num}", original).replace("{num2}", n(sellPrice));
+                            String original = n(sellPrice * 100 / (double) (100 - shopData.getInt(s + ".discount")),isIntTypeCurrency);
+                            sellText = t(player, "SHOP.SELL_PRICE_DISCOUNTED" + currencyKey).replace("{num}", original).replace("{num2}", n(sellPrice,isIntTypeCurrency));
                         }
                         else
                         {
-                            sellText = t(player, "SHOP.SELL_PRICE" + currencyKey).replace("{num}", n(sellPrice));
+                            sellText = t(player, "SHOP.SELL_PRICE" + currencyKey).replace("{num}", n(sellPrice,isIntTypeCurrency));
                         }
                         
                         sellText += showValueChange ? " " + valueChanged_Sell : "";
@@ -430,11 +437,15 @@ public final class Shop extends InGameUI
             finalShopBalanceText += t(player, "SHOP.SHOP_BAL") + "\n";
             if (ShopUtil.getShopBalance(shopName) >= 0)
             {
-                String temp = n(ShopUtil.getShopBalance(shopName));
-                if (shopData.contains("Options.flag.jobpoint"))
-                    temp += t(player,"JOB_POINTS");
-                else if (shopData.contains("Options.flag.playerpoint"))
-                    temp += t(player,"PLAYER_POINTS");
+                String temp;
+                if (shopData.getString("Options.currency","").equalsIgnoreCase("jobpoint"))
+                    temp = n(ShopUtil.getShopBalance(shopName)) + t(player,"JOB_POINTS");
+                else if (shopData.getString("Options.currency","").equalsIgnoreCase("playerpoint"))
+                    temp = n(ShopUtil.getShopBalance(shopName), true) + t(player,"PLAYER_POINTS");
+                else if (shopData.getString("Options.currency","").equalsIgnoreCase("exp"))
+                    temp = n(ShopUtil.getShopBalance(shopName), true) + t(player,"EXP_POINTS");
+                else
+                    temp = n(ShopUtil.getShopBalance(shopName));
 
                 finalShopBalanceText += t(player, "SHOP.SHOP_INFO_DASH") + temp + "\n";
             } else

@@ -140,6 +140,7 @@ public final class TabCompleteUtil
                             temp.add("setToRecAll");
                             temp.add("permission");
                             temp.add("maxpage");
+                            temp.add("currency");
                             temp.add("flag");
                             temp.add("position");
                             temp.add("shophours");
@@ -283,6 +284,18 @@ public final class TabCompleteUtil
                         } else if (args[2].equalsIgnoreCase("maxpage") && sender.hasPermission(P_ADMIN_SHOP_EDIT))
                         {
                             Help.showHelp("max_page", (Player) sender, args);
+                        } else if (args[2].equalsIgnoreCase("currency") && sender.hasPermission(P_ADMIN_SHOP_EDIT))
+                        {
+                            if (args.length == 4)
+                            {
+                                temp.add("vault");
+                                temp.add("exp");
+                                temp.add("jobpoint");
+                                temp.add("playerpoint");
+                                AddToAutoCompleteIfValid(args[3]);
+                            }
+
+                            Help.showHelp("currency", (Player) sender, args);
                         } else if (args[2].equalsIgnoreCase("flag") && sender.hasPermission(P_ADMIN_SHOP_EDIT))
                         {
                             if (args.length == 4)
@@ -290,8 +303,6 @@ public final class TabCompleteUtil
                                 temp.add("signShop");
                                 temp.add("localShop");
                                 temp.add("deliveryCharge");
-                                temp.add("jobPoint");
-                                temp.add("playerPoint");
                                 temp.add("showValueChange");
                                 temp.add("hideStock");
                                 temp.add("hidePricingType");

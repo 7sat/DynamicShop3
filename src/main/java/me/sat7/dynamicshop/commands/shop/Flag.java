@@ -59,8 +59,6 @@ public class Flag extends DSCMD
         if (args[3].equalsIgnoreCase("signshop") ||
                 args[3].equalsIgnoreCase("localshop") ||
                 args[3].equalsIgnoreCase("deliverycharge") ||
-                args[3].equalsIgnoreCase("jobpoint") ||
-                args[3].equalsIgnoreCase("playerpoint") ||
                 args[3].equalsIgnoreCase("showValueChange") ||
                 args[3].equalsIgnoreCase("hidestock") ||
                 args[3].equalsIgnoreCase("hidepricingtype") ||

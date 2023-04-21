@@ -51,6 +51,7 @@ public final class CreateShop extends DSCMD
             data.get().set("Options.enable", false);
             data.get().set("Options.lore", "");
             data.get().set("Options.page", 2);
+            data.get().set("Options.currency", "vault");
             if (args.length >= 3)
             {
                 if (args[2].equalsIgnoreCase("true"))

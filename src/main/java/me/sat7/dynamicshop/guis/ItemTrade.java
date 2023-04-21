@@ -54,7 +54,7 @@ public final class ItemTrade extends InGameUI
     private ItemMeta itemMeta;
 
     public enum CURRENCY
-    {VAULT, JOB_POINT, PLAYER_POINT}
+    {VAULT, EXP, JOB_POINT, PLAYER_POINT}
 
     public Inventory getGui(Player player, String shopName, String tradeIdx)
     {
@@ -106,12 +106,15 @@ public final class ItemTrade extends InGameUI
                 }
             } else if (e.getSlot() == CHECK_BALANCE)
             {
-                if (data.get().contains("Options.flag.jobpoint"))
+                if (data.get().getString("Options.currency","").equalsIgnoreCase("jobpoint"))
                 {
                     player.sendMessage(DynamicShop.dsPrefix(player) + t(player, "TRADE.BALANCE") + ":§f " + n(JobsHook.getCurJobPoints(player)) + t(player, "JOB_POINTS"));
-                } else if (data.get().contains("Options.flag.playerpoint"))
+                } else if (data.get().getString("Options.currency","").equalsIgnoreCase("playerpoint"))
                 {
                     player.sendMessage(DynamicShop.dsPrefix(player) + t(player, "TRADE.BALANCE") + ":§f " + n(PlayerpointHook.getCurrentPP(player)) + t(player, "PLAYER_POINTS"));
+                } else if (data.get().getString("Options.currency","").equalsIgnoreCase("exp"))
+                {
+                    player.sendMessage(DynamicShop.dsPrefix(player) + t(player, "TRADE.BALANCE") + ":§f " + n(player.getTotalExperience()) + t(player, "EXP_POINTS"));
                 } else
                 {
                     player.sendMessage(DynamicShop.dsPrefix(player) + t(player, "TRADE.BALANCE") + ":§f " + n(DynamicShop.getEconomy().getBalance(player)));
@@ -186,13 +189,17 @@ public final class ItemTrade extends InGameUI
         String myBalanceString;
         ConfigurationSection optionS = shopData.getConfigurationSection("Options");
 
-        if (optionS.contains("flag.jobpoint"))
+        if (optionS.getString("currency","").equalsIgnoreCase("jobpoint"))
         {
             myBalanceString = "§f" + n(JobsHook.getCurJobPoints(player)) + t(player,"JOB_POINTS");
         }
-        else if (optionS.contains("flag.playerpoint"))
+        else if (optionS.getString("currency","").equalsIgnoreCase("playerpoint"))
         {
             myBalanceString = "§f" + n(PlayerpointHook.getCurrentPP(player)) + t(player,"PLAYER_POINTS");
+        }
+        else if (optionS.getString("currency","").equalsIgnoreCase("exp"))
+        {
+            myBalanceString = "§f" + n(player.getTotalExperience()) + t(player,"EXP_POINTS");
         }
         else
         {
@@ -202,11 +209,15 @@ public final class ItemTrade extends InGameUI
         if (ShopUtil.getShopBalance(shopName) >= 0)
         {
             double d = ShopUtil.getShopBalance(shopName);
-            balStr = n(d);
-            if (optionS.contains("flag.jobpoint"))
-                balStr += t(player, "JOB_POINTS");
-            else if (optionS.contains("flag.playerpoint"))
-                balStr += t(player, "PLAYER_POINTS");
+
+            if (optionS.getString("currency","").equalsIgnoreCase("jobpoint"))
+                balStr = n(d) + t(player, "JOB_POINTS");
+            else if (optionS.getString("currency","").equalsIgnoreCase("playerpoint"))
+                balStr = n(d, true) + t(player, "PLAYER_POINTS");
+            else if (optionS.getString("currency","").equalsIgnoreCase("exp"))
+                balStr = n(d, true) + t(player, "EXP_POINTS");
+            else
+                balStr = n(d);
         } else
         {
             balStr = t(player, "TRADE.SHOP_BAL_INF");
@@ -284,14 +295,21 @@ public final class ItemTrade extends InGameUI
             String lore;
             String priceText;
 
+            boolean isIntTypeCurrency = false;
             String currencyKey = "";
-            if (shopData.contains("Options.flag.jobpoint"))
+            if (shopData.getString("Options.currency","").equalsIgnoreCase("jobpoint"))
             {
                 currencyKey = "_JP";
             }
-            else if (shopData.contains("Options.flag.playerpoint"))
+            else if (shopData.getString("Options.currency","").equalsIgnoreCase("playerpoint"))
             {
                 currencyKey = "_PP";
+                isIntTypeCurrency = true;
+            }
+            else if (shopData.getString("Options.currency","").equalsIgnoreCase("exp"))
+            {
+                currencyKey = "_EXP";
+                isIntTypeCurrency = true;
             }
 
             if (sell)
@@ -300,12 +318,12 @@ public final class ItemTrade extends InGameUI
 
                 if (shopData.contains(tradeIdx + ".discount"))
                 {
-                    String original = n(price * 100 / (double) (100 - shopData.getInt(tradeIdx + ".discount")));
-                    priceText = t(player, "TRADE.SELL_PRICE_DISCOUNTED" + currencyKey).replace("{num}", original).replace("{num2}", n(price));
+                    String original = n(price * 100 / (double) (100 - shopData.getInt(tradeIdx + ".discount")), isIntTypeCurrency);
+                    priceText = t(player, "TRADE.SELL_PRICE_DISCOUNTED" + currencyKey).replace("{num}", original).replace("{num2}", n(price, isIntTypeCurrency));
                 }
                 else
                 {
-                    priceText = t(player, "TRADE.SELL_PRICE" + currencyKey).replace("{num}", n(price));
+                    priceText = t(player, "TRADE.SELL_PRICE" + currencyKey).replace("{num}", n(price, isIntTypeCurrency));
                 }
             }
             else
@@ -314,12 +332,12 @@ public final class ItemTrade extends InGameUI
 
                 if (shopData.contains(tradeIdx + ".discount"))
                 {
-                    String original = n(price * 100 / (double) (100 - shopData.getInt(tradeIdx + ".discount")));
-                    priceText = t(player, "TRADE.PRICE_DISCOUNTED" + currencyKey).replace("{num}", original).replace("{num2}", n(price));
+                    String original = n(price * 100 / (double) (100 - shopData.getInt(tradeIdx + ".discount")), isIntTypeCurrency);
+                    priceText = t(player, "TRADE.PRICE_DISCOUNTED" + currencyKey).replace("{num}", original).replace("{num2}", n(price, isIntTypeCurrency));
                 }
                 else
                 {
-                    priceText = t(player, "TRADE.PRICE" + currencyKey).replace("{num}", n(price));
+                    priceText = t(player, "TRADE.PRICE" + currencyKey).replace("{num}", n(price, isIntTypeCurrency));
                 }
             }
 
@@ -426,13 +444,17 @@ public final class ItemTrade extends InGameUI
             return;
         }
 
-        if (options.contains("flag.jobpoint"))
+        if (options.getString("currency","").equalsIgnoreCase("jobpoint"))
         {
             Sell.sell(CURRENCY.JOB_POINT, player, shopName, tradeIdx, itemStack, -deliveryCharge, infiniteStock);
         }
-        else if (options.contains("flag.playerpoint"))
+        else if (options.getString("currency","").equalsIgnoreCase("playerpoint"))
         {
             Sell.sell(CURRENCY.PLAYER_POINT, player, shopName, tradeIdx, itemStack, -deliveryCharge, infiniteStock);
+        }
+        else if (options.getString("currency","").equalsIgnoreCase("exp"))
+        {
+            Sell.sell(CURRENCY.EXP, player, shopName, tradeIdx, itemStack, -deliveryCharge, infiniteStock);
         }
         else
         {
@@ -449,13 +471,17 @@ public final class ItemTrade extends InGameUI
             return;
         }
 
-        if (options.contains("flag.jobpoint"))
+        if (options.getString("currency","").equalsIgnoreCase("jobpoint"))
         {
             Buy.buy(CURRENCY.JOB_POINT, player, shopName, tradeIdx, itemStack, deliveryCharge, infiniteStock);
         }
-        else if (options.contains("flag.playerpoint"))
+        else if (options.getString("currency","").equalsIgnoreCase("playerpoint"))
         {
             Buy.buy(CURRENCY.PLAYER_POINT, player, shopName, tradeIdx, itemStack, deliveryCharge, infiniteStock);
+        }
+        else if (options.getString("currency","").equalsIgnoreCase("exp"))
+        {
+            Buy.buy(CURRENCY.EXP, player, shopName, tradeIdx, itemStack, deliveryCharge, infiniteStock);
         }
         else
         {

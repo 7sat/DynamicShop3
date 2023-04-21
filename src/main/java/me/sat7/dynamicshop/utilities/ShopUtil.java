@@ -165,6 +165,24 @@ public final class ShopUtil
                 }
             }
         }
+
+        if (userVersion < 6)
+        {
+            for(Map.Entry<String, CustomConfig> entry : shopConfigFiles.entrySet())
+            {
+                FileConfiguration fc = entry.getValue().get();
+                if (fc.contains("Options.flag.jobpoint"))
+                {
+                    fc.set("Options.flag.jobpoint", null);
+                    fc.set("Options.currency", "jobpoint");
+                }
+                if (fc.contains("Options.flag.playerpoint"))
+                {
+                    fc.set("Options.flag.playerpoint", null);
+                    fc.set("Options.currency", "playerpoint");
+                }
+            }
+        }
     }
 
     // 상점에서 빈 슬롯 찾기
@@ -881,13 +899,17 @@ public final class ShopUtil
 
                 // 여러 재화로 취급중인 경우 지원 안함.
                 int tempCurrencyIndex = 0;
-                if (data.get().contains("Options.flag.jobpoint"))
+                if (data.get().getString("Options.currency","").equalsIgnoreCase("jobpoint"))
                 {
                     tempCurrencyIndex = 1;
                 }
-                else if (data.get().contains("Options.flag.playerpoint"))
+                else if (data.get().getString("Options.currency","").equalsIgnoreCase("playerpoint"))
                 {
                     tempCurrencyIndex = 2;
+                }
+                else if (data.get().getString("Options.currency","").equalsIgnoreCase("exp"))
+                {
+                    tempCurrencyIndex = 3;
                 }
 
                 if (currencyInt == -1)
@@ -998,13 +1020,17 @@ public final class ShopUtil
 
                 // 여러 재화로 취급중인 경우 지원 안함.
                 int tempCurrencyIndex = 0;
-                if (data.get().contains("Options.flag.jobpoint"))
+                if (data.get().getString("Options.currency","").equalsIgnoreCase("jobpoint"))
                 {
                     tempCurrencyIndex = 1;
                 }
-                else if (data.get().contains("Options.flag.playerpoint"))
+                else if (data.get().getString("Options.currency","").equalsIgnoreCase("playerpoint"))
                 {
                     tempCurrencyIndex = 2;
+                }
+                else if (data.get().getString("Options.currency","").equalsIgnoreCase("exp"))
+                {
+                    tempCurrencyIndex = 3;
                 }
 
                 if (currencyInt == -1)

@@ -50,18 +50,21 @@ public final class ShopSettings extends InGameUI
     private final int STABLE_INTERVAL = 25;
     private final int STABLE_STRENGTH = 26;
 
-    private final int FLAG1 = 9;
-    private final int FLAG2 = 10;
-    private final int FLAG3 = 11;
-    private final int FLAG4 = 12;
-    private final int FLAG5 = 18;
-    private final int FLAG6 = 19;
-    private final int FLAG7 = 20;
-    private final int FLAG8 = 21;
-    private final int FLAG9 = 22;
-    private final int FLAG10 = 13;
-    private final int FLAG11 = 27;
-    private final int FLAG12 = 28;
+    private final int FLAG_SIGNSHOP = 9;
+    private final int FLAG_LOCALSHOP = 10;
+    private final int FLAG_DELIVERY = 11;
+    private final int FLAG_SHOW_VALUE_CHANGE = 12;
+    private final int FLAG_HIDE_STOCK = 13;
+    private final int FLAG_HIDE_PRICING_TYPE = 18;
+    private final int FLAG_HIDE_SHOP_BALANCE = 19;
+    private final int FLAG_SHOW_MAX_STOCK = 20;
+    private final int FLAG_HIDDEN_IN_COMMAND = 21;
+    private final int FLAG_INT_ONLY = 22;
+
+    private final int CURRENCY_VAULT = 27;
+    private final int CURRENCY_EXP = 28;
+    private final int CURRENCY_JP = 29;
+    private final int CURRENCY_PP = 30;
 
     private final int CMD_TOGGLE = 33;
     private final int CMD_SELL = 34;
@@ -75,6 +78,7 @@ public final class ShopSettings extends InGameUI
     private final int CLOSE = 45;
 
     private String shopName;
+    private String currency;
 
     public Inventory getGui(Player player, String shopName)
     {
@@ -301,18 +305,27 @@ public final class ShopSettings extends InGameUI
         }
 
         // 플래그 버튼들
-        CreateFlagButton(FLAG1, confSec_Options.contains("flag.signshop"), "signShop", t(player, "SHOP_SETTING.SIGN_SHOP_LORE"));
-        CreateFlagButton(FLAG2, confSec_Options.contains("flag.localshop"), "localShop", t(player, "SHOP_SETTING.LOCAL_SHOP_LORE"));
-        CreateFlagButton(FLAG3, confSec_Options.contains("flag.deliverycharge"), "deliveryCharge", t(player, "SHOP_SETTING.DELIVERY_CHARGE_LORE"));
-        CreateFlagButton(FLAG4, confSec_Options.contains("flag.jobpoint"), "jobPoint", t(player, "SHOP_SETTING.JOB_POINT_LORE"));
-        CreateFlagButton(FLAG5, confSec_Options.contains("flag.showvaluechange"), "showValueChange", t(player, "SHOP_SETTING.SHOW_VALUE_CHANGE_LORE"));
-        CreateFlagButton(FLAG6, confSec_Options.contains("flag.hidestock"), "hideStock", t(player, "SHOP_SETTING.HIDE_STOCK"));
-        CreateFlagButton(FLAG7, confSec_Options.contains("flag.hidepricingtype"), "hidePricingType", t(player, "SHOP_SETTING.HIDE_PRICING_TYPE"));
-        CreateFlagButton(FLAG8, confSec_Options.contains("flag.hideshopbalance"), "hideShopBalance", t(player, "SHOP_SETTING.HIDE_SHOP_BALANCE"));
-        CreateFlagButton(FLAG9, confSec_Options.contains("flag.showmaxstock"), "showMaxStock", t(player, "SHOP_SETTING.SHOW_MAX_STOCK"));
-        CreateFlagButton(FLAG10, confSec_Options.contains("flag.hiddenincommand"), "hiddenInCommand", t(player, "SHOP_SETTING.HIDDEN_IN_COMMAND"));
-        CreateFlagButton(FLAG11, confSec_Options.contains("flag.integeronly"), "integerOnly", t(player, "SHOP_SETTING.INTEGER_ONLY"));
-        CreateFlagButton(FLAG12, confSec_Options.contains("flag.playerpoint"), "playerPoint", t(player, "SHOP_SETTING.PLAYER_POINT_LORE"));
+        CreateFlagButton(FLAG_SIGNSHOP, confSec_Options.contains("flag.signshop"), "signShop", t(player, "SHOP_SETTING.SIGN_SHOP_LORE"));
+        CreateFlagButton(FLAG_LOCALSHOP, confSec_Options.contains("flag.localshop"), "localShop", t(player, "SHOP_SETTING.LOCAL_SHOP_LORE"));
+        CreateFlagButton(FLAG_DELIVERY, confSec_Options.contains("flag.deliverycharge"), "deliveryCharge", t(player, "SHOP_SETTING.DELIVERY_CHARGE_LORE"));
+        CreateFlagButton(FLAG_SHOW_VALUE_CHANGE, confSec_Options.contains("flag.showvaluechange"), "showValueChange", t(player, "SHOP_SETTING.SHOW_VALUE_CHANGE_LORE"));
+        CreateFlagButton(FLAG_HIDE_STOCK, confSec_Options.contains("flag.hidestock"), "hideStock", t(player, "SHOP_SETTING.HIDE_STOCK"));
+        CreateFlagButton(FLAG_HIDE_PRICING_TYPE, confSec_Options.contains("flag.hidepricingtype"), "hidePricingType", t(player, "SHOP_SETTING.HIDE_PRICING_TYPE"));
+        CreateFlagButton(FLAG_HIDE_SHOP_BALANCE, confSec_Options.contains("flag.hideshopbalance"), "hideShopBalance", t(player, "SHOP_SETTING.HIDE_SHOP_BALANCE"));
+        CreateFlagButton(FLAG_SHOW_MAX_STOCK, confSec_Options.contains("flag.showmaxstock"), "showMaxStock", t(player, "SHOP_SETTING.SHOW_MAX_STOCK"));
+        CreateFlagButton(FLAG_HIDDEN_IN_COMMAND, confSec_Options.contains("flag.hiddenincommand"), "hiddenInCommand", t(player, "SHOP_SETTING.HIDDEN_IN_COMMAND"));
+        CreateFlagButton(FLAG_INT_ONLY, confSec_Options.contains("flag.integeronly"), "integerOnly", t(player, "SHOP_SETTING.INTEGER_ONLY"));
+
+        currency = confSec_Options.getString("currency", "");
+        if (!currency.equalsIgnoreCase("JobPoint") &&
+            !currency.equalsIgnoreCase("PlayerPoint") &&
+            !currency.equalsIgnoreCase("Exp"))
+            currency = "Vault";
+
+        CreateCurrencyButton(CURRENCY_VAULT, currency.equalsIgnoreCase("Vault"), t(player, "SHOP_SETTING.CURRENCY") + "Vault", t(player, "SHOP_SETTING.VAULT_LORE"));
+        CreateCurrencyButton(CURRENCY_EXP, currency.equalsIgnoreCase("Exp"), t(player, "SHOP_SETTING.CURRENCY") + "Exp", t(player, "SHOP_SETTING.EXP_LORE"));
+        CreateCurrencyButton(CURRENCY_JP, currency.equalsIgnoreCase("JobPoint"), t(player, "SHOP_SETTING.CURRENCY") + "JobPoint", t(player, "SHOP_SETTING.JOB_POINT_LORE"));
+        CreateCurrencyButton(CURRENCY_PP, currency.equalsIgnoreCase("PlayerPoint"), t(player, "SHOP_SETTING.CURRENCY") + "PlayerPoint", t(player, "SHOP_SETTING.PLAYER_POINT_LORE"));
 
         // 로그 버튼
         String log_cur;
@@ -621,7 +634,7 @@ public final class ShopSettings extends InGameUI
             data.save();
         }
         // signshop
-        else if (e.getSlot() == FLAG1)
+        else if (e.getSlot() == FLAG_SIGNSHOP)
         {
             if (data.get().contains("Options.flag.signshop"))
             {
@@ -633,7 +646,7 @@ public final class ShopSettings extends InGameUI
             DynaShopAPI.openShopSettingGui(player, shopName);
         }
         // localshop
-        else if (e.getSlot() == FLAG2)
+        else if (e.getSlot() == FLAG_LOCALSHOP)
         {
             if (data.get().contains("Options.flag.localshop"))
             {
@@ -645,7 +658,7 @@ public final class ShopSettings extends InGameUI
             DynaShopAPI.openShopSettingGui(player, shopName);
         }
         // deliverycharge
-        else if (e.getSlot() == FLAG3)
+        else if (e.getSlot() == FLAG_DELIVERY)
         {
             if (data.get().contains("Options.flag.deliverycharge"))
             {
@@ -656,31 +669,8 @@ public final class ShopSettings extends InGameUI
             }
             DynaShopAPI.openShopSettingGui(player, shopName);
         }
-        // jobpoint
-        else if (e.getSlot() == FLAG4)
-        {
-            if (data.get().contains("Options.flag.jobpoint"))
-            {
-                Bukkit.dispatchCommand(player, "DynamicShop shop " + shopName + " flag jobPoint unset");
-            } else
-            {
-                if (!JobsHook.jobsRebornActive)
-                {
-                    player.sendMessage(DynamicShop.dsPrefix(player) + t(player, "ERR.JOBS_REBORN_NOT_FOUND"));
-                    return;
-                }
-
-                if (data.get().contains("Options.flag.playerpoint"))
-                {
-                    Bukkit.dispatchCommand(player, "DynamicShop shop " + shopName + " flag playerpoint unset");
-                }
-
-                Bukkit.dispatchCommand(player, "DynamicShop shop " + shopName + " flag jobPoint set");
-            }
-            DynaShopAPI.openShopSettingGui(player, shopName);
-        }
         // showValueChange
-        else if (e.getSlot() == FLAG5)
+        else if (e.getSlot() == FLAG_SHOW_VALUE_CHANGE)
         {
             if (data.get().contains("Options.flag.showvaluechange"))
             {
@@ -692,7 +682,7 @@ public final class ShopSettings extends InGameUI
             DynaShopAPI.openShopSettingGui(player, shopName);
         }
         // HIDE_STOCK
-        else if (e.getSlot() == FLAG6)
+        else if (e.getSlot() == FLAG_HIDE_STOCK)
         {
             if (data.get().contains("Options.flag.hidestock"))
             {
@@ -704,7 +694,7 @@ public final class ShopSettings extends InGameUI
             DynaShopAPI.openShopSettingGui(player, shopName);
         }
         // HIDE_PRICING_TYPE
-        else if (e.getSlot() == FLAG7)
+        else if (e.getSlot() == FLAG_HIDE_PRICING_TYPE)
         {
             if (data.get().contains("Options.flag.hidepricingtype"))
             {
@@ -716,7 +706,7 @@ public final class ShopSettings extends InGameUI
             DynaShopAPI.openShopSettingGui(player, shopName);
         }
         // HIDE_SHOP_BALANCE
-        else if (e.getSlot() == FLAG8)
+        else if (e.getSlot() == FLAG_HIDE_SHOP_BALANCE)
         {
             if (data.get().contains("Options.flag.hideshopbalance"))
             {
@@ -728,7 +718,7 @@ public final class ShopSettings extends InGameUI
             DynaShopAPI.openShopSettingGui(player, shopName);
         }
         // SHOW_MAX_STOCK
-        else if (e.getSlot() == FLAG9)
+        else if (e.getSlot() == FLAG_SHOW_MAX_STOCK)
         {
             if (data.get().contains("Options.flag.showmaxstock"))
             {
@@ -740,7 +730,7 @@ public final class ShopSettings extends InGameUI
             DynaShopAPI.openShopSettingGui(player, shopName);
         }
         // HIDDEN_IN_COMMAND
-        else if (e.getSlot() == FLAG10)
+        else if (e.getSlot() == FLAG_HIDDEN_IN_COMMAND)
         {
             if (data.get().contains("Options.flag.hiddenincommand"))
             {
@@ -748,44 +738,6 @@ public final class ShopSettings extends InGameUI
             } else
             {
                 Bukkit.dispatchCommand(player, "DynamicShop shop " + shopName + " flag hiddenInCommand set");
-            }
-            DynaShopAPI.openShopSettingGui(player, shopName);
-        }
-        // INTEGER_ONLY
-        else if (e.getSlot() == FLAG11)
-        {
-            if (data.get().contains("Options.flag.integeronly"))
-            {
-                Bukkit.dispatchCommand(player, "DynamicShop shop " + shopName + " flag integerOnly unset");
-                if(data.get().contains("Options.flag.playerpoint"))
-                    Bukkit.dispatchCommand(player, "DynamicShop shop " + shopName + " flag playerpoint unset");
-            } else
-            {
-                Bukkit.dispatchCommand(player, "DynamicShop shop " + shopName + " flag integerOnly set");
-            }
-            DynaShopAPI.openShopSettingGui(player, shopName);
-        }
-        // Player point
-        else if (e.getSlot() == FLAG12)
-        {
-            if (data.get().contains("Options.flag.playerpoint"))
-            {
-                Bukkit.dispatchCommand(player, "DynamicShop shop " + shopName + " flag playerpoint unset");
-            } else
-            {
-                if (!PlayerpointHook.isPPActive)
-                {
-                    player.sendMessage(DynamicShop.dsPrefix(player) + t(player, "ERR.PLAYER_POINTS_NOT_FOUND"));
-                    return;
-                }
-
-                if (data.get().contains("Options.flag.jobpoint"))
-                {
-                    Bukkit.dispatchCommand(player, "DynamicShop shop " + shopName + " flag jobpoint unset");
-                }
-
-                Bukkit.dispatchCommand(player, "DynamicShop shop " + shopName + " flag integerOnly set");
-                Bukkit.dispatchCommand(player, "DynamicShop shop " + shopName + " flag playerpoint set");
             }
             DynaShopAPI.openShopSettingGui(player, shopName);
         }
@@ -876,6 +828,72 @@ public final class ShopSettings extends InGameUI
                 OnChat.WaitForInput(player);
             }
         }
+        // INTEGER_ONLY
+        else if (e.getSlot() == FLAG_INT_ONLY)
+        {
+            if (data.get().contains("Options.flag.integeronly"))
+            {
+                Bukkit.dispatchCommand(player, "DynamicShop shop " + shopName + " flag integerOnly unset");
+
+                if(data.get().getString("Options.currency","").equalsIgnoreCase("playerpoint") ||
+                   data.get().getString("Options.currency","").equalsIgnoreCase("exp"))
+                    Bukkit.dispatchCommand(player, "DynamicShop shop " + shopName + " currency vault");
+            } else
+            {
+                Bukkit.dispatchCommand(player, "DynamicShop shop " + shopName + " flag integerOnly set");
+            }
+            DynaShopAPI.openShopSettingGui(player, shopName);
+        }
+        // vault
+        else if (e.getSlot() == CURRENCY_VAULT)
+        {
+            if (!currency.equalsIgnoreCase("vault"))
+            {
+                Bukkit.dispatchCommand(player, "DynamicShop shop " + shopName + " currency vault");
+            }
+            DynaShopAPI.openShopSettingGui(player, shopName);
+        }
+        // exp
+        else if (e.getSlot() == CURRENCY_EXP)
+        {
+            if (!currency.equalsIgnoreCase("exp"))
+            {
+                Bukkit.dispatchCommand(player, "DynamicShop shop " + shopName + " currency exp");
+                Bukkit.dispatchCommand(player, "DynamicShop shop " + shopName + " flag integerOnly set");
+            }
+            DynaShopAPI.openShopSettingGui(player, shopName);
+        }
+        // jobpoint
+        else if (e.getSlot() == CURRENCY_JP)
+        {
+            if (!JobsHook.jobsRebornActive)
+            {
+                player.sendMessage(DynamicShop.dsPrefix(player) + t(player, "ERR.JOBS_REBORN_NOT_FOUND"));
+                return;
+            }
+
+            if (!currency.equalsIgnoreCase("jobpoint"))
+            {
+                Bukkit.dispatchCommand(player, "DynamicShop shop " + shopName + " currency jobpoint");
+            }
+            DynaShopAPI.openShopSettingGui(player, shopName);
+        }
+        // Player point
+        else if (e.getSlot() == CURRENCY_PP)
+        {
+            if (!PlayerpointHook.isPPActive)
+            {
+                player.sendMessage(DynamicShop.dsPrefix(player) + t(player, "ERR.PLAYER_POINTS_NOT_FOUND"));
+                return;
+            }
+
+            if (!currency.equalsIgnoreCase("playerpoint"))
+            {
+                Bukkit.dispatchCommand(player, "DynamicShop shop " + shopName + " currency playerpoint");
+                Bukkit.dispatchCommand(player, "DynamicShop shop " + shopName + " flag integerOnly set");
+            }
+            DynaShopAPI.openShopSettingGui(player, shopName);
+        }
     }
 
     private void CreateFlagButton(int buttonPosition, boolean isEnable, String title, String lore)
@@ -908,5 +926,32 @@ public final class ShopSettings extends InGameUI
         loreArray.add("§9" + t(null, "CUR_STATE") + ": " + current);
         loreArray.add("§e" + t(null, "CLICK") + ": " + set);
         CreateButton(buttonPosition, icon, t(null, "SHOP_SETTING.FLAG") + ": " + title, loreArray);
+    }
+
+    private void CreateCurrencyButton(int buttonPosition, boolean isEnable, String title, String lore)
+    {
+        ArrayList<String> loreArray = new ArrayList<>();
+        if(lore.contains("\n"))
+        {
+            String[] temp = lore.split("\n");
+            Collections.addAll(loreArray, temp);
+        }
+        else
+        {
+            loreArray.add(lore);
+        }
+
+        Material icon;
+        if (isEnable)
+        {
+            icon = Material.YELLOW_STAINED_GLASS_PANE;
+            loreArray.add(t(null, "SHOP_SETTING.SELECTED"));
+
+        } else
+        {
+            icon = Material.WHITE_STAINED_GLASS_PANE;
+        }
+        loreArray.add("§e" + t(null, "CLICK") + ": " + t(null, "SET"));
+        CreateButton(buttonPosition, icon, title, loreArray);
     }
 }
