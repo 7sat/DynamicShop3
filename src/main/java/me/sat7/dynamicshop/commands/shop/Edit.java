@@ -49,7 +49,7 @@ public class Edit extends DSCMD
 
         int idx;
         double buyValue;
-        double valueMin = 0.01;
+        double valueMin = 0.0001;
         double valueMax = -1;
         int median;
         int stock;

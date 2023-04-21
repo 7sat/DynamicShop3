@@ -8,6 +8,7 @@ import me.sat7.dynamicshop.utilities.ConfigUtil;
 import me.sat7.dynamicshop.utilities.HashUtil;
 import org.bukkit.Bukkit;
 import org.bukkit.GameMode;
+import org.bukkit.Sound;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandExecutor;
 import org.bukkit.command.CommandSender;
@@ -101,7 +102,7 @@ public class Sell implements CommandExecutor
                 if (temp.contains(hash))
                     continue;
 
-                sum += DynaShopAPI.QuickSell(player, stack);
+                sum += DynaShopAPI.QuickSell(player, stack, false);
                 temp.add(hash);
             }
 
@@ -109,6 +110,10 @@ public class Sell implements CommandExecutor
             {
                 player.sendMessage(DynamicShop.dsPrefix(player) + t(player, "MESSAGE.NO_ITEM_TO_SELL_2"));
                 return false;
+            }
+            else
+            {
+                player.playSound(player.getLocation(), Sound.valueOf("ENTITY_EXPERIENCE_ORB_PICKUP"), 1, 1);
             }
 
             return true;

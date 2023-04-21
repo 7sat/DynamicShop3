@@ -116,7 +116,7 @@ public final class ItemSettings extends InGameUI
         // 조절버튼
         if (dsItem.getBuyValue() == dsItem.getSellValue())
             sellValueStr = "§8" + ChatColor.stripColor(sellValueStr);
-        if (dsItem.getMinPrice() <= 0.01)
+        if (dsItem.getMinPrice() <= 0.0001)
             priceMinStr = "§8" + ChatColor.stripColor(priceMinStr);
         if (dsItem.getMaxPrice() <= 0)
             priceMaxStr = "§8" + ChatColor.stripColor(priceMaxStr);
@@ -171,8 +171,8 @@ public final class ItemSettings extends InGameUI
         } else
         {
             buyPrice = (dsItem.getBuyValue() * dsItem.getMedian()) / dsItem.getStock();
-            if(buyPrice < 0.01)
-                buyPrice = 0.01;
+            if(buyPrice < 0.0001)
+                buyPrice = 0.0001;
 
             if (dsItem.getBuyValue() != dsItem.getSellValue()) // 판매가 별도설정
             {
@@ -191,7 +191,7 @@ public final class ItemSettings extends InGameUI
                     taxStr += ConfigUtil.getCurrentTax() + "%";
                     sellPrice = buyPrice - ((buyPrice / 100.0) * ConfigUtil.getCurrentTax());
                 }
-                sellPrice = (Math.round(sellPrice * 100) / 100.0);
+                sellPrice = (Math.round(sellPrice * 10000) / 10000.0);
 
                 editBtnLore.add(taxStr);
             }
@@ -247,8 +247,6 @@ public final class ItemSettings extends InGameUI
 
             String worthChanged = (dsItem.getBuyValue() == worth) ? " ▶§f " : " ▶§a ";
             String worthChanged2 = (dsItem.getSellValue() == worth) ? " ▶§f " : " ▶§a ";
-            //String minChanged = (dsItem.getMinPrice() == 0.01) ? " ▶§f " : " ▶§a ";
-            //String maxChanged = (dsItem.getMaxPrice() == -1) ? " ▶§f " : " ▶§a ";
             String medianChanged = (dsItem.getMedian() == sugMid) ? " ▶§f " : " ▶§a ";
             String stockChanged = (dsItem.getStock() == sugMid) ? " ▶§f " : " ▶§a ";
 
@@ -256,10 +254,6 @@ public final class ItemSettings extends InGameUI
                     + "§7 " + dsItem.getBuyValue() + worthChanged + worth + "\n"
                     + t(null, "ITEM_SETTING.VALUE_SELL") + "\n"
                     + "§7 " + dsItem.getSellValue() + worthChanged2 + worth + "\n"
-                    //+ t(null, "ITEM_SETTING.PRICE_MIN") + "\n"
-                    //+ "§7 " + dsItem.getMinPrice() + minChanged + 0.01 + "\n"
-                    //+ t(null, "ITEM_SETTING.PRICE_MAX") + "\n"
-                    //+ "§7 " + dsItem.getMaxPrice() + maxChanged + -1 + "\n"
                     + t(null, "ITEM_SETTING.MEDIAN") + "\n"
                     + "§7 " + dsItem.getMedian() + medianChanged + sugMid + "\n"
                     + t(null, "ITEM_SETTING.STOCK") + "\n"
@@ -309,7 +303,7 @@ public final class ItemSettings extends InGameUI
         if (e.getCurrentItem() == null)
             return;
 
-        if(dsItem.minPrice <= 0) dsItem.minPrice = 0.01;
+        if(dsItem.minPrice <= 0) dsItem.minPrice = 0.0001;
         if(dsItem.maxPrice <= 0) dsItem.maxPrice = -1;
 
         oldSbSame = dsItem.sellValue == dsItem.buyValue;
@@ -548,7 +542,7 @@ public final class ItemSettings extends InGameUI
     {
         if (currentTab == BUY_VALUE) dsItem.buyValue = 10;
         else if (currentTab == SELL_VALUE) dsItem.sellValue = 10;
-        else if (currentTab == MIN_VALUE) dsItem.minPrice = 0.01;
+        else if (currentTab == MIN_VALUE) dsItem.minPrice = 0.0001;
         else if (currentTab == MAX_VALUE) dsItem.maxPrice = -1;
         else if (currentTab == MEDIAN) dsItem.median = 10000;
         else if (currentTab == STOCK) dsItem.stock = 10000;
@@ -566,18 +560,18 @@ public final class ItemSettings extends InGameUI
         if (currentTab == BUY_VALUE)
         {
             dsItem.buyValue += editNum;
-            if (dsItem.buyValue < 0.01) dsItem.buyValue = 0.01f;
+            if (dsItem.buyValue < 0.0001) dsItem.buyValue = 0.0001f;
 
             if(oldSbSame)
                 dsItem.sellValue = dsItem.buyValue;
         } else if (currentTab == SELL_VALUE)
         {
             dsItem.sellValue += editNum;
-            if (dsItem.sellValue < 0.01) dsItem.sellValue = 0.01f;
+            if (dsItem.sellValue < 0.0001) dsItem.sellValue = 0.0001f;
         } else if (currentTab == MIN_VALUE)
         {
             dsItem.minPrice += editNum;
-            if (dsItem.minPrice < 0.01) dsItem.minPrice = 0.01f;
+            if (dsItem.minPrice < 0.0001) dsItem.minPrice = 0.0001f;
         } else if (currentTab == MAX_VALUE)
         {
             if (dsItem.maxPrice <= 0 && editNum > 0)
@@ -585,7 +579,7 @@ public final class ItemSettings extends InGameUI
             else
             {
                 dsItem.maxPrice += editNum;
-                if (dsItem.maxPrice < 0.01)
+                if (dsItem.maxPrice < 0.0001)
                     dsItem.maxPrice = -1;
             }
         } else if (currentTab == MEDIAN)
@@ -643,22 +637,22 @@ public final class ItemSettings extends InGameUI
         if (currentTab == BUY_VALUE)
         {
             dsItem.buyValue /= div;
-            if(dsItem.buyValue < 0.01) dsItem.buyValue = 0.01;
+            if(dsItem.buyValue < 0.0001) dsItem.buyValue = 0.0001;
 
             if(oldSbSame)
                 dsItem.sellValue = dsItem.buyValue;
         } else if (currentTab == SELL_VALUE)
         {
             dsItem.sellValue /= div;
-            if(dsItem.sellValue < 0.01) dsItem.sellValue = 0.01;
+            if(dsItem.sellValue < 0.0001) dsItem.sellValue = 0.0001;
         } else if (currentTab == MIN_VALUE)
         {
             dsItem.minPrice /= div;
-            if(dsItem.minPrice < 0.01) dsItem.minPrice = 0.01;
+            if(dsItem.minPrice < 0.0001) dsItem.minPrice = 0.0001;
         } else if (currentTab == MAX_VALUE)
         {
             dsItem.maxPrice /= div;
-            if(dsItem.maxPrice < 0.01) dsItem.maxPrice = 0.01;
+            if(dsItem.maxPrice < 0.0001) dsItem.maxPrice = 0.0001;
         } else if (currentTab == MEDIAN)
         {
             if(dsItem.median > 1)
@@ -740,12 +734,12 @@ public final class ItemSettings extends InGameUI
 
     private void ValueValidation()
     {
-        if (dsItem.buyValue < 0.01)
-            dsItem.buyValue = 0.01;
-        if (dsItem.sellValue < 0.01)
-            dsItem.sellValue = 0.01;
-        if (dsItem.minPrice < 0.01)
-            dsItem.minPrice = 0.01;
+        if (dsItem.buyValue < 0.0001)
+            dsItem.buyValue = 0.0001;
+        if (dsItem.sellValue < 0.0001)
+            dsItem.sellValue = 0.0001;
+        if (dsItem.minPrice < 0.0001)
+            dsItem.minPrice = 0.0001;
         if (dsItem.maxPrice < -1)
             dsItem.maxPrice = -1;
         if (dsItem.median < -1)

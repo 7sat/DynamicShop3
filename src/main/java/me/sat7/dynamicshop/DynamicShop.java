@@ -238,9 +238,9 @@ public final class DynamicShop extends JavaPlugin implements Listener
             }
 
             setupRspRetryCount++;
-            console.sendMessage(Constants.DYNAMIC_SHOP_PREFIX + " Economy provider not found. Retry... " + setupRspRetryCount + "/3");
+            //console.sendMessage(Constants.DYNAMIC_SHOP_PREFIX + " Economy provider not found. Retry... " + setupRspRetryCount + "/3");
 
-            Bukkit.getScheduler().runTaskLater(this, this::SetupRSP, 30L);
+            Bukkit.getScheduler().runTaskLater(this, this::SetupRSP, 40L);
         }
     }
 
@@ -503,8 +503,11 @@ public final class DynamicShop extends JavaPlugin implements Listener
     @Override
     public void onDisable()
     {
-        UserUtil.OnPluginDisable();
-        ShopUtil.ForceSaveAllShop();
+        if (econ != null)
+        {
+            UserUtil.OnPluginDisable();
+            ShopUtil.ForceSaveAllShop();
+        }
 
         Bukkit.getScheduler().cancelTasks(this);
         console.sendMessage(Constants.DYNAMIC_SHOP_PREFIX + " Disabled");

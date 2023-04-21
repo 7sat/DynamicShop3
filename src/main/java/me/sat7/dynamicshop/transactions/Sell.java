@@ -30,6 +30,11 @@ public final class Sell
 
     public static double quickSellItem(Player player, ItemStack itemStack, String shopName, int tradeIdx, boolean isShiftClick, int slot)
     {
+        return quickSellItem(player, itemStack, shopName, tradeIdx, isShiftClick, slot, true);
+    }
+
+    public static double quickSellItem(Player player, ItemStack itemStack, String shopName, int tradeIdx, boolean isShiftClick, int slot, boolean playSound)
+    {
         CustomConfig data = ShopUtil.shopConfigFiles.get(shopName);
 
         ItemTrade.CURRENCY currencyType;
@@ -173,7 +178,8 @@ public final class Sell
             SendSellMessage(currencyType, econ, player, tradeAmount, priceSum, itemStack);
 
             // 플레이어에게 소리 재생
-            player.playSound(player.getLocation(), Sound.valueOf("ENTITY_EXPERIENCE_ORB_PICKUP"), 1, 1);
+            if (playSound)
+                player.playSound(player.getLocation(), Sound.valueOf("ENTITY_EXPERIENCE_ORB_PICKUP"), 1, 1);
         }
 
         // 상점 계좌 잔액 수정

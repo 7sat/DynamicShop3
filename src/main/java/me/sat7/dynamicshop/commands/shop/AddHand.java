@@ -43,7 +43,7 @@ public class AddHand extends DSCMD
 
         String shopName = Shop.GetShopName(args);
         double buyValue;
-        double valueMin = 0.01;
+        double valueMin = 0.0001;
         double valueMax = -1;
         int median;
         int stock;
@@ -81,7 +81,7 @@ public class AddHand extends DSCMD
                 }
             }
 
-            if (buyValue < 0.01 || median == 0 || stock == 0)
+            if (buyValue < 0.0001 || median == 0 || stock == 0)
             {
                 player.sendMessage(DynamicShop.dsPrefix(player) + t(player, "ERR.VALUE_ZERO"));
                 return;

@@ -442,9 +442,17 @@ public final class DynaShopAPI
      */
     public static double QuickSell(Player player, ItemStack itemStack)
     {
-        return QuickSell(player, itemStack, -1);
+        return QuickSell(player, itemStack, -1, true);
+    }
+    public static double QuickSell(Player player, ItemStack itemStack, boolean playSound)
+    {
+        return QuickSell(player, itemStack, -1, playSound);
     }
     public static double QuickSell(Player player, ItemStack itemStack, int slot)
+    {
+        return QuickSell(player,itemStack, slot, true);
+    }
+    public static double QuickSell(Player player, ItemStack itemStack, int slot, boolean playSound)
     {
         if (itemStack == null || itemStack.getType().isAir())
             return 0;
@@ -457,7 +465,7 @@ public final class DynaShopAPI
         if (!validateShopName(ret[0]))
             return 0;
 
-        return Sell.quickSellItem(player, itemStack, ret[0], Integer.parseInt(ret[1]), slot == -1, slot);
+        return Sell.quickSellItem(player, itemStack, ret[0], Integer.parseInt(ret[1]), slot == -1, slot, playSound);
     }
 
     /**

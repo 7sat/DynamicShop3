@@ -610,7 +610,7 @@ public final class Shop extends InGameUI
                             sellValue = shopData.getDouble(idx + ".value2");
                         }
                         double valueMin = shopData.getDouble(idx + ".valueMin");
-                        if (valueMin <= 0.01) valueMin = 0.01;
+                        if (valueMin <= 0.0001) valueMin = 0.0001;
                         double valueMax = shopData.getDouble(idx + ".valueMax");
                         if (valueMax <= 0) valueMax = -1;
                         int median = shopData.getInt(idx + ".median");

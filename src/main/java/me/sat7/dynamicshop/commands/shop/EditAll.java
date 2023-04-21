@@ -153,9 +153,9 @@ public class EditAll extends DSCMD
                 result = originalValue * newValue;
             }
 
-            if (dataType.equals("value") && result < 0.01)
+            if (dataType.equals("value") && result < 0.0001)
             {
-                result = 0.01;
+                result = 0.0001;
             }
 
             if (dataType.equals("stock") || dataType.equals("median") || dataType.equals("maxStock") || dataType.equals("discount"))
@@ -165,7 +165,7 @@ public class EditAll extends DSCMD
             }
             else
             {
-                result = Math.round(result * 1000) / 1000.0;
+                result = Math.round(result * 10000) / 10000.0;
                 shopData.get().set(s + "." + dataType, result);
             }
 

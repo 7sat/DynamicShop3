@@ -67,7 +67,7 @@ public final class ItemsUtil
         String info = " value:" + data.get().getDouble(idx + ".value");
 
         double valueMin = data.get().getDouble(idx + ".valueMin");
-        if (valueMin > 0.01) info += " min:" + valueMin;
+        if (valueMin > 0.0001) info += " min:" + valueMin;
         double valueMax = data.get().getDouble(idx + ".valueMax");
         if (valueMax > 0) info += " max:" + valueMax;
 

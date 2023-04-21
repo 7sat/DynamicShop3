@@ -43,10 +43,13 @@ public final class TabCompleteUtil
 
             if (cmd.getName().equalsIgnoreCase("sell") && args.length == 1)
             {
-                temp.add("hand");
-                temp.add("handall");
-                temp.add("all");
-                AddToAutoCompleteIfValid(args[0]);
+                if (sender.hasPermission(P_SELL))
+                {
+                    temp.add("hand");
+                    temp.add("handall");
+                    temp.add("all");
+                    AddToAutoCompleteIfValid(args[0]);
+                }
 
                 return autoCompleteList;
             }

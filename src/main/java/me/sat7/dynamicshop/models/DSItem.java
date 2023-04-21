@@ -26,10 +26,10 @@ public class DSItem
     public DSItem(ItemStack itemStack, double buyValue, double sellValue, double minPrice, double maxPrice, int median, int stock)
     {
         setItemStack(itemStack);
-        setBuyValue(Math.round(buyValue * 100) / 100.0);
-        setSellValue(Math.round(sellValue * 100) / 100.0);
-        setMinPrice(Math.round(minPrice * 100) / 100.0);
-        setMaxPrice(Math.round(maxPrice * 100) / 100.0);
+        setBuyValue(Math.round(buyValue * 10000) / 10000.0);
+        setSellValue(Math.round(sellValue * 10000) / 10000.0);
+        setMinPrice(Math.round(minPrice * 10000) / 10000.0);
+        setMaxPrice(Math.round(maxPrice * 10000) / 10000.0);
         setMedian(median);
         setStock(stock);
         maxStock = -1;
@@ -37,10 +37,10 @@ public class DSItem
     public DSItem(ItemStack itemStack, double buyValue, double sellValue, double minPrice, double maxPrice, int median, int stock, int maxStock, int discount, int sellLimit, int buyLimit, long tradeLimitInterval, long tradeLimitNextTimer)
     {
         setItemStack(itemStack);
-        setBuyValue(Math.round(buyValue * 100) / 100.0);
-        setSellValue(Math.round(sellValue * 100) / 100.0);
-        setMinPrice(Math.round(minPrice * 100) / 100.0);
-        setMaxPrice(Math.round(maxPrice * 100) / 100.0);
+        setBuyValue(Math.round(buyValue * 10000) / 10000.0);
+        setSellValue(Math.round(sellValue * 10000) / 10000.0);
+        setMinPrice(Math.round(minPrice * 10000) / 10000.0);
+        setMaxPrice(Math.round(maxPrice * 10000) / 10000.0);
         setMedian(median);
         setStock(stock);
         setMaxStock(maxStock);

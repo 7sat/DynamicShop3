@@ -47,7 +47,7 @@ public class Add extends DSCMD
 
         Material mat;
         double buyValue;
-        double valueMin = 0.01;
+        double valueMin = 0.0001;
         double valueMax = -1;
         int median;
         int stock;
@@ -87,7 +87,7 @@ public class Add extends DSCMD
                 }
             }
 
-            if (buyValue < 0.01 || median == 0 || stock == 0)
+            if (buyValue < 0.0001 || median == 0 || stock == 0)
             {
                 sender.sendMessage(DynamicShop.dsPrefix(sender) + t(sender, "ERR.VALUE_ZERO"));
                 return;

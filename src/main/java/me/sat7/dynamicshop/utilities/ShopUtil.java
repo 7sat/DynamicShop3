@@ -317,7 +317,7 @@ public final class ShopUtil
                     data.get().set(idx + ".value2", dsItem.sellValue);
                 }
 
-                if (dsItem.minPrice > 0.01)
+                if (dsItem.minPrice > 0.0001)
                 {
                     data.get().set(idx + ".valueMin", dsItem.minPrice);
                 }
@@ -326,7 +326,7 @@ public final class ShopUtil
                     data.get().set(idx + ".valueMin", null);
                 }
 
-                if (dsItem.maxPrice > 0.01)
+                if (dsItem.maxPrice > 0.0001)
                 {
                     data.get().set(idx + ".valueMax", dsItem.maxPrice);
                 }
@@ -414,7 +414,7 @@ public final class ShopUtil
             data.get().set(idx + ".value2", dsItem.sellValue);
         }
 
-        if (dsItem.minPrice > 0.01)
+        if (dsItem.minPrice > 0.0001)
         {
             data.get().set(idx + ".valueMin", dsItem.minPrice);
         }
@@ -423,7 +423,7 @@ public final class ShopUtil
             data.get().set(idx + ".valueMin", null);
         }
 
-        if (dsItem.maxPrice > 0.01)
+        if (dsItem.maxPrice > 0.0001)
         {
             data.get().set(idx + ".valueMax", dsItem.maxPrice);
         }
@@ -764,7 +764,7 @@ public final class ShopUtil
         if (old < 0) return;
 
         double newValue = old + amount;
-        newValue = (Math.round(newValue * 100) / 100.0);
+        newValue = (Math.round(newValue * 10000) / 10000.0);
 
         try
         {
@@ -824,7 +824,7 @@ public final class ShopUtil
                     long tradeLimitNextTimer = data.get().getLong(itemIndex + ".tradeLimitPerPlayer.nextTimer");
 
                     int sugMid = CalcRecommendedMedian(worth, ConfigUtil.GetNumberOfPlayer());
-                    DSItem temp = new DSItem(null, worth, worth, 0.01f, -1, sugMid, sugMid, -1, discount,
+                    DSItem temp = new DSItem(null, worth, worth, 0.0001f, -1, sugMid, sugMid, -1, discount,
                                              sellLimit, buyLimit, tradeLimitInterval, tradeLimitNextTimer);
                     ShopUtil.editShopItem(shop, i, temp);
                 } else

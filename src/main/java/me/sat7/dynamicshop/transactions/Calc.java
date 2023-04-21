@@ -31,7 +31,7 @@ public final class Calc
             value = data.getDouble(idx + ".value");
         }
 
-        double min = data.getDouble(idx + ".valueMin", 0.01);
+        double min = data.getDouble(idx + ".valueMin", 0.0001);
         double max = data.getDouble(idx + ".valueMax");
         int median = data.getInt(idx + ".median");
         int stock = data.getInt(idx + ".stock");
@@ -114,7 +114,7 @@ public final class Calc
                     stock++;
                 }
                 double temp = median * value / stock;
-                double min = data.getDouble(idx + ".valueMin", 0.01);
+                double min = data.getDouble(idx + ".valueMin", 0.0001);
                 double max = data.getDouble(idx + ".valueMax");
 
                 if (temp < min)
@@ -163,7 +163,7 @@ public final class Calc
         }
         else
         {
-            total = (Math.round(total * 100) / 100.0);
+            total = (Math.round(total * 10000) / 10000.0);
         }
 
         return new double[]{total, tax};

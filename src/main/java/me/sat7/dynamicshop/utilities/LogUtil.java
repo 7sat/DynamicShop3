@@ -46,7 +46,7 @@ public final class LogUtil
                 String time = sdf.format(System.currentTimeMillis());
 
                 String keyString = CreatePath(shopName);
-                String valueString = time + "," + shopName + "," + itemName + "," + amount + "," + (Math.round(value * 100) / 100.0) + "," + curr + "," + player;
+                String valueString = time + "," + shopName + "," + itemName + "," + amount + "," + (Math.round(value * 10000) / 10000.0) + "," + curr + "," + player;
 
                 if (log.get(keyString) == null)
                 {
