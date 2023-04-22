@@ -40,7 +40,8 @@ public final class ShopSettings extends InGameUI
     private final int ENABLE_TOGGLE = 0;
     private final int PERMISSION = 1;
     private final int MAX_PAGE = 2;
-    private final int ROTATION_EDITOR = 3;
+    private final int BACKGROUND = 3;
+    private final int ROTATION_EDITOR = 4;
     private final int SHOP_HOUR = 6;
     private final int SHOP_HOUR_OPEN = 7;
     private final int SHOP_HOUR_CLOSE = 8;
@@ -128,6 +129,13 @@ public final class ShopSettings extends InGameUI
 
         //최대 페이지 버튼
         CreateButton(MAX_PAGE, InGameUI.GetPageButtonIconMat(), t(player, "SHOP_SETTING.MAX_PAGE"), new ArrayList<>(Arrays.asList(t(player, "SHOP_SETTING.MAX_PAGE_LORE"), t(player, "SHOP_SETTING.L_R_SHIFT"))), data.get().getInt("Options.page"));
+
+        // 배경 색상
+        String color = confSec_Options.getString("background","");
+        Material mat = Material.getMaterial( color.toUpperCase() + "_CONCRETE");
+        if (mat == null)
+            mat = Material.LIGHT_GRAY_CONCRETE;
+        CreateButton(BACKGROUND, mat, t(player, "SHOP_SETTING.BACKGROUND"), "§7" + ChatColor.stripColor(t(player, "SHOP_SETTING.BACKGROUND_LORE")));
 
         // 로테이션 에디터
         int currentRotation = confSec_Options.getInt("Rotation.Current", -1);
@@ -417,6 +425,11 @@ public final class ShopSettings extends InGameUI
                 Bukkit.dispatchCommand(player, "DynamicShop shop " + shopName + " maxpage " + targetValue);
             }
             DynaShopAPI.openShopSettingGui(player, shopName);
+        }
+        // 배경 색상 변경
+        else if (e.getSlot() == BACKGROUND)
+        {
+            DynamicShop.PaidOnlyMsg(player);
         }
         // 로테이션 편집기
         else if (e.getSlot() == ROTATION_EDITOR)

@@ -102,6 +102,7 @@ public final class LangUtil
             ccLang.get().addDefault("SHOP.TRADE_LIMIT_BUY", "§a구매량 제한 : {num} 남음");
             ccLang.get().addDefault("SHOP.TRADE_LIMIT_SELL", "§a판매량 제한 : {num} 남음");
             ccLang.get().addDefault("SHOP.TRADE_LIMIT_TIMER", "§a다음 리셋: {time}");
+            ccLang.get().addDefault("SHOP.CLICK_TO_ADD", "§e클릭: 추가");
 
             ccLang.get().addDefault("SHOP_SETTING_TITLE", "§3상점 설정");
             ccLang.get().addDefault("SHOP_SETTING.LOG_TOGGLE_LORE", "§e우클릭: 로그 뷰어");
@@ -109,6 +110,8 @@ public final class LangUtil
             ccLang.get().addDefault("SHOP_SETTING.LOG_PRINT_ADMIN", "§f로그를 어드민에게 출력");
             ccLang.get().addDefault("SHOP_SETTING.MAX_PAGE", "§f최대 페이지");
             ccLang.get().addDefault("SHOP_SETTING.MAX_PAGE_LORE", "§f상점의 최대 페이지를 설정합니다");
+            ccLang.get().addDefault("SHOP_SETTING.BACKGROUND", "§f배경 색상");
+            ccLang.get().addDefault("SHOP_SETTING.BACKGROUND_LORE", "§e클릭: 변경");
             ccLang.get().addDefault("SHOP_SETTING.L_R_SHIFT", "§e좌: -1 우: +1 Shift: x5");
             ccLang.get().addDefault("SHOP_SETTING.FLAG", "§f플래그");
             ccLang.get().addDefault("SHOP_SETTING.SHOP_SETTINGS_LORE", "§e우클릭: 상점 편집");
@@ -546,6 +549,7 @@ public final class LangUtil
             ccLang.get().addDefault("SHOP.TRADE_LIMIT_BUY", "§aPurchase limit: {num}left");
             ccLang.get().addDefault("SHOP.TRADE_LIMIT_SELL", "§aSales limit: {num}left");
             ccLang.get().addDefault("SHOP.TRADE_LIMIT_TIMER", "§aNext reset: {time}");
+            ccLang.get().addDefault("SHOP.CLICK_TO_ADD", "§eClick: Add");
 
             ccLang.get().addDefault("SHOP_SETTING_TITLE", "§3Shop Settings");
             ccLang.get().addDefault("SHOP_SETTING.LOG_TOGGLE_LORE", "§eRMB: Log Viewer");
@@ -553,6 +557,8 @@ public final class LangUtil
             ccLang.get().addDefault("SHOP_SETTING.LOG_PRINT_ADMIN", "§fPrint log to admin");
             ccLang.get().addDefault("SHOP_SETTING.MAX_PAGE", "§fMax page");
             ccLang.get().addDefault("SHOP_SETTING.MAX_PAGE_LORE", "§fSets the maximum page for the shop.");
+            ccLang.get().addDefault("SHOP_SETTING.BACKGROUND", "§fBackground color");
+            ccLang.get().addDefault("SHOP_SETTING.BACKGROUND_LORE", "§eClick: Change color");
             ccLang.get().addDefault("SHOP_SETTING.L_R_SHIFT", "§eLMB: -1 RMB: +1 Shift: x5");
             ccLang.get().addDefault("SHOP_SETTING.FLAG", "§fFlag");
             ccLang.get().addDefault("SHOP_SETTING.SHOP_SETTINGS_LORE", "§eRMB: Shop Settings");

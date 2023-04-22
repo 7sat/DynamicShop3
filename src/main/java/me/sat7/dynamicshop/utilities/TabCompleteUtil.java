@@ -154,6 +154,7 @@ public final class TabCompleteUtil
                             temp.add("sellbuy");
                             temp.add("log");
                             temp.add("resetTradingVolume");
+                            temp.add("background");
                         }
 
                         AddToAutoCompleteIfValid(args[2]);
@@ -458,6 +459,31 @@ public final class TabCompleteUtil
 
                                 Help.showHelp("resetTradingVolume", (Player) sender, args);
                             }
+                        } else if (args[2].equalsIgnoreCase("background") && sender.hasPermission(P_ADMIN_SHOP_EDIT))
+                        {
+                            if (args.length == 4)
+                            {
+                                temp.add("clear");
+                                temp.add("black");
+                                temp.add("gray");
+                                temp.add("light_gray");
+                                temp.add("white");
+                                temp.add("cyan");
+                                temp.add("light_blue");
+                                temp.add("blue");
+                                temp.add("brown");
+                                temp.add("green");
+                                temp.add("lime");
+                                temp.add("yellow");
+                                temp.add("orange");
+                                temp.add("pink");
+                                temp.add("magenta");
+                                temp.add("purple");
+                                temp.add("red");
+                                AddToAutoCompleteIfValid(args[3]);
+                            }
+
+                            Help.showHelp("background", (Player) sender, args);
                         }
                     }
                 } else if (args[0].equalsIgnoreCase("createshop") && sender.hasPermission(P_ADMIN_CREATE_SHOP))
