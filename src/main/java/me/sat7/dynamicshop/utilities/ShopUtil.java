@@ -4,6 +4,7 @@ import java.io.File;
 import java.text.SimpleDateFormat;
 import java.util.*;
 
+import lombok.NonNull;
 import me.sat7.dynamicshop.models.DSItem;
 import me.sat7.dynamicshop.transactions.Calc;
 import org.bukkit.Bukkit;
@@ -71,10 +72,11 @@ public final class ShopUtil
             data.get().options().header("Shop name can not contain formatting codes, '/' and ' '");
             data.get().options().copyHeader(true);
 
-            data.get().set("Options.page", 2);
             data.get().set("Options.title", "Sample Shop");
             data.get().set("Options.lore", "This is sample shop");
             data.get().set("Options.permission", "");
+            data.get().set("Options.page", 2);
+            data.get().set("Options.currency", Constants.S_VAULT);
             data.get().set("0.mat", "DIRT");
             data.get().set("0.value", 1);
             data.get().set("0.median", 10000);
@@ -166,7 +168,7 @@ public final class ShopUtil
             }
         }
 
-        if (userVersion < 6)
+        if (userVersion < 7)
         {
             for(Map.Entry<String, CustomConfig> entry : shopConfigFiles.entrySet())
             {
@@ -174,12 +176,17 @@ public final class ShopUtil
                 if (fc.contains("Options.flag.jobpoint"))
                 {
                     fc.set("Options.flag.jobpoint", null);
-                    fc.set("Options.currency", "jobpoint");
+                    fc.set("Options.currency", Constants.S_JOBPOINT);
                 }
                 if (fc.contains("Options.flag.playerpoint"))
                 {
                     fc.set("Options.flag.playerpoint", null);
-                    fc.set("Options.currency", "playerpoint");
+                    fc.set("Options.currency", Constants.S_PLAYERPOINT);
+                }
+
+                if (!fc.contains("Options.currency"))
+                {
+                    fc.set("Options.currency", Constants.S_VAULT);
                 }
             }
         }
@@ -849,7 +856,7 @@ public final class ShopUtil
         double bestPrice = -1;
         int tradeIdx = -1;
 
-        int currencyInt = -1;
+        String currency = "";
 
         // 접근가능한 상점중 최고가 찾기
         for(Map.Entry<String, CustomConfig> entry : shopConfigFiles.entrySet())
@@ -898,28 +905,25 @@ public final class ShopUtil
                     continue; // 구매만 가능함
 
                 // 여러 재화로 취급중인 경우 지원 안함.
-                int tempCurrencyIndex = 0;
-                if (data.get().getString("Options.currency","").equalsIgnoreCase("jobpoint"))
+                if (currency.isEmpty())
                 {
-                    tempCurrencyIndex = 1;
+                    currency = ShopUtil.GetCurrency(data);
                 }
-                else if (data.get().getString("Options.currency","").equalsIgnoreCase("playerpoint"))
-                {
-                    tempCurrencyIndex = 2;
-                }
-                else if (data.get().getString("Options.currency","").equalsIgnoreCase("exp"))
-                {
-                    tempCurrencyIndex = 3;
-                }
-
-                if (currencyInt == -1)
-                {
-                    currencyInt = tempCurrencyIndex;
-                }
-                else if (currencyInt != tempCurrencyIndex)
+                else if (!currency.equalsIgnoreCase(ShopUtil.GetCurrency(data)))
                 {
                     if(player != null)
-                        player.sendMessage(DynamicShop.dsPrefix(player) + t(player, "MESSAGE.Q_SEARCH_FAIL_CURRENCY"));
+                    {
+                        boolean useLocalizedName = ConfigUtil.GetLocalizedItemName();
+                        if (useLocalizedName)
+                        {
+                            String message = DynamicShop.dsPrefix(player) + t(player, "MESSAGE.Q_SEARCH_FAIL_CURRENCY") + " - <item>";
+                            LangUtil.sendMessageWithLocalizedItemName(player, message, itemStack.getType());
+                        }
+                        else
+                        {
+                            player.sendMessage(DynamicShop.dsPrefix(player) + t(player, "MESSAGE.Q_SEARCH_FAIL_CURRENCY") + " - " + ItemsUtil.getBeautifiedName(itemStack.getType()));
+                        }
+                    }
 
                     return new String[]{"","-2"};
                 }
@@ -1020,15 +1024,15 @@ public final class ShopUtil
 
                 // 여러 재화로 취급중인 경우 지원 안함.
                 int tempCurrencyIndex = 0;
-                if (data.get().getString("Options.currency","").equalsIgnoreCase("jobpoint"))
+                if (ShopUtil.GetCurrency(data).equalsIgnoreCase(Constants.S_JOBPOINT))
                 {
                     tempCurrencyIndex = 1;
                 }
-                else if (data.get().getString("Options.currency","").equalsIgnoreCase("playerpoint"))
+                else if (ShopUtil.GetCurrency(data).equalsIgnoreCase(Constants.S_PLAYERPOINT))
                 {
                     tempCurrencyIndex = 2;
                 }
-                else if (data.get().getString("Options.currency","").equalsIgnoreCase("exp"))
+                else if (ShopUtil.GetCurrency(data).equalsIgnoreCase(Constants.S_EXP))
                 {
                     tempCurrencyIndex = 3;
                 }
@@ -1040,7 +1044,18 @@ public final class ShopUtil
                 else if (currencyInt != tempCurrencyIndex)
                 {
                     if(player != null)
-                        player.sendMessage(DynamicShop.dsPrefix(player) + t(player, "MESSAGE.Q_SEARCH_FAIL_CURRENCY"));
+                    {
+                        boolean useLocalizedName = ConfigUtil.GetLocalizedItemName();
+                        if (useLocalizedName)
+                        {
+                            String message = DynamicShop.dsPrefix(player) + t(player, "MESSAGE.Q_SEARCH_FAIL_CURRENCY") + " - <item>";
+                            LangUtil.sendMessageWithLocalizedItemName(player, message, itemStack.getType());
+                        }
+                        else
+                        {
+                            player.sendMessage(DynamicShop.dsPrefix(player) + t(player, "MESSAGE.Q_SEARCH_FAIL_CURRENCY") + " - " + ItemsUtil.getBeautifiedName(itemStack.getType()));
+                        }
+                    }
 
                     return new String[]{"","-2"};
                 }
@@ -1533,5 +1548,31 @@ public final class ShopUtil
             ShopUtil.shopDirty.put(shopName, true);
 
         return sdf.format(next);
+    }
+
+    public static String GetCurrency(@NonNull CustomConfig config)
+    {
+        return GetCurrency(config.get());
+    }
+    public static String GetCurrency(@NonNull FileConfiguration fileConfiguration)
+    {
+        String temp = fileConfiguration.getString("Options.currency", "");
+
+        if (temp.equalsIgnoreCase(Constants.S_EXP))
+        {
+            return Constants.S_EXP;
+        }
+        else if (temp.equalsIgnoreCase(Constants.S_PLAYERPOINT))
+        {
+            return Constants.S_PLAYERPOINT;
+        }
+        else if (temp.equalsIgnoreCase(Constants.S_JOBPOINT))
+        {
+            return Constants.S_JOBPOINT;
+        }
+        else
+        {
+            return Constants.S_VAULT;
+        }
     }
 }

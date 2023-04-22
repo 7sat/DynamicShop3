@@ -1,25 +1,26 @@
 package me.sat7.dynamicshop.transactions;
 
-import java.util.HashMap;
-import java.util.Map;
-
+import me.sat7.dynamicshop.DynaShopAPI;
+import me.sat7.dynamicshop.DynamicShop;
+import me.sat7.dynamicshop.constants.Constants;
+import me.sat7.dynamicshop.economyhook.JobsHook;
 import me.sat7.dynamicshop.economyhook.PlayerpointHook;
 import me.sat7.dynamicshop.events.ShopBuySellEvent;
 import me.sat7.dynamicshop.files.CustomConfig;
 import me.sat7.dynamicshop.guis.ItemTrade;
 import me.sat7.dynamicshop.utilities.*;
+import net.milkbowl.vault.economy.Economy;
+import net.milkbowl.vault.economy.EconomyResponse;
 import org.bukkit.Bukkit;
 import org.bukkit.Location;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
 
-import me.sat7.dynamicshop.DynaShopAPI;
-import me.sat7.dynamicshop.DynamicShop;
-import me.sat7.dynamicshop.economyhook.JobsHook;
-import net.milkbowl.vault.economy.Economy;
-import net.milkbowl.vault.economy.EconomyResponse;
+import java.util.HashMap;
+import java.util.Map;
 
-import static me.sat7.dynamicshop.utilities.LangUtil.*;
+import static me.sat7.dynamicshop.utilities.LangUtil.n;
+import static me.sat7.dynamicshop.utilities.LangUtil.t;
 
 public final class Buy
 {
@@ -28,15 +29,10 @@ public final class Buy
 
     }
 
-    public static void buy(ItemTrade.CURRENCY currency, Player player, String shopName, String tradeIdx, ItemStack itemStack, double priceSum, boolean infiniteStock)
+    public static void buy(String currency, Player player, String shopName, String tradeIdx, ItemStack itemStack, double priceSum, boolean infiniteStock)
     {
-        CustomConfig data = ShopUtil.shopConfigFiles.get(shopName);
-
         Economy econ = null;
-        if (currency == ItemTrade.CURRENCY.VAULT)
-        {
-            econ = DynamicShop.getEconomy();
-        }
+        CustomConfig data = ShopUtil.shopConfigFiles.get(shopName);
 
         int tradeAmount = 0;
         int stockOld = data.get().getInt(tradeIdx + ".stock");
@@ -44,21 +40,22 @@ public final class Buy
         double priceSellOld = DynaShopAPI.getSellPrice(shopName, itemStack);
 
         double playerBalance = 0;
-        if (currency == ItemTrade.CURRENCY.VAULT)
-        {
-            playerBalance = econ.getBalance(player);
-        }
-        else if (currency == ItemTrade.CURRENCY.EXP)
+        if (currency.equalsIgnoreCase(Constants.S_EXP))
         {
             playerBalance = player.getTotalExperience();
         }
-        else if (currency == ItemTrade.CURRENCY.JOB_POINT)
+        else if (currency.equalsIgnoreCase(Constants.S_JOBPOINT))
         {
             playerBalance = JobsHook.getCurJobPoints(player);
         }
-        else if (currency == ItemTrade.CURRENCY.PLAYER_POINT)
+        else if (currency.equalsIgnoreCase(Constants.S_PLAYERPOINT))
         {
             playerBalance = PlayerpointHook.getCurrentPP(player);
+        }
+        else
+        {
+            econ = DynamicShop.getEconomy();
+            playerBalance = econ.getBalance(player);
         }
 
         // 플레이어 당 거래량 제한 확인
@@ -99,21 +96,21 @@ public final class Buy
         if (tradeAmount <= 0)
         {
             String message = "";
-            if (currency == ItemTrade.CURRENCY.VAULT)
-            {
-                message = DynamicShop.dsPrefix(player) + t(player, "MESSAGE.NOT_ENOUGH_MONEY").replace("{bal}", n(playerBalance));
-            }
-            else if (currency == ItemTrade.CURRENCY.JOB_POINT)
+            if (currency.equalsIgnoreCase(Constants.S_JOBPOINT))
             {
                 message = DynamicShop.dsPrefix(player) + t(player, "MESSAGE.NOT_ENOUGH_POINT").replace("{bal}", n(playerBalance));
             }
-            else if (currency == ItemTrade.CURRENCY.PLAYER_POINT)
+            else if (currency.equalsIgnoreCase(Constants.S_PLAYERPOINT))
             {
                 message = DynamicShop.dsPrefix(player) + t(player, "MESSAGE.NOT_ENOUGH_PLAYER_POINT").replace("{bal}", n(playerBalance));
             }
-            else if (currency == ItemTrade.CURRENCY.EXP)
+            else if (currency.equalsIgnoreCase(Constants.S_EXP))
             {
                 message = DynamicShop.dsPrefix(player) + t(player, "MESSAGE.NOT_ENOUGH_EXP_POINT").replace("{bal}", n(playerBalance));
+            }
+            else
+            {
+                message = DynamicShop.dsPrefix(player) + t(player, "MESSAGE.NOT_ENOUGH_MONEY").replace("{bal}", n(playerBalance));
             }
 
             player.sendMessage(message);
@@ -135,7 +132,21 @@ public final class Buy
         }
 
         EconomyResponse r;
-        if (currency == ItemTrade.CURRENCY.VAULT)
+        if (currency.equalsIgnoreCase(Constants.S_JOBPOINT))
+        {
+            if (!JobsHook.addJobsPoint(player, priceSum * -1))
+                return;
+        }
+        else if (currency.equalsIgnoreCase(Constants.S_PLAYERPOINT))
+        {
+            if (!PlayerpointHook.addPP(player, priceSum * -1))
+                return;
+        }
+        else if (currency.equalsIgnoreCase(Constants.S_EXP))
+        {
+            player.giveExp((int)(priceSum * -1));
+        }
+        else
         {
             r = DynamicShop.getEconomy().withdrawPlayer(player, priceSum);
             if (!r.transactionSuccess())
@@ -143,20 +154,6 @@ public final class Buy
                 player.sendMessage(String.format("An error occured: %s", r.errorMessage));
                 return;
             }
-        }
-        else if (currency == ItemTrade.CURRENCY.JOB_POINT)
-        {
-            if (!JobsHook.addJobsPoint(player, priceSum * -1))
-                return;
-        }
-        else if (currency == ItemTrade.CURRENCY.PLAYER_POINT)
-        {
-            if (!PlayerpointHook.addPP(player, priceSum * -1))
-                return;
-        }
-        else if (currency == ItemTrade.CURRENCY.EXP)
-        {
-            player.giveExp((int)(priceSum * -1));
         }
 
         int leftAmount = tradeAmount;
@@ -190,7 +187,7 @@ public final class Buy
         }
 
         //로그 기록
-        LogUtil.addLog(shopName, itemStack.getType().toString(), tradeAmount, priceSum, StringUtil.GetCurrencyString(currency), player.getName());
+        LogUtil.addLog(shopName, itemStack.getType().toString(), tradeAmount, priceSum, currency, player.getName());
 
         // 메시지 출력
         SendBuyMessage(currency, econ, player, tradeAmount, priceSum, itemStack);
@@ -215,38 +212,38 @@ public final class Buy
         Bukkit.getPluginManager().callEvent(event);
     }
 
-    private static void SendBuyMessage(ItemTrade.CURRENCY currency, Economy econ, Player player, int actualAmount, double priceSum, ItemStack itemStack)
+    private static void SendBuyMessage(String currency, Economy econ, Player player, int actualAmount, double priceSum, ItemStack itemStack)
     {
         String message = "";
         boolean itemHasCustomName = itemStack.getItemMeta() != null && itemStack.getItemMeta().hasDisplayName();
         boolean useLocalizedName = !itemHasCustomName && ConfigUtil.GetLocalizedItemName();
-        if (currency == ItemTrade.CURRENCY.VAULT)
-        {
-            message = DynamicShop.dsPrefix(player) + t(player, "MESSAGE.BUY_SUCCESS", !useLocalizedName)
-                    .replace("{amount}", Integer.toString(actualAmount))
-                    .replace("{price}", n(priceSum))
-                    .replace("{bal}", n(econ.getBalance(player)));
-        }
-        else if (currency == ItemTrade.CURRENCY.EXP)
+        if (currency.equalsIgnoreCase(Constants.S_EXP))
         {
             message = DynamicShop.dsPrefix(player) + t(player, "MESSAGE.BUY_SUCCESS_EXP", !useLocalizedName)
                     .replace("{amount}", Integer.toString(actualAmount))
                     .replace("{price}", n(priceSum, true))
                     .replace("{bal}", n(player.getTotalExperience()));
         }
-        else if (currency == ItemTrade.CURRENCY.JOB_POINT)
+        else if (currency.equalsIgnoreCase(Constants.S_JOBPOINT))
         {
             message = DynamicShop.dsPrefix(player) + t(player, "MESSAGE.BUY_SUCCESS_JP", !useLocalizedName)
                     .replace("{amount}", Integer.toString(actualAmount))
                     .replace("{price}", n(priceSum))
                     .replace("{bal}", n(JobsHook.getCurJobPoints(player)));
         }
-        else if (currency == ItemTrade.CURRENCY.PLAYER_POINT)
+        else if (currency.equalsIgnoreCase(Constants.S_PLAYERPOINT))
         {
             message = DynamicShop.dsPrefix(player) + t(player, "MESSAGE.BUY_SUCCESS_PP", !useLocalizedName)
                     .replace("{amount}", Integer.toString(actualAmount))
                     .replace("{price}", n(priceSum, true))
                     .replace("{bal}", n(PlayerpointHook.getCurrentPP(player)));
+        }
+        else
+        {
+            message = DynamicShop.dsPrefix(player) + t(player, "MESSAGE.BUY_SUCCESS", !useLocalizedName)
+                    .replace("{amount}", Integer.toString(actualAmount))
+                    .replace("{price}", n(priceSum))
+                    .replace("{bal}", n(econ.getBalance(player)));
         }
 
         if (useLocalizedName)

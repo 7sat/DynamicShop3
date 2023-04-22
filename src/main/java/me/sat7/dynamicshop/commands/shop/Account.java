@@ -3,6 +3,7 @@ package me.sat7.dynamicshop.commands.shop;
 import me.sat7.dynamicshop.DynamicShop;
 import me.sat7.dynamicshop.commands.DSCMD;
 import me.sat7.dynamicshop.commands.Shop;
+import me.sat7.dynamicshop.constants.Constants;
 import me.sat7.dynamicshop.economyhook.PlayerpointHook;
 import me.sat7.dynamicshop.files.CustomConfig;
 import me.sat7.dynamicshop.economyhook.JobsHook;
@@ -117,7 +118,7 @@ public class Account extends DSCMD
                 }
 
                 // 출발 상점과 도착 상점의 통화 유형이 다름
-                if (!shopData.get().getString("Options.currency", "").equals(targetShopData.get().getString("Options.currency", "")))
+                if (!ShopUtil.GetCurrency(shopData).equals(ShopUtil.GetCurrency(targetShopData)))
                 {
                     sender.sendMessage(DynamicShop.dsPrefix(sender) + t(sender, "ERR.SHOP_DIFF_CURRENCY"));
                     return;
@@ -156,17 +157,17 @@ public class Account extends DSCMD
                 // 출발 상점에 돈이 부족
                 if (ShopUtil.getShopBalance(args[1]) < amount)
                 {
-                    if (shopData.get().getString("Options.currency","").equalsIgnoreCase("jobpoint"))
+                    if (ShopUtil.GetCurrency(shopData).equalsIgnoreCase(Constants.S_JOBPOINT))
                     {
                         sender.sendMessage(DynamicShop.dsPrefix(sender) + t(sender, "MESSAGE.NOT_ENOUGH_POINT").
                                 replace("{bal}", n(ShopUtil.getShopBalance(args[1]))));
                     }
-                    else if (shopData.get().getString("Options.currency","").equalsIgnoreCase("playerpoint"))
+                    else if (ShopUtil.GetCurrency(shopData).equalsIgnoreCase(Constants.S_PLAYERPOINT))
                     {
                         sender.sendMessage(DynamicShop.dsPrefix(sender) + t(sender, "MESSAGE.NOT_ENOUGH_PLAYER_POINT").
                                 replace("{bal}", n(ShopUtil.getShopBalance(args[1]))));
                     }
-                    else if (shopData.get().getString("Options.currency","").equalsIgnoreCase("exp"))
+                    else if (ShopUtil.GetCurrency(shopData).equalsIgnoreCase(Constants.S_EXP))
                     {
                         sender.sendMessage(DynamicShop.dsPrefix(sender) + t(sender, "MESSAGE.NOT_ENOUGH_EXP_POINT").
                                 replace("{bal}", n(ShopUtil.getShopBalance(args[1]))));
@@ -197,7 +198,7 @@ public class Account extends DSCMD
                     }
 
                     // 출발 상점과 도착 상점의 통화 유형이 다름
-                    if (!shopData.get().getString("Options.currency", "").equals(targetShopData.get().getString("Options.currency", "")))
+                    if (!ShopUtil.GetCurrency(shopData).equals(ShopUtil.GetCurrency(targetShopData)))
                     {
                         sender.sendMessage(DynamicShop.dsPrefix(sender) + t(sender, "ERR.SHOP_DIFF_CURRENCY"));
                         return;
@@ -225,7 +226,7 @@ public class Account extends DSCMD
                             return;
                         }
 
-                        if (shopData.get().getString("Options.currency","").equalsIgnoreCase("jobpoint"))
+                        if (ShopUtil.GetCurrency(shopData).equalsIgnoreCase(Constants.S_JOBPOINT))
                         {
                             JobsHook.addJobsPoint(target, amount);
                             ShopUtil.addShopBalance(args[1], amount * -1);
@@ -233,7 +234,7 @@ public class Account extends DSCMD
 
                             sender.sendMessage(DynamicShop.dsPrefix(sender) + t(sender, "MESSAGE.TRANSFER_SUCCESS"));
                         }
-                        else if (shopData.get().getString("Options.currency","").equalsIgnoreCase("playerpoint"))
+                        else if (ShopUtil.GetCurrency(shopData).equalsIgnoreCase(Constants.S_PLAYERPOINT))
                         {
                             PlayerpointHook.addPP(target, amount);
                             ShopUtil.addShopBalance(args[1], amount * -1);
@@ -241,7 +242,7 @@ public class Account extends DSCMD
 
                             sender.sendMessage(DynamicShop.dsPrefix(sender) + t(sender, "MESSAGE.TRANSFER_SUCCESS"));
                         }
-                        else if (shopData.get().getString("Options.currency","").equalsIgnoreCase("exp"))
+                        else if (ShopUtil.GetCurrency(shopData).equalsIgnoreCase(Constants.S_EXP))
                         {
                             target.giveExp((int)amount);
                             ShopUtil.addShopBalance(args[1], amount * -1);

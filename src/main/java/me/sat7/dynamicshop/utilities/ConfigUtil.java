@@ -6,6 +6,7 @@ import me.sat7.dynamicshop.DynamicShop;
 import me.sat7.dynamicshop.files.CustomConfig;
 import org.bukkit.Bukkit;
 import org.bukkit.configuration.ConfigurationSection;
+import org.bukkit.configuration.file.FileConfiguration;
 
 import java.util.ArrayList;
 import java.util.Map;
@@ -14,7 +15,7 @@ import static me.sat7.dynamicshop.utilities.MathUtil.Clamp;
 
 public final class ConfigUtil
 {
-    public final static int PluginConfigVersion = 6;
+    public final static int PluginConfigVersion = 7;
 
     public static int GetConfigVersion()
     {
@@ -25,6 +26,8 @@ public final class ConfigUtil
     {
         DynamicShop.plugin.getConfig().set("Version", value);
     }
+
+    public static FileConfiguration config;
 
     // ============================================================
 
@@ -42,6 +45,8 @@ public final class ConfigUtil
         DynamicShop.plugin.saveDefaultConfig();
         DynamicShop.plugin.reloadConfig();
 
+        config = DynamicShop.plugin.getConfig();
+
         try
         {
             if(Bukkit.getVersion().contains("1.16") || Bukkit.getVersion().contains("1.17"))
@@ -52,11 +57,11 @@ public final class ConfigUtil
                     temp.append(s);
                     temp.append("\n");
                 }
-                DynamicShop.plugin.getConfig().options().header(temp.toString());
+                config.options().header(temp.toString());
             }
             else
             {
-                DynamicShop.plugin.getConfig().options().setHeader(header);
+                config.options().setHeader(header);
             }
         }
         catch (Exception ignore){}
@@ -75,217 +80,217 @@ public final class ConfigUtil
 
     public static String GetLanguage()
     {
-        return DynamicShop.plugin.getConfig().getString("Language");
+        return config.getString("Language");
     }
 
     public static String GetPrefix()
     {
-        return DynamicShop.plugin.getConfig().getString("Prefix");
+        return config.getString("Prefix");
     }
 
     // [ Command ] ==========
 
     public static boolean GetUseShopCommand()
     {
-        return DynamicShop.plugin.getConfig().getBoolean("Command.UseShopCommand");
+        return config.getBoolean("Command.UseShopCommand");
     }
 
     public static boolean GetOpenStartPageInsteadOfDefaultShop()
     {
-        return DynamicShop.plugin.getConfig().getBoolean("Command.OpenStartPageInsteadOfDefaultShop");
+        return config.getBoolean("Command.OpenStartPageInsteadOfDefaultShop");
     }
 
     public static String GetDefaultShopName()
     {
-        return DynamicShop.plugin.getConfig().getString("Command.DefaultShopName");
+        return config.getString("Command.DefaultShopName");
     }
 
     public static void SetDefaultShopName(String value)
     {
-        DynamicShop.plugin.getConfig().set("Command.DefaultShopName", value);
+        config.set("Command.DefaultShopName", value);
     }
 
     public static boolean GetPermissionCheckWhenCreatingAShopList()
     {
-        return DynamicShop.plugin.getConfig().getBoolean("Command.PermissionCheckWhenCreatingAShopList");
+        return config.getBoolean("Command.PermissionCheckWhenCreatingAShopList");
     }
 
     // [ Shop ] ==========
 
     public static int GetSalesTax()
     {
-        return DynamicShop.plugin.getConfig().getInt("Shop.SalesTax");
+        return config.getInt("Shop.SalesTax");
     }
 
     public static void SetSalesTax(int value)
     {
-        DynamicShop.plugin.getConfig().set("Shop.SalesTax", value);
+        config.set("Shop.SalesTax", value);
     }
 
     public static double GetDeliveryChargeScale()
     {
-        return DynamicShop.plugin.getConfig().getDouble("Shop.DeliveryChargeScale");
+        return config.getDouble("Shop.DeliveryChargeScale");
     }
 
     public static void SetDeliveryChargeScale(double value)
     {
-        DynamicShop.plugin.getConfig().set("Shop.DeliveryChargeScale", value);
+        config.set("Shop.DeliveryChargeScale", value);
     }
 
     public static int GetDeliveryChargeMin()
     {
-        return DynamicShop.plugin.getConfig().getInt("Shop.DeliveryChargeMin");
+        return config.getInt("Shop.DeliveryChargeMin");
     }
 
     public static void SetDeliveryChargeMin(int value)
     {
-        DynamicShop.plugin.getConfig().set("Shop.DeliveryChargeMin", value);
+        config.set("Shop.DeliveryChargeMin", value);
     }
 
     public static int GetDeliveryChargeMax()
     {
-        return DynamicShop.plugin.getConfig().getInt("Shop.DeliveryChargeMax");
+        return config.getInt("Shop.DeliveryChargeMax");
     }
 
     public static void SetDeliveryChargeMax(int value)
     {
-        DynamicShop.plugin.getConfig().set("Shop.DeliveryChargeMax", value);
+        config.set("Shop.DeliveryChargeMax", value);
     }
 
     public static int GetNumberOfPlayer()
     {
-        return DynamicShop.plugin.getConfig().getInt("Shop.NumberOfPlayer");
+        return config.getInt("Shop.NumberOfPlayer");
     }
 
     public static void SetNumberOfPlayer(int value)
     {
-        DynamicShop.plugin.getConfig().set("Shop.NumberOfPlayer", value);
+        config.set("Shop.NumberOfPlayer", value);
     }
 
     public static boolean GetUseLegacyStockStabilization()
     {
-        return DynamicShop.plugin.getConfig().getBoolean("Shop.UseLegacyStockStabilization");
+        return config.getBoolean("Shop.UseLegacyStockStabilization");
     }
 
     // [ UI ] ==========
 
     public static boolean GetDisplayStockAsStack()
     {
-        return DynamicShop.plugin.getConfig().getBoolean("UI.DisplayStockAsStack");
+        return config.getBoolean("UI.DisplayStockAsStack");
     }
 
     public static boolean GetOpenStartPageWhenClickCloseButton()
     {
-        return DynamicShop.plugin.getConfig().getBoolean("UI.OpenStartPageWhenClickCloseButton");
+        return config.getBoolean("UI.OpenStartPageWhenClickCloseButton");
     }
 
     public static String GetCloseButtonIcon()
     {
-        return DynamicShop.plugin.getConfig().getString("UI.CloseButtonIcon");
+        return config.getString("UI.CloseButtonIcon");
     }
 
     public static void SetCloseButtonIcon(String value)
     {
-        DynamicShop.plugin.getConfig().set("UI.CloseButtonIcon", value);
+        config.set("UI.CloseButtonIcon", value);
     }
 
     public static String GetPageButtonIcon()
     {
-        return DynamicShop.plugin.getConfig().getString("UI.PageButtonIcon");
+        return config.getString("UI.PageButtonIcon");
     }
 
     public static void SetPageButtonIcon(String value)
     {
-        DynamicShop.plugin.getConfig().set("UI.PageButtonIcon", value);
+        config.set("UI.PageButtonIcon", value);
     }
 
     public static String GetShopInfoButtonIcon()
     {
-        return DynamicShop.plugin.getConfig().getString("UI.ShopInfoButtonIcon");
+        return config.getString("UI.ShopInfoButtonIcon");
     }
 
     public static void SetShopInfoButtonIcon(String value)
     {
-        DynamicShop.plugin.getConfig().set("UI.ShopInfoButtonIcon", value);
+        config.set("UI.ShopInfoButtonIcon", value);
     }
 
     public static String GetIntFormat()
     {
-        return DynamicShop.plugin.getConfig().getString("UI.IntFormat");
+        return config.getString("UI.IntFormat");
     }
 
     public static String GetDoubleFormat()
     {
-        return DynamicShop.plugin.getConfig().getString("UI.DoubleFormat");
+        return config.getString("UI.DoubleFormat");
     }
 
     public static boolean GetLocalizedItemName()
     {
-        return DynamicShop.plugin.getConfig().getBoolean("UI.LocalizedItemName");
+        return config.getBoolean("UI.LocalizedItemName");
     }
 
     public static boolean GetUsePlaceholderAPI()
     {
-        return DynamicShop.plugin.getConfig().getBoolean("UI.UsePlaceholderAPI");
+        return config.getBoolean("UI.UsePlaceholderAPI");
     }
 
     public static boolean GetUseHexColorCode()
     {
-        return DynamicShop.plugin.getConfig().getBoolean("UI.UseHexColorCode");
+        return config.getBoolean("UI.UseHexColorCode");
     }
 
     public static boolean GetEnableInventoryClickSearch_StartPage()
     {
-        return DynamicShop.plugin.getConfig().getBoolean("UI.EnableInventoryClickSearch.StartPage");
+        return config.getBoolean("UI.EnableInventoryClickSearch.StartPage");
     }
 
     public static boolean GetEnableInventoryClickSearch_Shop()
     {
-        return DynamicShop.plugin.getConfig().getBoolean("UI.EnableInventoryClickSearch.Shop");
+        return config.getBoolean("UI.EnableInventoryClickSearch.Shop");
     }
 
     // [ Log ] ==========
 
     public static boolean GetSaveLogs()
     {
-        return DynamicShop.plugin.getConfig().getBoolean("Log.SaveLogs");
+        return config.getBoolean("Log.SaveLogs");
     }
 
     public static String GetLogFileNameFormat()
     {
-        return DynamicShop.plugin.getConfig().getString("Log.LogFileNameFormat");
+        return config.getString("Log.LogFileNameFormat");
     }
 
     public static boolean GetCullLogs()
     {
-        return DynamicShop.plugin.getConfig().getBoolean("Log.CullLogs");
+        return config.getBoolean("Log.CullLogs");
     }
 
     public static int GetLogCullAgeMinutes()
     {
-        return DynamicShop.plugin.getConfig().getInt("Log.LogCullAgeMinutes");
+        return config.getInt("Log.LogCullAgeMinutes");
     }
 
     public static int GetLogCullTimeMinutes()
     {
-        return DynamicShop.plugin.getConfig().getInt("Log.LogCullTimeMinutes");
+        return config.getInt("Log.LogCullTimeMinutes");
     }
 
     // [ ShopYmlBackup ] ==========
 
     public static boolean GetShopYmlBackup_Enable()
     {
-        return DynamicShop.plugin.getConfig().getBoolean("ShopYmlBackup.Enable");
+        return config.getBoolean("ShopYmlBackup.Enable");
     }
 
     public static int GetShopYmlBackup_IntervalMinutes()
     {
-        return DynamicShop.plugin.getConfig().getInt("ShopYmlBackup.IntervalMinutes");
+        return config.getInt("ShopYmlBackup.IntervalMinutes");
     }
 
     public static int GetShopYmlBackup_CullAgeMinutes()
     {
-        return DynamicShop.plugin.getConfig().getInt("ShopYmlBackup.CullAgeMinutes");
+        return config.getInt("ShopYmlBackup.CullAgeMinutes");
     }
 
     // ============================================================
@@ -325,87 +330,87 @@ public final class ConfigUtil
 
     private static void ConvertV2toV3()
     {
-        if (DynamicShop.plugin.getConfig().get("ShowTax") != null)
+        if (config.get("ShowTax") != null)
         {
-            DynamicShop.plugin.getConfig().set("ShowTax", null);
+            config.set("ShowTax", null);
         }
 
-        if (DynamicShop.plugin.getConfig().get("UseShopCommand") != null)
+        if (config.get("UseShopCommand") != null)
         {
-            DynamicShop.plugin.getConfig().set("Command.UseShopCommand", DynamicShop.plugin.getConfig().get("UseShopCommand"));
-            DynamicShop.plugin.getConfig().set("UseShopCommand", null);
+            config.set("Command.UseShopCommand", config.get("UseShopCommand"));
+            config.set("UseShopCommand", null);
         }
 
-        if (DynamicShop.plugin.getConfig().get("OpenStartPageInsteadOfDefaultShop") != null)
+        if (config.get("OpenStartPageInsteadOfDefaultShop") != null)
         {
-            DynamicShop.plugin.getConfig().set("Command.OpenStartPageInsteadOfDefaultShop", DynamicShop.plugin.getConfig().get("OpenStartPageInsteadOfDefaultShop"));
-            DynamicShop.plugin.getConfig().set("OpenStartPageInsteadOfDefaultShop", null);
+            config.set("Command.OpenStartPageInsteadOfDefaultShop", config.get("OpenStartPageInsteadOfDefaultShop"));
+            config.set("OpenStartPageInsteadOfDefaultShop", null);
         }
 
-        if (DynamicShop.plugin.getConfig().get("DefaultShopName") != null)
+        if (config.get("DefaultShopName") != null)
         {
-            DynamicShop.plugin.getConfig().set("Command.DefaultShopName", DynamicShop.plugin.getConfig().get("DefaultShopName"));
-            DynamicShop.plugin.getConfig().set("DefaultShopName", null);
+            config.set("Command.DefaultShopName", config.get("DefaultShopName"));
+            config.set("DefaultShopName", null);
         }
 
-        if (DynamicShop.plugin.getConfig().get("SalesTax") != null)
+        if (config.get("SalesTax") != null)
         {
-            DynamicShop.plugin.getConfig().set("Shop.SalesTax", DynamicShop.plugin.getConfig().get("SalesTax"));
-            DynamicShop.plugin.getConfig().set("SalesTax", null);
+            config.set("Shop.SalesTax", config.get("SalesTax"));
+            config.set("SalesTax", null);
         }
 
-        if (DynamicShop.plugin.getConfig().get("DeliveryChargeScale") != null)
+        if (config.get("DeliveryChargeScale") != null)
         {
-            DynamicShop.plugin.getConfig().set("Shop.DeliveryChargeScale", DynamicShop.plugin.getConfig().get("DeliveryChargeScale"));
-            DynamicShop.plugin.getConfig().set("DeliveryChargeScale", null);
+            config.set("Shop.DeliveryChargeScale", config.get("DeliveryChargeScale"));
+            config.set("DeliveryChargeScale", null);
         }
 
-        if (DynamicShop.plugin.getConfig().get("NumberOfPlayer") != null)
+        if (config.get("NumberOfPlayer") != null)
         {
-            DynamicShop.plugin.getConfig().set("Shop.NumberOfPlayer", DynamicShop.plugin.getConfig().get("NumberOfPlayer"));
-            DynamicShop.plugin.getConfig().set("NumberOfPlayer", null);
+            config.set("Shop.NumberOfPlayer", config.get("NumberOfPlayer"));
+            config.set("NumberOfPlayer", null);
         }
 
-        if (DynamicShop.plugin.getConfig().get("DisplayStockAsStack") != null)
+        if (config.get("DisplayStockAsStack") != null)
         {
-            DynamicShop.plugin.getConfig().set("UI.DisplayStockAsStack", DynamicShop.plugin.getConfig().get("DisplayStockAsStack"));
-            DynamicShop.plugin.getConfig().set("DisplayStockAsStack", null);
+            config.set("UI.DisplayStockAsStack", config.get("DisplayStockAsStack"));
+            config.set("DisplayStockAsStack", null);
         }
 
-        if (DynamicShop.plugin.getConfig().get("OnClickCloseButton_OpenStartPage") != null)
+        if (config.get("OnClickCloseButton_OpenStartPage") != null)
         {
-            DynamicShop.plugin.getConfig().set("UI.OpenStartPageWhenClickCloseButton", DynamicShop.plugin.getConfig().get("OnClickCloseButton_OpenStartPage"));
-            DynamicShop.plugin.getConfig().set("OnClickCloseButton_OpenStartPage", null);
+            config.set("UI.OpenStartPageWhenClickCloseButton", config.get("OnClickCloseButton_OpenStartPage"));
+            config.set("OnClickCloseButton_OpenStartPage", null);
         }
 
-        if (DynamicShop.plugin.getConfig().get("ShopInfoButtonIcon") != null)
+        if (config.get("ShopInfoButtonIcon") != null)
         {
-            DynamicShop.plugin.getConfig().set("UI.ShopInfoButtonIcon", DynamicShop.plugin.getConfig().get("ShopInfoButtonIcon"));
-            DynamicShop.plugin.getConfig().set("ShopInfoButtonIcon", null);
+            config.set("UI.ShopInfoButtonIcon", config.get("ShopInfoButtonIcon"));
+            config.set("ShopInfoButtonIcon", null);
         }
 
-        if (DynamicShop.plugin.getConfig().get("SaveLogs") != null)
+        if (config.get("SaveLogs") != null)
         {
-            DynamicShop.plugin.getConfig().set("Log.SaveLogs", DynamicShop.plugin.getConfig().get("SaveLogs"));
-            DynamicShop.plugin.getConfig().set("SaveLogs", null);
+            config.set("Log.SaveLogs", config.get("SaveLogs"));
+            config.set("SaveLogs", null);
         }
 
-        if (DynamicShop.plugin.getConfig().get("CullLogs") != null)
+        if (config.get("CullLogs") != null)
         {
-            DynamicShop.plugin.getConfig().set("Log.CullLogs", DynamicShop.plugin.getConfig().get("CullLogs"));
-            DynamicShop.plugin.getConfig().set("CullLogs", null);
+            config.set("Log.CullLogs", config.get("CullLogs"));
+            config.set("CullLogs", null);
         }
 
-        if (DynamicShop.plugin.getConfig().get("LogCullAgeMinutes") != null)
+        if (config.get("LogCullAgeMinutes") != null)
         {
-            DynamicShop.plugin.getConfig().set("Log.LogCullAgeMinutes", DynamicShop.plugin.getConfig().get("LogCullAgeMinutes"));
-            DynamicShop.plugin.getConfig().set("LogCullAgeMinutes", null);
+            config.set("Log.LogCullAgeMinutes", config.get("LogCullAgeMinutes"));
+            config.set("LogCullAgeMinutes", null);
         }
 
-        if (DynamicShop.plugin.getConfig().get("LogCullTimeMinutes") != null)
+        if (config.get("LogCullTimeMinutes") != null)
         {
-            DynamicShop.plugin.getConfig().set("Log.LogCullTimeMinutes", DynamicShop.plugin.getConfig().get("LogCullTimeMinutes"));
-            DynamicShop.plugin.getConfig().set("LogCullTimeMinutes", null);
+            config.set("Log.LogCullTimeMinutes", config.get("LogCullTimeMinutes"));
+            config.set("LogCullTimeMinutes", null);
         }
     }
 

@@ -1,6 +1,7 @@
 package me.sat7.dynamicshop;
 
 import lombok.NonNull;
+import me.sat7.dynamicshop.constants.Constants;
 import me.sat7.dynamicshop.files.CustomConfig;
 import me.sat7.dynamicshop.guis.*;
 import me.sat7.dynamicshop.models.DSItem;
@@ -224,7 +225,7 @@ public final class DynaShopAPI
         if (validateShopName(shopName))
         {
             CustomConfig data = ShopUtil.shopConfigFiles.get(shopName);
-            
+
             ArrayList<ItemStack> list = new ArrayList<>();
             for (String s : data.get().getKeys(false))
             {
@@ -366,44 +367,6 @@ public final class DynaShopAPI
     }
 
     /**
-     * Get whether a shop is for Vault money or Jobs points
-     *
-     * @param shopName The shop to check the type of
-     * @return True if it is a Job Point shop, False if it is a Vault economy money shop
-     * @throws IllegalArgumentException When the shop does not exist
-     */
-    public static boolean isJobsPointShop(@NonNull String shopName) throws IllegalArgumentException
-    {
-        if (validateShopName(shopName))
-        {
-            CustomConfig data = ShopUtil.shopConfigFiles.get(shopName);
-            return data.get().getString("Options.currency","").equalsIgnoreCase("jobpoint");
-        } else
-        {
-            throw new IllegalArgumentException("Shop: " + shopName + " does not exist");
-        }
-    }
-
-    /**
-     * Get whether a shop is for Vault money or Player points
-     *
-     * @param shopName The shop to check the type of
-     * @return True if it is a Player Point shop, False if it is a Vault economy money shop
-     * @throws IllegalArgumentException When the shop does not exist
-     */
-    public static boolean isPlayerPointShop(@NonNull String shopName) throws IllegalArgumentException
-    {
-        if (validateShopName(shopName))
-        {
-            CustomConfig data = ShopUtil.shopConfigFiles.get(shopName);
-            return data.get().getString("Options.currency","").equalsIgnoreCase("playerpoint");
-        } else
-        {
-            throw new IllegalArgumentException("Shop: " + shopName + " does not exist");
-        }
-    }
-
-    /**
      * Check if a shop exists
      *
      * @param shopName The shop name to check for
@@ -477,5 +440,56 @@ public final class DynaShopAPI
     public static int FindEmptySlot(String shopName)
     {
         return ShopUtil.findEmptyShopSlot(shopName, 0, false);
+    }
+
+    //------------
+    /**
+     * Get whether a shop is for Vault money or Jobs points
+     *
+     * @param shopName The shop to check the type of
+     * @return True if it is a Job Point shop.
+     * @throws IllegalArgumentException When the shop does not exist
+     */
+    public static boolean isJobsPointShop(@NonNull String shopName) throws IllegalArgumentException
+    {
+        if (validateShopName(shopName))
+        {
+            CustomConfig data = ShopUtil.shopConfigFiles.get(shopName);
+            return ShopUtil.GetCurrency(data).equalsIgnoreCase(Constants.S_JOBPOINT);
+        } else
+        {
+            throw new IllegalArgumentException("Shop: " + shopName + " does not exist");
+        }
+    }
+
+    /**
+     * Get whether a shop is for Vault money or Player points
+     *
+     * @param shopName The shop to check the type of
+     * @return True if it is a Player Point shop
+     * @throws IllegalArgumentException When the shop does not exist
+     */
+    public static boolean isPlayerPointShop(@NonNull String shopName) throws IllegalArgumentException
+    {
+        if (validateShopName(shopName))
+        {
+            CustomConfig data = ShopUtil.shopConfigFiles.get(shopName);
+            return ShopUtil.GetCurrency(data).equalsIgnoreCase(Constants.S_PLAYERPOINT);
+        } else
+        {
+            throw new IllegalArgumentException("Shop: " + shopName + " does not exist");
+        }
+    }
+
+    public static String GetShopCurrency(@NonNull String shopName)
+    {
+        if (validateShopName(shopName))
+        {
+            CustomConfig data = ShopUtil.shopConfigFiles.get(shopName);
+            return ShopUtil.GetCurrency(data);
+        } else
+        {
+            throw new IllegalArgumentException("Shop: " + shopName + " does not exist");
+        }
     }
 }

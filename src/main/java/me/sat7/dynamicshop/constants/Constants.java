@@ -2,18 +2,18 @@ package me.sat7.dynamicshop.constants;
 
 public final class Constants
 {
+    // Prefix
     public static final String DYNAMIC_SHOP_PREFIX = "§3[DShop]§f";
 
+    // Permission_Admin
     public static final String P_ADMIN_CREATIVE = "dshop.admin.creative";
     public static final String P_ADMIN_REMOTE_ACCESS = "dshop.admin.remoteaccess";
     public static final String P_ADMIN_DELETE_OLD_USER = "dshop.admin.deleteOldUser";
     public static final String P_ADMIN_SET_DEFAULT_SHOP = "dshop.admin.setdefaultshop";
     public static final String P_ADMIN_SET_TAX = "dshop.admin.settax";
     public static final String P_ADMIN_RELOAD = "dshop.admin.reload";
-
     public static final String P_ADMIN_CREATE_SIGN = "dshop.admin.createsign";
     public static final String P_ADMIN_DESTROY_SIGN = "dshop.admin.destroysign";
-
     public static final String P_ADMIN_CREATE_SHOP = "dshop.admin.createshop";
     public static final String P_ADMIN_DELETE_SHOP = "dshop.admin.deleteshop";
     public static final String P_ADMIN_MERGE_SHOP = "dshop.admin.mergeshop";
@@ -24,12 +24,14 @@ public final class Constants
     public static final String P_ADMIN_EDIT_ALL = "dshop.admin.editall";
     public static final String P_ADMIN_ITEM_INFO = "dshop.admin.iteminfo";
 
+    // Permission_User
     public static final String P_USE = "dshop.use"; // 이 권한은 기본적으로 지급됨
     public static final String P_SELL = "dshop.sell"; // 이 권한은 기본적으로 지급됨
     public static final String P_USE_QSELL = "dshop.use.qsell"; // 이 권한은 기본적으로 지급됨
 
-    private Constants()
-    {
-
-    }
+    // Currency
+    public static final String S_VAULT = "Vault";
+    public static final String S_EXP = "Exp";
+    public static final String S_PLAYERPOINT = "PlayerPoint";
+    public static final String S_JOBPOINT = "JobPoint";
 }

@@ -7,6 +7,7 @@ import java.util.Map;
 
 import me.sat7.dynamicshop.DynaShopAPI;
 import me.sat7.dynamicshop.commands.shop.Command;
+import me.sat7.dynamicshop.constants.Constants;
 import me.sat7.dynamicshop.economyhook.PlayerpointHook;
 import me.sat7.dynamicshop.events.OnChat;
 import me.sat7.dynamicshop.files.CustomConfig;
@@ -317,15 +318,15 @@ public final class ShopSettings extends InGameUI
         CreateFlagButton(FLAG_INT_ONLY, confSec_Options.contains("flag.integeronly"), "integerOnly", t(player, "SHOP_SETTING.INTEGER_ONLY"));
 
         currency = confSec_Options.getString("currency", "");
-        if (!currency.equalsIgnoreCase("JobPoint") &&
-            !currency.equalsIgnoreCase("PlayerPoint") &&
-            !currency.equalsIgnoreCase("Exp"))
-            currency = "Vault";
+        if (!currency.equalsIgnoreCase(Constants.S_JOBPOINT) &&
+            !currency.equalsIgnoreCase(Constants.S_PLAYERPOINT) &&
+            !currency.equalsIgnoreCase(Constants.S_EXP))
+            currency = Constants.S_VAULT;
 
-        CreateCurrencyButton(CURRENCY_VAULT, currency.equalsIgnoreCase("Vault"), t(player, "SHOP_SETTING.CURRENCY") + "Vault", t(player, "SHOP_SETTING.VAULT_LORE"));
-        CreateCurrencyButton(CURRENCY_EXP, currency.equalsIgnoreCase("Exp"), t(player, "SHOP_SETTING.CURRENCY") + "Exp", t(player, "SHOP_SETTING.EXP_LORE"));
-        CreateCurrencyButton(CURRENCY_JP, currency.equalsIgnoreCase("JobPoint"), t(player, "SHOP_SETTING.CURRENCY") + "JobPoint", t(player, "SHOP_SETTING.JOB_POINT_LORE"));
-        CreateCurrencyButton(CURRENCY_PP, currency.equalsIgnoreCase("PlayerPoint"), t(player, "SHOP_SETTING.CURRENCY") + "PlayerPoint", t(player, "SHOP_SETTING.PLAYER_POINT_LORE"));
+        CreateCurrencyButton(CURRENCY_VAULT, currency.equalsIgnoreCase(Constants.S_VAULT), t(player, "SHOP_SETTING.CURRENCY") + "Vault", t(player, "SHOP_SETTING.VAULT_LORE"));
+        CreateCurrencyButton(CURRENCY_EXP, currency.equalsIgnoreCase(Constants.S_EXP), t(player, "SHOP_SETTING.CURRENCY") + "Exp", t(player, "SHOP_SETTING.EXP_LORE"));
+        CreateCurrencyButton(CURRENCY_JP, currency.equalsIgnoreCase(Constants.S_JOBPOINT), t(player, "SHOP_SETTING.CURRENCY") + "JobPoint", t(player, "SHOP_SETTING.JOB_POINT_LORE"));
+        CreateCurrencyButton(CURRENCY_PP, currency.equalsIgnoreCase(Constants.S_PLAYERPOINT), t(player, "SHOP_SETTING.CURRENCY") + "PlayerPoint", t(player, "SHOP_SETTING.PLAYER_POINT_LORE"));
 
         // 로그 버튼
         String log_cur;
@@ -835,9 +836,9 @@ public final class ShopSettings extends InGameUI
             {
                 Bukkit.dispatchCommand(player, "DynamicShop shop " + shopName + " flag integerOnly unset");
 
-                if(data.get().getString("Options.currency","").equalsIgnoreCase("playerpoint") ||
-                   data.get().getString("Options.currency","").equalsIgnoreCase("exp"))
-                    Bukkit.dispatchCommand(player, "DynamicShop shop " + shopName + " currency vault");
+                if(ShopUtil.GetCurrency(data).equalsIgnoreCase(Constants.S_PLAYERPOINT) ||
+                   ShopUtil.GetCurrency(data).equalsIgnoreCase(Constants.S_EXP))
+                    Bukkit.dispatchCommand(player, "DynamicShop shop " + shopName + " currency " + Constants.S_VAULT);
             } else
             {
                 Bukkit.dispatchCommand(player, "DynamicShop shop " + shopName + " flag integerOnly set");
@@ -847,18 +848,18 @@ public final class ShopSettings extends InGameUI
         // vault
         else if (e.getSlot() == CURRENCY_VAULT)
         {
-            if (!currency.equalsIgnoreCase("vault"))
+            if (!currency.equalsIgnoreCase(Constants.S_VAULT))
             {
-                Bukkit.dispatchCommand(player, "DynamicShop shop " + shopName + " currency vault");
+                Bukkit.dispatchCommand(player, "DynamicShop shop " + shopName + " currency " + Constants.S_VAULT);
             }
             DynaShopAPI.openShopSettingGui(player, shopName);
         }
         // exp
         else if (e.getSlot() == CURRENCY_EXP)
         {
-            if (!currency.equalsIgnoreCase("exp"))
+            if (!currency.equalsIgnoreCase(Constants.S_EXP))
             {
-                Bukkit.dispatchCommand(player, "DynamicShop shop " + shopName + " currency exp");
+                Bukkit.dispatchCommand(player, "DynamicShop shop " + shopName + " currency " + Constants.S_EXP);
                 Bukkit.dispatchCommand(player, "DynamicShop shop " + shopName + " flag integerOnly set");
             }
             DynaShopAPI.openShopSettingGui(player, shopName);
@@ -872,9 +873,9 @@ public final class ShopSettings extends InGameUI
                 return;
             }
 
-            if (!currency.equalsIgnoreCase("jobpoint"))
+            if (!currency.equalsIgnoreCase(Constants.S_JOBPOINT))
             {
-                Bukkit.dispatchCommand(player, "DynamicShop shop " + shopName + " currency jobpoint");
+                Bukkit.dispatchCommand(player, "DynamicShop shop " + shopName + " currency " + Constants.S_JOBPOINT);
             }
             DynaShopAPI.openShopSettingGui(player, shopName);
         }
@@ -887,9 +888,9 @@ public final class ShopSettings extends InGameUI
                 return;
             }
 
-            if (!currency.equalsIgnoreCase("playerpoint"))
+            if (!currency.equalsIgnoreCase(Constants.S_PLAYERPOINT))
             {
-                Bukkit.dispatchCommand(player, "DynamicShop shop " + shopName + " currency playerpoint");
+                Bukkit.dispatchCommand(player, "DynamicShop shop " + shopName + " currency " + Constants.S_PLAYERPOINT);
                 Bukkit.dispatchCommand(player, "DynamicShop shop " + shopName + " flag integerOnly set");
             }
             DynaShopAPI.openShopSettingGui(player, shopName);

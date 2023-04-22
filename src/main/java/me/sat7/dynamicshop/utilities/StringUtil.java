@@ -146,22 +146,4 @@ public final class StringUtil {
         }
         return String.join("", itemParts);
     }
-
-    public static String GetCurrencyString (ItemTrade.CURRENCY currency)
-    {
-        if (currency == ItemTrade.CURRENCY.JOB_POINT)
-        {
-            return "jobPoint";
-        }
-        else if (currency == ItemTrade.CURRENCY.PLAYER_POINT)
-        {
-            return "playerPoint";
-        }
-        else if (currency == ItemTrade.CURRENCY.EXP)
-        {
-            return "exp";
-        }
-
-        return "vault";
-    }
 }

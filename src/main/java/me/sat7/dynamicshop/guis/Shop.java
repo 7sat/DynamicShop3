@@ -5,6 +5,7 @@ import java.util.Arrays;
 import java.util.regex.Pattern;
 
 import me.sat7.dynamicshop.DynaShopAPI;
+import me.sat7.dynamicshop.constants.Constants;
 import me.sat7.dynamicshop.economyhook.PlayerpointHook;
 import me.sat7.dynamicshop.models.DSItem;
 import me.sat7.dynamicshop.utilities.*;
@@ -53,12 +54,12 @@ public final class Shop extends InGameUI
     {
         shopData = ShopUtil.shopConfigFiles.get(shopName).get();
 
-        if (!JobsHook.jobsRebornActive && shopData.getString("Options.currency","").equalsIgnoreCase("jobpoint"))
+        if (!JobsHook.jobsRebornActive && ShopUtil.GetCurrency(shopData).equalsIgnoreCase(Constants.S_JOBPOINT))
         {
             player.sendMessage(DynamicShop.dsPrefix(player) + t(player, "ERR.JOBS_REBORN_NOT_FOUND"));
             return null;
         }
-        if (!PlayerpointHook.isPPActive && shopData.getString("Options.currency","").equalsIgnoreCase("playerpoint"))
+        if (!PlayerpointHook.isPPActive && ShopUtil.GetCurrency(shopData).equalsIgnoreCase(Constants.S_PLAYERPOINT))
         {
             player.sendMessage(DynamicShop.dsPrefix(player) + t(player, "ERR.PLAYER_POINT_NOT_FOUND"));
             return null;
@@ -220,16 +221,16 @@ public final class Shop extends InGameUI
 
                     boolean isIntTypeCurrency = false;
                     String currencyKey = "";
-                    if (DynaShopAPI.isJobsPointShop(shopName))
+                    if (ShopUtil.GetCurrency(shopData).equalsIgnoreCase(Constants.S_JOBPOINT))
                     {
                         currencyKey = "_JP";
                     }
-                    else if (DynaShopAPI.isPlayerPointShop(shopName))
+                    else if (ShopUtil.GetCurrency(shopData).equalsIgnoreCase(Constants.S_PLAYERPOINT))
                     {
                         currencyKey = "_PP";
                         isIntTypeCurrency = true;
                     }
-                    else if (shopData.getString("Options.currency","").equalsIgnoreCase("exp"))
+                    else if (ShopUtil.GetCurrency(shopData).equalsIgnoreCase(Constants.S_EXP))
                     {
                         currencyKey = "_EXP";
                         isIntTypeCurrency = true;
@@ -262,7 +263,7 @@ public final class Shop extends InGameUI
                         {
                             sellText = t(player, "SHOP.SELL_PRICE" + currencyKey).replace("{num}", n(sellPrice,isIntTypeCurrency));
                         }
-                        
+
                         sellText += showValueChange ? " " + valueChanged_Sell : "";
                     }
 
@@ -438,11 +439,11 @@ public final class Shop extends InGameUI
             if (ShopUtil.getShopBalance(shopName) >= 0)
             {
                 String temp;
-                if (shopData.getString("Options.currency","").equalsIgnoreCase("jobpoint"))
+                if (ShopUtil.GetCurrency(shopData).equalsIgnoreCase(Constants.S_JOBPOINT))
                     temp = n(ShopUtil.getShopBalance(shopName)) + t(player,"JOB_POINTS");
-                else if (shopData.getString("Options.currency","").equalsIgnoreCase("playerpoint"))
+                else if (ShopUtil.GetCurrency(shopData).equalsIgnoreCase(Constants.S_PLAYERPOINT))
                     temp = n(ShopUtil.getShopBalance(shopName), true) + t(player,"PLAYER_POINTS");
-                else if (shopData.getString("Options.currency","").equalsIgnoreCase("exp"))
+                else if (ShopUtil.GetCurrency(shopData).equalsIgnoreCase(Constants.S_EXP))
                     temp = n(ShopUtil.getShopBalance(shopName), true) + t(player,"EXP_POINTS");
                 else
                     temp = n(ShopUtil.getShopBalance(shopName));

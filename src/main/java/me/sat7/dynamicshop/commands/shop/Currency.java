@@ -3,6 +3,7 @@ package me.sat7.dynamicshop.commands.shop;
 import me.sat7.dynamicshop.DynamicShop;
 import me.sat7.dynamicshop.commands.DSCMD;
 import me.sat7.dynamicshop.commands.Shop;
+import me.sat7.dynamicshop.constants.Constants;
 import me.sat7.dynamicshop.files.CustomConfig;
 import me.sat7.dynamicshop.utilities.ShopUtil;
 import org.bukkit.command.CommandSender;
@@ -38,10 +39,10 @@ public class Currency extends DSCMD
         String shopName = Shop.GetShopName(args);
         CustomConfig shopData = ShopUtil.shopConfigFiles.get(shopName);
 
-        if (args[3].equalsIgnoreCase("vault") ||
-            args[3].equalsIgnoreCase("exp") ||
-            args[3].equalsIgnoreCase("playerpoint") ||
-            args[3].equalsIgnoreCase("jobpoint"))
+        if (args[3].equalsIgnoreCase(Constants.S_VAULT) ||
+            args[3].equalsIgnoreCase(Constants.S_EXP) ||
+            args[3].equalsIgnoreCase(Constants.S_PLAYERPOINT) ||
+            args[3].equalsIgnoreCase(Constants.S_JOBPOINT))
         {
             shopData.get().set("Options.currency", args[3].toLowerCase());
             shopData.save();
