@@ -83,6 +83,12 @@ public class Root implements CommandExecutor
                     sender.sendMessage(Constants.DYNAMIC_SHOP_PREFIX + "DebugMode " + DynamicShop.DEBUG_MODE);
                     return true;
                 }
+                else if (args[0].equalsIgnoreCase("dbgLog"))
+                {
+                    DynamicShop.DEBUG_LOG_ENABLED = !DynamicShop.DEBUG_LOG_ENABLED;
+                    sender.sendMessage(Constants.DYNAMIC_SHOP_PREFIX + "DebugLog " + DynamicShop.DEBUG_LOG_ENABLED);
+                    return true;
+                }
                 else if (args[0].equalsIgnoreCase("dbg") && DynamicShop.DEBUG_MODE)
                 {
                     DynamicShop.DebugLog();

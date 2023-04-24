@@ -77,6 +77,7 @@ public final class Sell
             if (player != null)
                 player.sendMessage(DynamicShop.dsPrefix(player) + t(player, "MESSAGE.NO_ITEM_TO_SELL"));
 
+            DynamicShop.PrintConsoleDbgLog("QSellFail-Player does not have an item. player:" + player + " itemType:" + itemStack.getType() + " shopName:" + shopName + " tradeIdx:" + tradeIdx);
             return 0;
         }
 
@@ -86,7 +87,10 @@ public final class Sell
         {
             tradeAmount = UserUtil.CheckTradeLimitPerPlayer(player, shopName, tradeIdx, HashUtil.GetItemHash(itemStack), tradeAmount, true);
             if (tradeAmount == 0)
+            {
+                DynamicShop.PrintConsoleDbgLog("QSellFail-Trading volume limit reached. player:" + player + " itemType:" + itemStack.getType() + " shopName:" + shopName + " tradeIdx:" + tradeIdx);
                 return 0;
+            }
         }
 
         // 비용 계산
@@ -96,7 +100,10 @@ public final class Sell
         // 계산된 비용에 대한 처리 시도
         Economy econ = DynamicShop.getEconomy();
         if (!CheckTransactionSuccess(currencyType, player, priceSum))
+        {
+            DynamicShop.PrintConsoleDbgLog("QSellFail-Transaction failed. player:" + player + " itemType:" + itemStack.getType() + " shopName:" + shopName + " tradeIdx:" + tradeIdx);
             return 0;
+        }
 
         // 플레이어 인벤토리에서 아이템 제거
         if (player != null)

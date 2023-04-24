@@ -6,7 +6,7 @@
 
     <groupId>me.sat7</groupId>
     <artifactId>DynamicShop</artifactId>
-    <version>3.15.1</version>
+    <version>3.15.2</version>
     <packaging>jar</packaging>
 
     <name>DynamicShop</name>

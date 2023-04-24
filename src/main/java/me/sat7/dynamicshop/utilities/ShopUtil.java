@@ -857,6 +857,7 @@ public final class ShopUtil
         int tradeIdx = -1;
 
         String currency = "";
+        ArrayList<String> failReason = new ArrayList<>();
 
         // 접근가능한 상점중 최고가 찾기
         for(Map.Entry<String, CustomConfig> entry : shopConfigFiles.entrySet())
@@ -869,6 +870,8 @@ public final class ShopUtil
                 String permission = data.get().getString("Options.permission");
                 if (permission != null && permission.length() > 0 && !player.hasPermission(permission) && !player.hasPermission(permission + ".sell"))
                 {
+                    if (DynamicShop.DEBUG_LOG_ENABLED)
+                        failReason.add("shopName:" + entry.getKey() + "-no permission");
                     continue;
                 }
             }
@@ -876,33 +879,53 @@ public final class ShopUtil
             // 비활성화된 상점
             boolean enable = data.get().getBoolean("Options.enable", true);
             if (!enable)
+            {
+                if (DynamicShop.DEBUG_LOG_ENABLED)
+                    failReason.add("shopName:" + entry.getKey() + "-shop is disabled");
                 continue;
+            }
 
             // 표지판 전용 상점, 지역상점, 잡포인트 상점
             boolean outside = !CheckShopLocation(entry.getKey(), player);
             if (outside && data.get().contains("Options.flag.localshop") && !data.get().contains("Options.flag.deliverycharge")) {
+                if (DynamicShop.DEBUG_LOG_ENABLED)
+                    failReason.add("shopName:" + entry.getKey() + "-local shop");
                 continue;
             }
 
             if (data.get().contains("Options.flag.signshop"))
+            {
+                if (DynamicShop.DEBUG_LOG_ENABLED)
+                    failReason.add("shopName:" + entry.getKey() + "-sign shop");
                 continue;
+            }
 
             // 영업시간 확인
             if (player != null && !CheckShopHour(entry.getKey(), player))
+            {
+                if (DynamicShop.DEBUG_LOG_ENABLED)
+                    failReason.add("shopName:" + entry.getKey() + "-not open hours");
                 continue;
+            }
 
             double deliveryCosts = CalcShipping(entry.getKey(), player);
-
             if (deliveryCosts == -1)
+            {
+                if (DynamicShop.DEBUG_LOG_ENABLED)
+                    failReason.add("shopName:" + entry.getKey() + "-Infinite Delivery Fee (Other World)");
                 continue;
+            }
 
             int sameItemIdx = ShopUtil.findItemFromShop(entry.getKey(), itemStack);
-
             if (sameItemIdx != -1)
             {
                 String tradeType = data.get().getString(sameItemIdx + ".tradeType");
                 if (tradeType != null && tradeType.equalsIgnoreCase("BuyOnly"))
+                {
+                    if (DynamicShop.DEBUG_LOG_ENABLED)
+                        failReason.add("shopName:" + entry.getKey() + "-buy only");
                     continue; // 구매만 가능함
+                }
 
                 // 여러 재화로 취급중인 경우 지원 안함.
                 if (currency.isEmpty())
@@ -932,6 +955,8 @@ public final class ShopUtil
                 if (ShopUtil.getShopBalance(entry.getKey()) != -1 &&
                         ShopUtil.getShopBalance(entry.getKey()) < Calc.calcTotalCost(entry.getKey(), String.valueOf(sameItemIdx), itemStack.getAmount())[0])
                 {
+                    if (DynamicShop.DEBUG_LOG_ENABLED)
+                        failReason.add("shopName:" + entry.getKey() + "-no money in shop");
                     continue;
                 }
 
@@ -939,7 +964,11 @@ public final class ShopUtil
                 int maxStock = data.get().getInt(sameItemIdx + ".maxStock", -1);
                 int stock = data.get().getInt(sameItemIdx + ".stock");
                 if (maxStock != -1 && maxStock <= stock)
+                {
+                    if (DynamicShop.DEBUG_LOG_ENABLED)
+                        failReason.add("shopName:" + entry.getKey() + "-shop reaches max stock");
                     continue;
+                }
 
                 // 플레이어 당 거래량 제한 확인
                 int sellLimit = ShopUtil.GetSellLimitPerPlayer(entry.getKey(), sameItemIdx);
@@ -947,7 +976,11 @@ public final class ShopUtil
                 {
                     int tradeAmount = UserUtil.CheckTradeLimitPerPlayer(player, entry.getKey(), sameItemIdx, HashUtil.GetItemHash(itemStack), itemStack.getAmount(), true);
                     if (tradeAmount == 0)
+                    {
+                        if (DynamicShop.DEBUG_LOG_ENABLED)
+                            failReason.add("shopName:" + entry.getKey() + "-Reached trading volume limit");
                         continue;
+                    }
                 }
 
                 double value = Calc.getCurrentPrice(entry.getKey(), String.valueOf(sameItemIdx), false);
@@ -963,6 +996,15 @@ public final class ShopUtil
             }
         }
 
+        if (DynamicShop.DEBUG_LOG_ENABLED && topShopName.equals("") && failReason.size() > 0)
+        {
+            DynamicShop.PrintConsoleDbgLog("No shops available for sell. player:" + player + " itemType:" + itemStack.getType() + " Details:");
+            for (String s : failReason)
+            {
+                DynamicShop.PrintConsoleDbgLog(" - " + s);
+            }
+        }
+
         return new String[]{topShopName, Integer.toString(tradeIdx)};
     }
 
@@ -974,6 +1016,8 @@ public final class ShopUtil
 
         int currencyInt = -1;
 
+        ArrayList<String> failReason = new ArrayList<>();
+
         // 접근가능한 상점중 최저가 찾기
         for(Map.Entry<String, CustomConfig> entry : shopConfigFiles.entrySet())
         {
@@ -983,30 +1027,50 @@ public final class ShopUtil
             String permission = data.get().getString("Options.permission");
             if (permission != null && permission.length() > 0 && !player.hasPermission(permission) && !player.hasPermission(permission + ".buy"))
             {
+                if (DynamicShop.DEBUG_LOG_ENABLED)
+                    failReason.add("shopName:" + entry.getKey() + "-no permission");
                 continue;
             }
 
             // 비활성화된 상점
             boolean enable = data.get().getBoolean("Options.enable", true);
             if (!enable)
+            {
+                if (DynamicShop.DEBUG_LOG_ENABLED)
+                    failReason.add("shopName:" + entry.getKey() + "-shop is disabled");
                 continue;
+            }
 
             // 표지판 전용 상점, 지역상점, 잡포인트 상점
             boolean outside = !CheckShopLocation(entry.getKey(), player);
             if (outside && data.get().contains("Options.flag.localshop") && !data.get().contains("Options.flag.deliverycharge")) {
+                if (DynamicShop.DEBUG_LOG_ENABLED)
+                    failReason.add("shopName:" + entry.getKey() + "-local shop");
                 continue;
             }
 
             if (data.get().contains("Options.flag.signshop"))
+            {
+                if (DynamicShop.DEBUG_LOG_ENABLED)
+                    failReason.add("shopName:" + entry.getKey() + "-sign shop");
                 continue;
+            }
 
             // 영업시간 확인
             if (!CheckShopHour(entry.getKey(), player))
+            {
+                if (DynamicShop.DEBUG_LOG_ENABLED)
+                    failReason.add("shopName:" + entry.getKey() + "-not open hours");
                 continue;
+            }
 
             double deliveryCosts = CalcShipping(entry.getKey(), player);
             if (deliveryCosts == -1)
+            {
+                if (DynamicShop.DEBUG_LOG_ENABLED)
+                    failReason.add("shopName:" + entry.getKey() + "-Infinite Delivery Fee (Other World)");
                 continue;
+            }
 
             int sameItemIdx = ShopUtil.findItemFromShop(entry.getKey(), itemStack);
 
@@ -1015,12 +1079,20 @@ public final class ShopUtil
                 String tradeType = data.get().getString(sameItemIdx + ".tradeType");
 
                 if (tradeType != null && tradeType.equalsIgnoreCase("SellOnly"))
+                {
+                    if (DynamicShop.DEBUG_LOG_ENABLED)
+                        failReason.add("shopName:" + entry.getKey() + "-sell only");
                     continue;
+                }
 
                 // 재고가 없음
                 int stock = data.get().getInt(sameItemIdx + ".stock");
                 if (stock != -1 && stock < 2)
+                {
+                    if (DynamicShop.DEBUG_LOG_ENABLED)
+                        failReason.add("shopName:" + entry.getKey() + "-Out of stock");
                     continue;
+                }
 
                 // 여러 재화로 취급중인 경우 지원 안함.
                 int tempCurrencyIndex = 0;
@@ -1066,7 +1138,11 @@ public final class ShopUtil
                 {
                     int tradeAmount = UserUtil.CheckTradeLimitPerPlayer(player, entry.getKey(), sameItemIdx, HashUtil.GetItemHash(itemStack), itemStack.getAmount(), false);
                     if (tradeAmount == 0)
+                    {
+                        if (DynamicShop.DEBUG_LOG_ENABLED)
+                            failReason.add("shopName:" + entry.getKey() + "-Trading volume limit reached");
                         continue;
+                    }
                 }
 
                 double value = Calc.getCurrentPrice(entry.getKey(), String.valueOf(sameItemIdx), true);
@@ -1079,6 +1155,15 @@ public final class ShopUtil
                     bestPrice = value;
                     tradeIdx = sameItemIdx;
                 }
+            }
+        }
+
+        if (DynamicShop.DEBUG_LOG_ENABLED && topShopName.equals("") && failReason.size() > 0)
+        {
+            DynamicShop.PrintConsoleDbgLog("No shops available for purchase. player:" + player + " itemType:" + itemStack.getType() + " Details:");
+            for (String s : failReason)
+            {
+                DynamicShop.PrintConsoleDbgLog(" - " + s);
             }
         }
 

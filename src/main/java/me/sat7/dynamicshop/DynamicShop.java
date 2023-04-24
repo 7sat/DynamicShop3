@@ -96,6 +96,13 @@ public final class DynamicShop extends JavaPlugin implements Listener
     public static final LocaleManager localeManager = new LocaleManager();
     public static boolean isPapiExist;
 
+    public static boolean DEBUG_LOG_ENABLED = false;
+    public static void PrintConsoleDbgLog(String msg)
+    {
+        if (DEBUG_LOG_ENABLED)
+            console.sendMessage(DynamicShop.dsPrefix_ + msg);
+    }
+
     public static boolean DEBUG_MODE = false;
     public static void DebugLog()
     {
