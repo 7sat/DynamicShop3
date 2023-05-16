@@ -2,9 +2,13 @@ package me.sat7.dynamicshop.commands;
 
 import me.sat7.dynamicshop.utilities.UserUtil;
 import org.bukkit.command.CommandSender;
+import org.bukkit.configuration.file.FileConfiguration;
 import org.bukkit.entity.Player;
 
 import me.sat7.dynamicshop.DynamicShop;
+
+import java.io.IOException;
+import java.util.Map;
 
 import static me.sat7.dynamicshop.constants.Constants.P_ADMIN_DELETE_OLD_USER;
 import static me.sat7.dynamicshop.utilities.LangUtil.t;
@@ -56,9 +60,9 @@ public final class DeleteUser extends DSCMD
         long currentTime = System.currentTimeMillis();
         long target = day * 86400000L;
 
-        for (String s : UserUtil.ccUser.get().getKeys(false))
+        for (Map.Entry<String, FileConfiguration> entry : UserUtil.ccUser.getConfigs().entrySet())
         {
-            long lastJoinLong = UserUtil.ccUser.get().getLong(s + ".lastJoin");
+            long lastJoinLong = entry.getValue().getLong("lastJoin");
             if (lastJoinLong == 0)
                 continue;
 
@@ -67,13 +71,18 @@ public final class DeleteUser extends DSCMD
             if (dayPassed > target)
             {
                 //sender.sendMessage(DynamicShop.dsPrefix(sender) + Bukkit.getOfflinePlayer(UUID.fromString(s)).getName() + " Deleted");
-                UserUtil.ccUser.get().set(s, null);
+                UserUtil.ccUser.remove(entry.getKey());
                 count += 1;
             }
         }
 
-        if (count > 0)
-            UserUtil.ccUser.save();
+        if (count > 0) {
+            try {
+                UserUtil.ccUser.saveAll();
+            } catch (IOException e) {
+                throw new RuntimeException(e);
+            }
+        }
 
         sender.sendMessage(DynamicShop.dsPrefix(sender) + count + " Items Removed");
     }

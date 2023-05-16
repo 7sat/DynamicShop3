@@ -2,9 +2,14 @@ package me.sat7.dynamicshop.utilities;
 
 import me.sat7.dynamicshop.DynamicShop;
 import me.sat7.dynamicshop.files.CustomConfig;
+import me.sat7.dynamicshop.files.IndividualCustomConfig;
 import org.bukkit.configuration.ConfigurationSection;
+import org.bukkit.configuration.file.FileConfiguration;
+import org.bukkit.configuration.file.YamlConfiguration;
 import org.bukkit.entity.Player;
 
+import java.io.File;
+import java.io.IOException;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Random;
@@ -12,36 +17,19 @@ import java.util.UUID;
 
 public final class UserUtil
 {
-    public static CustomConfig ccUser = new CustomConfig(); // 가급적 save 호출 피할 것. onDisable 에서 처리함.
+    public static IndividualCustomConfig<UUID> ccUser = new IndividualCustomConfig<>(); // 가급적 save 호출 피할 것. onDisable 에서 처리함.
     public static final HashMap<UUID, String> userTempData = new HashMap<>();
     public static final HashMap<UUID, String> userInteractItem = new HashMap<>();
 
     public static void Init()
     {
-        ccUser.setup("User", null);
-        ccUser.get().options().copyDefaults(true);
-        BackwardCompatibility();
-        ccUser.save();
-
+        ccUser.setup("User", uuid -> uuid.toString(), (player, config) -> {
+            config.set("tmpString", "");
+            config.set("interactItem", "");
+            config.set("cmdHelp", true);
+            config.set("lastJoin", System.currentTimeMillis());
+        });
         LoadTradeLimitDataFromYML();
-    }
-
-    private static void BackwardCompatibility()
-    {
-        int userVersion = ConfigUtil.GetConfigVersion();
-        if (userVersion < 3)
-        {
-            for (String s : ccUser.get().getKeys(false))
-            {
-                ConfigurationSection cs = ccUser.get().getConfigurationSection(s);
-                if (cs != null)
-                {
-                    // 구버전에 있던 데이터를 삭제함.
-                    cs.set("tmpString", null);
-                    cs.set("interactItem", null);
-                }
-            }
-        }
     }
 
     public static void CreateNewPlayerData(Player player)
@@ -49,8 +37,8 @@ public final class UserUtil
         UUID uuid = player.getUniqueId();
         userTempData.put(uuid, "");
         userInteractItem.put(uuid, "");
-        ccUser.get().set(uuid + ".lastJoin", System.currentTimeMillis());
-        ccUser.get().set(uuid + ".cmdHelp", true);
+        ccUser.get(player.getUniqueId()).set("lastJoin", System.currentTimeMillis());
+        ccUser.get(player.getUniqueId()).set("cmdHelp", true);
     }
 
     public static void CreateDummyPlayerData(Player sender, int count)
@@ -61,7 +49,7 @@ public final class UserUtil
         sender.sendMessage(DynamicShop.dsPrefix(sender) + "Start creating dummy data...");
 
         Random generator = new Random();
-        Object tradingVolumeData = ccUser.get().get(sender.getUniqueId() + ".tradingVolume");
+        Object tradingVolumeData = ccUser.get(sender.getUniqueId()).get("tradingVolume");
 
         for (int i = 0; i < count; i++)
         {
@@ -70,36 +58,45 @@ public final class UserUtil
             userInteractItem.put(uuid, "");
 
             int old = (generator.nextInt() % 100) + 3;
-            ccUser.get().set(uuid + ".lastJoin", System.currentTimeMillis() - ((long) old * 1000 * 60 * 60 * 24));
+            ccUser.get(uuid).set("lastJoin", System.currentTimeMillis() - ((long) old * 1000 * 60 * 60 * 24));
 
-            ccUser.get().set(uuid + ".cmdHelp", true);
+            ccUser.get(uuid).set("cmdHelp", true);
 
             if (i % 5 == 0)
             {
-                ccUser.get().set(uuid + ".tradingVolume", tradingVolumeData);
+                ccUser.get(uuid).set("tradingVolume", tradingVolumeData);
             }
         }
 
-        ccUser.save();
+        try {
+            ccUser.saveAll();
+        } catch (IOException e) {
+            throw new RuntimeException(e);
+        }
+
 
         sender.sendMessage(DynamicShop.dsPrefix(sender) + "Dummy Player Data Created x " + count);
     }
 
     public static boolean RecreateUserData(Player player)
     {
-        if (ccUser.get().contains(player.getUniqueId().toString()))
+        if (ccUser.get(player.getUniqueId()) != null)
             return true;
 
         CreateNewPlayerData(player);
-        ccUser.save();
+        ccUser.save(player.getUniqueId());
 
-        return ccUser.get().contains(player.getUniqueId().toString());
+        return ccUser.get(player.getUniqueId()) != null;
     }
 
     public static void OnPluginDisable()
     {
         SaveTradeLimitDataToYML();
-        ccUser.save();
+        try {
+            ccUser.saveAll();
+        } catch (IOException e) {
+            throw new RuntimeException(e);
+        }
     }
 
     // ----------------------------------------------------------------------
@@ -111,9 +108,10 @@ public final class UserUtil
 
     public static void LoadTradeLimitDataFromYML()
     {
-        for (String uuid : ccUser.get().getKeys(false))
+        for (Map.Entry<String, FileConfiguration> entry : ccUser.getConfigs().entrySet())
         {
-            ConfigurationSection userDataSection = ccUser.get().getConfigurationSection(uuid + ".tradingVolume");
+            ConfigurationSection userDataSection = entry.getValue().getConfigurationSection("tradingVolume");
+            String uuid = entry.getKey();
             if (userDataSection == null)
                 continue;
 
@@ -138,13 +136,13 @@ public final class UserUtil
     }
     public static void SaveTradeLimitDataToYML()
     {
-        for (String uuid : ccUser.get().getKeys(false))
+        for (Map.Entry<String, FileConfiguration> entry : ccUser.getConfigs().entrySet())
         {
-            ConfigurationSection userDataSection = ccUser.get().getConfigurationSection(uuid + ".tradingVolume");
+            ConfigurationSection userDataSection = entry.getValue().getConfigurationSection("tradingVolume");
             if (userDataSection == null)
                 continue;
 
-            ccUser.get().set(uuid + ".tradingVolume", null);
+            userDataSection.set("tradingVolume", null);
         }
 
         for (Map.Entry<String, HashMap<String, HashMap<UUID, Integer>>> shopMap : tradingVolume.entrySet())
@@ -161,7 +159,7 @@ public final class UserUtil
 
                 for (Map.Entry<UUID, Integer> uuidMap : tradingVolume.get(shopMap.getKey()).get(itemMap.getKey()).entrySet())
                 {
-                    ccUser.get().set(uuidMap.getKey() + ".tradingVolume." + shopMap.getKey() + "." + itemMap.getKey(), uuidMap.getValue());
+                    ccUser.get(uuidMap.getKey()).set("tradingVolume." + shopMap.getKey() + "." + itemMap.getKey(), uuidMap.getValue());
                 }
             }
         }
@@ -169,7 +167,11 @@ public final class UserUtil
     public static void RepetitiveTask()
     {
         SaveTradeLimitDataToYML();
-        ccUser.save();
+        try {
+            ccUser.saveAll();
+        } catch (IOException e) {
+            throw new RuntimeException(e);
+        }
     }
 
     public static int GetPlayerTradingVolume(Player player, String shopName, String hash)

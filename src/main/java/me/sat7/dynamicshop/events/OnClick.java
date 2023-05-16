@@ -12,6 +12,8 @@ import org.bukkit.event.Listener;
 import org.bukkit.event.inventory.InventoryClickEvent;
 import org.bukkit.event.inventory.InventoryDragEvent;
 
+import java.util.UUID;
+
 import static me.sat7.dynamicshop.utilities.LangUtil.t;
 
 public class OnClick implements Listener
@@ -38,7 +40,7 @@ public class OnClick implements Listener
             // UUID 확인되지 않는 경우 플러그인 사용을 막음. (이게 실질적으로 의미가 있는지는 모르겠음)
             String pUuid = player.getUniqueId().toString();
 
-            if (UserUtil.ccUser.get().getConfigurationSection(pUuid) == null)
+            if (UserUtil.ccUser.get(UUID.fromString(pUuid)) == null)
             {
                 if (!DynaShopAPI.recreateUserData(player))
                 {

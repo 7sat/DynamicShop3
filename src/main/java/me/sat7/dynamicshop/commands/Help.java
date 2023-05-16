@@ -25,7 +25,7 @@ public final class Help
     // 명령어 도움말 표시
     public static void showHelp(String helpcode, Player player, String[] args)
     {
-        if (!UserUtil.ccUser.get().getBoolean(player.getUniqueId() + ".cmdHelp"))
+        if (!UserUtil.ccUser.get(player.getUniqueId()).getBoolean( "cmdHelp"))
             return;
 
         UUID uuid = player.getUniqueId();
