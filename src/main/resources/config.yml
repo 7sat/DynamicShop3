@@ -1,15 +1,29 @@
 Language: en-US
-Prefix: §3§l[dShop] §f
-SalesTax: 25
-ShowTax: true
-UseShopCommand: true
-DefaultShopName: Main
-DisplayStockAsStack: false
-DeliveryChargeScale: 1
-NumberOfPlayer: 10
-SaveLogs: true
-CullLogs: true
-LogCullAgeMinutes: 7200
-LogCullTimeMinutes: 120
-OnClickCloseButton_OpenStartPage: true
-OpenStartPageInsteadOfDefaultShop: false
+Prefix: §3DShop3 §7| §f
+Command.UseShopCommand: true
+Command.OpenStartPageInsteadOfDefaultShop: true
+Command.DefaultShopName: SampleShop
+Command.PermissionCheckWhenCreatingAShopList: false
+Shop.SalesTax: 25
+Shop.DeliveryChargeScale: 0.3
+Shop.DeliveryChargeMin: 1
+Shop.DeliveryChargeMax: 25
+Shop.NumberOfPlayer: 10
+Shop.UseLegacyStockStabilization: false
+UI.DisplayStockAsStack: false
+UI.OpenStartPageWhenClickCloseButton: true
+UI.CloseButtonIcon : BARRIER
+UI.PageButtonIcon : PAPER
+UI.ShopInfoButtonIcon : OAK_SIGN
+UI.IntFormat: '###,###'
+UI.DoubleFormat: '###,##0.00'
+UI.LocalizedItemName: true
+UI.UsePlaceholderAPI : true
+UI.UseHexColorCode : true
+UI.EnableInventoryClickSearch.StartPage: true
+UI.EnableInventoryClickSearch.Shop: true
+Log.SaveLogs: true
+Log.LogFileNameFormat: MM_dd_yyyy
+Log.CullLogs: true
+Log.LogCullAgeMinutes: 7200
+Log.LogCullTimeMinutes: 120

@@ -1,47 +1,48 @@
 package me.sat7.dynamicshop.commands;
 
+import me.sat7.dynamicshop.utilities.ConfigUtil;
+import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
 
 import me.sat7.dynamicshop.DynamicShop;
-import me.sat7.dynamicshop.utilities.LangUtil;
 import me.sat7.dynamicshop.utilities.ShopUtil;
 
-public final class SetDefaultShop {
-    private SetDefaultShop() {
+import static me.sat7.dynamicshop.constants.Constants.P_ADMIN_SET_DEFAULT_SHOP;
+import static me.sat7.dynamicshop.utilities.LangUtil.t;
 
+public final class SetDefaultShop extends DSCMD
+{
+    public SetDefaultShop()
+    {
+        inGameUseOnly = false;
+        permission = P_ADMIN_SET_DEFAULT_SHOP;
+        validArgCount.add(2);
     }
 
-    static boolean setDefaultShop(String[] args, Player player) {
-        if(args.length >= 2)
-        {
-            if(!player.hasPermission("dshop.admin.setdefaultshop"))
-            {
-                player.sendMessage(DynamicShop.dsPrefix + LangUtil.ccLang.get().getString("ERR.NO_PERMISSION"));
-                return true;
-            }
+    @Override
+    public void SendHelpMessage(Player player)
+    {
+        player.sendMessage(DynamicShop.dsPrefix(player) + t(player, "HELP.TITLE").replace("{command}", "setdefaultshop"));
+        player.sendMessage(" - " + t(player, "HELP.USAGE") + ": /ds setdefaultshop <shop name>");
 
-            try
-            {
-                if(ShopUtil.ccShop.get().contains(args[1]))
-                {
-                    DynamicShop.plugin.getConfig().set("DefaultShopName",args[1]);
-                    DynamicShop.plugin.saveConfig();
-                    player.sendMessage(DynamicShop.dsPrefix + LangUtil.ccLang.get().getString("CHANGES_APPLIED") + args[1]);
-                }
-                else
-                {
-                    player.sendMessage(DynamicShop.dsPrefix + LangUtil.ccLang.get().getString("ERR.SHOP_NOT_FOUND"));
-                }
-            }
-            catch (Exception e)
-            {
-                player.sendMessage(DynamicShop.dsPrefix + LangUtil.ccLang.get().getString("ERR.SHOP_NOT_FOUND"));
-            }
-        }
-        else
+        player.sendMessage("");
+    }
+
+    @Override
+    public void RunCMD(String[] args, CommandSender sender)
+    {
+        if(!CheckValid(args, sender))
+            return;
+
+        if (ShopUtil.shopConfigFiles.containsKey(args[1]))
         {
-            player.sendMessage(DynamicShop.dsPrefix + LangUtil.ccLang.get().getString("ERR.WRONG_USAGE"));
+            ConfigUtil.SetDefaultShopName(args[1]);
+            ConfigUtil.Save();
+
+            sender.sendMessage(DynamicShop.dsPrefix(sender) + t(sender, "MESSAGE.CHANGES_APPLIED") + args[1]);
+        } else
+        {
+            sender.sendMessage(DynamicShop.dsPrefix(sender) + t(sender, "ERR.SHOP_NOT_FOUND"));
         }
-        return false;
     }
 }

@@ -1,15 +1,15 @@
 package me.sat7.dynamicshop.utilities;
 
-import java.util.ArrayList;
-import java.util.List;
+import java.util.*;
 import java.util.stream.Collectors;
 
+import me.sat7.dynamicshop.files.CustomConfig;
 import org.bukkit.Bukkit;
 import org.bukkit.Material;
+import org.bukkit.OfflinePlayer;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandSender;
 import org.bukkit.configuration.ConfigurationSection;
-import org.bukkit.configuration.file.FileConfiguration;
 import org.bukkit.entity.HumanEntity;
 import org.bukkit.entity.Player;
 
@@ -17,237 +17,236 @@ import me.sat7.dynamicshop.DynamicShop;
 import me.sat7.dynamicshop.commands.Help;
 import me.sat7.dynamicshop.constants.Constants;
 
-public final class TabCompleteUtil {
-    private TabCompleteUtil() {
+import static me.sat7.dynamicshop.constants.Constants.*;
+
+public final class TabCompleteUtil
+{
+    private TabCompleteUtil()
+    {
 
     }
 
-    public static List<String> onTabCompleteBody(DynamicShop dynamicShop, CommandSender sender, Command cmd, String commandLabel, String[] args) {
-        if(!(sender instanceof Player)) return null;
+    public static final ArrayList<String> temp = new ArrayList<>();
+    public static final ArrayList<String> autoCompleteList = new ArrayList<>();
 
-        FileConfiguration config = DynamicShop.ccUser.get((Player) sender);
+    public static List<String> onTabCompleteBody(DynamicShop dynamicShop, CommandSender sender, Command cmd, String[] args)
+    {
+        if (!(sender instanceof Player)) return null;
+
+        Player p = (Player) sender;
+        UUID uuid = p.getUniqueId();
 
         try
         {
-            ArrayList<String> temp = new ArrayList<>();
-            ArrayList<String> alist = new ArrayList<>();
+            temp.clear();
+            autoCompleteList.clear();
 
-            if(cmd.getName().equalsIgnoreCase("shop") && args.length == 1)
+            if (cmd.getName().equalsIgnoreCase("sell") && args.length == 1)
             {
-                if(!dynamicShop.getConfig().getBoolean("UseShopCommand")) return alist;
-
-                for (String s: ShopUtil.ccShop.get().getKeys(false))
+                if (sender.hasPermission(P_SELL))
                 {
-                    ConfigurationSection options = ShopUtil.ccShop.get().getConfigurationSection(s).getConfigurationSection("Options");
-
-                    if(options.contains("flag.signshop") && !sender.hasPermission(Constants.REMOTE_ACCESS_PERMISSION)) continue;
-
-                    temp.add(s);
+                    temp.add("hand");
+                    temp.add("handall");
+                    temp.add("all");
+                    AddToAutoCompleteIfValid(args[0]);
                 }
 
-                for (String s:temp)
-                {
-                    if(s.startsWith(args[0]) || s.toLowerCase().startsWith(args[0])) alist.add(s);
-                }
-                return alist;
+                return autoCompleteList;
             }
-            else if(cmd.getName().equalsIgnoreCase("DynamicShop"))
+            else if (cmd.getName().equalsIgnoreCase("shop") && args.length == 1)
             {
-                if(args.length == 1)
+                if (!ConfigUtil.GetUseShopCommand()) return autoCompleteList;
+
+                for (Map.Entry<String, CustomConfig> entry : ShopUtil.shopConfigFiles.entrySet())
                 {
-                    if(!config.getString("tmpString").equals("main"))
-                    {
-                        config.set("tmpString","main");
-                        Help.showHelp("main",(Player)sender,args);
-                    }
+                    ConfigurationSection options = entry.getValue().get().getConfigurationSection("Options");
+
+                    if (options.contains("flag.signshop") && !sender.hasPermission(Constants.P_ADMIN_REMOTE_ACCESS))
+                        continue;
+
+                    if (options.contains("flag.hiddenincommand") && !sender.hasPermission(P_ADMIN_SHOP_EDIT))
+                        continue;
+
+                    String permission = options.getString("permission", "");
+                    if (permission.isEmpty()
+                            || !ConfigUtil.GetPermissionCheckWhenCreatingAShopList()
+                            || p.hasPermission(permission))
+                        temp.add(entry.getKey());
+                }
+
+                AddToAutoCompleteIfValid(args[0]);
+                return autoCompleteList;
+            } else if (cmd.getName().equalsIgnoreCase("DynamicShop"))
+            {
+                if (args.length == 1)
+                {
+                    Help.showHelp("main", (Player) sender, args);
 
                     temp.add("shop");
                     temp.add("qsell");
-                    if(sender.hasPermission("dshop.admin.createshop")) temp.add("createshop");
-                    if(sender.hasPermission("dshop.admin.deleteshop")) temp.add("deleteshop");
-                    if(sender.hasPermission("dshop.admin.mergeshop")) temp.add("mergeshop");
-                    if(sender.hasPermission("dshop.admin.renameshop")) temp.add("renameshop");
-                    if(sender.hasPermission("dshop.admin.openshop")) temp.add("openshop");
-                    if(sender.hasPermission("dshop.admin.settax")) temp.add("settax");
-                    if(sender.hasPermission("dshop.admin.settax")) temp.add("settax temp");
-                    if(sender.hasPermission("dshop.admin.setdefaultshop")) temp.add("setdefaultshop");
-                    if(sender.hasPermission(Constants.DELETE_USER_PERMISSION)) temp.add("deleteOldUser");
-                    if(sender.hasPermission("dshop.admin.convert")) temp.add("convert");
-                    if(sender.hasPermission("dshop.admin.reload")) temp.add("reload");
+                    if (sender.hasPermission(P_ADMIN_CREATE_SHOP)) temp.add("createshop");
+                    if (sender.hasPermission(P_ADMIN_DELETE_SHOP)) temp.add("deleteshop");
+                    if (sender.hasPermission(P_ADMIN_MERGE_SHOP)) temp.add("mergeshop");
+                    if (sender.hasPermission(P_ADMIN_RENAME_SHOP)) temp.add("renameshop");
+                    if (sender.hasPermission(P_ADMIN_COPY_SHOP)) temp.add("copyshop");
+                    if (sender.hasPermission(P_ADMIN_OPEN_SHOP)) temp.add("openshop");
+                    if (sender.hasPermission(P_ADMIN_SET_TAX)) temp.add("settax");
+                    if (sender.hasPermission(P_ADMIN_SET_TAX)) temp.add("settax temp");
+                    if (sender.hasPermission(P_ADMIN_SET_DEFAULT_SHOP)) temp.add("setdefaultshop");
+                    if (sender.hasPermission(P_ADMIN_DELETE_OLD_USER)) temp.add("deleteOldUser");
+                    if (sender.hasPermission(P_ADMIN_RELOAD)) temp.add("reload");
+                    if (sender.hasPermission(P_ADMIN_ITEM_INFO)) temp.add("iteminfo");
                     temp.add("cmdHelp");
 
-                    for (String s:temp)
-                    {
-                        if(s.startsWith(args[0])) alist.add(s);
-                    }
-                }
-                else if(args.length >= 2 && args[0].equals("shop"))
+                    AddToAutoCompleteIfValid(args[0]);
+                } else if (args.length >= 2 && args[0].equals("shop"))
                 {
-                    if(args.length == 2)
+                    CustomConfig data = ShopUtil.shopConfigFiles.get(args[1]);
+
+                    if (args.length == 2)
                     {
-                        if(!config.getString("tmpString").equals("shop"))
+                        Help.showHelp("shop", (Player) sender, args);
+
+                        for (Map.Entry<String, CustomConfig> entry : ShopUtil.shopConfigFiles.entrySet())
                         {
-                            config.set("tmpString","shop");
-                            Help.showHelp("shop",(Player)sender,args);
+                            ConfigurationSection options = entry.getValue().get().getConfigurationSection("Options");
+
+                            if (options == null)
+                                continue;
+
+                            if (options.contains("flag") && options.getConfigurationSection("flag").contains("signshop") && !sender.hasPermission(Constants.P_ADMIN_REMOTE_ACCESS))
+                                continue;
+
+                            if (options.contains("flag.hiddenincommand") && !sender.hasPermission(P_ADMIN_SHOP_EDIT))
+                                continue;
+
+                            String permission = options.getString("permission", "");
+                            if (permission.isEmpty()
+                                    || !ConfigUtil.GetPermissionCheckWhenCreatingAShopList()
+                                    || p.hasPermission(permission))
+                                temp.add(entry.getKey());
                         }
 
-                        for (String s: ShopUtil.ccShop.get().getKeys(false))
-                        {
-                            ConfigurationSection options = ShopUtil.ccShop.get().getConfigurationSection(s).getConfigurationSection("Options");
-
-                            if(options.contains("flag") && options.getConfigurationSection("flag").contains("signshop") && !sender.hasPermission(Constants.REMOTE_ACCESS_PERMISSION)) continue;
-
-                            temp.add(s);
-                        }
-
-                        for (String s:temp)
-                        {
-                            if(s.startsWith(args[1]) || s.toLowerCase().startsWith(args[1])) alist.add(s);
-                        }
-                    }
-                    else if(args.length >= 3 && (!ShopUtil.ccShop.get().contains(args[1]) || args[1].length() == 0))
+                        AddToAutoCompleteIfValid(args[1]);
+                    } else if (args.length >= 3 && (!ShopUtil.shopConfigFiles.containsKey(args[1]) || args[1].length() == 0))
                     {
                         return null;
-                    }
-                    else if(args.length == 3)
+                    } else if (args.length == 3)
                     {
-                        //add,addhand,edit,editall,permission,maxpage,flag
-                        if(sender.hasPermission("dshop.admin.shopedit"))
+                        if (sender.hasPermission(P_ADMIN_SHOP_EDIT))
                         {
+                            temp.add("enable");
                             temp.add("add");
                             temp.add("addhand");
                             temp.add("edit");
                             temp.add("editall");
+                            temp.add("setToRecAll");
                             temp.add("permission");
                             temp.add("maxpage");
+                            temp.add("currency");
                             temp.add("flag");
                             temp.add("position");
                             temp.add("shophours");
                             temp.add("fluctuation");
                             temp.add("stockStabilizing");
+                            temp.add("command");
                             temp.add("account");
-                            temp.add("hideStock");
-                            temp.add("hidePricingType");
                             temp.add("sellbuy");
                             temp.add("log");
+                            temp.add("resetTradingVolume");
+                            temp.add("background");
                         }
 
-                        for (String s:temp)
-                        {
-                            if(s.startsWith(args[2])) alist.add(s);
-                        }
-                    }
-                    else if(args.length >= 4)
+                        AddToAutoCompleteIfValid(args[2]);
+                    } else if (args.length >= 4)
                     {
-                        if(args[2].equalsIgnoreCase("addhand") && sender.hasPermission("dshop.admin.shopedit"))
+                        if (args[2].equalsIgnoreCase("enable") && sender.hasPermission(P_ADMIN_SHOP_EDIT))
                         {
-                            if(!config.getString("tmpString").equals("addhand"))
-                            {
-                                config.set("tmpString","addhand");
-                                Help.showHelp("addhand",(Player)sender,args);
-                            }
-                        }
-                        else if(args[2].equalsIgnoreCase("add") && sender.hasPermission("dshop.admin.shopedit"))
-                        {
-                            if(args.length == 4)
-                            {
-                                if(!config.getString("tmpString").equals("add"))
-                                {
-                                    config.set("tmpString","add");
-                                    Help.showHelp("add",(Player)sender,args);
-                                }
+                            Help.showHelp("enable", (Player) sender, args);
 
-                                for (Material m: Material.values())
+                            if (args.length == 4)
+                            {
+                                temp.add("true");
+                                temp.add("false");
+                            }
+
+                            AddToAutoCompleteIfValid(args[3]);
+                        } else if (args[2].equalsIgnoreCase("addhand") && sender.hasPermission(P_ADMIN_SHOP_EDIT))
+                        {
+                            Help.showHelp("add_hand", (Player) sender, args);
+                        } else if (args[2].equalsIgnoreCase("add") && sender.hasPermission(P_ADMIN_SHOP_EDIT))
+                        {
+                            if (args.length == 4)
+                            {
+                                Help.showHelp("add", (Player) sender, args);
+
+                                for (Material m : Material.values())
                                 {
                                     temp.add(m.name());
                                 }
 
-                                for (String s:temp)
-                                {
-                                    if(s.startsWith(args[3].toUpperCase())) alist.add(s);
-                                }
-                            }
-                            else if(args.length == 5)
+                                AddToAutoCompleteIfValid(args[3]);
+                            } else if (args.length == 5)
                             {
                                 String mat = args[3].toUpperCase();
-                                if(!(config.getString("tmpString").contains("add") &&
-                                        config.getString("tmpString").length() > 3))
+                                String userTempStr = UserUtil.userTempData.get(uuid);
+
+                                if (!(userTempStr.contains("add") && userTempStr.length() > 3))
                                 {
-                                    if(Material.matchMaterial(mat) != null)
+                                    if (Material.matchMaterial(mat) != null)
                                     {
-                                        config.set("tmpString","add"+args[3]);
-                                        Help.showHelp("add"+args[3],(Player)sender,args);
+                                        Help.showHelp("add" + args[3], (Player) sender, args);
                                     }
                                 }
                             }
-                        }
-                        else if(args[2].equalsIgnoreCase("edit") && sender.hasPermission("dshop.admin.shopedit"))
+                        } else if (args[2].equalsIgnoreCase("edit") && sender.hasPermission(P_ADMIN_SHOP_EDIT))
                         {
-                            if(args.length == 4)
+                            if (args.length == 4)
                             {
-                                if(!config.getString("tmpString").equals("edit"))
-                                {
-                                    config.set("tmpString","edit");
-                                    Help.showHelp("edit",(Player)sender,args);
-                                }
+                                Help.showHelp("edit", (Player) sender, args);
 
-                                String shopName = args[1];
-
-                                for (String s: ShopUtil.ccShop.get().getConfigurationSection(shopName).getKeys(false))
+                                for (String s : data.get().getKeys(false))
                                 {
                                     try
                                     {
                                         int i = Integer.parseInt(s);
-                                        if(!ShopUtil.ccShop.get().contains(shopName+"."+s+".value")) continue; // 장식용임
-                                        temp.add(ShopUtil.ccShop.get().getConfigurationSection(shopName+"."+s).getName()+"/"+ ShopUtil.ccShop.get().getString(shopName+"." + s +".mat"));
+                                        if (!data.get().contains(s + ".value"))
+                                            continue; // 장식용임
+                                        temp.add(s + "/" + data.get().getString(s + ".mat"));
+                                    } catch (Exception ignored)
+                                    {
                                     }
-                                    catch (Exception ignored){}
                                 }
 
-                                for (String s:temp)
-                                {
-                                    String upper = args[3].toUpperCase();
-
-                                    if(s.startsWith(upper)) alist.add(s);
-                                }
-                            }
-                            else if(args.length == 5)
+                                AddToAutoCompleteIfValid(args[3]);
+                            } else if (args.length == 5)
                             {
                                 String mat = args[3];
-                                mat = mat.substring(mat.indexOf("/")+1);
+                                mat = mat.substring(mat.indexOf("/") + 1);
                                 mat = mat.toUpperCase();
 
-                                if(!(config.getString("tmpString").equals("edit"+mat)))
+                                if (Material.matchMaterial(mat) != null)
                                 {
-                                    if(Material.matchMaterial(mat) != null)
-                                    {
-                                        config.set("tmpString","edit"+mat);
-                                        Help.showHelp("edit"+mat,(Player)sender,args);
-                                    }
+                                    Help.showHelp("edit" + mat, (Player) sender, args);
                                 }
                             }
-                        }
-                        else if(args[2].equalsIgnoreCase("editall") && sender.hasPermission("dshop.admin.shopedit"))
+                        } else if (args[2].equalsIgnoreCase("editall") && sender.hasPermission(P_ADMIN_SHOP_EDIT))
                         {
-                            if(!config.getString("tmpString").equals("editall"))
+                            Help.showHelp("edit_all", (Player) sender, args);
+
+                            if (args.length == 4)
                             {
-                                config.set("tmpString","editall");
-                                Help.showHelp("editall",(Player)sender,args);
-                            }
-                            if(args.length == 4)
-                            {
-                                temp.add("value");
+                                temp.add("purchaseValue");
+                                temp.add("salesValue");
                                 temp.add("valueMin");
                                 temp.add("valueMax");
                                 temp.add("stock");
                                 temp.add("median");
+                                temp.add("maxStock");
+                                temp.add("discount");
 
-                                for (String s:temp)
-                                {
-                                    if(s.startsWith(args[3])) alist.add(s);
-                                }
-                            }
-                            else if(args.length == 5)
+                                AddToAutoCompleteIfValid(args[3]);
+                            } else if (args.length == 5)
                             {
                                 temp.add("=");
                                 temp.add("+");
@@ -255,468 +254,344 @@ public final class TabCompleteUtil {
                                 temp.add("/");
                                 temp.add("*");
 
-                                for (String s:temp)
-                                {
-                                    if(s.startsWith(args[4])) alist.add(s);
-                                }
-                            }
-                            else if(args.length == 6)
+                                AddToAutoCompleteIfValid(args[4]);
+                            } else if (args.length == 6)
                             {
-                                if(args[4].equals("="))
+                                if (args[4].equals("=") && !args[3].equals("discount"))
                                 {
-                                    temp.add("value");
+                                    temp.add("purchaseValue");
+                                    temp.add("salesValue");
                                     temp.add("valueMin");
                                     temp.add("valueMax");
                                     temp.add("stock");
                                     temp.add("median");
+                                    temp.add("maxStock");
+                                    temp.add("discount");
 
-                                    for (String s:temp)
-                                    {
-                                        if(s.startsWith(args[5])) alist.add(s);
-                                    }
+                                    AddToAutoCompleteIfValid(args[5]);
                                 }
                             }
-                        }
-                        else if(args[2].equalsIgnoreCase("permission") && sender.hasPermission("dshop.admin.shopedit"))
+                        } else if (args[2].equalsIgnoreCase("setToRecAll") && sender.hasPermission(P_ADMIN_SHOP_EDIT))
                         {
-                            if(!config.getString("tmpString").equals("permission"))
-                            {
-                                config.set("tmpString","permission");
-                                Help.showHelp("permission",(Player)sender,args);
-                            }
-                            if(args.length >= 4)
+                            Help.showHelp("set_to_rec_all", (Player) sender, args);
+                        } else if (args[2].equalsIgnoreCase("permission") && sender.hasPermission(P_ADMIN_SHOP_EDIT))
+                        {
+                            Help.showHelp("permission", (Player) sender, args);
+
+                            if (args.length >= 4)
                             {
                                 temp.add("true");
                                 temp.add("false");
 
-                                for (String s:temp)
-                                {
-                                    if(s.startsWith(args[3])) alist.add(s);
-                                }
+                                AddToAutoCompleteIfValid(args[3]);
                             }
-                        }
-                        else if(args[2].equalsIgnoreCase("maxpage") && sender.hasPermission("dshop.admin.shopedit"))
+                        } else if (args[2].equalsIgnoreCase("maxpage") && sender.hasPermission(P_ADMIN_SHOP_EDIT))
                         {
-                            if(!config.getString("tmpString").equals("maxpage"))
-                            {
-                                config.set("tmpString","maxpage");
-                                Help.showHelp("maxpage",(Player)sender,args);
-                            }
-                        }
-                        else if(args[2].equalsIgnoreCase("flag") && sender.hasPermission("dshop.admin.shopedit"))
+                            Help.showHelp("max_page", (Player) sender, args);
+                        } else if (args[2].equalsIgnoreCase("currency") && sender.hasPermission(P_ADMIN_SHOP_EDIT))
                         {
-                            if(args.length == 4)
+                            if (args.length == 4)
                             {
-                                temp.add("signshop");
-                                temp.add("localshop");
-                                temp.add("deliverycharge");
+                                temp.add("vault");
+                                temp.add("exp");
                                 temp.add("jobpoint");
-
-                                for (String s:temp)
-                                {
-                                    if(s.startsWith(args[3])) alist.add(s);
-                                }
+                                temp.add("playerpoint");
+                                AddToAutoCompleteIfValid(args[3]);
                             }
-                            else if(args.length > 4)
+
+                            Help.showHelp("currency", (Player) sender, args);
+                        } else if (args[2].equalsIgnoreCase("flag") && sender.hasPermission(P_ADMIN_SHOP_EDIT))
+                        {
+                            if (args.length == 4)
+                            {
+                                temp.add("signShop");
+                                temp.add("localShop");
+                                temp.add("deliveryCharge");
+                                temp.add("showValueChange");
+                                temp.add("hideStock");
+                                temp.add("hidePricingType");
+                                temp.add("hideShopBalance");
+                                temp.add("showMaxStock");
+                                temp.add("hiddenInCommand");
+                                temp.add("integerOnly");
+
+                                AddToAutoCompleteIfValid(args[3]);
+                            } else if (args.length > 4)
                             {
                                 temp.add("set");
                                 temp.add("unset");
 
-                                for (String s:temp)
-                                {
-                                    if(s.startsWith(args[4])) alist.add(s);
-                                }
+                                AddToAutoCompleteIfValid(args[4]);
                             }
 
-                            if(!config.getString("tmpString").equals("flag"))
-                            {
-                                config.set("tmpString","flag");
-                                Help.showHelp("flag",(Player)sender,args);
-                            }
-                        }
-                        else if(args[2].equalsIgnoreCase("position") && sender.hasPermission("dshop.admin.shopedit"))
+                            Help.showHelp("flag", (Player) sender, args);
+                        } else if (args[2].equalsIgnoreCase("position") && sender.hasPermission(P_ADMIN_SHOP_EDIT))
                         {
-                            if(args.length >= 4)
+                            if (args.length >= 4)
                             {
                                 temp.add("pos1");
                                 temp.add("pos2");
                                 temp.add("clear");
 
-                                for (String s:temp)
+                                AddToAutoCompleteIfValid(args[3]);
+                            }
+
+                            Help.showHelp("position", (Player) sender, args);
+                        } else if (args[2].equalsIgnoreCase("shophours") && sender.hasPermission(P_ADMIN_SHOP_EDIT))
+                        {
+                            Help.showHelp("shophours", (Player) sender, args);
+                        } else if (args[2].equalsIgnoreCase("fluctuation") && sender.hasPermission(P_ADMIN_SHOP_EDIT))
+                        {
+                            Help.showHelp("fluctuation", (Player) sender, args);
+                        } else if (args[2].equalsIgnoreCase("stockStabilizing") && sender.hasPermission(P_ADMIN_SHOP_EDIT))
+                        {
+                            Help.showHelp("stock_stabilizing", (Player) sender, args);
+                        } else if (args[2].equalsIgnoreCase("command") && sender.hasPermission(P_ADMIN_SHOP_EDIT))
+                        {
+                            if (args.length == 4)
+                            {
+                                temp.add("sell");
+                                temp.add("buy");
+                                temp.add("active");
+
+                                AddToAutoCompleteIfValid(args[3]);
+                            }
+                            else if (args.length == 5 && args[3].equalsIgnoreCase("active"))
+                            {
+                                temp.add("true");
+                                temp.add("false");
+
+                                AddToAutoCompleteIfValid(args[4]);
+                            }
+                            else if (args[3].equalsIgnoreCase("sell") || args[3].equalsIgnoreCase("buy"))
+                            {
+                                if(args.length == 5)
                                 {
-                                    if(s.startsWith(args[3])) alist.add(s);
+                                    temp.add("add");
+                                    temp.add("delete");
+
+                                    AddToAutoCompleteIfValid(args[4]);
                                 }
                             }
 
-                            if(!config.getString("tmpString").equals("position"))
-                            {
-                                config.set("tmpString","position");
-                                Help.showHelp("position",(Player)sender,args);
-                            }
-                        }
-                        else if(args[2].equalsIgnoreCase("shophours") && sender.hasPermission("dshop.admin.shopedit"))
+                            Help.showHelp("command", (Player) sender, args);
+                        } else if (args[2].equalsIgnoreCase("account") && sender.hasPermission(P_ADMIN_SHOP_EDIT))
                         {
-                            if(!config.getString("tmpString").equals("shophours"))
-                            {
-                                config.set("tmpString","shophours");
-                                Help.showHelp("shophours",(Player)sender,args);
-                            }
-                        }
-                        else if(args[2].equalsIgnoreCase("fluctuation") && sender.hasPermission("dshop.admin.shopedit"))
-                        {
-                            if(args.length == 4)
-                            {
-                                temp.add("off");
-                                temp.add("30m");
-                                temp.add("1h");
-                                temp.add("2h");
-                                temp.add("4h");
-                                temp.add("12h");
-
-                                for (String s:temp)
-                                {
-                                    if(s.startsWith(args[3])) alist.add(s);
-                                }
-                            }
-
-                            if(!config.getString("tmpString").equals("fluctuation"))
-                            {
-                                config.set("tmpString","fluctuation");
-                                Help.showHelp("fluctuation",(Player)sender,args);
-                            }
-                        }
-                        else if(args[2].equalsIgnoreCase("stockStabilizing") && sender.hasPermission("dshop.admin.shopedit"))
-                        {
-                            if(args.length == 4)
-                            {
-                                temp.add("off");
-                                temp.add("30m");
-                                temp.add("1h");
-                                temp.add("2h");
-                                temp.add("4h");
-                                temp.add("12h");
-
-                                for (String s:temp)
-                                {
-                                    if(s.startsWith(args[3])) alist.add(s);
-                                }
-                            }
-
-                            if(!config.getString("tmpString").equals("stockStabilizing"))
-                            {
-                                config.set("tmpString","stockStabilizing");
-                                Help.showHelp("stockStabilizing",(Player)sender,args);
-                            }
-                        }
-                        else if(args[2].equalsIgnoreCase("account") && sender.hasPermission("dshop.admin.shopedit"))
-                        {
-                            if(args.length == 4)
+                            if (args.length == 4)
                             {
                                 temp.add("set");
                                 temp.add("linkto");
                                 temp.add("transfer");
 
-                                for (String s:temp)
-                                {
-                                    if(s.startsWith(args[3])) alist.add(s);
-                                }
+                                AddToAutoCompleteIfValid(args[3]);
 
-                                if(!config.getString("tmpString").equals("account"))
-                                {
-                                    config.set("tmpString","account");
-                                    Help.showHelp("account",(Player)sender,args);
-                                }
-                            }
-                            else if(args.length == 5)
+                                Help.showHelp("account", (Player) sender, args);
+                            } else if (args.length == 5)
                             {
-                                if(args[3].equals("linkto") || args[3].equals("transfer"))
+                                if (args[3].equals("linkto") || args[3].equals("transfer"))
                                 {
-                                    temp.addAll(ShopUtil.ccShop.get().getKeys(false));
+                                    temp.addAll(ShopUtil.shopConfigFiles.keySet());
                                 }
 
-                                if(args[3].equals("set"))
+                                switch (args[3])
                                 {
-                                    if(!config.getString("tmpString").equals("accountSet"))
-                                    {
-                                        config.set("tmpString","accountSet");
-                                        Help.showHelp("accountSet",(Player)sender,args);
-                                    }
-                                }
-                                else if(args[3].equals("transfer"))
-                                {
-                                    if(!config.getString("tmpString").equals("accountTransfer"))
-                                    {
-                                        config.set("tmpString","accountTransfer");
-                                        Help.showHelp("accountTransfer",(Player)sender,args);
-                                    }
+                                    case "set":
+                                        Help.showHelp("account_set", (Player) sender, args);
+                                        break;
+                                    case "transfer":
+                                        Help.showHelp("account_transfer", (Player) sender, args);
 
-                                    for (Player p: Bukkit.getServer().getOnlinePlayers())
-                                    {
-                                        temp.add(p.getName());
-                                    }
-                                }
-                                else if(args[3].equals("linkto"))
-                                {
-                                    if(!config.getString("tmpString").equals("accountLinkto"))
-                                    {
-                                        config.set("tmpString","accountLinkto");
-                                        Help.showHelp("accountLinkto",(Player)sender,args);
-                                    }
+                                        for (Player onlinePlayer : Bukkit.getServer().getOnlinePlayers())
+                                        {
+                                            temp.add(onlinePlayer.getName());
+                                        }
+                                        break;
+                                    case "linkto":
+                                        Help.showHelp("account_link_to", (Player) sender, args);
+                                        break;
                                 }
 
-                                for (String s:temp)
-                                {
-                                    if(s.startsWith(args[4])) alist.add(s);
-                                }
+                                AddToAutoCompleteIfValid(args[4]);
                             }
-                        }
-                        else if(args[2].equalsIgnoreCase("hideStock") && sender.hasPermission("dshop.admin.shopedit"))
+                        } else if (args[2].equalsIgnoreCase("sellbuy") && sender.hasPermission(P_ADMIN_SHOP_EDIT))
                         {
-                            if(args.length == 4)
+                            if (args.length == 4)
                             {
-                                temp.add("true");
-                                temp.add("false");
+                                temp.add("sellOnly");
+                                temp.add("buyOnly");
+                                temp.add("clear");
 
-                                for (String s:temp)
-                                {
-                                    if(s.startsWith(args[3])) alist.add(s);
-                                }
+                                AddToAutoCompleteIfValid(args[3]);
 
-                                if(!config.getString("tmpString").equals("hideStock"))
-                                {
-                                    config.set("tmpString","hideStock");
-                                    Help.showHelp("hideStock",(Player)sender,args);
-                                }
+                                Help.showHelp("sellbuy", (Player) sender, args);
                             }
-                        }
-                        else if(args[2].equalsIgnoreCase("hidePricingType") && sender.hasPermission("dshop.admin.shopedit"))
+                        } else if (args[2].equalsIgnoreCase("log") && sender.hasPermission(P_ADMIN_SHOP_EDIT))
                         {
-                            if(args.length == 4)
-                            {
-                                temp.add("true");
-                                temp.add("false");
-
-                                for (String s:temp)
-                                {
-                                    if(s.startsWith(args[3])) alist.add(s);
-                                }
-
-                                if(!config.getString("tmpString").equals("hidePricingType"))
-                                {
-                                    config.set("tmpString","hidePricingType");
-                                    Help.showHelp("hidePricingType",(Player)sender,args);
-                                }
-                            }
-                        }
-                        else if(args[2].equalsIgnoreCase("sellbuy") && sender.hasPermission("dshop.admin.shopedit"))
-                        {
-                            if(args.length == 4)
-                            {
-                                temp.add("SellOnly");
-                                temp.add("BuyOnly");
-                                temp.add("Clear");
-
-                                for (String s:temp)
-                                {
-                                    if(s.startsWith(args[3])) alist.add(s);
-                                }
-
-                                if(!config.getString("tmpString").equals("sellbuy"))
-                                {
-                                    config.set("tmpString","sellbuy");
-                                    Help.showHelp("sellbuy",(Player)sender,args);
-                                }
-                            }
-                        }
-                        else if(args[2].equalsIgnoreCase("log") && sender.hasPermission("dshop.admin.shopedit"))
-                        {
-                            if(args.length == 4)
+                            if (args.length == 4)
                             {
                                 temp.add("enable");
                                 temp.add("disable");
                                 temp.add("clear");
+                                temp.add("printToConsole");
+                                temp.add("printToAdmin");
 
-                                for (String s:temp)
-                                {
-                                    if(s.startsWith(args[3])) alist.add(s);
-                                }
+                                AddToAutoCompleteIfValid(args[3]);
 
-                                if(!config.getString("tmpString").equals("log"))
-                                {
-                                    config.set("tmpString","log");
-                                    Help.showHelp("log",(Player)sender,args);
-                                }
+                                Help.showHelp("log", (Player) sender, args);
                             }
+                            else if (args.length == 5)
+                            {
+                                temp.add("on");
+                                temp.add("off");
+
+                                AddToAutoCompleteIfValid(args[4]);
+                            }
+                        } else if (args[2].equalsIgnoreCase("resetTradingVolume") && sender.hasPermission(P_ADMIN_SHOP_EDIT))
+                        {
+                            if (args.length == 4)
+                            {
+                                for (OfflinePlayer players : Bukkit.getServer().getOfflinePlayers())
+                                {
+                                    temp.add(players.getName());
+                                }
+
+                                AddToAutoCompleteIfValid(args[3]);
+
+                                Help.showHelp("resetTradingVolume", (Player) sender, args);
+                            }
+                        } else if (args[2].equalsIgnoreCase("background") && sender.hasPermission(P_ADMIN_SHOP_EDIT))
+                        {
+                            if (args.length == 4)
+                            {
+                                temp.add("clear");
+                                temp.add("black");
+                                temp.add("gray");
+                                temp.add("light_gray");
+                                temp.add("white");
+                                temp.add("cyan");
+                                temp.add("light_blue");
+                                temp.add("blue");
+                                temp.add("brown");
+                                temp.add("green");
+                                temp.add("lime");
+                                temp.add("yellow");
+                                temp.add("orange");
+                                temp.add("pink");
+                                temp.add("magenta");
+                                temp.add("purple");
+                                temp.add("red");
+                                AddToAutoCompleteIfValid(args[3]);
+                            }
+
+                            Help.showHelp("background", (Player) sender, args);
                         }
                     }
-                }
-                else if(args[0].equalsIgnoreCase("createshop") && sender.hasPermission("dshop.admin.createshop"))
+                } else if (args[0].equalsIgnoreCase("createshop") && sender.hasPermission(P_ADMIN_CREATE_SHOP))
                 {
                     if (args.length == 3)
                     {
                         temp.add("true");
                         temp.add("false");
 
-                        for (String s:temp)
-                        {
-                            if(s.startsWith(args[2])) alist.add(s);
-                        }
+                        AddToAutoCompleteIfValid(args[2]);
                     }
 
-                    if(!config.getString("tmpString").equals("createshop"))
-                    {
-                        config.set("tmpString","createshop");
-                        Help.showHelp("createshop",(Player)sender,args);
-                    }
-                }
-                else if(args[0].equalsIgnoreCase("deleteshop") && sender.hasPermission("dshop.admin.deleteshop"))
+                    Help.showHelp("create_shop", (Player) sender, args);
+                } else if (args[0].equalsIgnoreCase("deleteshop") && sender.hasPermission(P_ADMIN_DELETE_SHOP))
                 {
-                    temp.addAll(ShopUtil.ccShop.get().getKeys(false));
+                    temp.addAll(ShopUtil.shopConfigFiles.keySet());
 
-                    for (String s:temp)
-                    {
-                        if(s.startsWith(args[1])) alist.add(s);
-                    }
+                    AddToAutoCompleteIfValid(args[1]);
 
-                    if(!config.getString("tmpString").equals("deleteshop"))
-                    {
-                        config.set("tmpString","deleteshop");
-                        Help.showHelp("deleteshop",(Player)sender,args);
-                    }
-                }
-                else if(args[0].equalsIgnoreCase("mergeshop") && sender.hasPermission("dshop.admin.mergeshop"))
+                    Help.showHelp("delete_shop", (Player) sender, args);
+                } else if (args[0].equalsIgnoreCase("mergeshop") && sender.hasPermission(P_ADMIN_MERGE_SHOP))
                 {
                     if (args.length <= 3)
                     {
-                        temp.addAll(ShopUtil.ccShop.get().getKeys(false));
+                        temp.addAll(ShopUtil.shopConfigFiles.keySet());
 
-                        for (String s:temp)
-                        {
-                            if(s.startsWith(args[args.length-1])) alist.add(s);
-                        }
+                        AddToAutoCompleteIfValid(args[args.length - 1]);
                     }
 
-                    if(!config.getString("tmpString").equals("mergeshop"))
-                    {
-                        config.set("tmpString","mergeshop");
-                        Help.showHelp("mergeshop",(Player)sender,args);
-                    }
-                }
-                else if(args[0].equalsIgnoreCase("openshop") && sender.hasPermission("dshop.admin.openshop"))
+                    Help.showHelp("merge_shop", (Player) sender, args);
+                } else if (args[0].equalsIgnoreCase("openshop") && sender.hasPermission(P_ADMIN_OPEN_SHOP))
                 {
                     if (args.length == 2)
                     {
-                        temp.addAll(ShopUtil.ccShop.get().getKeys(false));
+                        temp.addAll(ShopUtil.shopConfigFiles.keySet());
 
-                        for (String s:temp)
-                        {
-                            if(s.startsWith(args[args.length-1])) alist.add(s);
-                        }
-                    } else if (args.length == 3) {
+                        AddToAutoCompleteIfValid(args[args.length - 1]);
+                    } else if (args.length == 3)
+                    {
                         temp.addAll(Bukkit.getOnlinePlayers().stream().map(HumanEntity::getName).collect(Collectors.toList()));
 
-                        for (String s:temp)
-                        {
-                            if(s.startsWith(args[args.length-1])) alist.add(s);
-                        }
+                        AddToAutoCompleteIfValid(args[args.length - 1]);
                     }
 
-                    if(!config.getString("tmpString").equals("openshop"))
-                    {
-                        config.set("tmpString","openshop");
-                        Help.showHelp("openshop",(Player)sender,args);
-                    }
-                }
-                else if(args[0].equalsIgnoreCase("renameshop") && sender.hasPermission("dshop.admin.renameshop"))
+                    Help.showHelp("open_shop", (Player) sender, args);
+                } else if (args[0].equalsIgnoreCase("renameshop") && sender.hasPermission(P_ADMIN_RENAME_SHOP))
                 {
-                    if(args.length == 2)
+                    if (args.length == 2)
                     {
-                        temp.addAll(ShopUtil.ccShop.get().getKeys(false));
+                        temp.addAll(ShopUtil.shopConfigFiles.keySet());
 
-                        for (String s:temp)
-                        {
-                            if(s.startsWith(args[1])) alist.add(s);
-                        }
+                        AddToAutoCompleteIfValid(args[1]);
                     }
 
-                    if(!config.getString("tmpString").equals("renameshop"))
-                    {
-                        config.set("tmpString","renameshop");
-                        Help.showHelp("renameshop",(Player)sender,args);
-                    }
-                }
-                else if(args[0].equalsIgnoreCase("cmdHelp"))
+                    Help.showHelp("rename_shop", (Player) sender, args);
+                } else if (args[0].equalsIgnoreCase("copyshop") && sender.hasPermission(P_ADMIN_COPY_SHOP))
                 {
-                    if(args.length == 2)
+                    if (args.length == 2)
                     {
-                        alist.add("on");
-                        alist.add("off");
+                        temp.addAll(ShopUtil.shopConfigFiles.keySet());
 
-                        if(!config.getString("tmpString").equals("cmdHelp"))
-                        {
-                            config.set("tmpString","cmdHelp");
-                            Help.showHelp("cmdHelp",(Player)sender,args);
-                        }
+                        AddToAutoCompleteIfValid(args[1]);
                     }
-                }
-                else if(args[0].equalsIgnoreCase("settax"))
+
+                    Help.showHelp("copy_shop", (Player) sender, args);
+                } else if (args[0].equalsIgnoreCase("cmdHelp"))
                 {
-                    if(!config.getString("tmpString").equals("settax"))
+                    if (args.length == 2)
                     {
-                        config.set("tmpString","settax");
-                        Help.showHelp("settax",(Player)sender,args);
+                        autoCompleteList.add("on");
+                        autoCompleteList.add("off");
+
+                        Help.showHelp("cmd_help", (Player) sender, args);
                     }
-                }
-                else if(args[0].equalsIgnoreCase("setdefaultshop"))
+                } else if (args[0].equalsIgnoreCase("iteminfo"))
                 {
-                    temp.addAll(ShopUtil.ccShop.get().getKeys(false));
-
-                    for (String s:temp)
-                    {
-                        if(s.startsWith(args[1])) alist.add(s);
-                    }
-
-                    if(!config.getString("tmpString").equals("setdefaultshop"))
-                    {
-                        config.set("tmpString","setdefaultshop");
-                        Help.showHelp("setdefaultshop",(Player)sender,args);
-                    }
-                }
-                else if(args[0].equalsIgnoreCase("deleteOldUser"))
+                    Help.showHelp("iteminfo", (Player) sender, args);
+                }  else if (args[0].equalsIgnoreCase("settax"))
                 {
-                    if(!config.getString("tmpString").equals("deleteOldUser"))
-                    {
-                        config.set("tmpString","deleteOldUser");
-                        Help.showHelp("deleteOldUser",(Player)sender,args);
-                    }
-                }
-                else if(args[0].equalsIgnoreCase("convert"))
+                    Help.showHelp("set_tax", (Player) sender, args);
+                } else if (args[0].equalsIgnoreCase("setdefaultshop"))
                 {
-                    if(!sender.hasPermission("dshop.admin.convert")) return null;
+                    temp.addAll(ShopUtil.shopConfigFiles.keySet());
 
-                    if(args.length == 2)
-                    {
-                        temp.add("Shop");
-                    }
+                    AddToAutoCompleteIfValid(args[1]);
 
-                    for (String s:temp)
-                    {
-                        if(s.startsWith(args[1])) alist.add(s);
-                    }
-
-                    if(!config.getString("tmpString").equals("convert"))
-                    {
-                        config.set("tmpString","convert");
-                        Help.showHelp("convert",(Player)sender,args);
-                    }
+                    Help.showHelp("set_default_shop", (Player) sender, args);
+                } else if (args[0].equalsIgnoreCase("deleteOldUser"))
+                {
+                    Help.showHelp("delete_old_user", (Player) sender, args);
                 }
 
-                return alist;
+                return autoCompleteList;
             }
-        }catch (Exception e){
+        } catch (Exception e)
+        {
             return null;
         }
 
         return null;
+    }
+
+    private static void AddToAutoCompleteIfValid(String arg)
+    {
+        for (String s : temp)
+        {
+            if (s.toLowerCase().startsWith(arg.toLowerCase()))
+                autoCompleteList.add(s);
+        }
     }
 }

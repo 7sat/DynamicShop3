@@ -1,47 +1,75 @@
 package me.sat7.dynamicshop.commands;
 
+import me.sat7.dynamicshop.guis.StartPage;
+import org.bukkit.command.CommandSender;
+import org.bukkit.configuration.ConfigurationSection;
 import org.bukkit.entity.Player;
 
 import me.sat7.dynamicshop.DynamicShop;
-import me.sat7.dynamicshop.utilities.LangUtil;
 import me.sat7.dynamicshop.utilities.ShopUtil;
 
-public final class RenameShop {
-    private RenameShop() {
+import static me.sat7.dynamicshop.constants.Constants.P_ADMIN_RENAME_SHOP;
+import static me.sat7.dynamicshop.utilities.LangUtil.t;
 
+public final class RenameShop extends DSCMD
+{
+    public RenameShop()
+    {
+        inGameUseOnly = false;
+        permission = P_ADMIN_RENAME_SHOP;
+        validArgCount.add(3);
     }
 
-    static boolean renameShop(String[] args, Player player) {
-        if(args.length >= 3)
+    @Override
+    public void SendHelpMessage(Player player)
+    {
+        player.sendMessage(DynamicShop.dsPrefix(player) + t(player, "HELP.TITLE").replace("{command}", "renameshop"));
+        player.sendMessage(" - " + t(player, "HELP.USAGE") + ": /ds renameshop <old name> <new name>");
+
+        player.sendMessage("");
+    }
+
+    @Override
+    public void RunCMD(String[] args, CommandSender sender)
+    {
+        if (!CheckValid(args, sender))
+            return;
+
+        if (ShopUtil.shopConfigFiles.containsKey(args[1]))
         {
-            if(!player.hasPermission("dshop.admin.renameshop"))
+            if (args[1].equals(args[2]))
             {
-                player.sendMessage(DynamicShop.dsPrefix + LangUtil.ccLang.get().getString("ERR.NO_PERMISSION"));
-                return true;
+                sender.sendMessage(DynamicShop.dsPrefix(sender) + t(sender, "ERR.WRONG_USAGE"));
+                return;
             }
 
-            try
+            String newName = args[2].replace("/", "");
+            ShopUtil.renameShop(args[1], newName);
+            sender.sendMessage(DynamicShop.dsPrefix(sender) + t(sender, "MESSAGE.CHANGES_APPLIED") + newName);
+
+            ConfigurationSection cs = StartPage.ccStartPage.get().getConfigurationSection("Buttons");
+            if (cs != null)
             {
-                if(ShopUtil.ccShop.get().contains(args[1]))
+                for (String c : cs.getKeys(false))
                 {
-                    String newName = args[2].replace("/","");
-                    ShopUtil.renameShop(args[1],newName);
-                    player.sendMessage(DynamicShop.dsPrefix + LangUtil.ccLang.get().getString("CHANGES_APPLIED") + newName);
+                    String actionString = cs.getString(c + ".action");
+                    if (actionString == null || !actionString.contains(args[1]) || !actionString.contains("ds shop"))
+                        continue;
+
+                    cs.set(c + ".action", actionString.replace(args[1], args[2]));
+
+                    String nameString = cs.getString(c + ".displayName");
+                    if (nameString == null || !nameString.contains(args[1]))
+                        continue;
+
+                    cs.set(c + ".displayName", nameString.replace(args[1], args[2]));
                 }
-                else
-                {
-                    player.sendMessage(DynamicShop.dsPrefix + LangUtil.ccLang.get().getString("ERR.SHOP_NOT_FOUND"));
-                }
-            }
-            catch (Exception e)
-            {
-                player.sendMessage(DynamicShop.dsPrefix + LangUtil.ccLang.get().getString("ERR.SHOP_NOT_FOUND"));
+                StartPage.ccStartPage.save();
             }
         }
         else
         {
-            player.sendMessage(DynamicShop.dsPrefix + LangUtil.ccLang.get().getString("ERR.WRONG_USAGE"));
+            sender.sendMessage(DynamicShop.dsPrefix(sender) + t(sender, "ERR.SHOP_NOT_FOUND"));
         }
-        return false;
     }
 }

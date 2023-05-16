@@ -1,18 +1,9 @@
-# SSDynamicShop
-Spaghetti from hell. Good Luck.
+Free version https://www.spigotmc.org/resources/65603/
 
-[Link]
+**Premium version** https://www.spigotmc.org/resources/100058/
 
-Spigot https://www.spigotmc.org/resources/65603/
+**Donation** https://www.paypal.com/paypalme/7sat
 
 Discord https://discord.gg/5HQjBqU
 
-Crowdin https://crowdin.com/project/1q2w3e4r
-
 bStats https://bstats.org/plugin/bukkit/DynamicShop
-
-[Donation]
-
-PayPal https://www.paypal.me/7sat?locale.x=ko_KR
-
-Donorbox https://donorbox.org/7sat
