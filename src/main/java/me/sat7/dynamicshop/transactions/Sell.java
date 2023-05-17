@@ -312,7 +312,8 @@ public final class Sell
         Bukkit.getPluginManager().callEvent(event);
 
         // UI 갱신
-        DynaShopAPI.openItemTradeGui(player, shopName, tradeIdx);
+        if (!ConfigUtil.GetFastTrade())
+            DynaShopAPI.openItemTradeGui(player, shopName, tradeIdx);
     }
 
     private static boolean CheckTransactionSuccess(String currencyType, Player player, double priceSum)

@@ -172,6 +172,10 @@ public final class ConfigUtil
         return config.getBoolean("Shop.UseLegacyStockStabilization");
     }
 
+    public static boolean GetFastTrade() {
+        return config.getBoolean("Shop.FastTrade");
+    }
+
     // [ UI ] ==========
 
     public static boolean GetDisplayStockAsStack()

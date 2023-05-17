@@ -205,7 +205,8 @@ public final class Buy
         RunBuyCommand(data, player, shopName, itemStack, tradeAmount, priceSum);
 
         ShopUtil.shopDirty.put(shopName, true);
-        DynaShopAPI.openItemTradeGui(player, shopName, tradeIdx);
+        if (!ConfigUtil.GetFastTrade())
+            DynaShopAPI.openItemTradeGui(player, shopName, tradeIdx);
 
         // 이벤트 호출
         ShopBuySellEvent event = new ShopBuySellEvent(true, priceBuyOld, Calc.getCurrentPrice(shopName, tradeIdx, true), priceSellOld, DynaShopAPI.getSellPrice(shopName, itemStack), stockOld, DynaShopAPI.getStock(shopName, itemStack), DynaShopAPI.getMedian(shopName, itemStack), shopName, itemStack, player);

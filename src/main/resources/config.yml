@@ -27,3 +27,4 @@ Log.LogFileNameFormat: MM_dd_yyyy
 Log.CullLogs: true
 Log.LogCullAgeMinutes: 7200
 Log.LogCullTimeMinutes: 120
+Shop.FastTrade: true
