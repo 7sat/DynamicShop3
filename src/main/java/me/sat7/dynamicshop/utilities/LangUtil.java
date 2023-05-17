@@ -103,6 +103,9 @@ public final class LangUtil
             ccLang.get().addDefault("SHOP.TRADE_LIMIT_SELL", "§a판매량 제한 : {num} 남음");
             ccLang.get().addDefault("SHOP.TRADE_LIMIT_TIMER", "§a다음 리셋: {time}");
             ccLang.get().addDefault("SHOP.CLICK_TO_ADD", "§e클릭: 추가");
+            ccLang.get().addDefault("SHOP.EDITOR_BUTTON", "§3에디터 모드: ");
+            ccLang.get().addDefault("SHOP.FAST_TRADE_BUY", "\n§e좌클릭: 1개 구매\n§e쉬프트+좌클릭: 64개 구매");
+            ccLang.get().addDefault("SHOP.FAST_TRADE_SELL", "\n§e우클릭: 1개 판매\n§e쉬프트+우클릭: 64개 판매");
 
             ccLang.get().addDefault("SHOP_SETTING_TITLE", "§3상점 설정");
             ccLang.get().addDefault("SHOP_SETTING.LOG_TOGGLE_LORE", "§e우클릭: 로그 뷰어");
@@ -550,6 +553,9 @@ public final class LangUtil
             ccLang.get().addDefault("SHOP.TRADE_LIMIT_SELL", "§aSales limit: {num}left");
             ccLang.get().addDefault("SHOP.TRADE_LIMIT_TIMER", "§aNext reset: {time}");
             ccLang.get().addDefault("SHOP.CLICK_TO_ADD", "§eClick: Add");
+            ccLang.get().addDefault("SHOP.EDITOR_BUTTON", "§3Editor Mode: ");
+            ccLang.get().addDefault("SHOP.FAST_TRADE_BUY", "\n§eLeft: buy 1\n§eShift+Left: buy 64");
+            ccLang.get().addDefault("SHOP.FAST_TRADE_SELL", "\n§eRight: sell 1\n§eShift+Right: sell 64");
 
             ccLang.get().addDefault("SHOP_SETTING_TITLE", "§3Shop Settings");
             ccLang.get().addDefault("SHOP_SETTING.LOG_TOGGLE_LORE", "§eRMB: Log Viewer");

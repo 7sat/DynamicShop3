@@ -92,6 +92,14 @@ public final class Buy
             tradeAmount++;
         }
 
+        // 상점 재고 부족
+        if ((!infiniteStock && stockOld <= tradeAmount) || stockOld == 1)
+        {
+            player.sendMessage(DynamicShop.dsPrefix(player) + t(player, "MESSAGE.OUT_OF_STOCK"));
+            data.get().set(tradeIdx + ".stock", stockOld);
+            return;
+        }
+
         // 실 구매 가능량이 0이다 = 돈이 없다.
         if (tradeAmount <= 0)
         {
@@ -114,14 +122,6 @@ public final class Buy
             }
 
             player.sendMessage(message);
-            data.get().set(tradeIdx + ".stock", stockOld);
-            return;
-        }
-
-        // 상점 재고 부족
-        if (!infiniteStock && stockOld <= tradeAmount)
-        {
-            player.sendMessage(DynamicShop.dsPrefix(player) + t(player, "MESSAGE.OUT_OF_STOCK"));
             data.get().set(tradeIdx + ".stock", stockOld);
             return;
         }

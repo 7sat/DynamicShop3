@@ -22,7 +22,7 @@ public class IndividualCustomConfig<T> {
 	private Function<T, String> function;
 	private BiConsumer<T, FileConfiguration> consumer;
 
-	public void setup(String folder, Function<T, String> function, BiConsumer<T, FileConfiguration> consumer){
+	public void setup(String folder, Function<T, String> function, BiConsumer<T, FileConfiguration> consumer) {
 		this.consumer = consumer;
 		this.function = function;
 		this.folder = new File(Bukkit.getServer().getPluginManager().getPlugin("DynamicShop").getDataFolder(), folder);
@@ -71,10 +71,14 @@ public class IndividualCustomConfig<T> {
 		if (customConfigs.containsKey(text) && temp != null) {
 			return temp;
 		} else {
-			FileConfiguration config = new YamlConfiguration();
-			customConfigs.put(text, config);
-			consumer.accept(name, config);
-			return config;
+			if (open(name)) {
+				return customConfigs.get(text);
+			} else {
+				FileConfiguration config = new YamlConfiguration();
+				customConfigs.put(text, config);
+				consumer.accept(name, config);
+				return config;
+			}
 		}
     }
 

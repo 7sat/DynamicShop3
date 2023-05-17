@@ -56,8 +56,6 @@ public final class Shop extends InGameUI
 
     private int selectedSlot = -1;
 
-    private boolean editorMode;
-
     public Inventory getGui(Player player, String shopName, int page)
     {
         shopData = ShopUtil.shopConfigFiles.get(shopName).get();
@@ -90,8 +88,8 @@ public final class Shop extends InGameUI
         CreateCloseButton(player, CLOSE);
         CreateButton(PAGE, InGameUI.GetPageButtonIconMat(), CreatePageButtonName(), CreatePageButtonLore(), this.page);
         CreateButton(SHOP_INFO, InGameUI.GetShopInfoButtonIconMat(), "§3" + shopName, CreateShopInfoText());
-        if (player.hasPermission(P_ADMIN_SHOP_EDIT))
-            CreateButton(EDITOR, Material.STRUCTURE_VOID, "§3에디터모드: " + (editorMode ? "§a현재 켜짐":"§c현재 꺼짐"), 1);
+        if (player.hasPermission(P_ADMIN_SHOP_EDIT) && ConfigUtil.GetFastTrade())
+            CreateButton(EDITOR, Material.STRUCTURE_VOID, CreateEditorButtonName(), 1);
 
         ShowItems();
 
@@ -112,9 +110,9 @@ public final class Shop extends InGameUI
             OnClickPageButton(e.isLeftClick(), e.isRightClick(), e.isShiftClick());
         else if (e.getSlot() == SHOP_INFO && e.isRightClick())
             OnClickShopSettingsButton();
-        else if (e.getSlot() == EDITOR && player.hasPermission(P_ADMIN_SHOP_EDIT))
+        else if (e.getSlot() == EDITOR && player.hasPermission(P_ADMIN_SHOP_EDIT) && ConfigUtil.GetFastTrade())
         {
-            editorMode = !editorMode;
+            UserUtil.userEditorMode.compute(player.getUniqueId(), (uuid, mode) -> Boolean.FALSE.equals(mode));
             RefreshUI();
         }
         else if (e.getSlot() <= 45)
@@ -343,7 +341,7 @@ public final class Shop extends InGameUI
             if(ChatColor.stripColor(temp).startsWith("\n"))
                 lore = lore.replaceFirst("\n","");
 
-            if (player.hasPermission(P_ADMIN_SHOP_EDIT) && editorMode)
+            if (player.hasPermission(P_ADMIN_SHOP_EDIT) && UserUtil.userEditorMode.get(player.getUniqueId()))
             {
                 lore += "\n" + t(player, "SHOP.ITEM_MOVE_LORE");
                 lore += "\n" + t(player, "SHOP.ITEM_EDIT_LORE");
@@ -352,17 +350,9 @@ public final class Shop extends InGameUI
                 if (ConfigUtil.GetFastTrade())
                 {
                     if (!buyText.isEmpty())
-                    {
-                        lore += "\n";
-                        lore += "\n§e좌클릭: 1개 구매";
-                        lore += "\n§e쉬프트+좌클릭: 64개 구매";
-                    }
+                        lore += "\n" + t(player, "SHOP.FAST_TRADE_BUY");
                     if (!sellText.isEmpty())
-                    {
-                        lore += "\n";
-                        lore += "\n§e우클릭: 1개 판매";
-                        lore += "\n§e쉬프트+우클릭: 전부 판매";
-                    }
+                        lore += "\n" + t(player, "SHOP.FAST_TRADE_SELL");
                 }
             }
         }
@@ -415,6 +405,13 @@ public final class Shop extends InGameUI
                 }
             }
         }
+    }
+
+    private String CreateEditorButtonName()
+    {
+        String editorString = t(player, "SHOP.EDITOR_BUTTON");
+        editorString += UserUtil.userEditorMode.get(player.getUniqueId()) ? ChatColor.GREEN + t(player, "ON") : ChatColor.RED + t(player, "OFF");
+        return editorString;
     }
 
     private String CreatePageButtonName()
@@ -628,31 +625,32 @@ public final class Shop extends InGameUI
                 return;
             }
 
-            if (ConfigUtil.GetFastTrade() && !editorMode)
+            if (ConfigUtil.GetFastTrade() && !UserUtil.userEditorMode.get(player.getUniqueId()))
             {
                 // 빠른 거래
                 if (e.getClick() == ClickType.DOUBLE_CLICK) return;
+                if (!e.isLeftClick() && !e.isRightClick()) return;
                 if(!CheckShopIsEnable())
                     return;
+                int deliveryCharge = ShopUtil.CalcShipping(shopName, player);
+                CustomConfig data = ShopUtil.shopConfigFiles.get(shopName);
+                ConfigurationSection optionS = data.get().getConfigurationSection("Options");
+                if (optionS.contains("world") && optionS.contains("pos1") && optionS.contains("pos2") && optionS.contains("flag.deliverycharge"))
+                {
+                    if (deliveryCharge == -1)
+                    {
+                        player.sendMessage(DynamicShop.dsPrefix(player) + t(player, "MESSAGE.DELIVERY_CHARGE_NA")); // 다른 월드로 배달 불가능
+                        return;
+                    }
+                }
                 int amount = 1;
                 if (e.isShiftClick()) amount = 64;
                 ItemStack tempIS = new ItemStack(e.getCurrentItem().getType(), amount);
-                CustomConfig data = ShopUtil.shopConfigFiles.get(shopName);
                 tempIS.setItemMeta((ItemMeta) data.get().get(idx + ".itemStack"));
-                int deliveryCharge = ShopUtil.CalcShipping(shopName, player);
                 String sellBuyOnly = shopData.getString(idx + ".tradeType", "");
                 if (e.isLeftClick()) {
                     if (sellBuyOnly.equalsIgnoreCase("SellOnly"))
                         return;
-                    ConfigurationSection optionS = data.get().getConfigurationSection("Options");
-                    if (optionS.contains("world") && optionS.contains("pos1") && optionS.contains("pos2") && optionS.contains("flag.deliverycharge"))
-                    {
-                        if (deliveryCharge == -1)
-                        {
-                            player.sendMessage(DynamicShop.dsPrefix(player) + t(player, "MESSAGE.DELIVERY_CHARGE_NA")); // 다른 월드로 배달 불가능
-                            return;
-                        }
-                    }
                     String permission = optionS.getString("permission");
                     if (permission != null && permission.length() > 0 && !player.hasPermission(permission) && !player.hasPermission(permission + ".buy"))
                     {
@@ -660,19 +658,9 @@ public final class Shop extends InGameUI
                         return;
                     }
                     Buy.buy(ShopUtil.GetCurrency(shopData), player, shopName, Integer.toString(idx), tempIS, deliveryCharge, data.get().getInt(idx+ ".stock") <= 0);
-                    ShowItem(Integer.toString(idx), idx);
                 } else if (e.isRightClick()) {
                     if (sellBuyOnly.equalsIgnoreCase("BuyOnly"))
                         return;
-                    ConfigurationSection optionS = data.get().getConfigurationSection("Options");
-                    if (optionS.contains("world") && optionS.contains("pos1") && optionS.contains("pos2") && optionS.contains("flag.deliverycharge"))
-                    {
-                        if (deliveryCharge == -1)
-                        {
-                            player.sendMessage(DynamicShop.dsPrefix(player) + t(player, "MESSAGE.DELIVERY_CHARGE_NA")); // 다른 월드로 배달 불가능
-                            return;
-                        }
-                    }
                     String permission = optionS.getString("permission");
                     if (permission != null && permission.length() > 0 && !player.hasPermission(permission) && !player.hasPermission(permission + ".sell"))
                     {
@@ -680,8 +668,8 @@ public final class Shop extends InGameUI
                         return;
                     }
                     Sell.sell(ShopUtil.GetCurrency(shopData), player, shopName, Integer.toString(idx), tempIS, deliveryCharge, data.get().getInt(idx+ ".stock") <= 0);
-                    ShowItem(Integer.toString(idx), idx);
                 }
+                ShowItem(Integer.toString(idx), idx);
             } else
             {
                 // 거래화면 열기
@@ -780,11 +768,11 @@ public final class Shop extends InGameUI
         infoMeta.setLore(new ArrayList<>(Arrays.asList(CreateShopInfoText().split("\n"))));
         infoButton.setItemMeta(infoMeta);
 
-        if (player.hasPermission(P_ADMIN_SHOP_EDIT))
+        if (player.hasPermission(P_ADMIN_SHOP_EDIT) && ConfigUtil.GetFastTrade())
         {
             ItemStack editorButton = inventory.getItem(EDITOR);
             ItemMeta editorMeta = editorButton.getItemMeta();
-            editorMeta.setDisplayName("§3에디터모드: " + (editorMode ? "§a현재 켜짐" : "§c현재 꺼짐"));
+            editorMeta.setDisplayName(CreateEditorButtonName());
             editorButton.setItemMeta(editorMeta);
         }
 

@@ -20,6 +20,7 @@ public final class UserUtil
     public static IndividualCustomConfig<UUID> ccUser = new IndividualCustomConfig<>(); // 가급적 save 호출 피할 것. onDisable 에서 처리함.
     public static final HashMap<UUID, String> userTempData = new HashMap<>();
     public static final HashMap<UUID, String> userInteractItem = new HashMap<>();
+    public static final HashMap<UUID, Boolean> userEditorMode = new HashMap<>();
 
     public static void Init()
     {
@@ -37,8 +38,7 @@ public final class UserUtil
         UUID uuid = player.getUniqueId();
         userTempData.put(uuid, "");
         userInteractItem.put(uuid, "");
-        ccUser.get(player.getUniqueId()).set("lastJoin", System.currentTimeMillis());
-        ccUser.get(player.getUniqueId()).set("cmdHelp", true);
+        userEditorMode.put(uuid, false);
     }
 
     public static void CreateDummyPlayerData(Player sender, int count)
