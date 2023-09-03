@@ -214,6 +214,36 @@ public final class ConfigUtil
         config.set("UI.ShopInfoButtonIcon", value);
     }
 
+    public static String GetBalanceButtonIcon()
+    {
+        return config.getString("UI.BalanceButtonIcon");
+    }
+
+    public static void SetBalanceButtonIcon(String value)
+    {
+        config.set("UI.BalanceButtonIcon", value);
+    }
+
+    public static String GetSellToggleButtonIcon()
+    {
+        return config.getString("UI.SellToggleButtonIcon");
+    }
+
+    public static void SetSellToggleButtonIcon(String value)
+    {
+        config.set("UI.SellToggleButtonIcon", value);
+    }
+
+    public static String GetBuyToggleButtonIcon()
+    {
+        return config.getString("UI.BuyToggleButtonIcon");
+    }
+
+    public static void SetBuyToggleButtonIcon(String value)
+    {
+        config.set("UI.BuyToggleButtonIcon", value);
+    }
+
     public static String GetIntFormat()
     {
         return config.getString("UI.IntFormat");
