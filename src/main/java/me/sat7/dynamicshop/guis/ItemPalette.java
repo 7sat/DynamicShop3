@@ -220,6 +220,14 @@ public final class ItemPalette extends InGameUI
         return potion;
     }
 
+    public ItemStack getPotionItemStack(Material potionMat, PotionType potionType){
+        ItemStack potion = new ItemStack(potionMat, 1);
+        PotionMeta meta = (PotionMeta) potion.getItemMeta();
+        meta.setBasePotionType(potionType);
+        potion.setItemMeta(meta);
+        return potion;
+    }
+
     private void SortAllItems()
     {
         ArrayList<ItemStack> allItems = new ArrayList<>();
@@ -237,21 +245,7 @@ public final class ItemPalette extends InGameUI
         {
             for (PotionType pt : PotionType.values())
             {
-                if (pt.isExtendable() && pt.isUpgradeable())
-                {
-                    allItems.add(getPotionItemStack(mat, pt, true, false));
-                    allItems.add(getPotionItemStack(mat, pt, false, true));
-                }
-                else if (pt.isExtendable())
-                {
-                    allItems.add(getPotionItemStack(mat, pt, true, false));
-                }
-                else if (pt.isUpgradeable())
-                {
-                    allItems.add(getPotionItemStack(mat, pt, false, true));
-                }
-
-                allItems.add(getPotionItemStack(mat, pt, false, false));
+                allItems.add(getPotionItemStack(mat, pt));
             }
         }
 
