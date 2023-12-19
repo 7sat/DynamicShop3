@@ -15,6 +15,9 @@ UI.OpenStartPageWhenClickCloseButton: true
 UI.CloseButtonIcon : BARRIER
 UI.PageButtonIcon : PAPER
 UI.ShopInfoButtonIcon : OAK_SIGN
+UI.BalanceButtonIcon : EMERALD
+UI.SellToggleButtonIcon : GREEN_STAINED_GLASS
+UI.BuyToggleButtonIcon : RED_STAINED_GLASS
 UI.IntFormat: '###,###'
 UI.DoubleFormat: '###,##0.00'
 UI.LocalizedItemName: true

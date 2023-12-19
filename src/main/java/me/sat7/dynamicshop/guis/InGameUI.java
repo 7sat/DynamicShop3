@@ -155,4 +155,43 @@ public class InGameUI
         }
         return mat;
     }
+
+    public static Material GetBalanceButtonIconMat()
+    {
+        String iconName = ConfigUtil.GetBalanceButtonIcon();
+        Material mat = Material.getMaterial(iconName);
+        if (mat == null)
+        {
+            mat = Material.EMERALD;
+            ConfigUtil.SetBalanceButtonIcon("EMERALD");
+            ConfigUtil.Save();
+        }
+        return mat;
+    }
+
+    public static Material GetSellToggleButtonIconMat()
+    {
+        String iconName = ConfigUtil.GetSellToggleButtonIcon();
+        Material mat = Material.getMaterial(iconName);
+        if (mat == null)
+        {
+            mat = Material.GREEN_STAINED_GLASS;
+            ConfigUtil.SetSellToggleButtonIcon("GREEN_STAINED_GLASS");
+            ConfigUtil.Save();
+        }
+        return mat;
+    }
+
+    public static Material GetBuyToggleButtonIconMat()
+    {
+        String iconName = ConfigUtil.GetBuyToggleButtonIcon();
+        Material mat = Material.getMaterial(iconName);
+        if (mat == null)
+        {
+            mat = Material.RED_STAINED_GLASS;
+            ConfigUtil.SetBuyToggleButtonIcon("RED_STAINED_GLASS");
+            ConfigUtil.Save();
+        }
+        return mat;
+    }
 }
