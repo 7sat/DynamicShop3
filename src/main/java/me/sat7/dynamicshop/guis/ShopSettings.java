@@ -371,7 +371,7 @@ public final class ShopSettings extends InGameUI
         // 거래 UI 설정
         ArrayList<String> tradeUILore = new ArrayList<>();
         tradeUILore.add("§9" + t(null, "CUR_STATE") + ": " + (confSec_Options.contains("tradeUI") ? confSec_Options.get("tradeUI") : t(player,"NULL")));
-        tradeUILore.add(t(player, "SHOP_SETTING.TRADE_UI_LORE"));
+        tradeUILore.add(t(player, "SHOP_SETTING.TRADE_UI_LORE_2"));
         CreateButton(TRADE_UI_SETTING, Material.EMERALD, t(player, "SHOP_SETTING.TRADE_UI"), tradeUILore);
 
         return inventory;

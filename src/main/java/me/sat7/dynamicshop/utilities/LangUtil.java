@@ -144,7 +144,7 @@ public final class LangUtil
             ccLang.get().addDefault("SHOP_SETTING.COMMAND_LORE1", "§e좌클릭: 설정");
             ccLang.get().addDefault("SHOP_SETTING.COMMAND_LORE3", "§e씨프트 우클릭: 마지막 항목 삭제");
             ccLang.get().addDefault("SHOP_SETTING.TRADE_UI", "§f거래 UI 설정");
-            ccLang.get().addDefault("SHOP_SETTING.TRADE_UI_LORE", "§e좌클릭: 편집\n우클릭: 초기화");
+            ccLang.get().addDefault("SHOP_SETTING.TRADE_UI_LORE_2", "§e좌클릭: 편집\n§e우클릭: 초기화");
 
             ccLang.get().addDefault("ROTATION_EDITOR_TITLE", "§3로테이션 에디터");
             ccLang.get().addDefault("ROTATION_EDITOR.ENABLED", "§a로테이션 켜짐");
@@ -596,7 +596,7 @@ public final class LangUtil
             ccLang.get().addDefault("SHOP_SETTING.COMMAND_LORE1", "§eLMB: Set");
             ccLang.get().addDefault("SHOP_SETTING.COMMAND_LORE3", "§eShift RMB: Delete last item");
             ccLang.get().addDefault("SHOP_SETTING.TRADE_UI", "§fEdit Trade UI");
-            ccLang.get().addDefault("SHOP_SETTING.TRADE_UI_LORE", "§eLMB: Edit\nRMB: Reset");
+            ccLang.get().addDefault("SHOP_SETTING.TRADE_UI_LORE_2", "§eLMB: Edit\n§eRMB: Reset");
 
             ccLang.get().addDefault("ROTATION_EDITOR_TITLE", "§3Rotation Editor");
             ccLang.get().addDefault("ROTATION_EDITOR.ENABLED", "§aEnabled");

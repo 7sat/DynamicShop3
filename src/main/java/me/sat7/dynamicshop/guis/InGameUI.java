@@ -105,7 +105,20 @@ public class InGameUI
     @SuppressWarnings({"UnusedReturnValue", "SameParameterValue"})
     protected ItemStack CreateButton(int slotIndex, Material icon, String name, ArrayList<String> lore, int amount)
     {
-        ItemStack itemStack = ItemsUtil.createItemStack(icon, null, name, lore, amount);
+        ArrayList<String> finalLore = new ArrayList<>();
+        for(String loreLine : lore)
+        {
+            if (loreLine.contains("\n"))
+            {
+                finalLore.addAll(Arrays.asList(loreLine.split("\n")));
+            }
+            else
+            {
+                finalLore.add(loreLine);
+            }
+        }
+
+        ItemStack itemStack = ItemsUtil.createItemStack(icon, null, name, finalLore, amount);
         inventory.setItem(slotIndex, itemStack);
 
         return itemStack;
