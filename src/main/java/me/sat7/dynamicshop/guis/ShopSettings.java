@@ -77,6 +77,8 @@ public final class ShopSettings extends InGameUI
     private final int LOG_PRINT_CONSOLE = 52;
     private final int LOG_PRINT_ADMIN = 53;
 
+    private final int TRADE_UI_SETTING = 36;
+
     private final int CLOSE = 45;
 
     private String shopName;
@@ -365,6 +367,12 @@ public final class ShopSettings extends InGameUI
         logLore_3.add("§9" + t(player, "CUR_STATE") + ": " + (printToAdminActive ? t(player, "ON") : t(player, "OFF")));
         logLore_3.add("§e" + t(player, "LMB") + ": " + (printToAdminActive ? t(player, "OFF") : t(player, "ON")));
         CreateButton(LOG_PRINT_ADMIN, printToAdminActive ? Material.GREEN_STAINED_GLASS_PANE : Material.BLACK_STAINED_GLASS_PANE, t(player, "SHOP_SETTING.LOG_PRINT_ADMIN"), logLore_3);
+
+        // 거래 UI 설정
+        ArrayList<String> tradeUILore = new ArrayList<>();
+        tradeUILore.add("§9" + t(null, "CUR_STATE") + ": " + (confSec_Options.contains("tradeUI") ? confSec_Options.get("tradeUI") : t(player,"NULL")));
+        tradeUILore.add(t(player, "SHOP_SETTING.TRADE_UI_LORE"));
+        CreateButton(TRADE_UI_SETTING, Material.EMERALD, t(player, "SHOP_SETTING.TRADE_UI"), tradeUILore);
 
         return inventory;
     }
@@ -907,6 +915,26 @@ public final class ShopSettings extends InGameUI
                 Bukkit.dispatchCommand(player, "DynamicShop shop " + shopName + " flag integerOnly set");
             }
             DynaShopAPI.openShopSettingGui(player, shopName);
+        }
+        else if (e.getSlot() == TRADE_UI_SETTING)
+        {
+            if (e.isLeftClick())
+            {
+                player.closeInventory();
+                player.sendMessage(DynamicShop.dsPrefix(player) + t(player, "TRADE.WAIT_FOR_INPUT"));
+
+                UserUtil.userInteractItem.put(player.getUniqueId(), shopName + "/-1");
+                UserUtil.userTempData.put(player.getUniqueId(), "waitForTradeUI");
+
+                OnChat.WaitForInput(player);
+            }
+            if (e.isRightClick())
+            {
+                data.get().set("Options.tradeUI", null);
+                data.save();
+
+                DynaShopAPI.openShopSettingGui(player, shopName);
+            }
         }
     }
 

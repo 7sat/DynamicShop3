@@ -212,7 +212,7 @@ public final class ItemPalette extends InGameUI
         }
     }
 
-    public ItemStack getPotionItemStack(Material potionMat, PotionType type, boolean extend, boolean upgraded){
+    public ItemStack getPotionItemStack_deprecated(Material potionMat, PotionType type, boolean extend, boolean upgraded){
         ItemStack potion = new ItemStack(potionMat, 1);
         PotionMeta meta = (PotionMeta) potion.getItemMeta();
         meta.setBasePotionData(new PotionData(type, extend, upgraded));
@@ -220,7 +220,7 @@ public final class ItemPalette extends InGameUI
         return potion;
     }
 
-    public ItemStack getPotionItemStack(Material potionMat, PotionType potionType){
+    public ItemStack getPotionItemStack_mc1_20_2_or_newer(Material potionMat, PotionType potionType){
         ItemStack potion = new ItemStack(potionMat, 1);
         PotionMeta meta = (PotionMeta) potion.getItemMeta();
         meta.setBasePotionType(potionType);
@@ -240,12 +240,41 @@ public final class ItemPalette extends InGameUI
                 allItems.add(new ItemStack(m));
         }
 
-        Material[] potionMat = {Material.POTION, Material.LINGERING_POTION, Material.SPLASH_POTION};
-        for (Material mat : potionMat)
+        try
         {
-            for (PotionType pt : PotionType.values())
+            // 1.20.2 or newer
+            Material[] potionMat = {Material.POTION, Material.LINGERING_POTION, Material.SPLASH_POTION};
+            for (Material mat : potionMat)
             {
-                allItems.add(getPotionItemStack(mat, pt));
+                for (PotionType pt : PotionType.values())
+                {
+                    allItems.add(getPotionItemStack_mc1_20_2_or_newer(mat, pt));
+                }
+            }
+        }
+        catch(NoSuchMethodError ignored)
+        {
+            Material[] potionMat = {Material.POTION, Material.LINGERING_POTION, Material.SPLASH_POTION};
+            for (Material mat : potionMat)
+            {
+                for (PotionType pt : PotionType.values())
+                {
+                    if (pt.isExtendable() && pt.isUpgradeable())
+                    {
+                        allItems.add(getPotionItemStack_deprecated(mat, pt, true, false));
+                        allItems.add(getPotionItemStack_deprecated(mat, pt, false, true));
+                    }
+                    else if (pt.isExtendable())
+                    {
+                        allItems.add(getPotionItemStack_deprecated(mat, pt, true, false));
+                    }
+                    else if (pt.isUpgradeable())
+                    {
+                        allItems.add(getPotionItemStack_deprecated(mat, pt, false, true));
+                    }
+
+                    allItems.add(getPotionItemStack_deprecated(mat, pt, false, false));
+                }
             }
         }
 

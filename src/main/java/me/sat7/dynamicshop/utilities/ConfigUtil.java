@@ -46,6 +46,7 @@ public final class ConfigUtil
         DynamicShop.plugin.reloadConfig();
 
         config = DynamicShop.plugin.getConfig();
+        config.options().copyDefaults(true);
 
         try
         {
@@ -71,6 +72,7 @@ public final class ConfigUtil
         ValidateAndApply();
         SetConfigVersion(ConfigUtil.PluginConfigVersion);
         Save();
+
     }
 
     public static void Save()

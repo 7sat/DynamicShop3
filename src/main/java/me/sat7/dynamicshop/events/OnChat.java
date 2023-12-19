@@ -2,6 +2,7 @@ package me.sat7.dynamicshop.events;
 
 import me.sat7.dynamicshop.DynamicShop;
 import me.sat7.dynamicshop.DynaShopAPI;
+import me.sat7.dynamicshop.files.CustomConfig;
 import me.sat7.dynamicshop.guis.StartPage;
 import me.sat7.dynamicshop.utilities.ShopUtil;
 
@@ -47,6 +48,10 @@ public class OnChat implements Listener
                 UserUtil.userTempData.put(uuid, "");
                 player.sendMessage(DynamicShop.dsPrefix(player) + t(player, "MESSAGE.INPUT_CANCELED"));
             } else if (userData.equals("waitforPageDelete") || userData.equals("sellCmd") || userData.equals("buyCmd"))
+            {
+                UserUtil.userTempData.put(uuid, "");
+                player.sendMessage(DynamicShop.dsPrefix(player) + t(player, "MESSAGE.INPUT_CANCELED"));
+            } else if (userData.contains("waitForTradeUI"))
             {
                 UserUtil.userTempData.put(uuid, "");
                 player.sendMessage(DynamicShop.dsPrefix(player) + t(player, "MESSAGE.INPUT_CANCELED"));
@@ -110,6 +115,33 @@ public class OnChat implements Listener
 
             UserUtil.userTempData.put(uuid, "");
             DynaShopAPI.openStartPage(p);
+            cancelRunnable(p);
+        } else if (userData.contains("waitForTradeUI"))
+        {
+            e.setCancelled(true);
+
+            String[] temp = UserUtil.userInteractItem.get(uuid).split("/");
+            String shopName = temp[0];
+            String tradeIdx = temp[1];
+
+            CustomConfig shopData = ShopUtil.shopConfigFiles.get(shopName);
+
+            if (tradeIdx.equals("-1"))
+            {
+                shopData.get().set("Options.tradeUI", e.getMessage());
+                shopData.save();
+
+                DynaShopAPI.openShopSettingGui(p, shopName);
+            }
+            else
+            {
+                shopData.get().set(tradeIdx + ".tradeUI", e.getMessage());
+                shopData.save();
+
+                DynaShopAPI.openItemTradeGui(p, shopName, tradeIdx);
+            }
+
+            UserUtil.userTempData.put(uuid, "");
             cancelRunnable(p);
         } else if (userData.contains("waitforPageDelete"))
         {

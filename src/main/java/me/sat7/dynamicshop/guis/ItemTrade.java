@@ -6,6 +6,7 @@ import java.util.Arrays;
 import me.sat7.dynamicshop.DynaShopAPI;
 import me.sat7.dynamicshop.constants.Constants;
 import me.sat7.dynamicshop.economyhook.PlayerpointHook;
+import me.sat7.dynamicshop.events.OnChat;
 import me.sat7.dynamicshop.files.CustomConfig;
 import me.sat7.dynamicshop.transactions.Buy;
 import me.sat7.dynamicshop.transactions.Sell;
@@ -54,6 +55,8 @@ public final class ItemTrade extends InGameUI
     private String material;
     private ItemMeta itemMeta;
 
+    private int[] tradeUI_default;
+
     public Inventory getGui(Player player, String shopName, String tradeIdx)
     {
         this.player = player;
@@ -70,6 +73,26 @@ public final class ItemTrade extends InGameUI
         String uiTitle = shopData.getBoolean("Options.enable", true) ? "" : t(player, "SHOP.DISABLED");
         uiTitle += t(player, "TRADE_TITLE");
         inventory = Bukkit.createInventory(player, 18, uiTitle);
+
+        if (shopData.contains("Options.tradeUI"))
+        {
+            tradeUI_default = new int[]{1, 2, 4, 8, 16, 32, 64};
+            try
+            {
+                String amountArrayData = shopData.getString("Options.tradeUI");
+                String[] strArray = amountArrayData.split(",");
+                int count = Math.min(strArray.length, 7);
+                for (int i = 0; i < count; i++)
+                {
+                    tradeUI_default[i] = Integer.parseInt(strArray[i]);
+                }
+            }
+            catch (Exception e)
+            {
+                tradeUI_default = null;
+                DynamicShop.console.sendMessage(Constants.DYNAMIC_SHOP_PREFIX + "Data parsing error. ShopName: " + shopName + ", tradeIdx: " + tradeIdx);
+            }
+        }
 
         CreateBalanceButton();
         CreateSellBuyOnlyToggle();
@@ -155,28 +178,41 @@ public final class ItemTrade extends InGameUI
                 }
             } else
             {
-                ItemStack tempIS = new ItemStack(e.getCurrentItem().getType(), e.getCurrentItem().getAmount());
-                tempIS.setItemMeta((ItemMeta) data.get().get(tradeIdx + ".itemStack"));
-
-                // 무한재고&고정가격
-                boolean infiniteStock = data.get().getInt(tradeIdx + ".stock") <= 0;
-
-                // 배달비 계산
-                ConfigurationSection optionS = data.get().getConfigurationSection("Options");
-                if (optionS.contains("world") && optionS.contains("pos1") && optionS.contains("pos2") && optionS.contains("flag.deliverycharge"))
+                if (player.hasPermission(P_ADMIN_SHOP_EDIT) && e.isShiftClick() && e.isRightClick())
                 {
-                    deliveryCharge = ShopUtil.CalcShipping(shopName, player);
-                    if (deliveryCharge == -1)
-                    {
-                        player.sendMessage(DynamicShop.dsPrefix(player) + t(player, "MESSAGE.DELIVERY_CHARGE_NA")); // 다른 월드로 배달 불가능
-                        return;
-                    }
-                }
+                    player.closeInventory();
+                    player.sendMessage(DynamicShop.dsPrefix(player) + t(player, "TRADE.WAIT_FOR_INPUT"));
 
-                if (e.getSlot() <= 10)
-                    Sell(optionS, tempIS, deliveryCharge, infiniteStock);
+                    UserUtil.userInteractItem.put(player.getUniqueId(), shopName + "/" + tradeIdx);
+                    UserUtil.userTempData.put(player.getUniqueId(), "waitForTradeUI");
+
+                    OnChat.WaitForInput(player);
+                }
                 else
-                    Buy(optionS, tempIS, deliveryCharge, infiniteStock);
+                {
+                    ItemStack tempIS = new ItemStack(e.getCurrentItem().getType(), e.getCurrentItem().getAmount());
+                    tempIS.setItemMeta((ItemMeta) data.get().get(tradeIdx + ".itemStack"));
+
+                    // 무한재고&고정가격
+                    boolean infiniteStock = data.get().getInt(tradeIdx + ".stock") <= 0;
+
+                    // 배달비 계산
+                    ConfigurationSection optionS = data.get().getConfigurationSection("Options");
+                    if (optionS.contains("world") && optionS.contains("pos1") && optionS.contains("pos2") && optionS.contains("flag.deliverycharge"))
+                    {
+                        deliveryCharge = ShopUtil.CalcShipping(shopName, player);
+                        if (deliveryCharge == -1)
+                        {
+                            player.sendMessage(DynamicShop.dsPrefix(player) + t(player, "MESSAGE.DELIVERY_CHARGE_NA")); // 다른 월드로 배달 불가능
+                            return;
+                        }
+                    }
+
+                    if (e.getSlot() <= 10)
+                        Sell(optionS, tempIS, deliveryCharge, infiniteStock);
+                    else
+                        Buy(optionS, tempIS, deliveryCharge, infiniteStock);
+                }
             }
         }
     }
@@ -277,10 +313,47 @@ public final class ItemTrade extends InGameUI
             tradeLimitString = limitString.replace("{num}", String.valueOf(tradeLimitLeft)).replace("{time}", tradeLimitResetTime);
         }
 
-        int amount = 1;
+        int[] amountArray;
+        Material mat = Material.getMaterial(material);
+        if (tradeUI_default != null)
+        {
+            amountArray = tradeUI_default;
+        }
+        else
+        {
+            if (mat.getMaxStackSize() <= 1)
+            {
+                amountArray = new int[]{1, 2, 3, 4, 5, 6, 7};
+            }
+            else
+            {
+                amountArray = new int[]{1, 2, 4, 8, 16, 32, 64};
+            }
+        }
+
+        if (shopData.contains(tradeIdx + ".tradeUI"))
+        {
+            try
+            {
+                String amountArrayData = shopData.getString(tradeIdx + ".tradeUI");
+                String[] strArray = amountArrayData.split(",");
+                int count = Math.min(strArray.length, 7);
+                for (int i = 0; i < count; i++)
+                {
+                    amountArray[i] = Integer.parseInt(strArray[i]);
+                }
+            }
+            catch (Exception e)
+            {
+                //DynamicShop.console.sendMessage(Constants.DYNAMIC_SHOP_PREFIX + "Data parsing error. ShopName: " + shopName + ", tradeIdx: " + tradeIdx);
+            }
+        }
+
         int idx = sell ? 2 : 11;
         for (int i = 1; i < 8; i++)
         {
+            int amount = Math.min(64, amountArray[i - 1]);
+
             ItemStack itemStack = new ItemStack(Material.getMaterial(material), amount);
             itemStack.setItemMeta((ItemMeta) shopData.get(tradeIdx + ".itemStack"));
             ItemMeta meta = itemStack.getItemMeta();
@@ -400,6 +473,11 @@ public final class ItemTrade extends InGameUI
             String tradeLoreText = sell ? t(player, "TRADE.CLICK_TO_SELL") : t(player, "TRADE.CLICK_TO_BUY");
             tradeLoreText = tradeLoreText.replace("{amount}", n(amount));
 
+            if (player.hasPermission(P_ADMIN_SHOP_EDIT))
+            {
+                tradeLoreText += "\n" + t(player, "TRADE.QUANTITY_LORE");
+            }
+
             lore = lore.replace("{\\nPrice}", priceText.isEmpty() ? "" : "\n" + priceText);
             lore = lore.replace("{\\nStock}", stockText.isEmpty() ? "" : "\n" + stockText);
             lore = lore.replace("{\\nDeliveryCharge}", deliveryChargeText.isEmpty() ? "" : "\n" + deliveryChargeText);
@@ -420,15 +498,6 @@ public final class ItemTrade extends InGameUI
             inventory.setItem(idx, itemStack);
 
             idx++;
-
-            if(itemStack.getMaxStackSize() <= 1)
-            {
-                amount++;
-            }
-            else
-            {
-                amount = amount * 2;
-            }
         }
     }
 

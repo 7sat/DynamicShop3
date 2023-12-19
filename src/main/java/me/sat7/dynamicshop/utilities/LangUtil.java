@@ -143,6 +143,8 @@ public final class LangUtil
             ccLang.get().addDefault("SHOP_SETTING.COMMAND_BUY", "§f구매시 명령어");
             ccLang.get().addDefault("SHOP_SETTING.COMMAND_LORE1", "§e좌클릭: 설정");
             ccLang.get().addDefault("SHOP_SETTING.COMMAND_LORE3", "§e씨프트 우클릭: 마지막 항목 삭제");
+            ccLang.get().addDefault("SHOP_SETTING.TRADE_UI", "§f거래 UI 설정");
+            ccLang.get().addDefault("SHOP_SETTING.TRADE_UI_LORE", "§e좌클릭: 편집\n우클릭: 초기화");
 
             ccLang.get().addDefault("ROTATION_EDITOR_TITLE", "§3로테이션 에디터");
             ccLang.get().addDefault("ROTATION_EDITOR.ENABLED", "§a로테이션 켜짐");
@@ -257,6 +259,8 @@ public final class LangUtil
             ccLang.get().addDefault("PAGE_EDITOR.STATIC_PRICE", "§8[고정 가격]");
             ccLang.get().addDefault("PAGE_EDITOR.EMPTY", "§8(비어있음)");
             ccLang.get().addDefault("PAGE_EDITOR.EMPTY_SLOT_LORE", "§e좌,우클릭: 밀기\n§e+씨프트: 당기기");
+            ccLang.get().addDefault("TRADE.QUANTITY_LORE", "§eShift+우: 수량 편집");
+            ccLang.get().addDefault("TRADE.WAIT_FOR_INPUT", "거래 UI에 표시 될 수량을 입력하세요.\n예시: 1,2,4,8,16,32,64");
 
             ccLang.get().addDefault("LOG_VIEWER_TITLE", "§3로그 뷰어");
             ccLang.get().addDefault("LOG_VIEWER.DATE", "§f날짜: ");
@@ -455,6 +459,7 @@ public final class LangUtil
             ccLang.get().addDefault("OFF", "꺼짐");
             ccLang.get().addDefault("SET", "설정");
             ccLang.get().addDefault("UNSET", "설정해제");
+            ccLang.get().addDefault("NULL", "없음");
             ccLang.get().addDefault("NULL(OPEN)", "없음 (모두에게 열려있음)");
             ccLang.get().addDefault("CUR_STATE", "현재상태");
             ccLang.get().addDefault("CLICK", "클릭");
@@ -590,6 +595,8 @@ public final class LangUtil
             ccLang.get().addDefault("SHOP_SETTING.COMMAND_BUY", "§fBuy Command");
             ccLang.get().addDefault("SHOP_SETTING.COMMAND_LORE1", "§eLMB: Set");
             ccLang.get().addDefault("SHOP_SETTING.COMMAND_LORE3", "§eShift RMB: Delete last item");
+            ccLang.get().addDefault("SHOP_SETTING.TRADE_UI", "§fEdit Trade UI");
+            ccLang.get().addDefault("SHOP_SETTING.TRADE_UI_LORE", "§eLMB: Edit\nRMB: Reset");
 
             ccLang.get().addDefault("ROTATION_EDITOR_TITLE", "§3Rotation Editor");
             ccLang.get().addDefault("ROTATION_EDITOR.ENABLED", "§aEnabled");
@@ -689,6 +696,8 @@ public final class LangUtil
             ccLang.get().addDefault("TRADE.CLICK_TO_SELL", "§2§nClick: Sell {amount}");
             ccLang.get().addDefault("TRADE.PURCHASE_LIMIT_PER_PLAYER", "§aPurchase limit: {num}left\n§aNext reset: {time}");
             ccLang.get().addDefault("TRADE.SALES_LIMIT_PER_PLAYER", "§aSales limit: {num}left\n§aNext reset: {time}");
+            ccLang.get().addDefault("TRADE.QUANTITY_LORE", "§eShift RMB: Edit Quantity");
+            ccLang.get().addDefault("TRADE.WAIT_FOR_INPUT", "Enter the quantity that will be displayed in the Trade UI.\nExample: 1,2,4,8,16,32,64");
 
             ccLang.get().addDefault("PAGE_EDITOR_TITLE", "§3Page Editor");
             ccLang.get().addDefault("PAGE_EDITOR.PREV", "§f<<");
@@ -901,6 +910,7 @@ public final class LangUtil
             ccLang.get().addDefault("OFF", "OFF");
             ccLang.get().addDefault("SET", "SET");
             ccLang.get().addDefault("UNSET", "UNSET");
+            ccLang.get().addDefault("NULL", "Null");
             ccLang.get().addDefault("NULL(OPEN)", "None (open to all)");
             ccLang.get().addDefault("CUR_STATE", "Current Status");
             ccLang.get().addDefault("CLICK", "Click");
