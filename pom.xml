@@ -144,7 +144,7 @@
         <dependency>
             <groupId>com.github.Zrips</groupId>
             <artifactId>Jobs</artifactId>
-            <version>4.17.2</version>
+            <version>v4.17.2</version>
             <scope>provided</scope>
         </dependency>
         <dependency>
