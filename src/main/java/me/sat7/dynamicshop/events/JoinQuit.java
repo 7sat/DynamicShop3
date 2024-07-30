@@ -31,13 +31,9 @@ public class JoinQuit implements Listener
             if (e.getPlayer().hasPermission(P_ADMIN_SHOP_EDIT) || e.getPlayer().hasPermission(P_ADMIN_RELOAD))
             {
                 TextComponent text = new TextComponent("");
-                text.addExtra(DynamicShop.CreateLink("DShop3", false, ChatColor.DARK_AQUA, UpdateChecker.getResourceUrl()));
+                text.addExtra(DynamicShop.CreateLink("DShop3 Premium", false, ChatColor.DARK_AQUA, UpdateChecker.getResourceUrl()));
                 text.addExtra(" ");
                 text.addExtra(DynamicShop.CreateLink("Download", false, ChatColor.WHITE, UpdateChecker.getResourceUrl()));
-                text.addExtra(" ");
-                text.addExtra(DynamicShop.CreateLink("Premium", false, ChatColor.WHITE, "https://spigotmc.org/resources/100058"));
-                text.addExtra(" ");
-                text.addExtra(DynamicShop.CreateLink("Donate", false, ChatColor.WHITE, "https://www.paypal.com/paypalme/7sat"));
 
                 e.getPlayer().sendMessage("");
                 e.getPlayer().spigot().sendMessage(text);

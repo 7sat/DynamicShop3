@@ -40,8 +40,6 @@ import org.bukkit.scheduler.BukkitTask;
 import java.io.File;
 import java.util.*;
 
-import static me.sat7.dynamicshop.utilities.LangUtil.t;
-
 public final class DynamicShop extends JavaPlugin implements Listener
 {
     private static Economy econ = null; // 볼트에 물려있는 이코노미
@@ -84,6 +82,7 @@ public final class DynamicShop extends JavaPlugin implements Listener
     private BukkitTask periodicRepetitiveTask;
     private BukkitTask saveLogsTask;
     private BukkitTask cullLogsTask;
+    private BukkitTask backupTask;
     private BukkitTask shopSaveTask;
     private BukkitTask userDataRepetitiveTask;
 
@@ -149,11 +148,11 @@ public final class DynamicShop extends JavaPlugin implements Listener
 
         UIManager.DebugLog();
 
-        //console.sendMessage("---------------------");
+        console.sendMessage("---------------------");
 
-        //console.sendMessage("RotationTaskMap: size" + RotationUtil.RotationTaskMap.size());
-        //for(Map.Entry<String, Integer> entry : RotationUtil.RotationTaskMap.entrySet())
-        //    console.sendMessage(entry.getKey() + ": " + entry.getValue());
+        console.sendMessage("RotationTaskMap: size: " + RotationUtil.RotationTaskMap.size());
+        for(Map.Entry<String, Integer> entry : RotationUtil.RotationTaskMap.entrySet())
+            console.sendMessage(entry.getKey() + ": " + entry.getValue());
 
         console.sendMessage("---------------------");
 
@@ -195,11 +194,14 @@ public final class DynamicShop extends JavaPlugin implements Listener
         PeriodicRepetitiveTask();
         startSaveLogsTask();
         startCullLogsTask();
+        StartBackupTask();
         StartShopSaveTask();
         StartUserDataTask();
         hookIntoJobs();
         hookIntoPlayerPoints();
         InitPapi();
+        
+        RotationUtil.RestartAllRotationTask();
 
         // 완료
         console.sendMessage(Constants.DYNAMIC_SHOP_PREFIX + " Enabled! :)");
@@ -400,6 +402,19 @@ public final class DynamicShop extends JavaPlugin implements Listener
         UIManager.RefreshUI();
     }
 
+    public void StartBackupTask()
+    {
+        if (!ConfigUtil.GetShopYmlBackup_Enable())
+            return;
+
+        if (backupTask != null)
+        {
+            backupTask.cancel();
+        }
+        long interval = (20L * 60L * (long) ConfigUtil.GetShopYmlBackup_IntervalMinutes());
+        backupTask = Bukkit.getScheduler().runTaskTimer(DynamicShop.plugin, ShopUtil::ShopYMLBackup, interval, interval);
+    }
+
     public void StartShopSaveTask()
     {
         if (shopSaveTask != null)
@@ -471,6 +486,9 @@ public final class DynamicShop extends JavaPlugin implements Listener
         File shopFolder = new File(getDataFolder(), "Shop");
         shopFolder.mkdir(); // new 하고 같은줄에서 바로 하면 폴더 안만들어짐.
 
+        File rotationFolder = new File(getDataFolder(), "Rotation");
+        rotationFolder.mkdir();
+
         File LogFolder = new File(getDataFolder(), "Log");
         LogFolder.mkdir();
     }
@@ -518,14 +536,5 @@ public final class DynamicShop extends JavaPlugin implements Listener
 
         Bukkit.getScheduler().cancelTasks(this);
         console.sendMessage(Constants.DYNAMIC_SHOP_PREFIX + " Disabled");
-    }
-
-    public static void PaidOnlyMsg(Player p)
-    {
-        TextComponent text = new TextComponent("");
-        text.addExtra(DynamicShop.dsPrefix(p) +  t(p, "PAID_VERSION.DESC"));
-        text.addExtra(DynamicShop.CreateLink(t(p, "PAID_VERSION.GET_PREMIUM"), false, ChatColor.WHITE, "https://spigotmc.org/resources/100058"));
-
-        p.spigot().sendMessage(text);
     }
 }

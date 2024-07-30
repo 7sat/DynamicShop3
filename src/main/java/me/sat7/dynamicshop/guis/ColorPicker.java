@@ -1,6 +1,10 @@
 package me.sat7.dynamicshop.guis;
 
 import me.sat7.dynamicshop.DynaShopAPI;
+import me.sat7.dynamicshop.DynamicShop;
+import me.sat7.dynamicshop.files.CustomConfig;
+import me.sat7.dynamicshop.utilities.ShopUtil;
+import me.sat7.dynamicshop.utilities.UserUtil;
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
 import org.bukkit.Material;
@@ -40,7 +44,29 @@ public class ColorPicker extends InGameUI
 
         if (e.getSlot() == CLOSE)
         {
-            DynaShopAPI.openStartPageSettingGui(player, slotIndex);
+            if (slotIndex == -1)
+            {
+                String shopName = UserUtil.userInteractItem.get(player.getUniqueId()).split("/")[0];
+                DynaShopAPI.openShopSettingGui(player, shopName);
+            }
+            else
+            {
+                DynaShopAPI.openStartPageSettingGui(player, slotIndex);
+            }
+        }
+        else if (slotIndex == -1)
+        {
+            String shopName = UserUtil.userInteractItem.get(player.getUniqueId()).split("/")[0];
+            CustomConfig data = ShopUtil.shopConfigFiles.get(shopName);
+
+            String color = null;
+            if (e.getCurrentItem() != null && !e.getCurrentItem().getType().isAir())
+                color = ChatColor.stripColor(e.getCurrentItem().getItemMeta().getDisplayName());
+
+            data.get().set("Options.background", color);
+            data.save();
+
+            DynaShopAPI.openShopSettingGui(player, shopName);
         }
         else if(e.getCurrentItem() != null && !e.getCurrentItem().getType().isAir())
         {

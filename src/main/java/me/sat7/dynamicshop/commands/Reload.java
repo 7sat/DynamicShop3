@@ -56,6 +56,8 @@ public final class Reload extends DSCMD
 
         DynamicShop.plugin.startSaveLogsTask();
         DynamicShop.plugin.startCullLogsTask();
+
+        DynamicShop.plugin.StartBackupTask();
         DynamicShop.plugin.StartShopSaveTask();
 
         DynamicShop.plugin.StartUserDataTask();
@@ -64,6 +66,8 @@ public final class Reload extends DSCMD
         QuickSell.SetupQuickSellGUIFile();
 
         LangUtil.setupLangFile(ConfigUtil.GetLanguage()); // ConfigUtil.Load() 보다 밑에 있어야함.
+
+        RotationUtil.Reload();
 
         sender.sendMessage(DynamicShop.dsPrefix(sender) + t(sender, "HELP.RELOADED"));
     }

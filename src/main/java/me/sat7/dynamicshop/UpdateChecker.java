@@ -11,7 +11,7 @@ import java.util.function.Consumer;
 
 public class UpdateChecker
 {
-    public static final int PROJECT_ID = 65603;
+    public static final int PROJECT_ID = 65603;//100058;
     private final JavaPlugin plugin;
     private final int resourceId;
 

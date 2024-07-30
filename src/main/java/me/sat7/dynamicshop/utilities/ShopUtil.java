@@ -1,12 +1,14 @@
 package me.sat7.dynamicshop.utilities;
 
 import java.io.File;
+import java.io.IOException;
 import java.text.SimpleDateFormat;
 import java.util.*;
 
 import lombok.NonNull;
 import me.sat7.dynamicshop.models.DSItem;
 import me.sat7.dynamicshop.transactions.Calc;
+import org.apache.commons.io.FileUtils;
 import org.bukkit.Bukkit;
 import org.bukkit.Location;
 import org.bukkit.command.CommandSender;
@@ -391,6 +393,8 @@ public final class ShopUtil
 
             data.save();
 
+            RotationUtil.UpdateCurrentRotationData(shopName, idx);
+
             return true;
         }
         catch (Exception e)
@@ -470,6 +474,8 @@ public final class ShopUtil
         }
 
         data.save();
+
+        RotationUtil.UpdateCurrentRotationData(shopName, idx);
     }
 
     // 상점에서 아이탬 제거
@@ -483,6 +489,8 @@ public final class ShopUtil
 
         data.get().set(String.valueOf(idx), null);
         data.save();
+
+        RotationUtil.UpdateCurrentRotationData(shopName, idx);
     }
 
     // 상점 페이지 삽입
@@ -630,6 +638,7 @@ public final class ShopUtil
         shopDirty.put(newName, false);
         shopDirty.remove(shopName);
 
+        RotationUtil.OnShopNameChanged(shopName, newName);
         UserUtil.OnRenameShop(shopName, newName);
     }
 
@@ -643,6 +652,8 @@ public final class ShopUtil
         data.get().set("Options.title", newName);
         shopConfigFiles.put(newName, data);
         shopDirty.put(newName, false);
+
+        RotationUtil.OnShopCopy(shopName, newName);
     }
 
     // 상점 병합
@@ -928,7 +939,7 @@ public final class ShopUtil
                 }
 
                 // 여러 재화로 취급중인 경우 지원 안함.
-                if (currency.isEmpty())
+                 if (currency.isEmpty())
                 {
                     currency = ShopUtil.GetCurrency(data);
                 }
@@ -1400,6 +1411,78 @@ public final class ShopUtil
         }
 
         data.save();
+    }
+
+    public static void ShopYMLBackup()
+    {
+        File[] listOfFiles = new File(DynamicShop.plugin.getDataFolder() + "/Shop").listFiles();
+        if(listOfFiles != null)
+        {
+            long time = System.currentTimeMillis();
+            for (File f : listOfFiles)
+            {
+                String path = DynamicShop.plugin.getDataFolder() + "/Shop_Backup/" + time + "/";
+                File newFile = new File(path + f.getName());
+                try
+                {
+                    FileUtils.copyFile(f, newFile);
+                } catch (IOException e)
+                {
+                    e.printStackTrace();
+                }
+            }
+        }
+
+        ShopYMLBackupCull();
+    }
+
+    public static void ShopYMLBackupCull()
+    {
+        File[] listOfFiles = new File(DynamicShop.plugin.getDataFolder() + "/Shop_Backup").listFiles();
+        if(listOfFiles != null)
+        {
+            for(File f : listOfFiles)
+            {
+                int ageMins = (int) (System.currentTimeMillis() - f.lastModified()) / 60000;
+                if (ageMins >= ConfigUtil.GetShopYmlBackup_CullAgeMinutes())
+                {
+                    try
+                    {
+                        FileUtils.deleteDirectory(f);
+                    } catch (IOException e)
+                    {
+                        //e.printStackTrace();
+                    }
+                }
+            }
+        }
+    }
+
+    public static int GetShopItemCount(String shopName, Boolean excludeInfiniteStock, Boolean excludeFixedPrice)
+    {
+        CustomConfig data = shopConfigFiles.get(shopName);
+        if(data == null)
+            return -1;
+
+        int count = 0;
+        for (String item : data.get().getKeys(false))
+        {
+            try
+            {
+                int i = Integer.parseInt(item); // options에 대해 적용하지 않기 위해.
+                if (!data.get().contains(item + ".value")) continue; // 장식용은 스킵
+
+                int stock = data.get().getInt(item + ".stock");
+                if (excludeInfiniteStock && stock < 1) continue; // 무한재고에 대해서는 스킵
+                int oldMedian = data.get().getInt(item + ".median");
+                if (excludeFixedPrice && oldMedian < 1) continue; // 고정가 상품에 대해서는 스킵
+
+                count++;
+            }
+            catch (Exception ignore){}
+        }
+
+        return count;
     }
 
     public static int RandomStockFluctuation(Random generator, int stock, int median, double strength)

@@ -84,6 +84,7 @@ public final class Shop extends InGameUI
         CreateButton(SHOP_INFO, InGameUI.GetShopInfoButtonIconMat(), "§3" + shopName, CreateShopInfoText());
 
         ShowItems();
+        FillBackgroundColor();
 
         return inventory;
     }
@@ -263,7 +264,7 @@ public final class Shop extends InGameUI
                         {
                             sellText = t(player, "SHOP.SELL_PRICE" + currencyKey).replace("{num}", n(sellPrice,isIntTypeCurrency));
                         }
-
+                        
                         sellText += showValueChange ? " " + valueChanged_Sell : "";
                     }
 
@@ -583,10 +584,21 @@ public final class Shop extends InGameUI
 
     private void OnClickItemSlot(int idx, InventoryClickEvent e)
     {
-        if (e.getCurrentItem() != null && e.getCurrentItem().getType() != Material.AIR)
+        boolean isEmpty = false;
+        if (e.getCurrentItem() == null || e.getCurrentItem().getType() == Material.AIR)
+        {
+            isEmpty = true;
+        }
+        else if (e.getCurrentItem().getItemMeta().getDisplayName().equals("  ") ||
+                 e.getCurrentItem().getItemMeta().getDisplayName().equals(t(player, "SHOP.CLICK_TO_ADD")))
+        {
+            isEmpty = true;
+        }
+
+        if (!isEmpty)
         {
             if (e.getCurrentItem().getItemMeta() != null &&
-                    e.getCurrentItem().getItemMeta().getDisplayName().equals(t(null, "SHOP.INCOMPLETE_DATA")))
+                e.getCurrentItem().getItemMeta().getDisplayName().equals(t(null, "SHOP.INCOMPLETE_DATA")))
             {
                 return;
             }
@@ -654,6 +666,9 @@ public final class Shop extends InGameUI
                     shopData.set(String.valueOf(selectedSlot), null);
                 }
 
+                RotationUtil.UpdateCurrentRotationData(shopName, selectedSlot);
+                RotationUtil.UpdateCurrentRotationData(shopName, idx);
+
                 ShopUtil.shopConfigFiles.get(shopName).save();
                 selectedSlot = -1;
                 RefreshUI();
@@ -687,6 +702,7 @@ public final class Shop extends InGameUI
         infoButton.setItemMeta(infoMeta);
 
         ShowItems();
+        FillBackgroundColor();
     }
 
     public boolean CheckShopIsEnable()
@@ -707,5 +723,28 @@ public final class Shop extends InGameUI
         }
 
         return ret;
+    }
+
+    public void FillBackgroundColor()
+    {
+        String color = shopData.getString("Options.background","");
+        if (color.isEmpty())
+            return;
+
+        Material mat = Material.getMaterial( color.toUpperCase() + "_STAINED_GLASS_PANE");
+        if (mat == null)
+            return;
+
+        String name = "  ";
+        if (player.hasPermission(P_ADMIN_SHOP_EDIT))
+            name = t(player, "SHOP.CLICK_TO_ADD");
+
+        for (int i = 0; i < 54; i++)
+        {
+            if(inventory.getItem(i) == null || inventory.getItem(i).getType().isAir())
+            {
+                CreateButton(i, mat, i < 45 ? name : "  ", "");
+            }
+        }
     }
 }
