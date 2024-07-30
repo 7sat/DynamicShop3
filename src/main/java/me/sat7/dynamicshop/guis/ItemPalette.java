@@ -7,8 +7,10 @@ import java.util.Comparator;
 import me.sat7.dynamicshop.DynaShopAPI;
 import me.sat7.dynamicshop.events.OnChat;
 import me.sat7.dynamicshop.models.DSItem;
+import me.sat7.dynamicshop.utilities.ConfigUtil;
 import me.sat7.dynamicshop.utilities.ShopUtil;
 import me.sat7.dynamicshop.utilities.UserUtil;
+import me.sat7.dynamicshop.utilities.WorthUtil;
 import org.bukkit.Bukkit;
 import org.bukkit.Material;
 import org.bukkit.entity.Player;
@@ -90,7 +92,7 @@ public final class ItemPalette extends InGameUI
         if(uiSubType == 0)
         {
             if(!paletteList.isEmpty())
-                CreateButton(ADD_ALL, Material.YELLOW_STAINED_GLASS_PANE, t(player, "PALETTE.ADD_ALL"), t(player, "PALETTE.ADD_ALL_LORE_LOCKED"));
+                CreateButton(ADD_ALL, Material.YELLOW_STAINED_GLASS_PANE, t(player, "PALETTE.ADD_ALL"), t(player, "PALETTE.ADD_ALL_LORE"));
         }
 
         // Search Button
@@ -219,7 +221,7 @@ public final class ItemPalette extends InGameUI
         potion.setItemMeta(meta);
         return potion;
     }
-
+    
     public ItemStack getPotionItemStack_mc1_20_2_or_newer(Material potionMat, PotionType potionType){
         ItemStack potion = new ItemStack(potionMat, 1);
         PotionMeta meta = (PotionMeta) potion.getItemMeta();
@@ -394,12 +396,6 @@ public final class ItemPalette extends InGameUI
 
     private void AddAll(boolean applyRecommend)
     {
-        if (applyRecommend)
-        {
-            DynamicShop.PaidOnlyMsg(player);
-            return;
-        }
-
         if(paletteList.isEmpty())
             return;
 
@@ -416,7 +412,33 @@ public final class ItemPalette extends InGameUI
 
                 targetSlotIdx = ShopUtil.findEmptyShopSlot(shopName, shopSlotIndex, true);
 
-                DSItem temp = new DSItem(itemStack, 1, 1, 0.0001, -1, 10000, 10000);
+                double worth = 1;
+                int median = 10000;
+
+                if (applyRecommend)
+                {
+                    String itemName = itemStack.getType().toString();
+                    worth = WorthUtil.ccWorth.get().getDouble(itemName);
+                    if (worth == 0)
+                    {
+                        itemName = itemName.replace("-", "");
+                        itemName = itemName.replace("_", "");
+                        itemName = itemName.toLowerCase();
+
+                        worth = WorthUtil.ccWorth.get().getDouble(itemName);
+                    }
+
+                    if (worth != 0)
+                    {
+                        median = ShopUtil.CalcRecommendedMedian(worth, ConfigUtil.GetNumberOfPlayer());
+                    } else
+                    {
+                        if (player != null)
+                            player.sendMessage(DynamicShop.dsPrefix(player) + t(player, "ERR.NO_RECOMMEND_DATA") + " : " + itemName);
+                    }
+                }
+
+                DSItem temp = new DSItem(itemStack, worth, worth, 0.0001, -1, median, median);
                 ShopUtil.addItemToShop(shopName, targetSlotIdx, temp);
             }
         }

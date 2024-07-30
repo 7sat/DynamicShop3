@@ -15,7 +15,6 @@ import me.sat7.dynamicshop.economyhook.JobsHook;
 import me.sat7.dynamicshop.utilities.ConfigUtil;
 import me.sat7.dynamicshop.utilities.UserUtil;
 import org.bukkit.Bukkit;
-import org.bukkit.ChatColor;
 import org.bukkit.Material;
 import org.bukkit.configuration.ConfigurationSection;
 import org.bukkit.entity.Player;
@@ -137,12 +136,12 @@ public final class ShopSettings extends InGameUI
         Material mat = Material.getMaterial( color.toUpperCase() + "_CONCRETE");
         if (mat == null)
             mat = Material.LIGHT_GRAY_CONCRETE;
-        CreateButton(BACKGROUND, mat, t(player, "SHOP_SETTING.BACKGROUND"), "§7" + ChatColor.stripColor(t(player, "SHOP_SETTING.BACKGROUND_LORE")));
+        CreateButton(BACKGROUND, mat, t(player, "SHOP_SETTING.BACKGROUND"), t(player, "SHOP_SETTING.BACKGROUND_LORE"));
 
         // 로테이션 에디터
         int currentRotation = confSec_Options.getInt("Rotation.Current", -1);
         String rotationString = currentRotation == -1 ? t(player, "ROTATION_EDITOR.DISABLED") : String.valueOf(currentRotation + 1);
-        CreateButton(ROTATION_EDITOR, Material.CLOCK, t(player, "SHOP_SETTING.ROTATION_EDITOR") + rotationString, "§7" + ChatColor.stripColor(t(player, "SHOP_SETTING.ROTATION_EDITOR_LORE")));
+        CreateButton(ROTATION_EDITOR, Material.CLOCK, t(player, "SHOP_SETTING.ROTATION_EDITOR") + rotationString, t(player, "SHOP_SETTING.ROTATION_EDITOR_LORE"));
 
         // 영업시간 버튼
         int curTime = (int) (player.getWorld().getTime()) / 1000 + 6;
@@ -178,7 +177,7 @@ public final class ShopSettings extends InGameUI
             ArrayList<String> fluctuationLore = new ArrayList<>(Arrays.asList(
                     "§9" + t(player, "CUR_STATE") + ": " + t(player, "ON"),
                     "§e" + t(player, "LMB") + ": " + t(player, "OFF"),
-                    "§7" + ChatColor.stripColor(t(player, "STOCK_SIMULATOR.SIMULATOR_BUTTON_LORE"))
+                    "§e" + t(player, "STOCK_SIMULATOR.SIMULATOR_BUTTON_LORE")
                     ));
             CreateButton(FLUC, Material.COMPARATOR, t(player, "FLUCTUATION.FLUCTUATION"), fluctuationLore);
 
@@ -200,7 +199,7 @@ public final class ShopSettings extends InGameUI
                     new ArrayList<>(Arrays.asList(
                             "§9" + t(player, "CUR_STATE") + ": " + t(player, "OFF"),
                             "§e" + t(player, "LMB") + ": " + t(player, "ON"),
-                            "§7" + ChatColor.stripColor(t(player, "STOCK_SIMULATOR.SIMULATOR_BUTTON_LORE"))
+                            "§e" + t(player, "STOCK_SIMULATOR.SIMULATOR_BUTTON_LORE")
                             )),
                     1);
             inventory.setItem(FLUC, flucToggleBtn);
@@ -213,7 +212,7 @@ public final class ShopSettings extends InGameUI
             ArrayList<String> stableLore = new ArrayList<>(Arrays.asList(
                     "§9" + t(player, "CUR_STATE") + ": " + t(player, "ON"),
                     "§e" + t(player, "LMB") + ": " + t(player, "OFF"),
-                    "§7" + ChatColor.stripColor(t(player, "STOCK_SIMULATOR.SIMULATOR_BUTTON_LORE"))
+                    "§e" + t(player, "STOCK_SIMULATOR.SIMULATOR_BUTTON_LORE")
             ));
             CreateButton(STABLE, Material.COMPARATOR, t(player, "STOCK_STABILIZING.SS"), stableLore);
 
@@ -233,7 +232,7 @@ public final class ShopSettings extends InGameUI
             ArrayList<String> stableLore = new ArrayList<>(Arrays.asList(
                     "§9" + t(player, "CUR_STATE") + ": " + t(player, "OFF"),
                     "§e" + t(player, "LMB") + ": " + t(player, "ON"),
-                    "§7" + ChatColor.stripColor(t(player, "STOCK_SIMULATOR.SIMULATOR_BUTTON_LORE"))
+                    "§e" + t(player, "STOCK_SIMULATOR.SIMULATOR_BUTTON_LORE")
                     ));
             CreateButton(STABLE, Material.COMPARATOR, t(player, "STOCK_STABILIZING.SS"), stableLore);
         }
@@ -353,7 +352,7 @@ public final class ShopSettings extends InGameUI
         ArrayList<String> logLore = new ArrayList<>();
         logLore.add("§9" + t(player, "CUR_STATE") + ": " + log_cur);
         logLore.add("§e" + t(player, "LMB") + ": " + log_set);
-        logLore.add(t(player, "§7" + ChatColor.stripColor(t(player, "SHOP_SETTING.LOG_TOGGLE_LORE"))));
+        logLore.add(t(player, "SHOP_SETTING.LOG_TOGGLE_LORE"));
         CreateButton(LOG_TOGGLE, Material.BOOK, t(player, "LOG.LOG"), logLore);
 
         boolean printToConsoleActive = data.get().contains("Options.log.printToConsole") && data.get().getBoolean("Options.log.printToConsole");
@@ -437,7 +436,7 @@ public final class ShopSettings extends InGameUI
         // 배경 색상 변경
         else if (e.getSlot() == BACKGROUND)
         {
-            DynamicShop.PaidOnlyMsg(player);
+            DynaShopAPI.openColorPicker(player, -1);
         }
         // 로테이션 편집기
         else if (e.getSlot() == ROTATION_EDITOR)

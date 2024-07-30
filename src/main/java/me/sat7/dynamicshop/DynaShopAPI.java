@@ -71,7 +71,9 @@ public final class DynaShopAPI
     // 상점 로테이트 편집기
     public static void OpenRotationEditor(Player player, String shopName)
     {
-        DynamicShop.PaidOnlyMsg(player);
+        RotationEditor uiClass = new RotationEditor();
+        Inventory inventory = uiClass.getGui(player, shopName);
+        UIManager.Open(player, inventory, uiClass);
     }
 
     // 거래화면 생성 및 열기
@@ -123,13 +125,17 @@ public final class DynaShopAPI
     // 로그뷰어 열기
     public static void openLogViewer(Player player, String shopName)
     {
-        DynamicShop.PaidOnlyMsg(player);
+        LogViewer uiClass = new LogViewer();
+        Inventory inventory = uiClass.getGui(player, shopName);
+        UIManager.Open(player, inventory, uiClass);
     }
 
     // 재고 시뮬레이터 열기
     public static void openStockSimulator(Player player, String shopName)
     {
-        DynamicShop.PaidOnlyMsg(player);
+        StockSimulator uiClass = new StockSimulator();
+        Inventory inventory = uiClass.getGui(player, shopName);
+        UIManager.Open(player, inventory, uiClass);
     }
 
     // 스타트 페이지
@@ -225,7 +231,7 @@ public final class DynaShopAPI
         if (validateShopName(shopName))
         {
             CustomConfig data = ShopUtil.shopConfigFiles.get(shopName);
-
+            
             ArrayList<ItemStack> list = new ArrayList<>();
             for (String s : data.get().getKeys(false))
             {

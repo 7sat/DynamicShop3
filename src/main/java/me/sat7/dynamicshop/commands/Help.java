@@ -55,7 +55,7 @@ public final class Help
             if (player.hasPermission(P_ADMIN_SHOP_EDIT) || player.hasPermission(P_ADMIN_EDIT_ALL))
             {
                 player.sendMessage(" - " + t(player, "HELP.USAGE")
-                   + ": /ds shop <shopname> <enable | addhand | add | edit | editall | setToRecAll | sellbuy | permission | maxpage | flag | currency | position | shophours | fluctuation | stockStabilizing | command | account | log | resetTradingVolume | background>");
+                        + ": /ds shop <shopname> <enable | addhand | add | edit | editall | setToRecAll | sellbuy | permission | maxpage | flag | currency | position | shophours | fluctuation | stockStabilizing | command | account | log | resetTradingVolume | background>");
             }
 
             if (player.hasPermission(P_ADMIN_SHOP_EDIT))

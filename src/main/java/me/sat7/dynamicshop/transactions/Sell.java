@@ -310,7 +310,7 @@ public final class Sell
         // 이벤트 호출
         ShopBuySellEvent event = new ShopBuySellEvent(false, priceBuyOld, Calc.getCurrentPrice(shopName, tradeIdx, true), priceSellOld, DynaShopAPI.getSellPrice(shopName, itemStack), stockOld, DynaShopAPI.getStock(shopName, itemStack), DynaShopAPI.getMedian(shopName, itemStack), shopName, itemStack, player);
         Bukkit.getPluginManager().callEvent(event);
-
+        
         // UI 갱신
         DynaShopAPI.openItemTradeGui(player, shopName, tradeIdx);
     }

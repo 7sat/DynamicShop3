@@ -1,20 +1,21 @@
 package me.sat7.dynamicshop.utilities;
 
+import java.io.File;
+import java.io.FileReader;
+import java.io.FileWriter;
+import java.io.IOException;
+import java.text.SimpleDateFormat;
+import java.util.*;
+import java.util.concurrent.ConcurrentHashMap;
+
+import com.opencsv.CSVReader;
 import com.opencsv.CSVWriter;
 import me.sat7.dynamicshop.DynamicShop;
 import me.sat7.dynamicshop.constants.Constants;
 import me.sat7.dynamicshop.files.CustomConfig;
 import org.apache.commons.io.FileUtils;
+import org.apache.commons.io.FilenameUtils;
 import org.bukkit.Bukkit;
-
-import java.io.File;
-import java.io.FileWriter;
-import java.io.IOException;
-import java.text.SimpleDateFormat;
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.Map;
-import java.util.concurrent.ConcurrentHashMap;
 
 import static me.sat7.dynamicshop.utilities.LangUtil.t;
 
@@ -108,11 +109,62 @@ public final class LogUtil
         }
     }
 
+    public static ArrayList<String> LoadDataFromCSV(String shopName, String selectedFileName)
+    {
+        ArrayList<String> resultArray = new ArrayList<>();
+
+        try
+        {
+            CSVReader reader = new CSVReader(new FileReader(DynamicShop.plugin.getDataFolder() + "/Log/" + shopName + "/" + selectedFileName));
+            List<String[]> data = reader.readAll();
+
+            for (int i = data.size() - 1; i >= 0; i--)
+            {
+                String[] line = data.get(i);
+                // User,Item,Amount,Date,Time,Currency,Price
+                resultArray.add(i + "," + line[7] + "," + line[3] + "," + line[4] + "," + line[0] + "," + line[1] + "," + line[6] + "," + line[5]);
+            }
+        } catch (Exception e)
+        {
+            //DynamicShop.console.sendMessage(Constants.DYNAMIC_SHOP_PREFIX + " Failed to read CSV file.");
+        }
+
+        return resultArray;
+    }
+
     private static String CreatePath(String shopName)
     {
         SimpleDateFormat sdf = new SimpleDateFormat(ConfigUtil.GetLogFileNameFormat());
         String timeForFileName = sdf.format(System.currentTimeMillis());
         return DynamicShop.plugin.getDataFolder() + "/Log/" + shopName + "/" + timeForFileName + ".csv";
+    }
+
+    public static ArrayList<String> GetLogFileList(String shopName)
+    {
+        ArrayList<String> resultArray = new ArrayList<>();
+
+        try
+        {
+            File f = new File(DynamicShop.plugin.getDataFolder() + "/Log/" + shopName);
+            File[] fList = f.listFiles();
+            if (fList != null)
+            {
+                Arrays.sort(fList, Comparator.comparingLong(File::lastModified).reversed());
+
+                for (File temp: fList)
+                {
+                    if (temp.isHidden() || !FilenameUtils.getExtension(temp.getName()).equals("csv"))
+                        continue;
+
+                    resultArray.add(temp.getName());
+                }
+            }
+        } catch (Exception e)
+        {
+            //DynamicShop.console.sendMessage(Constants.DYNAMIC_SHOP_PREFIX + " Failed to create log file list.");
+        }
+
+        return resultArray;
     }
 
     public static void cullLogs()
@@ -167,6 +219,21 @@ public final class LogUtil
             try
             {
                 FileUtils.deleteDirectory(directory);
+            } catch (IOException e)
+            {
+                DynamicShop.console.sendMessage(Constants.DYNAMIC_SHOP_PREFIX + " Failed to delete csv.");
+            }
+        }
+    }
+
+    public static void DeleteLogFile(String shopName, String file)
+    {
+        File targetFile = new File(DynamicShop.plugin.getDataFolder() + "/Log/" + shopName + "/" + file);
+        if (targetFile.exists())
+        {
+            try
+            {
+                FileUtils.delete(targetFile);
             } catch (IOException e)
             {
                 DynamicShop.console.sendMessage(Constants.DYNAMIC_SHOP_PREFIX + " Failed to delete csv.");

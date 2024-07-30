@@ -1,7 +1,16 @@
 package me.sat7.dynamicshop.transactions;
 
+//import static org.junit.Assert.assertEquals;
+//
+//import org.junit.Before;
+//import org.junit.Test;
+//
+//import me.sat7.dynamicshop.files.FileUtil;
+//import me.sat7.dynamicshop.utilities.ShopUtil;
+
 public class TransactionTests {
-/*
+
+    /*
     @Before
     public void setup() {
         ShopUtil.ccShop = FileUtil.generateOutOfStockCustomConfig();
@@ -44,5 +53,5 @@ public class TransactionTests {
         double amountBuy = Calc.calcTotalCost("default", "COBBLESTONE", 3);
         assertEquals(30, amountBuy, 0.01);
     }
-*/
+    */
 }
